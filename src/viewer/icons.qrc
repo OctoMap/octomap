@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>icons/media-playback-start.png</file>
+        <file>icons/media-seek-backward.png</file>
+        <file>icons/media-seek-forward.png</file>
+        <file>icons/media-skip-backward.png</file>
+        <file>icons/media-skip-forward.png</file>
+    </qresource>
+</RCC>

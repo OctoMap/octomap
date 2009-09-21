@@ -1,0 +1,276 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>ImageInterface</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>ImageInterface</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>288</width>
+            <height>213</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Image settings</string>
+    </property>
+    <property name="icon">
+        <pixmap>image0</pixmap>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout5</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Width</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>imgWidth</cstring>
+                    </property>
+                    <property name="suffix">
+                        <string> px</string>
+                    </property>
+                    <property name="maxValue">
+                        <number>32000</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Width of the image (in pixels)</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Height</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>imgHeight</cstring>
+                    </property>
+                    <property name="prefix">
+                        <string></string>
+                    </property>
+                    <property name="suffix">
+                        <string> px</string>
+                    </property>
+                    <property name="maxValue">
+                        <number>32000</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Height of the image (in pixels)</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Image quality</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>imgQuality</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>100</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Between 0 (smallest files) and 100 (highest quality)</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>271</width>
+                            <height>31</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2_2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel3_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Oversampling</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>oversampling</cstring>
+                    </property>
+                    <property name="prefix">
+                        <string>x </string>
+                    </property>
+                    <property name="maxValue">
+                        <number>64</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Antialiases image (when larger then 1.0)</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer1_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>271</width>
+                            <height>31</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>whiteBackground</cstring>
+            </property>
+            <property name="text">
+                <string>Use white background</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Use white as background color</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>expandFrustum</cstring>
+            </property>
+            <property name="text">
+                <string>Expand frustum if needed</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>When image aspect ratio differs from viewer's one, expand frustum as needed. Fits inside current frustum otherwise.</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>251</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pushButton1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>OK</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pushButton2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="900">89504e470d0a1a0a0000000d494844520000000f000000100806000000c95625040000034b49444154289175936b6c936514c7cf79deb77d7ba1ddda8e6ea173b2b574abb38e0ee59239362b5342829ae8b8242626c6686296201a090924c62fc6208c20972f2c4682f383c449608a805333a633206c7363dd6adacdca6aa117d6ee5ddfbeb7e7f10b8b8a7a92ffb7dfc93f39f91d648cc1ff4d3e9bf55c3edef35e5d207033f4c2d683884819a59c78b9ef65ceb53c0b8cb17f445154e1b75872bd5494cace1c39d6bdd7bf56fef4c5ae1165b1e8648c81387861fb6cfb8a4ceefddd9f100000c61847293300004446e34f9e3df5c39e3bc9d4a34d6d1bbfd9f054c71552282dd765d5060040e7667c8674d24566a71a080083899bb73af279d103005c74ecce0eb3d9a15a6d96a2af2978d1e5ae4a5bcc568918f812008050e949998d027072d144c6a35af8eb6fa73b791ef3aaa23d3017d742de80e757bba36c8669ba41c914aa6d559549de2414000088ae130322f0824521a91cae0cb7fa86ac56733e112b34e7d2ccba2a5831c6f3c68c3c5f58b198487b5dfeba71e439090000b2a94a9e52e0dc9e39be631d77aa58743f44299a2ff5fdbebd6695f3bacb6d8a23a2767772b645992f3a2b560706f1de6d6066aa912001e26d9ce019001d1e8eb445c7d4aed16b0badbbdf6dda050822d5756362e06aa7b9aa22e908ac1c06000031ef86c8c86ab49797b0b1f92782886c3a92aaed39f1e3aba1c7cb07aa6bcd239431393b39d39618fa255cddbee6bc506e9b030060d363eb582c5207b50d71f43d7c9d070068dd18ec076d99bdf1113a29cb258bba20558c9e3cb71f4d8254b379c36944a44cd78cfaa5be9d74513472eb370d80dd91c425c318a37cefd18f0f9890b348e389b5e28d58534b57e707c197b6ec43445d9ff8f969f98d6d9f2141261c3bbb95f88357c8928a8844b3d96cb9feeeded76243e3a19af09a8bf5cfb71f46449d2ee4ddc58fbaf7aae9db76127eee2bac0b5cbdd7f8979ad9db196fcf5b07ce1fddb16b229fcad433c64017179cd943fb4ffe1172e8779f0dddd2e2538f2df178ff63c892e4ecddf366aff7c1eaa8afbe215afaaeff19fdfbfe4d1693a0b8f61d7adbb465db714464ff6a5ecae8b92f5e39d2e0913ff7bbd8a0bf8c4db6d48af3a74fbc435545f83bf79fcb6a495a76edc38387bf7ca2397d63e7e648ee42dfeb545585fbb93f01b22dcb16d181190d0000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>pushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageInterface</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton2</sender>
+        <signal>clicked()</signal>
+        <receiver>ImageInterface</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

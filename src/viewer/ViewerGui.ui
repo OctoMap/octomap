@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ViewerGuiClass</class>
+ <widget class="QMainWindow" name="ViewerGuiClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>3D Mapping Viewer</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuShow">
+     <property name="title">
+      <string>Show</string>
+     </property>
+    </widget>
+    <addaction name="actionOpen_file"/>
+    <addaction name="actionOpen_graph_incremental"/>
+    <addaction name="actionSettings"/>
+    <addaction name="menuShow"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset_view"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_file"/>
+    <addaction name="actionExport_view"/>
+    <addaction name="separator"/>
+    <addaction name="actionTest"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelp"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuView_mode">
+     <property name="title">
+      <string>View mode</string>
+     </property>
+     <addaction name="actionHeight_map"/>
+     <addaction name="actionPrintout_mode"/>
+    </widget>
+    <addaction name="actionPointcloud"/>
+    <addaction name="actionOctree_cells"/>
+    <addaction name="actionFree"/>
+    <addaction name="actionChanged_free_only"/>
+    <addaction name="actionOctree_structure"/>
+    <addaction name="actionTrajectory"/>
+    <addaction name="separator"/>
+    <addaction name="actionPruned"/>
+    <addaction name="actionAs_pure_binary_OcTree"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionStore_camera"/>
+    <addaction name="actionRestore_camera"/>
+    <addaction name="menuView_mode"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen_file">
+   <property name="text">
+    <string>Open file...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open file</string>
+   </property>
+  </action>
+  <action name="actionSave_file">
+   <property name="text">
+    <string>Save tree...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save tree to file</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionPointcloud">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pointcloud</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionOctree_cells">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Occupied Octree cells</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
+   </property>
+  </action>
+  <action name="actionOctree_structure">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Octree structure</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
+  </action>
+  <action name="actionTrajectory">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Trajectory</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
+  </action>
+  <action name="actionFree">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Free Octree cells</string>
+   </property>
+   <property name="shortcut">
+    <string>F</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionReset_view">
+   <property name="text">
+    <string>Reset view</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset the 3D viewpoint</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </action>
+  <action name="actionPruned">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Prune tree</string>
+   </property>
+  </action>
+  <action name="actionAs_pure_binary_OcTree">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>As pure binary tree</string>
+   </property>
+  </action>
+  <action name="actionPrintout_mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Printout</string>
+   </property>
+  </action>
+  <action name="actionOpen_graph_incremental">
+   <property name="text">
+    <string>Open graph incremental...</string>
+   </property>
+  </action>
+  <action name="actionExport_view">
+   <property name="text">
+    <string>Export view...</string>
+   </property>
+  </action>
+  <action name="actionStore_camera">
+   <property name="text">
+    <string>Store camera</string>
+   </property>
+  </action>
+  <action name="actionRestore_camera">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Restore camera</string>
+   </property>
+  </action>
+  <action name="actionHeight_map">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Height map</string>
+   </property>
+  </action>
+  <action name="actionChanged_free_only">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Changed free only</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

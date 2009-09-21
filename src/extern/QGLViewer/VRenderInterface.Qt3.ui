@@ -1,0 +1,211 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>VRenderInterface</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>VRenderInterface</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>298</width>
+            <height>245</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Vectorial rendering options</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>5</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>includeHidden</cstring>
+            </property>
+            <property name="text">
+                <string>Include hidden parts</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Hidden polygons are also included in the output (usually twice bigger)</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cullBackFaces</cstring>
+            </property>
+            <property name="text">
+                <string>Cull back faces</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Back faces (non clockwise point ordering) are removed from the output</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>blackAndWhite</cstring>
+            </property>
+            <property name="text">
+                <string>Black and white</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Black and white rendering</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>colorBackground</cstring>
+            </property>
+            <property name="text">
+                <string>Color background</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Use current background color instead of white</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>tightenBBox</cstring>
+            </property>
+            <property name="text">
+                <string>Tighten bounding box</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Fit output bounding box to current display</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout3</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>sortLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Sort method:</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Polygon depth sorting method</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <item>
+                        <property name="text">
+                            <string>No sorting</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>BSP</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Topological</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Advanced topological</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>sortMethod</cstring>
+                    </property>
+                    <property name="currentItem">
+                        <number>3</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Polygon depth sorting method</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>31</width>
+                    <height>41</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>SaveButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Save</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>CancelButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>SaveButton</sender>
+        <signal>clicked()</signal>
+        <receiver>VRenderInterface</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>CancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>VRenderInterface</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>SaveButton</tabstop>
+    <tabstop>CancelButton</tabstop>
+    <tabstop>includeHidden</tabstop>
+    <tabstop>cullBackFaces</tabstop>
+    <tabstop>blackAndWhite</tabstop>
+    <tabstop>colorBackground</tabstop>
+    <tabstop>tightenBBox</tabstop>
+    <tabstop>sortMethod</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
