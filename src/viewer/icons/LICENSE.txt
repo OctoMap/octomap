@@ -1,0 +1,4 @@
+These are the KDE4 icons from http://www.oxygen-icons.org/.
+All icons are released under GNU Library General Public License,
+for details please see http://www.gnu.org/licenses/lgpl-3.0.txt
+or "lgpl-3.0.txt" in this directory.
