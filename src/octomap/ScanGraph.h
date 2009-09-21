@@ -7,6 +7,8 @@
 // ==================================================
 
 #include <string>
+#include <math.h>
+
 #include "Pointcloud.h"
 #include "octomap_types.h"
 
@@ -21,7 +23,7 @@ namespace octomap {
 
    public:
 
-    ScanNode (Pointcloud* _scan, fern::Pose6D _pose, unsigned int _id) : scan(_scan), pose(_pose), id(_id) {}
+    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id) : scan(_scan), pose(_pose), id(_id) {}
     ScanNode () {}
 
     bool operator == (const ScanNode& other) {
@@ -35,7 +37,7 @@ namespace octomap {
     std::istream& readPoseASCII(std::istream &s);
 
     Pointcloud* scan;
-    fern::Pose6D pose;
+    octomath::Pose6D pose;
     unsigned int id;
 
   };
@@ -44,7 +46,7 @@ namespace octomap {
 
    public:
 
-    ScanEdge(ScanNode* _first, ScanNode* _second, fern::Pose6D _constraint)
+    ScanEdge(ScanNode* _first, ScanNode* _second, octomath::Pose6D _constraint)
       : first(_first), second(_second), constraint(_constraint), weight(1.0) { }
     ScanEdge() {}
 
@@ -62,7 +64,7 @@ namespace octomap {
     ScanNode* first;
     ScanNode* second;
 
-    fern::Pose6D constraint;
+    octomath::Pose6D constraint;
     double weight;
   };
 
@@ -76,8 +78,8 @@ namespace octomap {
 
     void clear();
 
-    ScanNode* addNode(Pointcloud* scan, fern::Pose6D pose);
-    ScanEdge* addEdge(ScanNode* first, ScanNode* second, fern::Pose6D constraint);
+    ScanNode* addNode(Pointcloud* scan, octomath::Pose6D pose);
+    ScanEdge* addEdge(ScanNode* first, ScanNode* second, octomath::Pose6D constraint);
     ScanEdge* addEdge(uint first_id, uint second_id);
 
     // will return NULL if node was not found
@@ -90,7 +92,7 @@ namespace octomap {
 
     // find and update loops according to a given distance threshold
     void updateLoopsDist(double distthres, double angle_thres=M_PI*.75);
-    static double estimateOverlap(fern::Pose6D p, fern::Pose6D q, double distthres, double angle_thres);
+    static double estimateOverlap(octomath::Pose6D p, octomath::Pose6D q, double distthres, double angle_thres);
 
 
     std::vector<unsigned int> getNeighborIDs(unsigned int id);

@@ -53,7 +53,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 # Resource files (icons, ...)
 QT4_ADD_RESOURCES(viewer_RES icons.qrc)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mapping3d
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/octomap
   ${CMAKE_SOURCE_DIR}/extern	# for local copy of libQGLViewer
 )
 
@@ -70,5 +70,5 @@ target_link_libraries(viewer3d
 	QGLViewer
 	${QT_LIBRARIES}
 	${Boost_LIBRARIES}
-	mapping3d 
+	octomap 
 )

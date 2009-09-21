@@ -64,7 +64,7 @@ namespace octomap {
     void getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const;
 
     // returns true if an object was hit
-    bool rayCast(fern::Pose6D& origin, double maxrange, point3d& closest_object );
+    bool rayCast(octomath::Pose6D& origin, double maxrange, point3d& closest_object );
 
   protected:
 

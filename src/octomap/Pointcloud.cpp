@@ -7,6 +7,7 @@
 #include "Pointcloud.h"
 #include <ext/algorithm>
 #include <list>
+#include <fstream>
 
 namespace octomap {
 
@@ -180,7 +181,7 @@ namespace octomap {
   }
 
 
-  void Pointcloud::transform(fern::Pose6D transform) {
+  void Pointcloud::transform(octomath::Pose6D transform) {
 
     for (uint i=0; i<points.size(); i++) {
       *(points[i]) = transform.transform(*(points[i]));
@@ -198,10 +199,10 @@ namespace octomap {
   }
 
 
-  void Pointcloud::transformAbsolute(fern::Pose6D transform) {
+  void Pointcloud::transformAbsolute(octomath::Pose6D transform) {
 
     // undo previous transform, then apply current transform
-    fern::Pose6D transf = current_inv_transform * transform;
+    octomath::Pose6D transf = current_inv_transform * transform;
 
     for (uint i=0; i<points.size(); i++) {
       *(points[i]) = transf.transform(*(points[i]));
@@ -230,41 +231,6 @@ namespace octomap {
 	normals[i]->rotate_IP(roll, pitch, yaw);
       }
     }
-  }
-
-
-
-  point3d Pointcloud::getMean() const {
-    point3d center(0,0,0);
-
-    for(uint i=0; i<points.size(); i++) {
-      center += *(points[i]);
-    }
-    center /= (double) points.size();
-
-    return center;
-  }
-
-
-  fern::Matrix Pointcloud::getCov () const {
-
-    point3d mean;
-    fern::Matrix cov(3,3);
-
-    mean = getMean();
-
-    for (uint i = 0; i < points.size(); i++) {
-      point3d p = *(points[i]) - mean;
-      cov += p.outerProd(p);
-    }
-    cov /=  (double) points.size();
-    return cov;
-  }
-
-  std::pair<std::vector<double>, std::vector<std::vector<double> > > Pointcloud::PCA() const {
-
-    fern::Matrix cov = getCov();
-    return cov.eigensystem();
   }
 
 

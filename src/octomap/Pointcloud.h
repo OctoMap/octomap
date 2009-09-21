@@ -49,22 +49,17 @@ namespace octomap {
     void writeVrml(std::string filename, std::vector<double>& probs);
 
     // apply transform to each point
-    void transform(fern::Pose6D transform);
+    void transform(octomath::Pose6D transform);
 
     // rotate each point in pointcloud
     void rotate(double roll, double pitch, double yaw);
 
     // apply transform to each point, undo prev transform
     // FIXME: probably buggy...
-    void transformAbsolute(fern::Pose6D transform);
+    void transformAbsolute(octomath::Pose6D transform);
 
     void calcBBX(point3d& lowerBound, point3d& upperBound) const;
     void crop(point3d lowerBound, point3d upperBound);
-
-
-    point3d      getMean() const;
-    fern::Matrix getCov()  const;
-    std::pair<std::vector<double>, std::vector<std::vector<double> > > PCA() const;
 
     void subSampleRandom(uint num_samples, Pointcloud& sample_cloud);
 
@@ -112,7 +107,7 @@ namespace octomap {
     std::vector<double>  remissions;
     std::vector<bool>    on_border;
 
-    fern::Pose6D         current_inv_transform;
+    octomath::Pose6D         current_inv_transform;
 
     bool                 has_remissions;
     bool                 has_normals;

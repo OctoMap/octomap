@@ -5,6 +5,9 @@
 // Armin Hornung <hornunga@informatik.uni-freiburg.de>
 // =====================================================
 
+#include <math.h>
+#include <cassert>
+
 namespace octomap {
 
 
@@ -218,7 +221,7 @@ namespace octomap {
 
 
   template <class NODE>
-  bool AbstractOcTree<NODE>::rayCast(fern::Pose6D& origin, double maxrange, point3d& closest_object ){
+  bool AbstractOcTree<NODE>::rayCast(octomath::Pose6D& origin, double maxrange, point3d& closest_object ){
 
     point3d beam (maxrange, 0, 0);
     beam.rotate_IP(origin.roll(), origin.pitch(), origin.yaw());

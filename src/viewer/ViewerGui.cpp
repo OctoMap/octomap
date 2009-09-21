@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 
 #include "ViewerGui.h"
 #define _MAXRANGE_URG 5.1

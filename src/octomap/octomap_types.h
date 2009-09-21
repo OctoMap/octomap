@@ -6,13 +6,13 @@
 // Kai M. Wurm <wurm@uni-freiburg.de>
 // ==================================================
 
-#include <fern/Vector3.h>
-#include <fern/Pose6D.h>
+#include <Vector3.h>
+#include <Pose6D.h>
 
 namespace octomap {
 
-  typedef fern::Vector3               point3d;
-  typedef std::vector<fern::Vector3*> point3d_collection;
+  typedef octomath::Vector3               point3d;
+  typedef std::vector<octomath::Vector3*> point3d_collection;
   typedef std::pair<point3d, double> OcTreeVolume;
 
   #define m3d_max(a,b) (a>b)?a:b

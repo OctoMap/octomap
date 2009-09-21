@@ -6,6 +6,7 @@
 // Armin Hornung <hornunga@informatik.uni-freiburg.de>
 // =====================================================
 
+#include <cassert>
 #include "CountingOcTree.h"
 
 namespace octomap {

@@ -4,9 +4,11 @@
 // Kai M. Wurm <wurm@uni-freiburg.de>
 // ==================================================
 
-#include "ScanGraph.h"
 #include <iomanip>
-#include <fern/Pose6D.h>
+#include <fstream>
+
+#include <Pose6D.h>
+#include "ScanGraph.h"
 
 namespace octomap {
 
@@ -54,9 +56,9 @@ namespace octomap {
     this->pose.trans().read(s);
 
     // read rotation from euler angles
-    fern::Vector3 rot;
+    octomath::Vector3 rot;
     rot.read(s);
-    this->pose.rot() = fern::Quaternion(rot);
+    this->pose.rot() = octomath::Quaternion(rot);
 
     return s;
   }
@@ -140,7 +142,7 @@ namespace octomap {
   }
 
 
-  ScanNode* ScanGraph::addNode(Pointcloud* scan, fern::Pose6D pose) {
+  ScanNode* ScanGraph::addNode(Pointcloud* scan, octomath::Pose6D pose) {
 
     if (scan != 0) {
       nodes.push_back(new ScanNode(scan, pose, nodes.size()));
@@ -153,7 +155,7 @@ namespace octomap {
   }
 
 
-  ScanEdge* ScanGraph::addEdge(ScanNode* first, ScanNode*  second, fern::Pose6D constraint) {
+  ScanEdge* ScanGraph::addEdge(ScanNode* first, ScanNode*  second, octomath::Pose6D constraint) {
 
     if ((first != 0) && (second != 0)) {
       edges.push_back(new ScanEdge(first, second, constraint));
@@ -178,7 +180,7 @@ namespace octomap {
     ScanNode* second = getNodeByID(second_id);
 
     if ((first != 0) && (second != 0)) {
-      fern::Pose6D constr = first->pose.inv() * second->pose;
+      octomath::Pose6D constr = first->pose.inv() * second->pose;
       return this->addEdge(first, second, constr);
     }
     else {
@@ -193,7 +195,7 @@ namespace octomap {
     if (nodes.size() >= 2) {
       ScanNode* first =  nodes[nodes.size()-2];
       ScanNode* second = nodes[nodes.size()-1];
-      fern::Pose6D c =  (first->pose).inv() * second->pose;
+      octomath::Pose6D c =  (first->pose).inv() * second->pose;
       this->addEdge(first, second, c);
     }
   }
@@ -259,92 +261,6 @@ namespace octomap {
     }
 
     return res;
-  }
-
-
-  double ScanGraph::estimateOverlap(fern::Pose6D p, fern::Pose6D q, double distthres, double angle_thres) {
-
-    double dist = p.distance( q );
-    if (dist > distthres) return 0;
-
-    double angle_dist = fabs(fern::normalizeAngle(p.yaw()) - fern::normalizeAngle(q.yaw()));
-    angle_dist = fabs(fern::normalizeAngle(angle_dist));
-
-    return 1. - angle_dist/angle_thres;
-  }
-
-
-
-  std::vector<std::pair<uint, uint> > ScanGraph::findLoopsDist(octomap::ScanNode* node, double dist_thres, double angle_thres) {
-
-    std::vector<std::pair<uint, uint> > result;
-
-    if (this->size() > 2) {
-
-      for (ScanGraph::iterator it=this->begin(); it != this->end(); it++) {
-	if (node->id == (*it)->id) continue;
-
-	// nodes close to each other?
-	fern::Pose6D& current_pose = (*it)->pose;
-
-	/*
-	double dist = node->pose.distance( current_pose );
-
-	if (dist < dist_thres) {
-	  // check relative yaw angle of poses
-	  double angle_dist = fabs(fern::normalizeAngle(node->pose.yaw()) - fern::normalizeAngle(current_pose.yaw()));
-	  angle_dist = fabs(fern::normalizeAngle(angle_dist));
-	  if (angle_dist < angle_thres) {
-	    result.push_back(std::pair<uint, uint>(node->id, (*it)->id));
-	  }
-	  else {
-	    printf("%d -> %d: angle too big: %f\n", node->id, (*it)->id, angle_dist);
-	  }
-	}
-	*/
-
-	double overlap = estimateOverlap(node->pose, current_pose, dist_thres, M_PI);
-	if (overlap >= 0.5) {
-	  result.push_back(std::pair<uint, uint>(node->id, (*it)->id));
-	}
-	else {
-	  //	  printf("%d -> %d: not enough overlap: %f\n. ", node->id, (*it)->id, overlap );
-	}
-      }
-    }
-    return result;
-  }
-
-
-  void ScanGraph::updateLoopsDist(double distthres, double anglethres) {
-
-    loops.clear();
-
-    for (ScanGraph::iterator it=this->begin(); it != this->end(); it++) {
-      std::vector<std::pair<uint, uint> > loop_edges = findLoopsDist( *it, distthres, anglethres);
-      for (uint j=0; j < loop_edges.size(); j++) {
-	uint first_id = loop_edges[j].first;
-	uint second_id = loop_edges[j].second;
-
-	if ( ! this->edgeExists(first_id, second_id)) {
-
-	  // ensure that loops are created from late to early nodes
-	  if (first_id < second_id) {
-	    uint swptmp = first_id;
-	    first_id = second_id;
-	    second_id = swptmp;
-	  }
-
-	  std::cout << COLOR_RED << "detected loop between " << first_id << " and " << second_id  << COLOR_NORMAL << std::endl;
-	  ScanEdge* new_edge = this->addEdge(first_id, second_id);
-	  if (new_edge != NULL) {
-	    new_edge->weight = 0.5; // loop edges have smaller weight than pairwise edges
-	    loops.push_back(new_edge);
-	  }
-	}
-      }
-    }
-
   }
 
 
@@ -590,7 +506,7 @@ namespace octomap {
 //     for ( ; second_it != this->end(); first_it++, second_it++) {
 //       ScanNode* first = (*first_it);
 //       ScanNode* second = (*second_it);
-//       fern::Pose6D c =  (first->pose).inv() * second->pose;
+//       octomath::Pose6D c =  (first->pose).inv() * second->pose;
 //       this->addEdge(first, second, c);
 //     }
 
@@ -612,7 +528,7 @@ namespace octomap {
 
     // for all node in graph...
     for (ScanGraph::iterator it = this->begin(); it != this->end(); it++) {
-      fern::Pose6D scan_pose = (*it)->pose;
+      octomath::Pose6D scan_pose = (*it)->pose;
       Pointcloud* pc = new Pointcloud((*it)->scan);
       pc->transformAbsolute(scan_pose);
       pc->crop(lowerBound, upperBound);

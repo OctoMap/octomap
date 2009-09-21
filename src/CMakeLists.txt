@@ -6,9 +6,6 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-find_path( FERN_DIR Pose6D.h PATHS $ENV{HOME}/code/projects-fern $ENV{HOME}/code/fern $ENV{HOME}/projects-fern $ENV{HOME}/fern $BASE_DIR}/../projects-fern $BASE_DIR}/../fern)
-message(STATUS "fern found in: " ${FERN_DIR})
-
 
 # COMPILER FLAGS (default: Release)
 # use "-DCMAKE_BUILD_TYPE=Debug" in cmake for a Debug-build
@@ -29,24 +26,20 @@ SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
 
-LINK_DIRECTORIES(
-  ${FERN_DIR}/lib
-  )
-
 INCLUDE_DIRECTORIES(
-  ${FERN_DIR}/include
+  ${CMAKE_SOURCE_DIR}/math
   ${CMAKE_SOURCE_DIR}/octomap
-  )
+)
 
 ###
 # Libraries used by all subprojects:
 #
 LINK_LIBRARIES(
-  ferngeom fern
   gsl cblas
-  )
+)
   
 
+ADD_SUBDIRECTORY( math )
 ADD_SUBDIRECTORY( octomap )
 
 

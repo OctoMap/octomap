@@ -6,6 +6,9 @@
 // =====================================================
 
 #include <bitset>
+#include <cassert>
+#include <math.h>
+#include <fstream>
 #include "OcTreeNode.h"
 
 namespace octomap {

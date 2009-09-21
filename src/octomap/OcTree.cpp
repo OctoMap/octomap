@@ -6,6 +6,8 @@
 // =====================================================
 
 #include <bitset>
+#include <cassert>
+#include <fstream>
 
 #include "OcTree.h"
 #include "CountingOcTree.h"
@@ -321,7 +323,7 @@ namespace octomap {
     if (_NO_UNIFORM_SAMPLING == 1){
       std::cerr << "Warning: Uniform sampling of scan is disabled!\n";
 
-      fern::Pose6D scan_pose (scan.pose);
+      octomath::Pose6D scan_pose (scan.pose);
 
       // integrate beams
       octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
@@ -348,7 +350,7 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
 
-    fern::Vector3 direction = (end - origin).unit();
+    octomath::Vector3 direction = (end - origin).unit();
     double maxLength = (end - origin).norm2();
 
     // Voxel integer coordinates are the indices of the OcTree cells
@@ -469,7 +471,7 @@ namespace octomap {
 
 
   void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
-    fern::Pose6D scan_pose (scan.pose);
+    octomath::Pose6D scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
     octomap::point3d p;
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
@@ -484,7 +486,7 @@ namespace octomap {
   }
 
   void OcTree::insertScanUniform(const ScanNode& scan) {
-    fern::Pose6D scan_pose (scan.pose);
+    octomath::Pose6D scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
     octomap::point3d p;
 
