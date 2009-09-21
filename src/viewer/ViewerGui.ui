@@ -37,12 +37,11 @@
     <addaction name="actionSettings"/>
     <addaction name="menuShow"/>
     <addaction name="separator"/>
-    <addaction name="actionReset_view"/>
-    <addaction name="separator"/>
     <addaction name="actionSave_file"/>
     <addaction name="actionExport_view"/>
     <addaction name="separator"/>
-    <addaction name="actionTest"/>
+    <addaction name="actionPruned"/>
+    <addaction name="actionAs_pure_binary_OcTree"/>
     <addaction name="separator"/>
     <addaction name="actionHelp"/>
     <addaction name="actionExit"/>
@@ -65,12 +64,10 @@
     <addaction name="actionOctree_structure"/>
     <addaction name="actionTrajectory"/>
     <addaction name="separator"/>
-    <addaction name="actionPruned"/>
-    <addaction name="actionAs_pure_binary_OcTree"/>
-    <addaction name="separator"/>
-    <addaction name="separator"/>
+    <addaction name="actionReset_view"/>
     <addaction name="actionStore_camera"/>
     <addaction name="actionRestore_camera"/>
+    <addaction name="separator"/>
     <addaction name="menuView_mode"/>
    </widget>
    <addaction name="menu_File"/>
@@ -78,6 +75,10 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_file">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Open file...</string>
    </property>
@@ -86,6 +87,10 @@
    </property>
   </action>
   <action name="actionSave_file">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
+   </property>
    <property name="text">
     <string>Save tree...</string>
    </property>
@@ -94,6 +99,10 @@
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -160,16 +169,28 @@
    </property>
   </action>
   <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/help-contents.png</normaloff>:/icons/help-contents.png</iconset>
+   </property>
    <property name="text">
     <string>Help</string>
    </property>
   </action>
   <action name="actionSettings">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
+   </property>
    <property name="text">
     <string>Settings</string>
    </property>
   </action>
   <action name="actionReset_view">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
+   </property>
    <property name="text">
     <string>Reset view</string>
    </property>
@@ -201,7 +222,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>As pure binary tree</string>
+    <string>Convert to binary tree</string>
    </property>
   </action>
   <action name="actionPrintout_mode">
@@ -213,11 +234,19 @@
    </property>
   </action>
   <action name="actionOpen_graph_incremental">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Open graph incremental...</string>
    </property>
   </action>
   <action name="actionExport_view">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/view-preview.png</normaloff>:/icons/view-preview.png</iconset>
+   </property>
    <property name="text">
     <string>Export view...</string>
    </property>
@@ -252,6 +281,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

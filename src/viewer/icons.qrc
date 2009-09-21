@@ -5,5 +5,15 @@
         <file>icons/media-seek-forward.png</file>
         <file>icons/media-skip-backward.png</file>
         <file>icons/media-skip-forward.png</file>
+        <file>icons/application-exit.png</file>
+        <file>icons/configure.png</file>
+        <file>icons/document-open-folder.png</file>
+        <file>icons/document-open.png</file>
+        <file>icons/document-save.png</file>
+        <file>icons/edit-undo.png</file>
+        <file>icons/help-contents.png</file>
+        <file>icons/system-restart.png</file>
+        <file>icons/view-preview.png</file>
+        <file>icons/document-save-as.png</file>
     </qresource>
 </RCC>
