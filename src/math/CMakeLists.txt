@@ -9,6 +9,6 @@ SET (octomath_SRCS
 ADD_LIBRARY( octomath ${octomath_SRCS})
 
 TARGET_LINK_LIBRARIES(
-  octomath
+  octomath gsl cblas
 )
 

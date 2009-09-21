@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT( octomap )
 
 # get rid of a useless warning:
@@ -31,14 +31,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/octomap
 )
 
-###
-# Libraries used by all subprojects:
-#
-LINK_LIBRARIES(
-  gsl cblas
-)
-  
-
 ADD_SUBDIRECTORY( math )
 ADD_SUBDIRECTORY( octomap )
 
@@ -56,4 +48,18 @@ IF(QT4_FOUND)
 ELSE(QT4_FOUND)
 	MESSAGE(STATUS "Qt4 not found, skipping GUI")
 ENDIF(QT4_FOUND)
+
+# Documentation target:
+FIND_PACKAGE(Doxygen)
+IF(DOXYGEN_FOUND)
+    ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
+                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                     COMMENT "Generating documentation (Doxygen)...")
+ENDIF(DOXYGEN_FOUND)
+
+# Packaging:
+# SET(CPACK_SET_DESTDIR "ON")
+# SET(CPACK_SOURCE_GENERATOR "TGZ")
+# INCLUDE(CPack)
+
 

@@ -44,67 +44,9 @@ void ViewerWidget::init() {
   float pos[4] = {-1.0, -1.0, 1.0, 0.0};
   // Directional light
   glLightfv(GL_LIGHT0, GL_POSITION, pos);
-
-
-
-//  // some defaults for empty view, once a file is loaded
-//  // these will be adjusted anyways.
-//  this->setSceneBoundingBox (qglviewer::Vec(-20., -20., -2.),
-//			     qglviewer::Vec(20., 20., 10.));
-//
-//  // center of rotation
-//  this->setSceneCenter(qglviewer::Vec(0,0,0));
-//
-//  this->camera()->setPosition(qglviewer::Vec(-4.,0.,1.2));
-//  this->camera()->setViewDirection(qglviewer::Vec(-0.2,.0,0));
-//  this->camera()->setOrientation(-M_PI/2., M_PI/2.);
-
 }
 
 void ViewerWidget::resetView(){
-  // TODO: does not seem to be needed...
-  // values are arbitrary anyways (real data in scene could be somewhere else)
-
-  // adjust view and BBX:
-  /*
-  GLfloat min_x, min_y, min_z;
-  GLfloat max_x, max_y, max_z;
-  min_x = min_y = min_z = 1e6;
-  max_x = max_y = max_z = -1e6;
-
-
-  unsigned int numPoints = pointcloud_points_size / 3;
-  GLfloat x, y, z;
-
-  for(unsigned i = 0; i < numPoints; i+=3){
-    x = pointcloud_points_array[i];
-    y = pointcloud_points_array[i+1];
-    z = pointcloud_points_array[i+2];
-
-    if (x < min_x) min_x = x;
-    if (y < min_y) min_y = y;
-    if (z < min_z) min_z = z;
-
-    if (x > max_x) max_x = x;
-    if (y > max_y) max_y = y;
-    if (z > max_z) max_z = z;
-  }
-
-
-
-
-  this->setSceneBoundingBox (qglviewer::Vec(min_x-10., min_y-2., min_z),
-      qglviewer::Vec(max_x, max_y, max_z+3.));
-
-  // center of rotation
-  this->setSceneCenter(qglviewer::Vec(0,0,0));
-
-  this->camera()->setPosition(qglviewer::Vec(-4.,0.,1.2));
-  this->camera()->setViewDirection(qglviewer::Vec(-0.2,.0,0));
-  this->camera()->setOrientation(-M_PI/2., M_PI/2.);
- **/
-
-
   this->showEntireScene();
   updateGL();
 
@@ -128,7 +70,7 @@ void ViewerWidget::setSceneBoundingBox(const qglviewer::Vec& min, const qglviewe
 }
 
 
-void ViewerWidget::generateCubes (const std::list<octomap::OcTreeVolume>& voxels, GLfloat** gl_array, GLfloat* gl_color_array) {
+void ViewerWidget::generateCubes(const std::list<octomap::OcTreeVolume>& voxels, GLfloat** gl_array, GLfloat* gl_color_array) {
 
   // generate the cubes, 6 quads each
   // min and max-values are computed on-the-fly
