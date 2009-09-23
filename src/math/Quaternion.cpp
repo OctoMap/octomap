@@ -6,6 +6,8 @@
 #include "Utils.h"
 
 
+// used from Vector: norm2, unit, *
+
 namespace octomath {
 
   Quaternion::Quaternion() : Vector(4){
@@ -54,7 +56,7 @@ namespace octomath {
   
   Vector3 Quaternion::toEuler() const {
     // create rotational matrix
-    OUR_REAL n = norm2(); // normalize (by the way)
+    OUR_REAL n = norm2(); 
     OUR_REAL s = n > 0?2./(n*n):0.;
 
     OUR_REAL xs = x()*s;

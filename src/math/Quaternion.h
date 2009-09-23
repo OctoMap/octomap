@@ -128,7 +128,6 @@ namespace octomath {
      * @return A copy of <this> Quaterion inverted
      */
     Quaternion inv() const;
-    Quaternion inverse() const __attribute__ ((deprecated)) { return inv(); } // for inversion with copy use inv()
 
     /*!
      * \brief Inversion
@@ -137,7 +136,6 @@ namespace octomath {
      * @return a reference to <this> Quaternion
      */
     Quaternion& inv_IP();
-    Quaternion& invert() __attribute__ ((deprecated)) { return inv_IP(); } // for inversion in place use inv_IP()
 
     /*!
      * \brief Rotate a vector

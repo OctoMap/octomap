@@ -310,13 +310,6 @@ namespace octomath {
     return OUR_VECTOR_FUN(max)(m_vec);
   }
 
-  VectorView Vector::subvector(uint b, uint e) const {
-//     Vector result(e - b);
-//     for (uint i=b ; i<e; i++){
-//       result(i - b) = (*this)(i);
-//     }
-    return VectorView(OUR_VECTOR_FUN(subvector)(m_vec, b, e-b));
-  }
 
   Vector Vector::abs() const {
     Vector result(size());
@@ -416,23 +409,6 @@ namespace octomath {
     return s;
   }
 
-
-  VectorView::VectorView(const Vector& other){
-    if(m_vec!=NULL){
-      OUR_VECTOR_FUN(free)(m_vec);
-    }
-    m_vec = (OUR_VECTOR*)malloc(sizeof(OUR_VECTOR));
-    *m_vec = *other.m_vec;
-    m_vec->owner = 0;
-  }
-
-
-  VectorView::VectorView(const OUR_VECTOR_FUN(view)& gvv){
-    m_vec = (OUR_VECTOR*)malloc(sizeof(OUR_VECTOR));
-    *m_vec = gvv.vector;
-    m_vec->owner = 0;
-  }
- 
   
   Vector& Vector::unit_IP (){ 
     OUR_REAL len = norm2();

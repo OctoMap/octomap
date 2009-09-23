@@ -13,7 +13,6 @@ namespace octomath
   
  
   class Matrix;
-  class VectorView;
   
   /**
    * \brief This class represents a vector.
@@ -85,7 +84,6 @@ namespace octomath
 
     double min() const;
     double max() const;
-    VectorView subvector(uint b, uint e) const;
 
     Vector abs() const;
 
@@ -108,9 +106,6 @@ namespace octomath
     Vector sort();
     Vector sort(Vector &index);
 
-    friend class Matrix;
-    friend class VectorView;
-
     std::istream& read(std::istream &s);
     std::ostream& write(std::ostream &s) const;
     std::istream& readBinary(std::istream &s);
@@ -120,17 +115,9 @@ namespace octomath
     OUR_VECTOR *m_vec;
   };
   
-  class VectorView:public Vector{
-  public:
-    VectorView(const Vector& other);
-    VectorView(const OUR_VECTOR_FUN(view)& gvv);
-    //~VectorView();
-    friend class Matrix;
-  };
 
   //! user friendly output to stream. This output is NOT for parsing!
   std::ostream& operator<< (std::ostream &s, const Vector &v);
-  std::istream& operator>> (std::istream &s, Vector &v) __attribute__ ((deprecated)); // for parsing use read() or readBinary() - they can read streams written by write() and writeBinary()
 
   Vector operator+ (double x, const Vector &vec);
   Vector operator- (double x, const Vector &vec);
