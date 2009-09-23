@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_OCTREE_H
-#define MAPPING3D_OCTREE_H
+#ifndef OCTOMAP_OCTREE_H
+#define OCTOMAP_OCTREE_H
 
 // =====================================================
 // octomap

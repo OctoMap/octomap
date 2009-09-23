@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_TYPES_H
-#define MAPPING3D_TYPES_H
+#ifndef OCTOMAP_TYPES_H
+#define OCTOMAP_TYPES_H
 
 // ==================================================
 // mapping3d

@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_SCANGRAPH_H
-#define MAPPING3D_SCANGRAPH_H
+#ifndef OCTOMAP_SCANGRAPH_H
+#define OCTOMAP_SCANGRAPH_H
 
 // ==================================================
 // octomap

@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_BINARYOCTREE_NODE_HH
-#define MAPPING3D_BINARYOCTREE_NODE_HH
+#ifndef OCTOMAP_BINARYOCTREE_NODE_HH
+#define OCTOMAP_BINARYOCTREE_NODE_HH
 
 // =====================================================
 // octomap

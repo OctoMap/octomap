@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_POINTCLOUD_H
-#define MAPPING3D_POINTCLOUD_H
+#ifndef OCTOMAP_POINTCLOUD_H
+#define OCTOMAP_POINTCLOUD_H
 
 // ==================================================
 // octomap

@@ -1,5 +1,5 @@
-#ifndef MAPPING3D_COUNTING_OCTREE_HH
-#define MAPPING3D_COUNTING_OCTREE_HH
+#ifndef OCTOMAP_COUNTING_OCTREE_HH
+#define OCTOMAP_COUNTING_OCTREE_HH
 
 // =====================================================
 // octomap
