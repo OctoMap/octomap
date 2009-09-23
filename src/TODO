@@ -1,0 +1,16 @@
+* :
+
+- "delta" -> "stable"
+
+core:
+- remove gsl dependancy
+- node data should be optional
+  (derive from OcTreeNode)
+- valgrind / cachegrind
+
+viewer:
+- black / white background
+- camera settings are to prominent
+- remove every feature that is not stable
+- clean up
+
