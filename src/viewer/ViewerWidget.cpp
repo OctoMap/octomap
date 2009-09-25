@@ -9,19 +9,18 @@
 
 using namespace std;
 
+namespace octomap{
 
 ViewerWidget::ViewerWidget(QWidget* parent) :
   QGLViewer(parent),
   octree_occupied_cells_vertex_size(0), octree_freespace_cells_vertex_size(0),
   octree_occupied_delta_cells_vertex_size(0), octree_freespace_delta_cells_vertex_size(0),
-  octree_freespace_changed_cells_vertex_size(0),octree_grid_vertex_size(0),  pointcloud_points_size(0),
-  trajectory_vertex_array(NULL), trajectory_color_array(NULL), trajectory_size(0),m_zMin(0.0),m_zMax(1.0)
+  octree_freespace_changed_cells_vertex_size(0),octree_grid_vertex_size(0),
+  m_zMin(0.0),m_zMax(1.0)
 {
 	m_drawOcTreeCells = true;
-	m_drawPointcloud = true;
 	m_drawOcTreeGrid = false;
 	m_octree_grid_vis_initialized = false;
-	m_show_trajectory = false;
 	m_draw_freespace = false;
 	m_draw_freespaceDeltaOnly = false;
 	m_printoutMode = false;
@@ -47,6 +46,7 @@ void ViewerWidget::init() {
 }
 
 void ViewerWidget::resetView(){
+  this->camera()->setOrientation(-M_PI_2, M_PI_2);
   this->showEntireScene();
   updateGL();
 
@@ -460,73 +460,22 @@ void ViewerWidget::initOctreeGridVis() {
   m_octree_grid_vis_initialized = true;
 }
 
-void ViewerWidget::setPointcloud(boost::shared_ptr<octomap::Pointcloud> _cloud){
+void ViewerWidget::addSceneObject(SceneObject* obj){
+  assert (obj);
+  m_sceneObjects.push_back(obj);
+  updateGL();
+}
 
-  // prepare points
-  if (pointcloud_points_size != 0) {
-    delete[] pointcloud_points_array;
+void ViewerWidget::removeSceneObject(SceneObject* obj){
+  assert(obj);
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end();){
+    if (*it == obj)
+      it = m_sceneObjects.erase(it);
+    else
+      ++it;
   }
-
-  pointcloud_points_size = _cloud->size()* 3;
-  pointcloud_points_array = new GLfloat[pointcloud_points_size];
-
-  double min_x, min_y, min_z;
-  double max_x, max_y, max_z;
-  min_x = min_y = min_z = 1e6;
-  max_x = max_y = max_z = -1e6;
-  double x, y, z;
-
-  octomap::Pointcloud::iterator it;
-  unsigned int i = 0;
-  for (it = _cloud->begin(); it != _cloud->end(); ++it){
-    x = (*it)->x();
-    y = (*it)->y();
-    z = (*it)->z();
-
-    if (x < min_x) min_x = x;
-    if (y < min_y) min_y = y;
-    if (z < min_z) min_z = z;
-
-    if (x > max_x) max_x = x;
-    if (y > max_y) max_y = y;
-    if (z > max_z) max_z = z;
-
-    pointcloud_points_array[i] = x;
-    pointcloud_points_array[i+1] = y;
-    pointcloud_points_array[i+2] = z;
-    i+= 3;
-  }
-
-  // adjust view and BBX (also calls setSceneCenter)
-  qglviewer::Vec minPos(min_x, min_y, min_z);
-  qglviewer::Vec maxPos(max_x, max_y, max_z);
-
-  this->setSceneBoundingBox (minPos,maxPos);
-  this->camera()->setPosition(minPos + 0.5*(maxPos-minPos));
-  this->camera()->setViewDirection(qglviewer::Vec(-0.2,.0,0));
-  this->camera()->setOrientation(-M_PI/2., M_PI/2.);
-
-  this->showEntireScene();
 
   updateGL();
-
-}
-
-void ViewerWidget::clearPointcloud(){
-
-  if (pointcloud_points_size != 0) {
-    delete[] pointcloud_points_array;
-    pointcloud_points_size = 0;
-  }
-}
-
-void ViewerWidget::clearTrajectory(){
-
-  if (trajectory_size != 0) {
-    delete[] trajectory_vertex_array;
-    delete[] trajectory_color_array;
-    trajectory_size = 0;
-  }
 }
 
 void ViewerWidget::clearOcTree(){
@@ -583,64 +532,14 @@ void ViewerWidget::clearOcTreeStructure(){
 }
 
 void ViewerWidget::clearAll(){
-  clearPointcloud();
+  // clear drawable objects:
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end();){
+    (*it)->clear();
+  }
+
   clearOcTree();
   clearOcTreeStructure();
-  clearTrajectory();
 }
-
-
-void ViewerWidget::setTrajectory(std::vector<octomap::point3d>& traj) {
-
-  if (trajectory_size != 0) {
-    delete[] trajectory_vertex_array;
-    delete[] trajectory_color_array;
-  }
-
-  trajectory_size = traj.size();
-  trajectory_vertex_array = new GLfloat[trajectory_size * 3];
-  trajectory_color_array = new GLfloat[trajectory_size * 4];
-
-  uint i = 0;
-  for (std::vector<octomap::point3d>::iterator it = traj.begin(); it != traj.end(); it++) {
-    trajectory_vertex_array[i] = it->x();
-    trajectory_vertex_array[i+1] = it->y();
-    trajectory_vertex_array[i+2] = it->z();
-    i+=3;
-  }
-
-  for (unsigned int j=0; j < trajectory_size*4; j+=4) {
-    trajectory_color_array[j]   = 0.; // r
-    trajectory_color_array[j+1] = 0.; // g
-    trajectory_color_array[j+2] = 1.; // b
-    trajectory_color_array[j+3] = 1.; // alpha
-  }
-
-  m_show_trajectory = false;
-}
-
-
-void ViewerWidget::setScanGraph(boost::shared_ptr<octomap::ScanGraph> _graph) {
-
-  // compute pointcloud for the moment
-  boost::shared_ptr<octomap::Pointcloud> map(new octomap::Pointcloud());
-  for (octomap::ScanGraph::iterator it = _graph->begin(); it != _graph->end(); it++) {
-    octomap::Pointcloud* current_scan = new octomap::Pointcloud((*it)->scan);
-    current_scan->transformAbsolute((*it)->pose);
-    map->push_back(current_scan);  // insert complete scan in pointcloud
-    delete current_scan;
-  }
-  this->setPointcloud(map);
-
-  // set trajectory
-  std::vector<octomap::point3d> traj;
-  for (octomap::ScanGraph::iterator it = _graph->begin(); it != _graph->end(); it++) {
-    traj.push_back( (*it)->pose.trans() );
-  }
-
-  this->setTrajectory(traj);
-}
-
 
 void ViewerWidget::draw(){
 
@@ -658,49 +557,18 @@ void ViewerWidget::draw(){
     glCullFace(GL_BACK);
   }
 
+  // draw drawable objects:
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); ++it){
+    (*it)->draw();
+  }
+
   glEnableClientState(GL_VERTEX_ARRAY);
 
-  if (m_show_trajectory)  drawTrajectory();
   if (m_drawOcTreeCells)  drawOctreeCells();
   if (m_draw_freespace && !m_heightColorMode)  drawFreespace();
-  if (m_drawPointcloud)   drawPointcloud();
   if (m_drawOcTreeGrid)   drawOctreeGrid();
 
   glDisableClientState(GL_VERTEX_ARRAY);
-}
-
-void ViewerWidget::drawTrajectory() const {
-  if (trajectory_size == 0)
-    return;
-
-  glEnableClientState(GL_COLOR_ARRAY);
-  glLineWidth(3.0f);
-  glVertexPointer(3, GL_FLOAT, 0, trajectory_vertex_array);
-  glColorPointer(4, GL_FLOAT, 0, trajectory_color_array);
-  glDrawArrays(GL_LINE_STRIP, 0, trajectory_size);
-  glDisableClientState(GL_COLOR_ARRAY);
-}
-
-void ViewerWidget::drawPointcloud() const{
-  if (pointcloud_points_size == 0)
-    return;
-
-  glEnable(GL_POINT_SMOOTH);
-
-  if (m_printoutMode){
-    if (!m_draw_freespace) {
-      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-    glColor4f(0.0, 0.0, 0.0, 1.);
-  } else{
-    glColor4f(1.0, 0.0, 0.0, 1.);
-
-  }
-
-  glPointSize(1.0);
-
-  glVertexPointer(3, GL_FLOAT, 0, pointcloud_points_array);
-  glDrawArrays(GL_POINTS, 0, pointcloud_points_size/3);
 }
 
 void ViewerWidget::drawOctreeCells() const {
@@ -866,4 +734,6 @@ void ViewerWidget::drawOctreeGrid() {
 
   glDisable(GL_LINE_SMOOTH);
   glEnable(GL_LIGHTING);
+}
+
 }

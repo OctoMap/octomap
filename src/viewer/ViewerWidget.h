@@ -8,9 +8,12 @@
 #ifndef VIEWERWIDGET_H_
 #define VIEWERWIDGET_H_
 
+#include "SceneObject.h"
 #include <octomap.h>
 #include <boost/shared_ptr.hpp>
 #include <QGLViewer/qglviewer.h>
+
+namespace octomap{
 
 class ViewerWidget : public QGLViewer {
   Q_OBJECT
@@ -20,8 +23,6 @@ class ViewerWidget : public QGLViewer {
   ViewerWidget(QWidget* parent = NULL);
   void clearOcTree();
   void clearOcTreeStructure();
-  void clearTrajectory();
-  void clearPointcloud();
   void clearAll();
 
 
@@ -39,15 +40,20 @@ class ViewerWidget : public QGLViewer {
 		       std::list<octomap::OcTreeVolume>& grid_voxels,
 		       std::list<octomap::OcTreeVolume>& changed_free_voxels);
 
-  void setTrajectory(std::vector<octomap::point3d>& traj);
-
-  /*!
-   * Assigns a new ScanGraph to the viewer. This will update the internal
-   * PointCloud from the graph (by calling setPointcloud())
+  /**
+   * Adds an object to the scene that can be drawn
    *
-   * @param _graph
+   * @param obj SceneObject to be added
    */
-  void setScanGraph(boost::shared_ptr<octomap::ScanGraph> _graph);
+  void addSceneObject(SceneObject* obj);
+
+  /**
+   * Removes a SceneObject from the list of drawable objects if
+   * it has been added previously. Does nothing otherwise.
+   *
+   * @param obj SceneObject to be removed
+   */
+  void removeSceneObject(SceneObject* obj);
 
  public slots:
 
@@ -74,8 +80,6 @@ class ViewerWidget : public QGLViewer {
   void drawOctreeGrid();
   void drawOctreeCells() const;
   void drawFreespace() const;
-  void drawPointcloud() const;
-  void drawTrajectory() const;
   void drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize, GLfloat* cubeColorArray = NULL) const;
 
   //! setup octree visualizations
@@ -90,14 +94,14 @@ class ViewerWidget : public QGLViewer {
 
   void heightMapColor(double height, GLfloat* glArrayPos) const;
 
+  std::vector<SceneObject*> m_sceneObjects;
+
   std::list<octomap::OcTreeVolume> m_grid_voxels;
 
   bool m_drawOcTreeCells;
   bool m_drawOcTreeGrid;
-  bool m_drawPointcloud;
   bool m_printoutMode;
   bool m_heightColorMode;
-  bool m_show_trajectory;
   bool m_draw_freespace;
   bool m_draw_freespaceDeltaOnly;
 
@@ -124,18 +128,11 @@ class ViewerWidget : public QGLViewer {
   GLfloat*     octree_grid_vertex_array;
   unsigned int octree_grid_vertex_size;
 
-  //! OpenGL representation of Pointcloud
-  GLfloat*     pointcloud_points_array;
-  unsigned int pointcloud_points_size;
-
-  GLfloat* trajectory_vertex_array;
-  GLfloat* trajectory_color_array;
-  unsigned int trajectory_size;
-
   double m_zMin;
   double m_zMax;
 
 };
 
+}
 
 #endif /* VIEWERWIDGET_H_ */

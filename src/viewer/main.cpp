@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	}
 
 	QApplication app(argc, argv);
-	ViewerGui gui(filename);
+	octomap::ViewerGui gui(filename);
 	gui.show();
 	return app.exec();
 }

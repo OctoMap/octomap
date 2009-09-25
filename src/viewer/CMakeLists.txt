@@ -21,6 +21,9 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 # sources for this project
 set(viewer_SRCS
 	main.cpp
+	SceneObject.h
+	TrajectoryDrawer.cpp
+	PointcloudDrawer.cpp
 	ViewerGui.cpp
 	ViewerWidget.cpp
 	ViewerSettings.cpp

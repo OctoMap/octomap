@@ -13,10 +13,14 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <string>
+#include "TrajectoryDrawer.h"
+#include "PointcloudDrawer.h"
 #include "ViewerWidget.h"
 #include "ViewerSettings.h"
 #include "ViewerSettingsPanel.h"
 #include "ui_ViewerGui.h"
+
+namespace octomap {
 
 class ViewerGui : public QMainWindow {
   Q_OBJECT
@@ -52,6 +56,8 @@ class ViewerGui : public QMainWindow {
   void on_actionHeight_map_toggled(bool checked);
   void on_actionStore_camera_triggered();
   void on_actionRestore_camera_triggered();
+  void on_actionPointcloud_toggled(bool checked);
+  void on_actionTrajectory_toggled(bool checked);
 
   // use it for testcases etc.
   void on_actionTest_triggered();
@@ -127,6 +133,8 @@ class ViewerGui : public QMainWindow {
 
   Ui::ViewerGuiClass ui;
   ViewerWidget* m_glwidget;
+  TrajectoryDrawer* m_trajectoryDrawer;
+  PointcloudDrawer* m_pointcloudDrawer;
   double m_octreeResolution;
   double m_occupancyThresh;
   unsigned int m_max_tree_depth;
@@ -139,5 +147,7 @@ class ViewerGui : public QMainWindow {
   std::string m_filename;
 
 };
+
+}
 
 #endif // VIEWERGUI_H

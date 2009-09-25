@@ -12,8 +12,10 @@
 #define _MAXRANGE_URG 5.1
 #define _MAXRANGE_SICK 50.0
 
+namespace octomap{
+
 ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
-  : QMainWindow(parent), m_octreeResolution(0.1), m_occupancyThresh(0.5), m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
+  : QMainWindow(parent), m_trajectoryDrawer(NULL),m_pointcloudDrawer(NULL),m_octreeResolution(0.1), m_occupancyThresh(0.5), m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
     m_cameraStored(false),m_filename("")
 {
 	ui.setupUi(this);
@@ -48,10 +50,8 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
 
 	connect(settingsPanel, SIGNAL(changeCamPosition(double, double, double, double, double, double)), m_glwidget, SLOT(setCamPosition(double, double, double, double, double, double)));
 
-	connect(ui.actionPointcloud, SIGNAL(toggled(bool)), m_glwidget, SLOT(enablePointcloud(bool)));
 	connect(ui.actionOctree_cells, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTreeCells(bool)));
 	connect(ui.actionOctree_structure, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTree(bool)));
-	connect(ui.actionTrajectory, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableTrajectory(bool)));
 	connect(ui.actionFree, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespace(bool)));
 	connect(ui.actionChanged_free_only, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespaceDeltaOnly(bool)));
 	connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
@@ -66,6 +66,17 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
 
 ViewerGui::~ViewerGui()
 {
+  if (m_trajectoryDrawer){
+    m_glwidget->removeSceneObject(m_trajectoryDrawer);
+    delete m_trajectoryDrawer;
+    m_trajectoryDrawer = NULL;
+  }
+
+  if (m_pointcloudDrawer){
+    m_glwidget->removeSceneObject(m_pointcloudDrawer);
+    delete m_pointcloudDrawer;
+    m_pointcloudDrawer = NULL;
+  }
 
 }
 
@@ -310,9 +321,6 @@ void ViewerGui::openTree(){
 
 
 void ViewerGui::loadGraph(bool completeGraph){
-  m_glwidget->setScanGraph(m_scanGraph);
-
-
   ui.actionSettings->setEnabled(true);
   ui.actionPointcloud->setEnabled(true);
   ui.actionPointcloud->setChecked(false);
@@ -350,6 +358,22 @@ void ViewerGui::loadGraph(bool completeGraph){
   emit changeNumberOfScans(graphSize);
   emit changeCurrentScan(currentScan);
   showInfo("Done (" +QString::number(currentScan)+ " of "+ QString::number(graphSize)+" nodes)", true);
+
+  if (!m_trajectoryDrawer){
+    m_trajectoryDrawer = new TrajectoryDrawer();
+  }
+  m_trajectoryDrawer->setScanGraph(*m_scanGraph);
+
+  if (!m_pointcloudDrawer){
+    m_pointcloudDrawer = new PointcloudDrawer();
+  }
+  m_pointcloudDrawer->setScanGraph(*m_scanGraph);
+
+  if (ui.actionTrajectory->isChecked())
+    m_glwidget->addSceneObject(m_trajectoryDrawer);
+
+  if (ui.actionPointcloud->isChecked())
+    m_glwidget->addSceneObject(m_pointcloudDrawer);
 }
 
 void ViewerGui::changeTreeDepth(int depth){
@@ -487,6 +511,24 @@ void ViewerGui::on_actionRestore_camera_triggered(){
   }
 }
 
+void ViewerGui::on_actionPointcloud_toggled(bool checked){
+  if (m_pointcloudDrawer){
+    if (checked)
+      m_glwidget->addSceneObject(m_pointcloudDrawer);
+    else
+      m_glwidget->removeSceneObject(m_pointcloudDrawer);
+  }
+}
+
+void ViewerGui::on_actionTrajectory_toggled(bool checked){
+  if (m_trajectoryDrawer){
+    if (checked)
+      m_glwidget->addSceneObject(m_trajectoryDrawer);
+    else
+      m_glwidget->removeSceneObject(m_trajectoryDrawer);
+  }
+}
+
 void ViewerGui::on_actionTest_triggered(){
 
 }
@@ -514,6 +556,8 @@ void ViewerGui::on_actionPruned_triggered(bool checked){
   if (ui.actionAs_pure_binary_OcTree->isChecked()) {
     generateBinaryOctree();
   }
+}
+
 }
 
 
