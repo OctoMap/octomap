@@ -59,8 +59,6 @@ class ViewerWidget : public QGLViewer {
 
   void enableOcTree(bool enabled = true){m_drawOcTreeGrid = enabled; updateGL();};
   void enableOcTreeCells(bool enabled = true){m_drawOcTreeCells = enabled; updateGL();};
-  void enablePointcloud(bool enabled = true){m_drawPointcloud = enabled; updateGL();};
-  void enableTrajectory (bool enabled = true){ m_show_trajectory = enabled; updateGL();};
   void enableFreespace (bool enabled = true){ m_draw_freespace = enabled; updateGL();};
   void enableFreespaceDeltaOnly (bool enabled = true){ m_draw_freespaceDeltaOnly = enabled; updateGL();};
   void enablePrintoutMode (bool enabled = true){m_printoutMode = enabled; updateGL();};
