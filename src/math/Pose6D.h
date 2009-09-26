@@ -63,16 +63,16 @@ namespace octomath {
      */
     const Quaternion& rot() const;
 
-    OUR_REAL& x() { return translation(0); }
-    OUR_REAL& y() { return translation(1); }
-    OUR_REAL& z() { return translation(2); }
-    const OUR_REAL& x() const { return translation(0); }
-    const OUR_REAL& y() const { return translation(1); }
-    const OUR_REAL& z() const { return translation(2); }
+    double& x() { return translation(0); }
+    double& y() { return translation(1); }
+    double& z() { return translation(2); }
+    const double& x() const { return translation(0); }
+    const double& y() const { return translation(1); }
+    const double& z() const { return translation(2); }
 
-    OUR_REAL roll() const {return (rotation.toEuler())(0); }
-    OUR_REAL pitch() const {return (rotation.toEuler())(1); }
-    OUR_REAL yaw() const {return (rotation.toEuler())(2); }
+    double roll() const {return (rotation.toEuler())(0); }
+    double pitch() const {return (rotation.toEuler())(1); }
+    double yaw() const {return (rotation.toEuler())(2); }
 
     /*!
      * \brief Transformation a vector
@@ -124,7 +124,7 @@ namespace octomath {
      *
      * @return the translational (euclidian) distance to <p>
      */
-    OUR_REAL distance(const Pose6D &other) const;
+    double distance(const Pose6D &other) const;
 
     /*!
      * \brief Translational length
@@ -132,8 +132,8 @@ namespace octomath {
      * @return the translational (euclidian) length of the translation
      * vector of <this> Pose6D
      */
-    OUR_REAL transLength() const;
-    OUR_REAL TransLength() const __attribute__ ((deprecated)); // use 'transLength' instead
+    double transLength() const;
+    double TransLength() const __attribute__ ((deprecated)); // use 'transLength' instead
 
     /*!
      * \brief Output operator

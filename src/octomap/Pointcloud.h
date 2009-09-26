@@ -22,7 +22,7 @@ namespace octomap {
     Pointcloud(const Pointcloud& other);
     Pointcloud(Pointcloud* other);
 
-    uint size() const {  return points.size(); }
+    unsigned int size() const {  return points.size(); }
     void clear();
 
     // add beam endpoint
@@ -41,8 +41,8 @@ namespace octomap {
     bool hasNormals() const { return has_normals; }
 
     bool hasBorder() const { return (on_border.size() > 0); }
-    void setOnBorder(uint id);
-    bool isOnBorder(uint id);
+    void setOnBorder(unsigned int id);
+    bool isOnBorder(unsigned int id);
 
 
     void writeVrml(std::string filename, bool remvis = true);
@@ -61,7 +61,7 @@ namespace octomap {
     void calcBBX(point3d& lowerBound, point3d& upperBound) const;
     void crop(point3d lowerBound, point3d upperBound);
 
-    void subSampleRandom(uint num_samples, Pointcloud& sample_cloud);
+    void subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud);
 
     // iterators ------------------
 

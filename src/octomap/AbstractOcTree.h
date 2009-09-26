@@ -63,9 +63,6 @@ namespace octomap {
     //  used e.g. for visualization
     void getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const;
 
-    // returns true if an object was hit
-    bool rayCast(octomath::Pose6D& origin, double maxrange, point3d& closest_object );
-
   protected:
 
     // generate 16-bit key from/for given value

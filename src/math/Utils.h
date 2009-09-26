@@ -4,11 +4,9 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-#include <gsl/gsl_complex_math.h>
 #include <complex>
 #include <cassert>
 #include <vector>
-#include "OurTypes.h"
 
 #ifndef SQR
 #define SQR(x) ((x)*(x))

@@ -14,12 +14,12 @@ namespace octomap {
   /***   CountingOcTreeNode  **********************************/
 
   CountingOcTreeNode::CountingOcTreeNode() : count(0) {
-    for (uint i = 0; i<8; i++) 
+    for (unsigned int i = 0; i<8; i++) 
       itsChildren[i] = NULL;
   }
   
   CountingOcTreeNode::~CountingOcTreeNode() {
-    for (uint i = 0; i<8; i++) {
+    for (unsigned int i = 0; i<8; i++) {
       if (itsChildren[i]){
 	delete itsChildren[i];
       }
@@ -46,7 +46,7 @@ namespace octomap {
   }
 
   bool CountingOcTreeNode::hasChildren() const {
-      for (uint i = 0; i<8; i++) 
+      for (unsigned int i = 0; i<8; i++) 
 	if (childExists(i)) return true;
       return false;
   }
@@ -70,7 +70,7 @@ namespace octomap {
 
     unsigned short int key[3];
 
-    for (uint i=0; i<3; i++) {
+    for (unsigned int i=0; i<3; i++) {
       if ( !genKey( value(i), key[i]) ) return NULL;
     }
 
@@ -80,7 +80,7 @@ namespace octomap {
     // follow or construct nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      uint pos = genPos(key, i);
+      unsigned int pos = genPos(key, i);
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {

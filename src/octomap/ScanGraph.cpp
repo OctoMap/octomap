@@ -6,6 +6,7 @@
 
 #include <iomanip>
 #include <fstream>
+#include <stdlib.h>
 
 #include <Pose6D.h>
 #include "ScanGraph.h"
@@ -130,12 +131,12 @@ namespace octomap {
 
   void ScanGraph::clear() {
 
-    for (uint i=0; i<nodes.size(); i++) {
+    for (unsigned int i=0; i<nodes.size(); i++) {
       delete nodes[i];
     }
     nodes.clear();
 
-    for (uint i=0; i<edges.size(); i++) {
+    for (unsigned int i=0; i<edges.size(); i++) {
       delete edges[i];
     }
     edges.clear();
@@ -169,7 +170,7 @@ namespace octomap {
   }
 
 
-  ScanEdge* ScanGraph::addEdge(uint first_id, uint second_id) {
+  ScanEdge* ScanGraph::addEdge(unsigned int first_id, unsigned int second_id) {
 
     if ( this->edgeExists(first_id, second_id)) {
       printf("\nERROR: addEdge:: Edge exists!\n");
@@ -207,7 +208,7 @@ namespace octomap {
 
     outfile << "graph ScanGraph" << std::endl;
     outfile << "{" << std::endl;
-    for (uint i=0; i<edges.size(); i++) {
+    for (unsigned int i=0; i<edges.size(); i++) {
       outfile << (edges[i]->first)->id
 	      << " -- "
 	      << (edges[i]->second)->id
@@ -223,16 +224,16 @@ namespace octomap {
 
 
   ScanNode* ScanGraph::getNodeByID(unsigned int id) {
-    for (uint i = 0; i < nodes.size(); i++) {
+    for (unsigned int i = 0; i < nodes.size(); i++) {
       if (nodes[i]->id == id) return nodes[i];
     }
     return NULL;
   }
 
 
-  bool ScanGraph::edgeExists(uint first_id, uint second_id) {
+  bool ScanGraph::edgeExists(unsigned int first_id, unsigned int second_id) {
 
-    for (uint i=0; i<edges.size(); i++) {
+    for (unsigned int i=0; i<edges.size(); i++) {
       if (
 	  (((edges[i]->first)->id == first_id) && ((edges[i]->second)->id == second_id))
 	  ||
@@ -252,7 +253,7 @@ namespace octomap {
     if (node) {
 
       // check all nodes
-      for (uint i = 0; i < nodes.size(); i++) {
+      for (unsigned int i = 0; i < nodes.size(); i++) {
 	if (node->id == nodes[i]->id) continue;
 	if (edgeExists(id, nodes[i]->id)) {
 	  res.push_back(nodes[i]->id);
@@ -323,7 +324,7 @@ namespace octomap {
     // file structure:    n | node_1 | ... | node_n | m | edge_1 | ... | edge_m
 
     // write nodes  ---------------------------------
-    uint graph_size = this->size();
+    unsigned int graph_size = this->size();
     if (graph_size) fprintf(stderr, "writing %d nodes to binary file...\n", graph_size);
     s.write((char*)&graph_size, sizeof(graph_size));
 
@@ -334,7 +335,7 @@ namespace octomap {
     if (graph_size) fprintf(stderr, "done.\n");
 
     // write edges  ---------------------------------
-    uint num_edges = this->edges.size();
+    unsigned int num_edges = this->edges.size();
     if (num_edges) fprintf(stderr, "writing %d edges to binary file...\n", num_edges);
     s.write((char*)&num_edges, sizeof(num_edges));
 
@@ -367,7 +368,7 @@ namespace octomap {
 
     // read nodes  ---------------------------------
 
-    uint graph_size = 0;
+    unsigned int graph_size = 0;
     s.read((char*)&graph_size, sizeof(graph_size));
     if (graph_size) fprintf(stderr, "reading %d nodes from binary file...\n", graph_size);
 
@@ -390,7 +391,7 @@ namespace octomap {
     if (graph_size)     fprintf(stderr, "done.\n");
 
     // read edges  ---------------------------------
-    uint num_edges = 0;
+    unsigned int num_edges = 0;
     s.read((char*)&num_edges, sizeof(num_edges));
     if (num_edges) fprintf(stderr, "reading %d edges from binary file...\n", num_edges);
 
@@ -439,7 +440,7 @@ namespace octomap {
 
   std::istream& ScanGraph::readEdgesASCII(std::istream &s) {
 
-    uint num_edges = 0;
+    unsigned int num_edges = 0;
     s >> num_edges;
     fprintf(stderr, "reading %d edges from ASCII file...\n", num_edges);
 

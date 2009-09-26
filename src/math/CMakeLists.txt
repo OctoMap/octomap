@@ -1,5 +1,4 @@
 SET (octomath_SRCS
-  Vector.cpp
   Vector3.cpp
   Quaternion.cpp
   Pose6D.cpp
@@ -9,6 +8,6 @@ SET (octomath_SRCS
 ADD_LIBRARY( octomath ${octomath_SRCS})
 
 TARGET_LINK_LIBRARIES(
-  octomath gsl cblas
+  octomath
 )
 

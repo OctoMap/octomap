@@ -9,6 +9,8 @@
 #include <cassert>
 #include <math.h>
 #include <fstream>
+#include <stdlib.h>
+
 #include "OcTreeNode.h"
 
 namespace octomap {
@@ -24,7 +26,7 @@ namespace octomap {
 
   OcTreeNode::~OcTreeNode(){
     if (itsChildren != NULL) {
-      for (uint i=0;i<8;i++) {
+      for (unsigned int i=0;i<8;i++) {
         if (itsChildren[i] != NULL) delete itsChildren[i];
       }
       delete[] itsChildren;
@@ -319,7 +321,7 @@ namespace octomap {
     }
 
     // prune children
-    for (uint i=0;i<8;i++) {
+    for (unsigned int i=0;i<8;i++) {
       if (itsChildren[i] != NULL) delete itsChildren[i];
     }
     delete[] itsChildren;

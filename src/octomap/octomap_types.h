@@ -6,6 +6,8 @@
 // Kai M. Wurm <wurm@uni-freiburg.de>
 // ==================================================
 
+#include <vector>
+
 #include <Vector3.h>
 #include <Pose6D.h>
 

@@ -1,7 +1,8 @@
-#ifndef FERN_VECTOR3_H
-#define FERN_VECTOR3_H
+#ifndef OCTOMATH_VECTOR3_H
+#define OCTOMATH_VECTOR3_H
 
-#include "Vector.h"
+#include <iostream>
+
 
 namespace octomath {
 
@@ -12,7 +13,7 @@ namespace octomath {
    * translation in tree-dimensional space or to represent the
    * attitude of an object using Euler angle.
    */
-  class Vector3 : public Vector {
+  class Vector3 {
   public:
 
     /*!
@@ -28,7 +29,7 @@ namespace octomath {
      *
      * @param other a vector of dimension 3
      */
-    Vector3(const Vector& other);
+    Vector3(const Vector3& other);
 
     /*!
      * \brief Constructor
@@ -36,14 +37,14 @@ namespace octomath {
      * Constructs a tree-dimensional vector from
      * tree single values x, y, z or roll, pitch, yaw
      */
-    Vector3(OUR_REAL x, OUR_REAL y, OUR_REAL z);
+    Vector3(double x, double y, double z);
 
     /*!
      * \brief Assignment operator
      *
      * @param other a vector of dimension 3
      */
-    Vector3 & operator = (const Vector& other);
+    Vector3& operator = (const Vector3& other);
 
     void operator-= (const Vector3& other);
 
@@ -57,30 +58,55 @@ namespace octomath {
      */
     Vector3 crossProduct(const Vector3& other) const;
 
-    OUR_REAL dotProduct(const Vector3& other) const;
-    OUR_REAL innerProd(const Vector3& other) const { return dotProduct(other); }
-    
-    OUR_REAL angleTo(const Vector3& other) const;
+    double dotProduct(const Vector3& other) const;
+    double innerProd(const Vector3& other) const { return dotProduct(other); }
 
     Vector3& rotate_IP (double roll, double pitch, double yaw);
 
     double sqrDist(const Vector3& other) const;
     double dist(const Vector3& other) const;
 
-    OUR_REAL& x();
-    OUR_REAL& y();
-    OUR_REAL& z();
-    const OUR_REAL& x() const;
-    const OUR_REAL& y() const;
-    const OUR_REAL& z() const;
+    const double& operator() (unsigned int i) const;
+    double& operator() (unsigned int i);
 
-    OUR_REAL& roll();
-    OUR_REAL& pitch();
-    OUR_REAL& yaw();
-    const OUR_REAL& roll() const;
-    const OUR_REAL& pitch() const;
-    const OUR_REAL& yaw() const;
+    double& x();
+    double& y();
+    double& z();
+    const double& x() const;
+    const double& y() const;
+    const double& z() const;
+
+    double& roll();
+    double& pitch();
+    double& yaw();
+    const double& roll() const;
+    const double& pitch() const;
+    const double& yaw() const;
+
+    Vector3 operator- () const;
+    Vector3 operator- (const Vector3 &other) const;
+    Vector3 operator+ (const Vector3 &other) const;
+    void    operator+= (const Vector3 &other);
+    bool    operator== (const Vector3 &other) const; 
+    void operator/= (double x);
+
+
+    double norm2() const;
+    Vector3  unit () const;
+    Vector3& unit_IP ();
+
+
+    //    void read (unsigned char * src, unsigned int size);
+    std::istream& read(std::istream &s);
+    std::ostream& write(std::ostream &s) const;
+    std::istream& readBinary(std::istream &s);
+    std::ostream& writeBinary(std::ostream &s) const;
+
+
+  protected:
+    double data[3];
   };
+
 
   //! user friendly output in format (x y z)
   std::ostream& operator<<(std::ostream& out, octomath::Vector3 const& v);

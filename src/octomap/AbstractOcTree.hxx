@@ -42,7 +42,7 @@ namespace octomap {
     int scaled_val =  ((int) floor(resolution_factor * val)) + tree_max_val;
 
     // key within range of tree?
-    if (( scaled_val > 0) && (((uint) scaled_val) < (2*tree_max_val))) {
+    if (( scaled_val > 0) && (((unsigned int) scaled_val) < (2*tree_max_val))) {
       key = scaled_val;
       return true;
     }
@@ -87,7 +87,7 @@ namespace octomap {
 
     unsigned short int key[3];
 
-    for (uint i=0; i<3; i++) {
+    for (unsigned int i=0; i<3; i++) {
       if ( !genKey( value(i), key[i]) ) {
         return false;
       }
@@ -98,7 +98,7 @@ namespace octomap {
     // follow nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      uint pos = genPos(key, i);
+      unsigned int pos = genPos(key, i);
 
       if (curNode->childExists(pos)) {
         curNode = static_cast<NODE*>( curNode->getChild(pos) );
@@ -122,7 +122,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodes(uint max_depth, std::list<OcTreeVolume>& nodes) const{
+  void AbstractOcTree<NODE>::getLeafNodes(unsigned int max_depth, std::list<OcTreeVolume>& nodes) const{
     assert(itsRoot);
     if (tree_size <= 1) return; // A tree with only the root is an empty tree (by definition)
     getLeafNodesRecurs(itsRoot, 0, max_depth, tree_center, nodes);
@@ -130,7 +130,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodesRecurs(NODE* node, uint depth, uint max_depth,
+  void AbstractOcTree<NODE>::getLeafNodesRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
 					const point3d& parent_center, std::list<OcTreeVolume>& nodes) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
@@ -140,7 +140,7 @@ namespace octomap {
         double center_offset = tree_center(0) / pow( 2., (double) depth+1);
         point3d search_center;
 
-        for (uint i=0; i<8; i++) {
+        for (unsigned int i=0; i<8; i++) {
           if (node->childExists(i)) {
 
             // x-axis
@@ -169,7 +169,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxels(uint max_depth, std::list<OcTreeVolume>& voxels) const{
+  void AbstractOcTree<NODE>::getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const{
     assert(itsRoot);
 
     getVoxelsRecurs(itsRoot, 0, max_depth, tree_center, voxels);
@@ -178,7 +178,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxelsRecurs(NODE* node, uint depth, uint max_depth,
+  void AbstractOcTree<NODE>::getVoxelsRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
 			 const point3d& parent_center, std::list<OcTreeVolume>& voxels) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
@@ -187,7 +187,7 @@ namespace octomap {
         double center_offset = tree_center(0) / pow(2., (double) depth + 1);
         point3d search_center;
 
-        for (uint i = 0; i < 8; i++) {
+        for (unsigned int i = 0; i < 8; i++) {
           if (node->childExists(i)) {
 
             // x-axis
@@ -220,27 +220,4 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  bool AbstractOcTree<NODE>::rayCast(octomath::Pose6D& origin, double maxrange, point3d& closest_object ){
-
-    point3d beam (maxrange, 0, 0);
-    beam.rotate_IP(origin.roll(), origin.pitch(), origin.yaw());
-
-    beam.unit_IP();
-    unsigned int steps = (unsigned int) floor (maxrange / resolution);
-
-    point3d beam_step;
-    NODE* search_result;
-
-    for (unsigned int i=0; i<steps; i++) {
-
-      beam_step = origin.trans() + beam *  ((double) i  * resolution);
-
-      if ( this->search( beam_step, search_result ) ) {
-        closest_object = beam_step;
-        return true;
-      }
-    }
-    return false;
-  }
 }

@@ -41,11 +41,11 @@ namespace octomap {
 
 
     //! get occupied leaf points (MIXED treated as occupied)
-    void getOccupied(uint max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getOccupied(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
     //! get free leaf points
-    void getFreespace(uint max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getFreespace(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
     //! gets potential obstacles: nodes labeled "free" (were binary before), but are now delta
-    void getChangedFreespace(uint max_depth, double occ_tres, std::list<OcTreeVolume>& nodes) const;
+    void getChangedFreespace(unsigned int max_depth, double occ_tres, std::list<OcTreeVolume>& nodes) const;
 
     //! returns the memory usage of the OcTree in Bytes
     unsigned int memoryUsage() const;
@@ -66,7 +66,7 @@ namespace octomap {
     //  have the same value
     void prune();
 
-    void calcNumberOfNodesPerType(uint& num_binary, uint& num_delta) const;
+    void calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const;
 
     std::istream& readBinary(std::ifstream &s);
     std::ostream& writeBinary(std::ostream &s);
@@ -90,18 +90,18 @@ namespace octomap {
 
 
     OcTreeNode* updateNodeRecurs(OcTreeNode* node, bool node_just_created, unsigned short int key[3],
-				 uint depth, bool occupied);
+				 unsigned int depth, bool occupied);
 
-    void getOccupiedRecurs(OcTreeNode* node, uint depth, uint max_depth, double occ_thres, const point3d& parent_center,
+    void getOccupiedRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres, const point3d& parent_center,
 			   std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
-    void getFreespaceRecurs(OcTreeNode* node, uint depth, uint max_depth, double occ_thres, const point3d& parent_center,
+    void getFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres, const point3d& parent_center,
 			    std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
     void getChangedFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres,
               const point3d& parent_center, std::list<OcTreeVolume>& nodes) const;
 
-    void deltaToBinaryRecurs(OcTreeNode* node, uint depth, uint max_depth);
+    void deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
 
-    void pruneRecurs(OcTreeNode* node, uint depth, uint max_depth, unsigned int& num_pruned);
+    void pruneRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
 
     void calcNumberOfNodesPerTypeRecurs(OcTreeNode* node,
 					unsigned int& num_binary,

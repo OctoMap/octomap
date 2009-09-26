@@ -8,6 +8,7 @@
 #include <bitset>
 #include <cassert>
 #include <fstream>
+#include <stdlib.h>
 
 #include "OcTree.h"
 #include "CountingOcTree.h"
@@ -559,9 +560,9 @@ namespace octomap {
     unsigned int node_size = sizeof (OcTreeNodeEightPointers);
 
     // number of initialized nodes
-    uint num_binary = 0; uint num_delta = 0;
+    unsigned int num_binary = 0; unsigned int num_delta = 0;
     calcNumberOfNodesPerType(num_binary, num_delta);
-    uint total_nodes = num_binary + num_delta;
+    unsigned int total_nodes = num_binary + num_delta;
 
     return node_size * total_nodes;
   }

@@ -1,32 +1,36 @@
 #include "Vector3.h"
 #include <cassert>
 #include <math.h>
+#include <string.h>
 
 namespace octomath {
 
-  Vector3::Vector3() : Vector(3) {
+  Vector3::Vector3() {
   }
 
-  Vector3::Vector3(const Vector& other) : Vector(other) {
-    assert(other.size() == 3);
+  Vector3::Vector3(const Vector3& other) {
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) = other(i);
+    }
   }
 
-  Vector3::Vector3(double x, double y, double z) : Vector(3, Vector::UINIT) {
+  Vector3::Vector3(double x, double y, double z) {
     operator()(0) = x;
     operator()(1) = y;
     operator()(2) = z;
   }
 
-  Vector3 & Vector3::operator = (const Vector& other) {
-    assert(other.size() == 3);
-    *this = Vector3(other);
+  Vector3 & Vector3::operator= (const Vector3& other) {
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) = other(i);
+    }
     return *this;
   }
 
   void Vector3::operator-= (const Vector3& other){ 
-    this->x() -= other.x();
-    this->y() -= other.y();
-    this->z() -= other.z();
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) -= other(i);
+    }
   }
 
 
@@ -38,16 +42,6 @@ namespace octomath {
 
   double Vector3::dotProduct(const Vector3& other) const {
     return x()*other.x() + y()*other.y() + z()*other.z();
-  }
-
-
-  double Vector3::angleTo(const Vector3& other) const {
-    
-    double dot_prod = this->dotProduct(other);
-    double len1 = this->norm2();
-    double len2 = other.norm2();
-
-    return acos(dot_prod / (len1*len2));
   }
 
   Vector3& Vector3::rotate_IP (double roll, double pitch, double yaw) {
@@ -87,9 +81,16 @@ namespace octomath {
     return sqrt(this->sqrDist(other));
   }
 
+
+  const double& Vector3::operator() (unsigned int i) const{ 
+    return data[i];
+  }
+  double& Vector3::operator() (unsigned int i){ 
+    return data[i];
+  }
   
   double& Vector3::x() {
-    return (*this)(0);
+    return operator()(0);
   }
 
   double& Vector3::y() {
@@ -134,6 +135,122 @@ namespace octomath {
 
   const double& Vector3::yaw() const {
     return operator()(2);
+  }
+
+  Vector3 Vector3::operator- () const {
+    Vector3 result(*this);
+    for (unsigned int i=0; i<3; ++i) {
+      result(i) = -result(i);
+    }
+    return result;
+  }
+
+  Vector3 Vector3::operator+ (const Vector3 &other) const {
+    Vector3 result(*this);
+    for (unsigned int i=0; i<3; ++i) {
+      result(i) += other(i);
+    }
+    return result;
+  }
+
+  Vector3 Vector3::operator- (const Vector3 &other) const {
+    Vector3 result(*this);
+    for (unsigned int i=0; i<3; ++i) {
+      result(i) -= other(i);
+    }
+    return result;
+  }
+  
+  void Vector3::operator+= (const Vector3 &other){
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) += other(i);
+    }
+  }
+
+  bool Vector3::operator== (const Vector3 &other) const { 
+    for (unsigned int i=0; i<3; i++) {
+      if (operator()(i) != other(i)) return false;
+    }
+    return true;
+  }
+
+  void Vector3::operator/= (double x) {
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) /= x;
+    }
+  }
+
+  
+  double Vector3::norm2() const {
+    double n = 0;
+    for (unsigned int i=0; i<3; i++) {
+      n += operator()(i) * operator()(i);
+    }
+    return sqrt(n);
+  }
+
+
+  Vector3& Vector3::unit_IP (){ 
+    double len = norm2();
+    if (len > 0)
+      *this /= len;
+    return *this;
+  }
+  
+  Vector3 Vector3::unit () const {
+    Vector3 result(*this);
+    result.unit_IP();
+    return result;
+  }
+
+
+
+//   void Vector3::read(unsigned char * src, unsigned int size){
+//     memcpy(&data[0],src, sizeof(double));    
+//     memcpy(&data[1],src, sizeof(double));    
+//     memcpy(&data[2],src, sizeof(double));    
+//   }
+
+
+  std::istream& Vector3::read(std::istream &s) {
+    int temp;
+    s >> temp; // should be 3
+    for (unsigned int i=0; i<3; i++)
+      s >> operator()(i);
+    return s;
+  }
+
+
+  std::ostream& Vector3::write(std::ostream &s) const {
+    s << 3;
+    for (unsigned int i=0; i<3; i++)
+      s << " " << operator()(i);
+    return s;
+  }
+
+
+
+  std::istream& Vector3::readBinary(std::istream &s) {
+    int temp;
+    s.read((char*)&temp, sizeof(temp));
+    double val = 0;
+    for (unsigned int i=0; i<3; i++) {
+      s.read((char*)&val, sizeof(val));
+      operator()(i) = val;
+    }
+    return s;
+  }
+
+
+  std::ostream& Vector3::writeBinary(std::ostream &s) const {
+    int temp = 3;
+    s.write((char*)&temp, sizeof(temp));
+    double val = 0;
+    for (unsigned int i=0; i<3; i++) {
+      val = operator()(i);
+      s.write((char*)&val, sizeof(val));
+    }
+    return s;
   }
 
 

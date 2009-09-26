@@ -1,5 +1,6 @@
 #include "octomap.h"
 #include <string.h>
+#include <stdlib.h>
 
 using namespace std;
 using namespace octomap;

@@ -80,12 +80,12 @@ namespace octomap {
 
     ScanNode* addNode(Pointcloud* scan, octomath::Pose6D pose);
     ScanEdge* addEdge(ScanNode* first, ScanNode* second, octomath::Pose6D constraint);
-    ScanEdge* addEdge(uint first_id, uint second_id);
+    ScanEdge* addEdge(unsigned int first_id, unsigned int second_id);
 
     // will return NULL if node was not found
     ScanNode* getNodeByID(unsigned int id);
 
-    bool edgeExists(uint first_id, uint second_id);
+    bool edgeExists(unsigned int first_id, unsigned int second_id);
 
     // connect previously added point to the one before that
     void connectPrevious();
@@ -148,7 +148,7 @@ namespace octomap {
 
    protected:
 
-    std::vector<std::pair<uint, uint> > findLoopsDist(ScanNode* node, double distthres, double angle_thres);
+    std::vector<std::pair<unsigned int, unsigned int> > findLoopsDist(ScanNode* node, double distthres, double angle_thres);
 
     std::vector<ScanNode*> nodes;
     std::vector<ScanEdge*> edges;

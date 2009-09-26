@@ -19,7 +19,8 @@ namespace octomath {
    * Rotation Vectors. Stanford University. 2006. - Technical Report.
    */
 
-  class Quaternion : public Vector {
+  class Quaternion {
+
   public:
 
     /*!
@@ -32,10 +33,8 @@ namespace octomath {
 
     /*!
      * \brief Copy constructor
-     *
-     * @param other a vector of dimension 4
      */
-    Quaternion(const Vector& other);
+    Quaternion(const Quaternion& other);
 
     /*!
      * \brief Constructor
@@ -43,7 +42,7 @@ namespace octomath {
      * Constructs a Quaternion from four single
      * values
      */
-    Quaternion(OUR_REAL u, OUR_REAL x, OUR_REAL y, OUR_REAL z);
+    Quaternion(double u, double x, double y, double z);
 
     /*!
      * \brief Constructor
@@ -61,7 +60,7 @@ namespace octomath {
      * @param pitch theta/pitch angle (rotation about y-axis)
      * @param yaw psi/yaw angle (rotation about z-axis)
      */
-    Quaternion(OUR_REAL roll, OUR_REAL pitch, OUR_REAL yaw);
+    Quaternion(double roll, double pitch, double yaw);
 
 
     /*!
@@ -71,18 +70,19 @@ namespace octomath {
      * Euler angles (roll, pitch, yaw).
      */
     Vector3 toEuler() const;
-    
-    /*!
-     * \brief Assignment operator
-     */
-    Quaternion& operator= (const Quaternion& other);
 
-    /*!
-     * \brief Assignment operator
-     *
-     * @param other a vector of dimension 4
-     */
-    Quaternion& operator= (const Vector& other);
+
+    const double& operator() (unsigned int i) const;
+    double& operator() (unsigned int i);
+
+    double norm2() const;
+    Quaternion  unit () const;
+    Quaternion& unit_IP ();
+
+    
+    void operator/= (double x);
+    Quaternion& operator= (const Quaternion& other);
+    bool operator== (const Quaternion&other) const; 
 
     /*!
      * \brief Quaternion multiplication
@@ -148,14 +148,24 @@ namespace octomath {
      */
     Vector3 rotate(const Vector3 &v) const;
 
-    OUR_REAL& u();
-    OUR_REAL& x();
-    OUR_REAL& y();
-    OUR_REAL& z();
-    const OUR_REAL& u() const;
-    const OUR_REAL& x() const;
-    const OUR_REAL& y() const;
-    const OUR_REAL& z() const;
+    double& u();
+    double& x();
+    double& y();
+    double& z();
+    const double& u() const;
+    const double& x() const;
+    const double& y() const;
+    const double& z() const;
+
+    std::istream& read(std::istream &s);
+    std::ostream& write(std::ostream &s) const;
+    std::istream& readBinary(std::istream &s);
+    std::ostream& writeBinary(std::ostream &s) const;
+
+  protected:
+    
+    double data[4];
+
   };
 
   //! user friendly output in format (u x y z)
