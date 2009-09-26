@@ -1,5 +1,5 @@
-#ifndef FERN_QUATERNION_H
-#define FERN_QUATERNION_H
+#ifndef OCTOMATH_QUATERNION_H
+#define OCTOMATH_QUATERNION_H
 
 #include "Vector3.h"
 

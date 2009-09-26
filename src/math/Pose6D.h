@@ -1,5 +1,5 @@
-#ifndef FERN_POSE6D_H
-#define FERN_POSE6D_H
+#ifndef OCTOMATH_POSE6D_H
+#define OCTOMATH_POSE6D_H
 
 #include "Vector3.h"
 #include "Quaternion.h"

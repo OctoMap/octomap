@@ -1,5 +1,5 @@
-#ifndef FERN_UTILS_H
-#define FERN_UTILS_H
+#ifndef OCTOMATH_UTILS_H
+#define OCTOMATH_UTILS_H
 
 #include <fstream>
 #include <string>
