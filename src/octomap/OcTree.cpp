@@ -32,8 +32,8 @@
 #include "OcTree.h"
 #include "CountingOcTree.h"
 
-// switch to 1 to disable uniform sampling of scans (will "eat" the floor)
-#define _NO_UNIFORM_SAMPLING 0
+// switch to true to disable uniform sampling of scans (will "eat" the floor)
+#define NO_UNIFORM_SAMPLING false
 
 namespace octomap {
 
@@ -71,11 +71,11 @@ namespace octomap {
 
     return updateNodeRecurs(itsRoot, false, key, 0, occupied);
   }
+  
 
   OcTreeNode* OcTree::updateNodeRecurs(OcTreeNode* node, bool node_just_created,
-				       unsigned short int key[3], unsigned int depth, bool occupied) {
-
-    //     std::cout << "depth: " << depth << " just created: " << node_just_created << std::endl;
+				       unsigned short int key[3], unsigned int depth,
+				       bool occupied) {
 
     unsigned int pos = genPos(key, tree_depth-1-depth);
     bool created_node = false;
@@ -89,16 +89,14 @@ namespace octomap {
       else {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created && (node != itsRoot)) {
-          // current node does not have children AND it is not a new node AND its not the root node
+          // current node does not have children AND it is not a new node 
+	  // AND its not the root node
           // -> expand pruned node
-          //          printf ("expanded pruned node\n");  // REMOVE FOR RELEASE
           for (unsigned int k=0; k<8; k++) {
-            //            if (node->createChild(k)) tree_size+=8;
             node->createChild(k);
             tree_size++;
             sizeChanged = true;
             node->getChild(k)->setLabel(node->getLabel());
-            // CHECK create as binary nodes, then set child at [pos] to delta?
           }
         }
         else {
@@ -132,13 +130,16 @@ namespace octomap {
 
 
   void OcTree::getOccupied(unsigned int max_depth, double occ_thres,
-                           std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const{
+                           std::list<OcTreeVolume>& binary_nodes, 
+			   std::list<OcTreeVolume>& delta_nodes) const{
     getOccupiedRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, binary_nodes, delta_nodes);
   }
 
+
   void OcTree::getOccupiedRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth,
 				 double occ_thres, const point3d& parent_center,
-				 std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const{
+				 std::list<OcTreeVolume>& binary_nodes,
+				 std::list<OcTreeVolume>& delta_nodes) const{
 
     if (depth < max_depth && node->hasChildren()) {
 
@@ -182,12 +183,16 @@ namespace octomap {
 
 
   void OcTree::getFreespace(unsigned int max_depth, double occ_thres,
-			    std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const{
+			    std::list<OcTreeVolume>& binary_nodes, 
+			    std::list<OcTreeVolume>& delta_nodes) const{
     getFreespaceRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, binary_nodes, delta_nodes);
   }
 
-  void OcTree::getFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres,
-				  const point3d& parent_center, std::list<OcTreeVolume>& binary_nodes,
+
+  void OcTree::getFreespaceRecurs(OcTreeNode* node, unsigned int depth, 
+				  unsigned int max_depth, double occ_thres,
+				  const point3d& parent_center, 
+				  std::list<OcTreeVolume>& binary_nodes,
 				  std::list<OcTreeVolume>& delta_nodes) const{
 
     if (depth < max_depth && node->hasChildren()) {
@@ -232,13 +237,16 @@ namespace octomap {
     }
   }
 
+
   void OcTree::getChangedFreespace(unsigned int max_depth, double occ_thres,
 			    std::list<OcTreeVolume>& nodes) const{
     getChangedFreespaceRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, nodes);
   }
 
-  void OcTree::getChangedFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres,
-				  const point3d& parent_center, std::list<OcTreeVolume>& nodes) const{
+  void OcTree::getChangedFreespaceRecurs(OcTreeNode* node, unsigned int depth, 
+					 unsigned int max_depth, double occ_thres,
+					 const point3d& parent_center, 
+					 std::list<OcTreeVolume>& nodes) const{
 
     if (depth < max_depth && node->hasChildren()) {
 
@@ -276,7 +284,7 @@ namespace octomap {
     }
   }
 
-  // CHECKED KMW
+
   void OcTree::prune() {
     for (unsigned int depth=tree_depth-1; depth>0; depth--) {
       unsigned int num_pruned = 0;
@@ -285,8 +293,8 @@ namespace octomap {
     }
   }
 
-  // CHECKED KMW
-  void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned) {
+  void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth,
+			   unsigned int max_depth, unsigned int& num_pruned) {
 
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
@@ -320,7 +328,8 @@ namespace octomap {
     if (itsRoot->isDelta()) itsRoot->convertToBinary();
   }
 
-  void OcTree::deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth) {
+  void OcTree::deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, 
+				   unsigned int max_depth) {
 
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
@@ -336,11 +345,12 @@ namespace octomap {
     }
   }
 
+
   void OcTree::insertScan(const ScanNode& scan) {
     if (scan.scan->size()< 1)
       return;
 
-    if (_NO_UNIFORM_SAMPLING == 1){
+    if (NO_UNIFORM_SAMPLING){
       std::cerr << "Warning: Uniform sampling of scan is disabled!\n";
 
       octomath::Pose6D scan_pose (scan.pose);
@@ -360,8 +370,8 @@ namespace octomap {
   }
 
 
-  // CHECKED KMW
-  bool OcTree::computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& _ray) const {
+  bool OcTree::computeRay(const point3d& origin, const point3d& end, 
+			  std::vector<point3d>& _ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
@@ -655,7 +665,8 @@ namespace octomap {
   }
 
 
-  void OcTree::calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const{
+  void OcTree::calcNumberOfNodesPerType(unsigned int& num_binary,
+					unsigned int& num_delta) const{
 
     num_binary = 0;
     num_delta = 0;
@@ -680,7 +691,6 @@ namespace octomap {
   }
 
 
-  // CHECKED KMW
   unsigned int OcTree::calcNumNodes() const{
     unsigned int retval = 1; // root node
     calcNumNodesRecurs(itsRoot, retval);
@@ -688,7 +698,6 @@ namespace octomap {
   }
 
 
-  // CHECKED KMW
   void OcTree::calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const{
 
     assert (node != NULL);
@@ -711,7 +720,6 @@ namespace octomap {
   }
 
 
-  // CHECKED KMW
   std::istream& OcTree::readBinary(std::ifstream &s) {
 
     if (!s.is_open()){
@@ -735,13 +743,18 @@ namespace octomap {
     s.read((char*)&tree_resolution, sizeof(tree_resolution));
 
     if (fabs(this->resolution - tree_resolution) > 1e-3) {
-      std::cerr<< "WARNING: resolution of tree (" << this->resolution << ") and file ("<< tree_resolution <<") dont match. Changing tree res.\n";
+      std::cerr << "WARNING: resolution of tree (" 
+		<< this->resolution << ") and file ("
+		<< tree_resolution 
+		<<") dont match. Changing tree res.\n";
       this->setResolution(tree_resolution);
     }
 
     unsigned int tree_read_size = 0;
     s.read((char*)&tree_read_size, sizeof(tree_read_size));
-    std::cout << "Reading "<< tree_read_size << " nodes from bonsai tree file..." <<std::flush;
+    std::cout << "Reading "
+	      << tree_read_size 
+	      << " nodes from bonsai tree file..." <<std::flush;
 
     itsRoot->readBinary(s);
 
@@ -759,7 +772,6 @@ namespace octomap {
     binary_outfile.close();
   }
 
-  // CHECKED KMW
   std::ostream& OcTree::writeBinary(std::ostream &s){
 
     // format:    treetype | resolution | num nodes | [binary nodes]

@@ -326,13 +326,6 @@ namespace octomap {
   }
 
 
-  bool ScanGraph::isLoop(ScanEdge* e) {
-    for (edge_iterator it = this->loops_begin(); it != this->loops_end(); it++) {
-      if (**it == *e) return true;
-    }
-    return false;
-  }
-
   void ScanGraph::writeBinary(std::string filename) const{
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
     writeBinary(binary_outfile);

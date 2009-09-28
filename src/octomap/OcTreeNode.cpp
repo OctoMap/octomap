@@ -40,7 +40,6 @@ namespace octomap {
 
     setLabel(UNKNOWN);
     setDelta(true);
-    //    setValid(true);
   }
 
   OcTreeNode::~OcTreeNode(){
@@ -58,11 +57,6 @@ namespace octomap {
   // ============================================================
 
   void OcTreeNode::allocChildren() {
-//     itsChildren = new OcTreeNode[8];
-//     for (unsigned int i=0; i<8; i++) {
-//       itsChildren[i].setValid(false);
-//     }
-
     itsChildren = new OcTreeNode*[8];
     for (unsigned int i=0; i<8; i++) {
       itsChildren[i] = NULL;
@@ -71,23 +65,18 @@ namespace octomap {
 
   bool OcTreeNode::childExists(unsigned int i) const {
     assert(i < 8);
-    //    if ((itsChildren != NULL) && (itsChildren[i].valid())) return true;
     if ((itsChildren != NULL) && (itsChildren[i] != NULL)) return true;
     else return false;
   }
 
   OcTreeNode* OcTreeNode::getChild(unsigned int i) {
     assert((i < 8) && (itsChildren != NULL));
-//     assert(itsChildren[i].valid());
-//     return &(itsChildren[i]);
     assert(itsChildren[i] != NULL);
     return itsChildren[i];
   }
 
   const OcTreeNode* OcTreeNode::getChild(unsigned int i) const{
     assert((i < 8) && (itsChildren != NULL));
-//     assert(itsChildren[i].valid());
-//     return &(itsChildren[i]);
     assert(itsChildren[i] != NULL);
     return itsChildren[i];
   }
@@ -134,16 +123,9 @@ namespace octomap {
   }
 
   bool OcTreeNode::createChild(unsigned int i) {
-    // returns true if children allocated.
-    // this information is used to keep tree_size consistent
     if (itsChildren == NULL) {
       allocChildren();
-      //itsChildren[i].setValid(true);
     }
-//     else {
-//       itsChildren[i].setValid(true);
-//       return false;
-//     }
     itsChildren[i] = new OcTreeNode();
     return true;
   }
@@ -159,15 +141,6 @@ namespace octomap {
   void OcTreeNode::setDelta(bool a) {
     if (a) data |=  4; // set
     else   data &= ~4; // clear
-  }
-
-  void OcTreeNode::setValid(bool v) {
-    if (v) data |=  8; // set
-    else   data &= ~8; // clear
-  }
-
-  bool OcTreeNode::valid() const {
-    return (data & 8);
   }
 
   char OcTreeNode::getLabel() const {
@@ -266,7 +239,6 @@ namespace octomap {
     setDelta(true);
   }
 
-  // CHECKED KMW
   void OcTreeNode::convertToBinary() {
     assert(isDelta());
 
@@ -307,7 +279,6 @@ namespace octomap {
   }
 
 
-  // CHECKED KMW
   // TODO use label (char) instead of bool?
   bool OcTreeNode::labelMatches(bool occupied) const{
     assert(!isDelta());
@@ -360,7 +331,6 @@ namespace octomap {
   // =  file I/O          =======================================
   // ============================================================
 
-  // CHECKED KMW, rewrite test
   std::istream& OcTreeNode::readBinary(std::istream &s) {
 
     char child1to4_char;
@@ -445,7 +415,6 @@ namespace octomap {
     return s;
   }
 
-  // CHECKED KMW, rewrite test
   std::ostream& OcTreeNode::writeBinary(std::ostream &s) {
 
     // 2 bits for each children, 8 children per node -> 16 bits

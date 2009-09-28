@@ -32,7 +32,9 @@ namespace octomap {
 
   template <class NODE>
   AbstractOcTree<NODE>::AbstractOcTree(double _resolution) :
-    itsRoot(NULL), tree_depth(16), tree_max_val(32768), resolution(_resolution), tree_size(0) {
+    itsRoot(NULL), tree_depth(16), tree_max_val(32768), 
+    resolution(_resolution), tree_size(0) {
+    
     this->setResolution(_resolution);
     for (unsigned i = 0; i< 3; i++){
       maxValue[i] = -1e6;
@@ -141,7 +143,8 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodes(unsigned int max_depth, std::list<OcTreeVolume>& nodes) const{
+  void AbstractOcTree<NODE>::getLeafNodes(unsigned int max_depth, 
+					  std::list<OcTreeVolume>& nodes) const{
     assert(itsRoot);
     if (tree_size <= 1) return; // A tree with only the root is an empty tree (by definition)
     getLeafNodesRecurs(itsRoot, 0, max_depth, tree_center, nodes);
@@ -149,8 +152,10 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodesRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
-					const point3d& parent_center, std::list<OcTreeVolume>& nodes) const{
+  void AbstractOcTree<NODE>::getLeafNodesRecurs(NODE* node, unsigned int depth, 
+						unsigned int max_depth,
+						const point3d& parent_center,
+						std::list<OcTreeVolume>& nodes) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
 
@@ -188,7 +193,8 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const{
+  void AbstractOcTree<NODE>::getVoxels(unsigned int max_depth, 
+				       std::list<OcTreeVolume>& voxels) const{
     assert(itsRoot);
 
     getVoxelsRecurs(itsRoot, 0, max_depth, tree_center, voxels);
@@ -197,8 +203,10 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxelsRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
-			 const point3d& parent_center, std::list<OcTreeVolume>& voxels) const{
+  void AbstractOcTree<NODE>::getVoxelsRecurs(NODE* node, unsigned int depth, 
+					     unsigned int max_depth,
+					     const point3d& parent_center,
+					     std::list<OcTreeVolume>& voxels) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
       if (node->hasChildren() && (depth != max_depth)) {

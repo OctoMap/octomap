@@ -34,7 +34,6 @@ namespace octomap {
 
 #define PROB_HIT  0.7
 #define PROB_MISS 0.4
-#define PRUNING_PROB_THRES 0.05
 #define ML_OCC_PROB_THRES 0.5
 #define CLAMPING_THRES_MIN -2
 #define CLAMPING_THRES_MAX 3.5
@@ -54,26 +53,36 @@ namespace octomap {
     OcTreeNode* getChild(unsigned int i);
 
     /**
-     * const version of getChild aboce
+     * const version of getChild above
      *
      * @param i child number (index)
      * @return const OcTreeNode* to child
      */
     const OcTreeNode* getChild(unsigned int i) const;
 
-    bool createChild(unsigned int i); // returns true if children had to be alloced
+    bool createChild(unsigned int i);
 
     bool childExists(unsigned int i) const;
     bool hasChildren() const;
     bool collapsible() const;
-    bool valid() const; // returns true if the node is valid
 
     // data
+    /**
+     * Stable nodes are called 'binary', else they are
+     * called 'delta' nodes
+     * @return false if node is stable
+     */
     bool isDelta() const;
+    /**
+     * set a label out of those defined in OcTreeNode::Labels (0..3)
+     */
     void setLabel(char l);
+    /**
+     * @return label of node
+     */
     char getLabel() const;
     /**
-     * Converts a pure binary node to delta. Sets LogOdds only of leaf nodes,
+     * Converts a stable  node to delta. Sets LogOdds only of leaf nodes,
      * inner nodes should be set by the update call
      */
     void convertToDelta();
@@ -117,7 +126,6 @@ namespace octomap {
     double prior() const;
 
     void allocChildren();
-    void setValid(bool v);
     void setDelta(bool a);
     char commonChildLabel() const;
     bool pruneBinary();
@@ -128,6 +136,12 @@ namespace octomap {
     OcTreeNode** itsChildren; // pointer to children, may be NULL
   };
 
+  // for memory computation only
+  class OcTreeNodeLight {
+  public:
+    float log_odds_occupancy;
+    OcTreeNodeLight* itsChildren;
+  };
 
 
   // for memory computation only
@@ -136,13 +150,6 @@ namespace octomap {
     float log_odds_occupancy;
     char data;
     OcTreeNodeEightPointers* itsChildren[8];
-  };
-
-  // for memory computation only
-  class OcTreeNodeLight {
-  public:
-    float log_odds_occupancy;
-    OcTreeNodeLight* itsChildren;
   };
 
 } // end namespace

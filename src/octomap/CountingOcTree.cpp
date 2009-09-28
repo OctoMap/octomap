@@ -29,7 +29,6 @@
 
 namespace octomap {
 
-  /***   CountingOcTreeNode  **********************************/
 
   CountingOcTreeNode::CountingOcTreeNode() : count(0) {
     for (unsigned int i = 0; i<8; i++)
@@ -70,7 +69,6 @@ namespace octomap {
   }
 
 
-  // tree   ################################################
 
 
   CountingOcTree::CountingOcTree(double _resolution)

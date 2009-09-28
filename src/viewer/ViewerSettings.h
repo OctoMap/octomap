@@ -41,8 +41,6 @@ public:
     void setResolution(double resolution){ui.resolution->setValue(resolution);};
     unsigned int getLaserType(){return ui.laserType->currentIndex(); };
     void setLaserType(int type){ui.laserType->setCurrentIndex(type); };
-    double getOccupancyThresh(){return ui.threshold->value(); };
-    void setOccupancyThresh(double thresh){ui.threshold->setValue(thresh);};
 
 private:
     Ui::ViewerSettingsClass ui;

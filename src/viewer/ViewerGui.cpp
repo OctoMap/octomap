@@ -419,7 +419,6 @@ void ViewerGui::on_actionSettings_triggered(){
   ViewerSettings dialog(this);
   dialog.setResolution(m_octreeResolution);
   dialog.setLaserType(m_laserType);
-  dialog.setOccupancyThresh(m_occupancyThresh);
 
 
   if (dialog.exec()){
@@ -429,8 +428,7 @@ void ViewerGui::on_actionSettings_triggered(){
 
     m_octreeResolution = dialog.getResolution();
     m_laserType = dialog.getLaserType();
-    m_occupancyThresh = dialog.getOccupancyThresh();
-
+  
     // apply new settings
     bool resolutionChanged = (fabs (oldResolution - m_octreeResolution) > 1e-5);
 

@@ -44,7 +44,8 @@ namespace octomap {
 
    public:
 
-    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id) : scan(_scan), pose(_pose), id(_id) {}
+    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id) 
+      : scan(_scan), pose(_pose), id(_id) {}
     ScanNode () {}
 
     bool operator == (const ScanNode& other) {
@@ -111,11 +112,6 @@ namespace octomap {
     // connect previously added point to the one before that
     void connectPrevious();
 
-    // find and update loops according to a given distance threshold
-    void updateLoopsDist(double distthres, double angle_thres=M_PI*.75);
-    static double estimateOverlap(octomath::Pose6D p, octomath::Pose6D q, double distthres, double angle_thres);
-
-
     std::vector<unsigned int> getNeighborIDs(unsigned int id);
     std::vector<ScanEdge*> getOutEdges(ScanNode* node);
     // warning: constraints are reversed
@@ -150,11 +146,6 @@ namespace octomap {
     const_edge_iterator edges_end() const  { return edges.end(); }
 
 
-    unsigned int loops_size() { return loops.size(); }
-    edge_iterator loops_begin() { return loops.begin(); }
-    edge_iterator loops_end()   { return loops.end(); }
-    bool isLoop(ScanEdge* e);
-
     std::ostream& writeBinary(std::ostream &s) const;
     std::istream& readBinary(std::ifstream &s);
     void writeBinary(std::string filename) const;
@@ -169,13 +160,8 @@ namespace octomap {
 
    protected:
 
-    std::vector<std::pair<unsigned int, unsigned int> > findLoopsDist(ScanNode* node, double distthres, double angle_thres);
-
     std::vector<ScanNode*> nodes;
     std::vector<ScanEdge*> edges;
-
-    // loops is a subset of edges
-    std::vector<ScanEdge*> loops;
   };
 
 }

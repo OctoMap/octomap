@@ -29,8 +29,6 @@
 
 
 #include <list>
-#include <utility>
-
 
 #include "octomap_types.h"
 
@@ -40,14 +38,13 @@ namespace octomap {
 
   /*! OcTree base class
    *
-   *  Note: the tree does not save individual points.
-   *
    *  This tree has a max depth of 15, at an resolution
    *  of 1 cm, values have to be < +/- 327.68 meters (2^15)
    *
-   *  This implementation uses a very efficient key generation
+   *  This implementation uses an efficient key generation method
    *  directly from the binary representation of the data.
    *
+   *  Note: the tree does not save individual points.
    */
   template <class NODE>
     class AbstractOcTree {
@@ -79,8 +76,9 @@ namespace octomap {
      */
     void getLeafNodes(unsigned int max_depth, std::list<OcTreeVolume>& nodes) const;
 
-    //! walk tree, add all AbstractOcTree volumes (center w. size)
-    //  used e.g. for visualization
+    /*! walk tree, add all AbstractOcTree volumes (center w. size)
+     *  used e.g. for visualization
+     */
     void getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const;
 
   protected:

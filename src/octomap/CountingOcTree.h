@@ -35,6 +35,8 @@ namespace octomap {
    * An OcTreeNode which stores an internal counter per node / cell
    * count is recursive, parent nodes have the summed count of their
    * children.
+   * Note: in our mapping system this data structure is used in 
+   *       the sensor model only
    */
   class CountingOcTreeNode {
 
@@ -64,7 +66,7 @@ namespace octomap {
 
   public:
 
-    CountingOcTree(double resolution = 0.1);
+    CountingOcTree(double resolution);
     ~CountingOcTree();
 
     CountingOcTreeNode* updateNode(const point3d& value);
@@ -72,7 +74,6 @@ namespace octomap {
   protected:
 
     void traverseNode(CountingOcTreeNode* traversedNode);
-
   };
 
 
