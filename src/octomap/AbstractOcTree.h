@@ -1,9 +1,11 @@
-//Id: $Id$
+// $Id$
 
 #ifndef OCTOMAP_OCTREE_H
 #define OCTOMAP_OCTREE_H
 
-$License$
+/*$License$ */
+
+/*$license$ */
 
 #include <list>
 #include <utility>
