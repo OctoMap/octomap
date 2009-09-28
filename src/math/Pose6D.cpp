@@ -1,3 +1,29 @@
+// $Id$
+
+/**
+* Octomap:
+* A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @see http://octomap.sourceforge.net/
+* License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+*/
+
+/*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+* for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
+
 #include "Pose6D.h"
 #include <math.h>
 
@@ -43,7 +69,7 @@ namespace octomath {
     return rotation;
   }
 
-  
+
   const Quaternion& Pose6D::rot() const {
     return rotation;
   }
@@ -75,7 +101,7 @@ namespace octomath {
     Vector3    trans_new = rotation.rotate(other.trans()) + trans();
     return Pose6D(trans_new, rot_new.normalized());
   }
-  
+
   const Pose6D& Pose6D::operator*= (const Pose6D& other) {
     trans() += rotation.rotate(other.trans());
     rot() = rot() * other.rot();
@@ -93,22 +119,22 @@ namespace octomath {
   double Pose6D::TransLength() const {
     return transLength();
   }
-  
+
 
   double Pose6D::transLength() const {
     return sqrt(x()*x() + y()*y() + z()*z());
   }
-  
-  
+
+
   bool Pose6D::operator==(const Pose6D& other) const {
     return translation == other.translation
       && rotation == other.rotation;
   }
-  
+
   bool Pose6D::operator!=(const Pose6D& other) const {
     return !(*this == other);
   }
-  
+
   std::istream& Pose6D::read(std::istream &s) {
     translation.read(s);
     rotation.read(s);

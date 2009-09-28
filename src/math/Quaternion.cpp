@@ -1,3 +1,29 @@
+// $Id$
+
+/**
+* Octomap:
+* A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @see http://octomap.sourceforge.net/
+* License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+*/
+
+/*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+* for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
+
 #include "Quaternion.h"
 #include "Vector3.h"
 
@@ -17,13 +43,13 @@ namespace octomath {
     z() = 0;
   }
 
-  const double& Quaternion::operator() (unsigned int i) const{ 
+  const double& Quaternion::operator() (unsigned int i) const{
     return data[i];
   }
-  double& Quaternion::operator() (unsigned int i){ 
+  double& Quaternion::operator() (unsigned int i){
     return data[i];
   }
-  
+
   Quaternion::Quaternion(const Quaternion &other) {
     for (unsigned int i=0; i<4; i++) {
       operator()(i) = other(i);
@@ -65,7 +91,7 @@ namespace octomath {
     z() = (m[1][0] - m[0][1])>=0?fabs(_z):-fabs(_z);
   }
 
-  
+
   double Quaternion::norm2() const {
     double n = 0;
     for (unsigned int i=0; i<4; i++) {
@@ -80,7 +106,7 @@ namespace octomath {
     }
   }
 
-  bool Quaternion::operator== (const Quaternion& other) const { 
+  bool Quaternion::operator== (const Quaternion& other) const {
     for (unsigned int i=0; i<4; i++) {
       if (operator()(i) != other(i)) return false;
     }
@@ -90,7 +116,7 @@ namespace octomath {
 
   Vector3 Quaternion::toEuler() const {
     // create rotational matrix
-    double n = norm2(); 
+    double n = norm2();
     double s = n > 0?2./(n*n):0.;
 
     double xs = x()*s;
@@ -130,7 +156,7 @@ namespace octomath {
     return Vector3(roll, pitch, yaw);
   }
 
-  
+
   Quaternion& Quaternion::operator= (const Quaternion& other) {
     u() = other.u();
     x() = other.x();
@@ -154,13 +180,13 @@ namespace octomath {
     return Quaternion(0, v(0), v(1), v(2)) * q;
   }
 
-  Quaternion& Quaternion::unit_IP (){ 
+  Quaternion& Quaternion::unit_IP (){
     double len = norm2();
     if (len > 0)
       *this /= len;
     return *this;
   }
-  
+
   Quaternion Quaternion::unit () const {
     Quaternion result(*this);
     result.unit_IP();

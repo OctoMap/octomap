@@ -1,8 +1,28 @@
+// $Id$
 
-// ==================================================
-// octomap
-// Kai M. Wurm <wurm@uni-freiburg.de>
-// ==================================================
+/**
+* Octomap:
+* A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @see http://octomap.sourceforge.net/
+* License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+*/
+
+/*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+* for more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
 
 #include "Pointcloud.h"
 #include <ext/algorithm>
@@ -265,18 +285,18 @@ namespace octomap {
   void Pointcloud::crop(point3d lowerBound, point3d upperBound) {
 
     Pointcloud result;
-    
+
     double min_x, min_y, min_z;
     double max_x, max_y, max_z;
     double x,y,z;
 
     min_x = lowerBound(0); min_y = lowerBound(1); min_z = lowerBound(2);
-    max_x = upperBound(0); max_y = upperBound(1); max_z = upperBound(2);    
+    max_x = upperBound(0); max_y = upperBound(1); max_z = upperBound(2);
 
     if (hasRemissions()) {
       Pointcloud::rem_const_iterator rit = begin_rem();
       for (Pointcloud::const_iterator it=begin(); (it!=end() && rit != end_rem()); it++, rit++) {
-	
+
 	x = (**it)(0);
 	y = (**it)(1);
 	z = (**it)(2);
@@ -293,7 +313,7 @@ namespace octomap {
     } // end if has rem
     else {
       for (Pointcloud::const_iterator it=begin(); it!=end(); it++) {
-	
+
 	x = (**it)(0);
 	y = (**it)(1);
 	z = (**it)(2);
@@ -450,7 +470,7 @@ namespace octomap {
 	outfile << "\t\t" << 0. << " " << 0. << " " << 1.0 << "\n";
       }
     }
-  
+
 
 
     outfile << "                 ]" << std::endl;
