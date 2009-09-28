@@ -3,9 +3,7 @@
 #ifndef OCTOMAP_OCTREE_H
 #define OCTOMAP_OCTREE_H
 
-/*$License$ */
-
-/*$license$ */
+/* $License$ */
 
 #include <list>
 #include <utility>
