@@ -12,7 +12,7 @@ TEMPLATE = lib
 TARGET = QGLViewer
 VERSION = 2.3.1
 CONFIG -= debug debug_and_release
-CONFIG *= release qt opengl warn_on shared thread create_prl rtti
+CONFIG *= release warn_off qt opengl shared thread create_prl rtti
 
 HEADERS = qglviewer.h \
 	  camera.h \
