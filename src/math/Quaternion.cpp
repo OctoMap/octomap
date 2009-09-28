@@ -55,10 +55,10 @@ namespace octomath {
       {    -spitch,                  cpitch*sroll,                  cpitch*croll}
     };
 
-    double _u = sqrt(OUR_MAX(0., 1 + m[0][0] + m[1][1] + m[2][2]))/2.0;
-    double _x = sqrt(OUR_MAX(0., 1 + m[0][0] - m[1][1] - m[2][2]))/2.0;
-    double _y = sqrt(OUR_MAX(0., 1 - m[0][0] + m[1][1] - m[2][2]))/2.0;
-    double _z = sqrt(OUR_MAX(0., 1 - m[0][0] - m[1][1] + m[2][2]))/2.0;
+    double _u = sqrt(std::max(0., 1 + m[0][0] + m[1][1] + m[2][2]))/2.0;
+    double _x = sqrt(std::max(0., 1 + m[0][0] - m[1][1] - m[2][2]))/2.0;
+    double _y = sqrt(std::max(0., 1 - m[0][0] + m[1][1] - m[2][2]))/2.0;
+    double _z = sqrt(std::max(0., 1 - m[0][0] - m[1][1] + m[2][2]))/2.0;
     u() = _u;
     x() = (m[2][1] - m[1][2])>=0?fabs(_x):-fabs(_x);
     y() = (m[0][2] - m[2][0])>=0?fabs(_y):-fabs(_y);

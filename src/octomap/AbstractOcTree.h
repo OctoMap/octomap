@@ -1,12 +1,9 @@
+//Id: $Id$
+
 #ifndef OCTOMAP_OCTREE_H
 #define OCTOMAP_OCTREE_H
 
-// =====================================================
-// octomap
-// -----------------------------------------------------
-// Kai M. Wurm <wurm@uni-freiburg.de>
-// Armin Hornung <hornunga@informatik.uni-freiburg.de>
-// =====================================================
+$License$
 
 #include <list>
 #include <utility>

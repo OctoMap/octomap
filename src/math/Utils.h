@@ -1,23 +1,9 @@
 #ifndef OCTOMATH_UTILS_H
 #define OCTOMATH_UTILS_H
 
-#include <fstream>
-#include <string>
-#include <cmath>
-#include <complex>
-#include <cassert>
-#include <vector>
-
 #ifndef SQR
 #define SQR(x) ((x)*(x))
 #endif
-
-#define OUR_MAX(a,b) (a>b)?(a):(b)
-
-
-//#define USE_FLOAT_IN_OUR
-
-
 
 
 /* GNU C predefined mathematical constants: */
@@ -101,16 +87,6 @@
 #ifndef M_SQRT_TWO_PI
 #define M_SQRT_TWO_PI 2.506628274631000502
 #endif
-
-
-
-namespace octomath
-{
-
-  double normalizeAngle(double angle);
-  double angleDistance(double angle1, double angle2);
-
-}
 
 
 #endif
