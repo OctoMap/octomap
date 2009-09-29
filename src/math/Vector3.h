@@ -79,8 +79,8 @@ namespace octomath {
      *
      * Calculates the tree-dimensional cross product, which
      * represents the vector orthogonal to the plane defined
-     * by <this> and other.
-     * @return <this> x other
+     * by this and other.
+     * @return this x other
      */
     Vector3 crossProduct(const Vector3& other) const;
 

@@ -1,6 +1,3 @@
-#ifndef OCTOMAP_POINTCLOUD_H
-#define OCTOMAP_POINTCLOUD_H
-
 // $Id$
 
 /**
@@ -27,6 +24,9 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_POINTCLOUD_H
+#define OCTOMAP_POINTCLOUD_H
+
 #include<vector>
 #include<list>
 #include <octomap_types.h>
@@ -46,26 +46,28 @@ namespace octomap {
     unsigned int size() const {  return points.size(); }
     void clear();
 
-    // add beam endpoint
-    void push_back(double x, double y, double z);
-    void push_back(point3d& p);
-    void push_back(point3d* p);
+    void push_back(double x, double y, double z); ///< adds the endpoint of a beam to the Pointcloud
+    void push_back(point3d& p); ///< adds the endpoint of a beam to the Pointcloud
+    void push_back(point3d* p); ///< adds the endpoint of a beam to the Pointcloud
 
-    // add points from other Pointcloud
+    /// Add points from other Pointcloud
     void push_back(const Pointcloud& other);
 
+    /// Export the Pointcloud to a VRML file
     void writeVrml(std::string filename);
 
-    // apply transform to each point
+    /// Apply transform to each point
     void transform(octomath::Pose6D transform);
 
-    // rotate each point in pointcloud
+    /// Rotate each point in pointcloud
     void rotate(double roll, double pitch, double yaw);
 
-    // apply transform to each point, undo prev transform
+    /// Apply transform to each point, undo previous transforms
     void transformAbsolute(octomath::Pose6D transform);
 
+    /// Calculate bounding box of Pointcloud
     void calcBBX(point3d& lowerBound, point3d& upperBound) const;
+    /// Crop Pointcloud to given bounding box
     void crop(point3d lowerBound, point3d upperBound);
 
     void subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud);

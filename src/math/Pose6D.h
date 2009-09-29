@@ -68,24 +68,24 @@ namespace octomath {
     /*!
      * \brief Translational component
      *
-     * @return the translational component of <this> pose
+     * @return the translational component of this pose
      */
     Vector3& trans();
     /*!
      * \brief Rotational component
      *
-     * @return the rotational component of <this> pose
+     * @return the rotational component of this pose
      */
     Quaternion& rot();
     /*!
      * \brief Translational component
      *
-     * @return the translational component of <this> pose
+     * @return the translational component of this pose
      */
     const Vector3& trans() const;
     /*!
      * \brief Rotational component
-     * @return the rotational component of <this> pose
+     * @return the rotational component of this pose
      */
     const Quaternion& rot() const;
 
@@ -103,18 +103,18 @@ namespace octomath {
     /*!
      * \brief Transformation a vector
      *
-     * Transforms the vector <v> by the transformation which is
-     * specified by <this>.
+     * Transforms the vector v by the transformation which is
+     * specified by this.
      * @return the vector which is translated by the translation of
-     * <this> and afterwards rotated by the rotation of <this>.
+     * this and afterwards rotated by the rotation of this.
      */
     Vector3 transform (const Vector3 &v) const;
 
     /*!
      * \brief Inversion
      *
-     * Inverts the coordinate transformation represented by <this> pose
-     * @return a copy of <this> pose inverted
+     * Inverts the coordinate transformation represented by this pose
+     * @return a copy of this pose inverted
      */
     Pose6D inv() const;
     Pose6D invert() const __attribute__ ((deprecated)) { return inv(); } // for inversion with copy use inv()
@@ -122,8 +122,8 @@ namespace octomath {
     /*!
      * \brief Inversion
      *
-     * Inverts the coordinate transformation represented by <this> pose
-     * @return a reference to <this> pose
+     * Inverts the coordinate transformation represented by this pose
+     * @return a reference to this pose
      */
     Pose6D& inv_IP();
     Pose6D& invert_IP() __attribute__ ((deprecated)) { return inv_IP(); } // for inversion in place use inv_IP()
@@ -132,23 +132,23 @@ namespace octomath {
      * \brief Concatenation
      *
      * Concatenates the coordinate transformations represented
-     * by <this> and p.
-     * @return <this> * p (applies first <this>, then p)
+     * by this and p.
+     * @return this * p (applies first this, then p)
      */
     Pose6D operator* (const Pose6D &p) const;
     /*!
      * \brief In place concatenation
      *
-     * Concatenates p to <this> Pose6D.
-     * @return <this> which results from first moving by <this> and
-     * afterwards by <p>
+     * Concatenates p to this Pose6D.
+     * @return this which results from first moving by this and
+     * afterwards by p
      */
     const Pose6D& operator*= (const Pose6D &p);
 
     /*!
      * \brief Translational distance
      *
-     * @return the translational (euclidian) distance to <p>
+     * @return the translational (euclidian) distance to p
      */
     double distance(const Pose6D &other) const;
 
@@ -156,7 +156,7 @@ namespace octomath {
      * \brief Translational length
      *
      * @return the translational (euclidian) length of the translation
-     * vector of <this> Pose6D
+     * vector of this Pose6D
      */
     double transLength() const;
     double TransLength() const __attribute__ ((deprecated)); // use 'transLength' instead

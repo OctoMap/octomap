@@ -1,6 +1,3 @@
-#ifndef OCTOMAP_BINARYOCTREE_NODE_HH
-#define OCTOMAP_BINARYOCTREE_NODE_HH
-
 // $Id$
 
 /**
@@ -27,6 +24,9 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_BINARYOCTREE_NODE_HH
+#define OCTOMAP_BINARYOCTREE_NODE_HH
+
 #include "octomap_types.h"
 
 namespace octomap {
@@ -49,21 +49,20 @@ namespace octomap {
     OcTreeNode();
     ~OcTreeNode();
 
-    // children
+    /// \return a pointer to the i th child of the node. The child needs to exist.
     OcTreeNode* getChild(unsigned int i);
 
-    /**
-     * const version of getChild above
-     *
-     * @param i child number (index)
-     * @return const OcTreeNode* to child
-     */
+    /// \return a const pointer to the i th child of the node. The child needs to exist.
     const OcTreeNode* getChild(unsigned int i) const;
 
     bool createChild(unsigned int i);
 
+    /// \return true if the i th child exists
     bool childExists(unsigned int i) const;
+    /// \return true if the node has at least one child
     bool hasChildren() const;
+    /// A node is collapsible if all children exist, don't have children of their own
+    /// and are completely binary.
     bool collapsible() const;
 
     // data
@@ -77,10 +76,10 @@ namespace octomap {
      * set a label out of those defined in OcTreeNode::Labels (0..3)
      */
     void setLabel(char l);
-    /**
-     * @return label of node
-     */
+
+    /// \return label of node
     char getLabel() const;
+
     /**
      * Converts a stable  node to delta. Sets LogOdds only of leaf nodes,
      * inner nodes should be set by the update call

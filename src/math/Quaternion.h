@@ -92,7 +92,7 @@ namespace octomath {
     /*!
      * \brief Conversion to Euler angles
      *
-     * Converts the attitude represented by <this> to
+     * Converts the attitude represented by this to
      * Euler angles (roll, pitch, yaw).
      */
     Vector3 toEuler() const;
@@ -115,7 +115,7 @@ namespace octomath {
      *
      * Standard Quaternion multiplication which is not
      * commutative.
-     * @return <this> * other
+     * @return this * other
      */
     Quaternion operator* (const Quaternion& other) const;
 
@@ -136,30 +136,30 @@ namespace octomath {
     /*!
      * \brief Normalization
      *
-     * @return A copy of <this> Quaternion as Unit Quaternion
+     * @return A copy of this Quaternion as Unit Quaternion
      */
     Quaternion normalized() const;
 
     /*!
      * \brief Normalization
      *
-     * Normalizes <this> Quaternion.
-     * @return a reference to <this> Quaternion
+     * Normalizes this Quaternion.
+     * @return a reference to this Quaternion
      */
     Quaternion& normalize();
 
     /*!
      * \brief Inversion
      *
-     * @return A copy of <this> Quaterion inverted
+     * @return A copy of this Quaterion inverted
      */
     Quaternion inv() const;
 
     /*!
      * \brief Inversion
      *
-     * Inverts <this> Quaternion
-     * @return a reference to <this> Quaternion
+     * Inverts this Quaternion
+     * @return a reference to this Quaternion
      */
     Quaternion& inv_IP();
 
@@ -168,7 +168,7 @@ namespace octomath {
      *
      * Rotates a vector to the body fixed coordinate
      * system according to the attitude represented by
-     * <this> Quaternion.
+     * this Quaternion.
      * @param v a vector represented in world coordinates
      * @return v represented in body-fixed coordinates
      */

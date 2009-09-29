@@ -1,6 +1,3 @@
-#ifndef OCTOMAP_TYPES_H
-#define OCTOMAP_TYPES_H
-
 // $Id$
 
 /**
@@ -27,6 +24,9 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_TYPES_H
+#define OCTOMAP_TYPES_H
+
 #include <vector>
 
 #include <Vector3.h>
@@ -36,6 +36,7 @@ namespace octomap {
 
   typedef octomath::Vector3               point3d;
   typedef std::vector<octomath::Vector3*> point3d_collection;
+  /// A voxel defined by its center point3d and its side length
   typedef std::pair<point3d, double> OcTreeVolume;
 
   #define m3d_max(a,b) (a>b)?a:b

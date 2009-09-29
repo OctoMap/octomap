@@ -1,6 +1,3 @@
-#ifndef OCTOMAP_SCANGRAPH_H
-#define OCTOMAP_SCANGRAPH_H
-
 // $Id$
 
 /**
@@ -27,6 +24,10 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_SCANGRAPH_H
+#define OCTOMAP_SCANGRAPH_H
+
+
 #include <string>
 #include <math.h>
 
@@ -40,11 +41,14 @@ namespace octomap {
   class ScanGraph;
 
 
+  /**
+   * A 3D scan as Pointcloud, performed from a Pose6D.
+   */
   class ScanNode {
 
    public:
 
-    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id) 
+    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id)
       : scan(_scan), pose(_pose), id(_id) {}
     ScanNode () {}
 
@@ -59,7 +63,7 @@ namespace octomap {
     std::istream& readPoseASCII(std::istream &s);
 
     Pointcloud* scan;
-    octomath::Pose6D pose;
+    octomath::Pose6D pose; ///< 6D pose from which the scan was performed
     unsigned int id;
 
   };
@@ -91,6 +95,11 @@ namespace octomap {
   };
 
 
+  /**
+   * A ScanGraph is a collection of ScanNodes, connected by ScanEdges.
+   * Each ScanNode contains a 3D scan performed from a pose.
+   *
+   */
   class ScanGraph {
 
    public:
@@ -98,18 +107,20 @@ namespace octomap {
     ScanGraph() {};
     ~ScanGraph();
 
+    /// Clears all nodes and edges
     void clear();
 
     ScanNode* addNode(Pointcloud* scan, octomath::Pose6D pose);
     ScanEdge* addEdge(ScanNode* first, ScanNode* second, octomath::Pose6D constraint);
     ScanEdge* addEdge(unsigned int first_id, unsigned int second_id);
 
-    // will return NULL if node was not found
+    /// will return NULL if node was not found
     ScanNode* getNodeByID(unsigned int id);
 
+    /// \return true when an edge between first_id and second_id exists
     bool edgeExists(unsigned int first_id, unsigned int second_id);
 
-    // connect previously added point to the one before that
+    /// Connect previously added point to the one before that
     void connectPrevious();
 
     std::vector<unsigned int> getNeighborIDs(unsigned int id);
@@ -119,13 +130,13 @@ namespace octomap {
 
     void exportDot(std::string filename);
 
-    // Transform every scan according to its pose
+    /// Transform every scan according to its pose
     void transformScans();
 
-    // cut graph (all containing Pointclouds) to given BBX in global coords
+    /// Cut graph (all containing Pointclouds) to given BBX in global coords
     void crop(point3d lowerBound, point3d upperBound);
 
-    // cut Pointclouds to given BBX in local coords
+    /// Cut Pointclouds to given BBX in local coords
     void cropEachScan(point3d lowerBound, point3d upperBound);
 
 
