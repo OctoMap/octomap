@@ -90,10 +90,11 @@ class ViewerWidget : public QGLViewer {
    */
   void resetView();
 
- private:
+ protected:
 
   virtual void draw();
   virtual void init();
+  virtual QString helpString() const;
   void drawOctreeGrid();
   void drawOctreeCells() const;
   void drawFreespace() const;

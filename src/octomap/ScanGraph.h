@@ -68,6 +68,9 @@ namespace octomap {
 
   };
 
+  /**
+   * A connection between two \ref ScanNode "ScanNodes"
+   */
   class ScanEdge {
 
    public:

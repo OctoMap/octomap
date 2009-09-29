@@ -1,8 +1,5 @@
 // $Id$
 
-#ifndef OCTOMAP_OCTREE_H
-#define OCTOMAP_OCTREE_H
-
 /**
 * Octomap:
 * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
@@ -27,6 +24,10 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_OCTREE_H
+#define OCTOMAP_OCTREE_H
+
+
 
 #include <list>
 
@@ -36,7 +37,8 @@
 namespace octomap {
 
 
-  /*! OcTree base class
+  /**
+   * OcTree base class
    *
    *  This tree has a max depth of 15, at an resolution
    *  of 1 cm, values have to be < +/- 327.68 meters (2^15)
@@ -54,64 +56,61 @@ namespace octomap {
     AbstractOcTree(double _resolution);
     virtual ~AbstractOcTree();
 
-
+    /// \return The number of nodes in the tree
     unsigned int size() const { return tree_size; }
 
     void setResolution(double r);
     double getResolution() const { return resolution; }
 
-    //! \return root-node of tree
+    /// \return Pointer to the root node of tree
     NODE* getRoot() const { return itsRoot; }
 
 
-    /*! Search point in tree
-     * \return true, if point's cell is found
-     * Pointer to cell will be given in result, else this is NULL
+    /**
+     * Search a 3D point in the tree
+     *
+     * @param value Searched coordinate
+     * @param result Pointer to the resulting NODE when found, else NULL
+     * @return Result of search
      */
     bool search (const point3d& value, NODE*& result) const;
 
 
-    /*
-     * Returns leaf node volumes (OcTreeVolume: center point and size of volume).
+    /**
+     * Traverse the tree and collect all leaf nodes
+     *
+     * @param max_depth Depth limit for nodes regarded as leafs
+     * @param nodes Leaf nodes as OcTreeVolume
      */
     void getLeafNodes(unsigned int max_depth, std::list<OcTreeVolume>& nodes) const;
 
     /*! walk tree, add all AbstractOcTree volumes (center w. size)
      *  used e.g. for visualization
      */
+    /**
+     * Traverse the tree and collect all nodes, at all levels. Used e.g. in visualization.
+     *
+     * @param max_depth Depth limit for nodes
+     * @param voxels
+     */
     void getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const;
 
   protected:
 
-    // generate 16-bit key from/for given value
+    /// generate 16-bit key from/for given value
     bool genKey(double val, unsigned short int& key) const;
 
-    // reverse of genKey, generates center coordinate of cell corresponding to a key
+    /// reverse of genKey(), generates center coordinate of cell corresponding to a key
     bool genVal(unsigned short int& key, double& val) const;
 
-    // generate child number from key at given tree depth
+    /// generate child number from key at given tree depth
     unsigned int genPos(unsigned short int key[], int i) const;
 
-    /**
-     * Recursive call for getLeafNodes
-     * @param node
-     * @param depth
-     * @param max_depth
-     * @param parent_center
-     * @param points
-     */
+    /// Recursive call for getLeafNodes()
     void getLeafNodesRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
         const point3d& parent_center, std::list<OcTreeVolume>& points) const;
 
-    /**
-     * Recursively puts the AbstractOcTree structure as OcTreeVolume in voxels.
-     *
-     * @param node
-     * @param depth
-     * @param max_depth
-     * @param parent_center
-     * @param points
-     */
+    /// Recursive call for getVoxels()
     void getVoxelsRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
         const point3d& parent_center, std::list<OcTreeVolume>& voxels) const;
 
@@ -120,13 +119,13 @@ namespace octomap {
     // constants of the tree
     unsigned int tree_depth;
     unsigned int tree_max_val;
-    double resolution;  // in meters
-    double resolution_factor; // = 1. / resolution
+    double resolution;  ///< in meters
+    double resolution_factor; ///< = 1. / resolution
     point3d tree_center;
 
-    unsigned int tree_size; // number of nodes in tree
-    double maxValue[3]; // max in x, y, z
-    double minValue[3]; // min in x, y, z
+    unsigned int tree_size; ///< number of nodes in tree
+    double maxValue[3]; ///< max in x, y, z
+    double minValue[3]; ///< min in x, y, z
     bool sizeChanged;
   };
 

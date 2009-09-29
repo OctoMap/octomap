@@ -1,6 +1,3 @@
-#ifndef OCTOMAP_COUNTING_OCTREE_HH
-#define OCTOMAP_COUNTING_OCTREE_HH
-
 // $Id$
 
 /**
@@ -27,16 +24,21 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#ifndef OCTOMAP_COUNTING_OCTREE_HH
+#define OCTOMAP_COUNTING_OCTREE_HH
+
 #include "AbstractOcTree.h"
 
 namespace octomap {
 
-  /*!
-   * An OcTreeNode which stores an internal counter per node / cell
-   * count is recursive, parent nodes have the summed count of their
+  /**
+   * An Octree-node which stores an internal counter per node / volume.
+   *
+   * Count is recursive, parent nodes have the summed count of their
    * children.
-   * Note: in our mapping system this data structure is used in 
-   *       the sensor model only
+   *
+   * \note In our mapping system this data structure is used in
+   *       CountingOcTree in the sensor model only
    */
   class CountingOcTreeNode {
 
@@ -58,9 +60,14 @@ namespace octomap {
     unsigned int count;
   };
 
-
-  /*!
-   * OcTree implementation storing the hit counts for single cells
+  /**
+   * An AbstractOcTree which stores an internal counter per node / volume.
+   *
+   * Count is recursive, parent nodes have the summed count of their
+   * children.
+   *
+   * \note In our mapping system this data structure is used in
+   *       the sensor model only
    */
   class CountingOcTree : public AbstractOcTree <CountingOcTreeNode> {
 

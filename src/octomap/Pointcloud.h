@@ -33,6 +33,10 @@
 
 namespace octomap {
 
+  /**
+   * A collection of 3D coordinates (point3d), which are regarded as endpoints of a
+   * 3D laser scan.
+   */
   class Pointcloud {
 
   public:

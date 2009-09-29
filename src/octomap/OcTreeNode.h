@@ -40,6 +40,9 @@ namespace octomap {
 
 #define UNKOWN_AS_OBSTACLE false
 
+  /**
+   * Nodes to be used in OcTree, our main data structure.
+   */
   class OcTreeNode {
 
   public:

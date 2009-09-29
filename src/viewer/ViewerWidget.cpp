@@ -71,6 +71,23 @@ void ViewerWidget::resetView(){
 
 }
 
+QString ViewerWidget::helpString() const{
+  QString help = "<h2>Octomap 3D viewer</h2>";
+
+  help +="The Octomap library implements a 3D occupancy grid mapping approach. "
+      "It provides data structures and mapping algorithms. The map is implemented "
+      "using an octree. 3D maps can be viewed an built using this 3D viewer."
+      "<br/><br/>"
+      "Octomap is available at http://octomap.sourceforge.net/, and is actively "
+      "maintained by Kai M. Wurm and Armin Hornung. This 3D viewer is based on "
+      "libQGLViewer, available at http://www.libqglviewer.com/."
+      "<br/><br/>"
+      "Please refer to the \"Keyboard\" and \"Mouse\" tabs for instructions on "
+      "how to use the viewer.";
+
+  return help;
+}
+
 void ViewerWidget::enableHeightColorMode (bool enabled){
   m_heightColorMode = enabled;
 }

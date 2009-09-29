@@ -31,6 +31,9 @@
 
 namespace octomap {
 
+  /**
+   * Drawer which visualizes Pointclouds
+   */
   class PointcloudDrawer: public ScanGraphDrawer {
   public:
     PointcloudDrawer();
