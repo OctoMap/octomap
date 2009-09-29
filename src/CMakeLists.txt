@@ -7,7 +7,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 
-# COMPILER FLAGS (default: Release)
+# COMPILER SETTINGS (default: Release)
 # use "-DCMAKE_BUILD_TYPE=Debug" in cmake for a Debug-build
 IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
    SET(CMAKE_BUILD_TYPE Release)
