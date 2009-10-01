@@ -300,7 +300,7 @@ namespace octomap {
       octomath::Pose6D scan_pose (scan.pose);
 
       // integrate beams
-      octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
+      octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
       octomap::point3d p;
 
       for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); 
@@ -311,7 +311,6 @@ namespace octomap {
     } else{
       this->insertScanUniform(scan);
     }
-
   }
 
 
@@ -447,7 +446,7 @@ namespace octomap {
 
   void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
     octomath::Pose6D scan_pose (scan.pose);
-    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
+    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
     octomap::point3d p;
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
       p = scan_pose.transform(**point_it);
@@ -462,7 +461,7 @@ namespace octomap {
 
   void OcTree::insertScanUniform(const ScanNode& scan) {
     octomath::Pose6D scan_pose (scan.pose);
-    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
+    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
     octomap::point3d p;
 
     // preprocess data  --------------------------

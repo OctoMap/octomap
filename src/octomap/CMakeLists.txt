@@ -17,6 +17,9 @@ TARGET_LINK_LIBRARIES(
 ADD_EXECUTABLE(test test.cpp)
 TARGET_LINK_LIBRARIES(test octomap)
 
+ADD_EXECUTABLE(read_pointcloud read_pointcloud.cpp)
+TARGET_LINK_LIBRARIES(read_pointcloud octomap)
+
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap)
 

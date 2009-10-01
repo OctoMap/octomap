@@ -34,8 +34,6 @@
 #include "Pointcloud.h"
 #include "octomap_types.h"
 
-#define SCANGRAPH_HEIGHT_OFFSET 0.55
-
 namespace octomap {
 
   class ScanGraph;
