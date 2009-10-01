@@ -1,16 +1,14 @@
 * :
-
 - "delta" -> "stable"
 
 core:
-- node data should be optional
-  (derive from OcTreeNode)
 - valgrind / cachegrind
+- unknown cells and prob of 0.5 can not 
+  be distinguished w/o labels in inner nodes
 
 viewer:
 - black / white background
 - camera settings are to prominent
 - remove every feature that is not stable
 - clean up
-- remove occupancy threshold?
 

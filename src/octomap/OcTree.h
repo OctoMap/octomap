@@ -158,9 +158,6 @@ namespace octomap {
     /// recursive call of getFreeSpace()
     void getFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres, const point3d& parent_center,
 			    std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
-    /// recursive call of getChangedFreespace()
-    void getChangedFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres,
-              const point3d& parent_center, std::list<OcTreeVolume>& nodes) const;
 
     ///recursive call of deltaToBinary()
     void deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);

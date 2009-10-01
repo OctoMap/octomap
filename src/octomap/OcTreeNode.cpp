@@ -37,9 +37,6 @@ namespace octomap {
 
   OcTreeNode::OcTreeNode()
     : log_odds_occupancy(0),  itsChildren(NULL) {
-
-    setLabel(UNKNOWN);
-    setDelta(true);
   }
 
   OcTreeNode::~OcTreeNode(){
@@ -100,27 +97,6 @@ namespace octomap {
     return true;
   }
 
-  char OcTreeNode::commonChildLabel() const{
-    char common_label = UNKNOWN;
-    for (unsigned int i=0; i<8; i++) {
-
-      if (childExists(i)) {
-
-        // REMOVE FOR RELEASE
-        if (getChild(i)->isDelta()) {
-          printf("commonChildLabel:: node has delta children (no %d). This should not happen.\n", i);
-          exit(0);
-        }
-
-        if (common_label == UNKNOWN) common_label = getChild(i)->getLabel();
-        else if (this->getChild(i)->getLabel() != common_label) return MIXED;
-      }
-      else { // "unknown" child
-        if (UNKOWN_AS_OBSTACLE && (common_label != UNKNOWN)) return MIXED;
-      }
-    }
-    return common_label;
-  }
 
   bool OcTreeNode::createChild(unsigned int i) {
     if (itsChildren == NULL) {
@@ -130,32 +106,12 @@ namespace octomap {
     return true;
   }
 
-  // ============================================================
-  // =  data              =======================================
-  // ============================================================
 
   bool OcTreeNode::isDelta() const {
-    return (data & 4);
+    return ((log_odds_occupancy < CLAMPING_THRES_MAX) && 
+	    (log_odds_occupancy > CLAMPING_THRES_MIN));
   }
 
-  void OcTreeNode::setDelta(bool a) {
-    if (a) data |=  4; // set
-    else   data &= ~4; // clear
-  }
-
-  char OcTreeNode::getLabel() const {
-    char retval = 0;
-    if (data & 1) retval += 1;
-    if (data & (1<<1)) retval += 2;
-    return retval;
-  }
-
-  void OcTreeNode::setLabel(char l) {
-    if (l & 1) data |=  1; // set
-    else       data &= ~1; // clear
-    if (l & 2) data |=  2; // set
-    else       data &= ~2; // clear
-  }
 
   void OcTreeNode::integrateHit() {
     updateLogOdds(PROB_HIT);
@@ -172,27 +128,19 @@ namespace octomap {
 
   void OcTreeNode::updateLogOdds(double p) {
 
-    if (!isDelta()) printf("WARNING: updating passive node!\n"); // REMOVE FOR RELEASE
-
 //     printf("logodds before: %f\n", log_odds_occupancy);
     log_odds_occupancy += logodds(p);
 //     printf("logodds after : %f\n\n", log_odds_occupancy);
 
     if (!hasChildren() &&
-        ((log_odds_occupancy > CLAMPING_THRES_MAX) || (log_odds_occupancy < CLAMPING_THRES_MIN))) {
+        ((log_odds_occupancy > CLAMPING_THRES_MAX) || 
+	 (log_odds_occupancy < CLAMPING_THRES_MIN))) {
       this->convertToBinary();
     }
-
   }
 
   double OcTreeNode::getOccupancy() const {
-    if (isDelta()) {
-      return 1. - ( 1. / (1. + exp(log_odds_occupancy)) );
-    }
-    else {
-      std::cerr << "Warning: getOccupancy on pure binary node\n";
-      exit(0);
-    }
+    return 1. - ( 1. / (1. + exp(log_odds_occupancy)) );
   }
 
   double OcTreeNode::getMeanChildLogOdds() const{
@@ -209,6 +157,7 @@ namespace octomap {
   }
 
 
+
   double OcTreeNode::getMaxChildLogOdds() const{
     double max = -1e6;
     for (unsigned int i=0; i<8; i++) {
@@ -222,70 +171,17 @@ namespace octomap {
 
 
   bool OcTreeNode::isOccupied() const {
-    if (isDelta()) return (this->getOccupancy() >= ML_OCC_PROB_THRES); // TODO speedup logodds >= 0 ?
-    else return (getLabel() == OCCUPIED);
+    return (this->getOccupancy() >= ML_OCC_PROB_THRES);
   }
 
 
-  void OcTreeNode::convertToDelta() {
-    assert(!isDelta());
-
-    // converting leaf
+  void OcTreeNode::convertToBinary() {
     if (!hasChildren()) {
       if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
       else              setLogOdds(CLAMPING_THRES_MIN);
     }
-
-    setDelta(true);
   }
 
-  void OcTreeNode::convertToBinary() {
-    assert(isDelta());
-
-    // converting node
-    if (hasChildren()) {
-
-
-      // REMOVE FOR RELEASE
-      for (unsigned int i=0; i<8; i++) {
-	if (childExists(i) && (getChild(i)->isDelta())) {
-	  printf("convertToBinary:: node has delta children. This should not happen.\n");
-	  exit(0);
-	  return;
-	}
-      }
-
-
-      setLabel(commonChildLabel());
-
-      // REMOVE FOR RELEASE
-      if (getLabel() == UNKNOWN) {
-	printf("convertToBinary:: label is set to UNKOWN. This should not happen.\n");
-	exit(0);
-	return;
-      }
-
-
-      //      printf("{%d}", getLabel());
-    }
-
-    // converting leaf
-    else {
-      if (isOccupied()) setLabel(OCCUPIED);
-      else              setLabel(FREE);
-    }
-
-    setDelta(false);
-  }
-
-
-  // TODO use label (char) instead of bool?
-  bool OcTreeNode::labelMatches(bool occupied) const{
-    assert(!isDelta());
-
-    return ((occupied && (getLabel() == OCCUPIED)) ||
-	    (!occupied && getLabel() == FREE));
-  }
 
   // ============================================================
   // =  pruning           =======================================
@@ -304,10 +200,10 @@ namespace octomap {
   // post-condition:
   // children deleted, node's label is common label of children
   bool OcTreeNode::pruneBinary() {
-
-    char common_label = this->getChild(0)->getLabel();
+    
+    bool occupancy_state = this->getChild(0)->isOccupied();
     for (unsigned int i=1; i<8; i++) {
-      if (this->getChild(i)->getLabel() != common_label) return false;
+      if (this->getChild(i)->isOccupied() != occupancy_state) return false;
     }
 
     // prune children
@@ -317,9 +213,6 @@ namespace octomap {
     delete[] itsChildren;
     itsChildren = NULL;
 
-    // convert pruned node to binary leaf
-    this->setLabel(common_label);
-    //     printf("%d)", common_label);
     if (isDelta()) convertToBinary();
 
     return true;
@@ -349,65 +242,45 @@ namespace octomap {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
         // child is free leaf
         createChild(i);
-        getChild(i)->setLabel(FREE);
-        getChild(i)->setDelta(false);
+        getChild(i)->setLogOdds(CLAMPING_THRES_MIN);
       }
       else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i);
-        getChild(i)->setLabel(OCCUPIED);
-        getChild(i)->setDelta(false);
+        getChild(i)->setLogOdds(CLAMPING_THRES_MAX);
       }
       else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
         // child has children
         createChild(i);
-        getChild(i)->setLabel(UNKNOWN);
-        getChild(i)->setDelta(false);
+        getChild(i)->setLogOdds(-200.); // child is unkown, we leave it uninitialized
       }
-      // child is unkown, we leave it uninitialized
     }
     for (unsigned int i=0; i<4; i++) {
       if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 0)) {
         // child is free leaf
         createChild(i+4);
-        getChild(i+4)->setLabel(FREE);
-        getChild(i+4)->setDelta(false);
+        getChild(i+4)->setLogOdds(CLAMPING_THRES_MIN);
       }
       else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i+4);
-        getChild(i+4)->setLabel(OCCUPIED);
-        getChild(i+4)->setDelta(false);
+        getChild(i+4)->setLogOdds(CLAMPING_THRES_MAX);
       }
       else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
         // child has children
         createChild(i+4);
-        getChild(i+4)->setLabel(UNKNOWN); // set occupancy when all children have been read
-        getChild(i+4)->setDelta(false);
+        getChild(i+4)->setLogOdds(-200.); // set occupancy when all children have been read
       }
       // child is unkown, we leave it uninitialized
     }
-
 
     // read children's children and set the label
     for (unsigned int i=0; i<8; i++) {
       if (this->childExists(i)) {
         OcTreeNode* child = this->getChild(i);
-        if (child->getLabel() == UNKNOWN) {
-
+        if (fabs(child->getLogOdds()+200.)<1e-3) {
           child->readBinary(s);
-
-          char child_label = UNKNOWN;
-          for (unsigned int j=0; j<8; j++) {
-            if (child->childExists(j)) {
-              OcTreeNode* grand_child = child->getChild(j);
-              char label = grand_child->getLabel();
-              if      (child_label == UNKNOWN) child_label = label;
-              else if (child_label != label)   child_label = MIXED;
-	    }
-	  } // end for grand children
-
-          child->setLabel(child_label);
+          child->setLogOdds(child->getMaxChildLogOdds());
         }
       } // end if child exists
     } // end for children
@@ -433,9 +306,9 @@ namespace octomap {
     for (unsigned int i=0; i<4; i++) {
       if (childExists(i)) {
         OcTreeNode* child = this->getChild(i);
-        if      (child->hasChildren())        { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
-        else if (child->getLabel()==OCCUPIED) { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
-        else                                  { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
+        if      (child->hasChildren())  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
+        else if (child->isOccupied())   { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
+        else                            { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
       }
       else {
         child1to4[i*2] = 0; child1to4[i*2+1] = 0;
@@ -445,9 +318,9 @@ namespace octomap {
     for (unsigned int i=0; i<4; i++) {
       if (childExists(i+4)) {
         OcTreeNode* child = this->getChild(i+4);
-        if      (child->hasChildren())        { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
-        else if (child->getLabel()==OCCUPIED) { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
-        else                                  { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
+        if      (child->hasChildren())  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
+        else if (child->isOccupied())   { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
+        else                            { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
       }
       else {
         child5to8[i*2] = 0; child5to8[i*2+1] = 0;

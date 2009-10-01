@@ -230,7 +230,7 @@ void ViewerGui::showOcTree() {
     if (m_ocTree->size() < 5 * 1e6) {
       m_ocTree->getFreespace (m_max_tree_depth, m_occupancyThresh, free_voxels, free_delta_voxels);
       m_ocTree->getVoxels(m_max_tree_depth, grid_voxels);
-      m_ocTree->getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
+      // FIXME m_ocTree->getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
     }
 
     double minX, minY, minZ, maxX, maxY, maxZ;

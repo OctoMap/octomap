@@ -55,12 +55,10 @@ namespace octomap {
     //       return leaf
     OcTreeNode* leaf;
     if (this->search(value, leaf)) { // TODO: Possible speedup: avoid search in every insert?
-      if ((!leaf->isDelta()) && (leaf->labelMatches(occupied))) {
+      if ((!leaf->isDelta()) && (leaf->isOccupied() == occupied)) {
         return leaf;
       }
     }
-
-    if (!(itsRoot->isDelta())) itsRoot->convertToDelta();
 
     // generate key for addressing in tree
     unsigned short int key[3];
@@ -82,11 +80,7 @@ namespace octomap {
 
     // follow down to last level
     if (depth < tree_depth) {
-      if (node->childExists(pos)) {
-	// new information is added to existing node -> convert to delta if needed
-        if (!(node->getChild(pos)->isDelta())) node->getChild(pos)->convertToDelta();
-      }
-      else {
+      if (!node->childExists(pos)) {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created && (node != itsRoot)) {
           // current node does not have children AND it is not a new node 
@@ -96,7 +90,7 @@ namespace octomap {
             node->createChild(k);
             tree_size++;
             sizeChanged = true;
-            node->getChild(k)->setLabel(node->getLabel());
+            //node->getChild(k)->setLabel(node->getLabel());
           }
         }
         else {
@@ -107,7 +101,8 @@ namespace octomap {
         }
         created_node = true;
       }
-      OcTreeNode* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, occupied);
+      OcTreeNode* retval = updateNodeRecurs(node->getChild(pos), created_node, 
+					    key, depth+1, occupied);
 
       // set own probability to mean prob of children
       //      node->setLogOdds(node->getMeanChildLogOdds());
@@ -160,23 +155,22 @@ namespace octomap {
           if (i & 4)  search_center(2) = parent_center(2) + center_offset;
           else        search_center(2) = parent_center(2) - center_offset;
 
-          getOccupiedRecurs(node->getChild(i), depth+1, max_depth, occ_thres, search_center, binary_nodes, delta_nodes);
+          getOccupiedRecurs(node->getChild(i), depth+1, max_depth, 
+			    occ_thres, search_center, binary_nodes, delta_nodes);
         }
       }
     }
 
     else { // max level reached
-      // delta node
-      if (node->isDelta()) {
-	if (node->getOccupancy() >= occ_thres) {
-	  double voxelSize = resolution * pow(2., double(tree_depth - depth));
+
+      if (node->isOccupied()) {
+	double voxelSize = resolution * pow(2., double(tree_depth - depth));
+	if (node->isDelta()) {
 	  delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
 	}
-      }
-      // binary node
-      else if (node->getLabel() == OcTreeNode::OCCUPIED || node->getLabel() == OcTreeNode::MIXED) {
-        double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+	else {
+	  binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+	}
       }
     }
   }
@@ -221,66 +215,16 @@ namespace octomap {
     }
     else {    // max level reached
 
-      // delta node
-      if (node->isDelta()) {
-        if (node->getOccupancy() < occ_thres) {
-                double voxelSize = resolution * pow(2., double(tree_depth - depth));
-                delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        }
+      if (!node->isOccupied()) {
+	double voxelSize = resolution * pow(2., double(tree_depth - depth));
+	if (node->isDelta()) {
+	  delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+	}
+	else {
+	  binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+	}
       }
-      // regular binary node
-      else if (node->getLabel() == OcTreeNode::FREE) {
-        double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-      }
-
-    }
-  }
-
-
-  void OcTree::getChangedFreespace(unsigned int max_depth, double occ_thres,
-			    std::list<OcTreeVolume>& nodes) const{
-    getChangedFreespaceRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, nodes);
-  }
-
-  void OcTree::getChangedFreespaceRecurs(OcTreeNode* node, unsigned int depth, 
-					 unsigned int max_depth, double occ_thres,
-					 const point3d& parent_center, 
-					 std::list<OcTreeVolume>& nodes) const{
-
-    if (depth < max_depth && node->hasChildren()) {
-
-      double center_offset = tree_center(0) / pow( 2., (double) depth+1);
-      point3d search_center;
-
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-
-          // x-axis
-          if (i & 1)  search_center(0) = parent_center(0) + center_offset;
-          else        search_center(0) = parent_center(0) - center_offset;
-
-          // y-axis
-          if (i & 2)  search_center(1) = parent_center(1) + center_offset;
-          else        search_center(1) = parent_center(1) - center_offset;
-          // z-axis
-          if (i & 4)  search_center(2) = parent_center(2) + center_offset;
-          else        search_center(2) = parent_center(2) - center_offset;
-
-          getChangedFreespaceRecurs(node->getChild(i), depth+1, max_depth, occ_thres, search_center, nodes);
-
-        } // GetChild
-      } // depth
-    }
-    else {    // max level reached
-
-      // delta node
-      if (node->isDelta() && node->getLabel() == OcTreeNode::FREE) {
-        //if (node->getOccupancy() < occ_thres) {
-                double voxelSize = resolution * pow(2., double(tree_depth - depth));
-                nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        //}
-      }
+      
     }
   }
 
@@ -359,7 +303,8 @@ namespace octomap {
       octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z() + SCANGRAPH_HEIGHT_OFFSET); // note the height hack
       octomap::point3d p;
 
-      for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
+      for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); 
+	   point_it != scan.scan->end(); point_it++) {
         p = scan_pose.transform(**point_it);
         this->insertRay(origin, p);
       } // end for all points

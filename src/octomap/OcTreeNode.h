@@ -1,3 +1,6 @@
+#ifndef OCTOMAP_OCTREE_NODE_H
+#define OCTOMAP_OCTREE_NODE_H
+
 // $Id$
 
 /**
@@ -24,9 +27,6 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_BINARYOCTREE_NODE_HH
-#define OCTOMAP_BINARYOCTREE_NODE_HH
-
 #include "octomap_types.h"
 
 namespace octomap {
@@ -47,18 +47,14 @@ namespace octomap {
 
   public:
 
-    enum Labels {FREE=0, OCCUPIED=1, MIXED=2, UNKNOWN=3};
-
     OcTreeNode();
-    ~OcTreeNode();
+    virtual ~OcTreeNode();
 
     /// \return a pointer to the i th child of the node. The child needs to exist.
-    OcTreeNode* getChild(unsigned int i);
-
+    virtual OcTreeNode* getChild(unsigned int i);
     /// \return a const pointer to the i th child of the node. The child needs to exist.
-    const OcTreeNode* getChild(unsigned int i) const;
-
-    bool createChild(unsigned int i);
+    virtual const OcTreeNode* getChild(unsigned int i) const;
+    virtual bool createChild(unsigned int i);
 
     /// \return true if the i th child exists
     bool childExists(unsigned int i) const;
@@ -68,30 +64,11 @@ namespace octomap {
     /// and are completely binary.
     bool collapsible() const;
 
-    // data
-    /**
-     * Stable nodes are called 'binary', else they are
-     * called 'delta' nodes
-     * @return false if node is stable
-     */
     bool isDelta() const;
+    virtual void convertToBinary();
+ 
     /**
-     * set a label out of those defined in OcTreeNode::Labels (0..3)
-     */
-    void setLabel(char l);
-
-    /// \return label of node
-    char getLabel() const;
-
-    /**
-     * Converts a stable  node to delta. Sets LogOdds only of leaf nodes,
-     * inner nodes should be set by the update call
-     */
-    void convertToDelta();
-    void convertToBinary();
-    bool labelMatches(bool occupied) const;
-    /**
-     * @return mean of all child probabilities (when they exist), in log odds
+     * @return mean of all child probabilities (if they exist), in log odds
      */
     double getMeanChildLogOdds() const;
 
@@ -107,7 +84,6 @@ namespace octomap {
 
     float getLogOdds() const{ return log_odds_occupancy; }
     void setLogOdds(float l) { log_odds_occupancy = l; }
-
 
 
     /**
@@ -128,16 +104,14 @@ namespace octomap {
     double prior() const;
 
     void allocChildren();
-    void setDelta(bool a);
-    char commonChildLabel() const;
     bool pruneBinary();
 
     float log_odds_occupancy; // store log odds occupancy probability
-    char data; // store label and state
-
     OcTreeNode** itsChildren; // pointer to children, may be NULL
   };
 
+
+  // =========================================
   // for memory computation only
   class OcTreeNodeLight {
   public:
