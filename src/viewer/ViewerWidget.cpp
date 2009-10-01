@@ -26,6 +26,8 @@
 
 #include "ViewerWidget.h"
 
+#define ALPHA_OCCUPIED 0.8
+
 using namespace std;
 
 namespace octomap{
@@ -59,7 +61,7 @@ void ViewerWidget::init() {
   // Light initialization:
   glEnable(GL_LIGHT0);
 
-  float pos[4] = {-1.0, -1.0, 1.0, 0.0};
+  float pos[4] = {-1.0, 1.0, 1.0, 0.0};
   // Directional light
   glLightfv(GL_LIGHT0, GL_POSITION, pos);
 }
@@ -295,7 +297,7 @@ void ViewerWidget::heightMapColor(double h, GLfloat* glArrayPos) const{
     glArrayPos[0] = r;
     glArrayPos[1] = g;
     glArrayPos[2] = b;
-    glArrayPos[3] = 1.0; // alpha
+    glArrayPos[3] = ALPHA_OCCUPIED; // alpha
 }
 
 
@@ -504,7 +506,8 @@ void ViewerWidget::addSceneObject(SceneObject* obj){
 
 void ViewerWidget::removeSceneObject(SceneObject* obj){
   assert(obj);
-  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end();){
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin();
+      it != m_sceneObjects.end();){
     if (*it == obj)
       it = m_sceneObjects.erase(it);
     else
@@ -569,7 +572,8 @@ void ViewerWidget::clearOcTreeStructure(){
 
 void ViewerWidget::clearAll(){
   // clear drawable objects:
-  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end();){
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); 
+      it != m_sceneObjects.end();){
     (*it)->clear();
   }
 
@@ -594,7 +598,8 @@ void ViewerWidget::draw(){
   }
 
   // draw drawable objects:
-  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); ++it){
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); 
+      it != m_sceneObjects.end(); ++it){
     (*it)->draw();
   }
 
@@ -623,14 +628,14 @@ void ViewerWidget::drawOctreeCells() const {
 
   // draw binary occupied cells
   if (octree_occupied_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, 1.0);
+    if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, ALPHA_OCCUPIED);
     if (m_draw_freespaceDeltaOnly) glColor4f(0.2, 0.7, 1.0, 1.0);
     drawCubes(octree_occupied_cells_vertex_array, octree_occupied_cells_vertex_size, octree_occupied_cells_color_array);
   }
 
   // draw delta occupied cells
   if (octree_occupied_delta_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, 1.0);
+    if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, ALPHA_OCCUPIED);
     drawCubes(octree_occupied_delta_cells_vertex_array, octree_occupied_delta_cells_vertex_size, octree_occupied_delta_cells_color_array);
   }
 
@@ -651,14 +656,14 @@ void ViewerWidget::drawFreespace() const {
 
   // draw binary freespace cells
   if (!m_draw_freespaceDeltaOnly && octree_freespace_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.0, 1.0, 0., 0.2);
+    if (!m_printoutMode) glColor4f(0.0, 1.0, 0., 0.3);
     drawCubes(octree_freespace_cells_vertex_array, octree_freespace_cells_vertex_size);
   }
 
 
   // draw delta freespace cells
   if (octree_freespace_delta_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.2);
+    if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.3);
     if (m_draw_freespaceDeltaOnly) glColor4f(1.0, 0., 0., 1.0);
     drawCubes(octree_freespace_delta_cells_vertex_array, octree_freespace_delta_cells_vertex_size);
   }
@@ -666,7 +671,8 @@ void ViewerWidget::drawFreespace() const {
 
 
 
-void ViewerWidget::drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize, GLfloat* cubeColorArray) const {
+void ViewerWidget::drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
+			     GLfloat* cubeColorArray) const {
   if (cubeArraySize == 0)
     return;
 
