@@ -281,6 +281,9 @@ void ViewerGui::openFile(){
     else if (fileinfo.suffix() == "bt"){
       openTree();
     }
+    else if (fileinfo.suffix() == "dat"){
+      openPointcloud();
+    }
     else {
       QMessageBox::warning(this, "Unknown file", "Cannot open file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
     }
@@ -298,6 +301,40 @@ void ViewerGui::openGraph(bool completeGraph){
   m_scanGraph->readBinary(m_filename);
 
   loadGraph(completeGraph);
+}
+
+
+void ViewerGui::openPointcloud(){
+  
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  showInfo("Loading ASCII pointcloud from file "+QString::fromStdString(m_filename)+"...");
+
+  m_scanGraph = boost::shared_ptr<octomap::ScanGraph>(new octomap::ScanGraph());
+
+
+  // read pointcloud from file
+  std::ifstream s(m_filename.c_str());
+  Pointcloud pc;
+
+  if (!s) {
+    std::cout <<"ERROR: could not read " << m_filename << std::endl;
+    return;
+  }
+
+  std::string tmp;
+  octomath::Vector3 p;
+  while (!s.eof()) {
+    for (unsigned int i=0; i<3; i++){
+      s >> p(i);   
+    }
+    pc.push_back(p);
+  }    
+
+  octomath::Pose6D laser_pose(0,0,0,0,0,0);
+  m_scanGraph->addNode(&pc, laser_pose);
+
+  loadGraph(true);
+  showInfo("Done.", true);
 }
 
 
@@ -451,7 +488,7 @@ void ViewerGui::on_actionSettings_triggered(){
 void ViewerGui::on_actionOpen_file_triggered(){
   QString filename = QFileDialog::getOpenFileName(this,
 	      tr("Open log file"), "",
-	  "All supported files (*.graph *.bt);;binary scan graph (*.graph);;bonsai tree (*.bt);;All files (*)");
+	  "All supported files (*.graph *.bt *.dat);;binary scan graph (*.graph);;bonsai tree (*.bt);;pointcloud (*.dat);;All files (*)");
   if (filename != ""){
     m_filename = filename.toStdString();
     openFile();

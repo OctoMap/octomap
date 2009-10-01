@@ -95,10 +95,10 @@ class ViewerGui : public QMainWindow {
   void openFile();
 
   /**
-   * Reads in a .log file, generates and optimizes a ScanGraph. Afterwards,
-   * loadGraph() is called.
+   * Reads in a .dat file which consists of single points in ASCII,
+   * one point per line, values separated by white spaces
    */
-  void openLog();
+  void openPointcloud();
 
   /**
    * Opens a .graph file and generates a ScanGraph from it. Afterwards,
