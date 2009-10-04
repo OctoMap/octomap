@@ -13,11 +13,12 @@ License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 REQUIREMENTS
 ############################
 
- * octomap: a regular build environment
+ * octomap: a regular build environment, cmake
  
  * viewer: Boost smart_ptr, Qt4, libQGLViewer (included in "extern") 
-    You can install all dependencies on Ubuntu / Debian by running:
-    "sudo apt-get install libqt4-dev libqt4-opengl-dev libboost-dev"
+
+   You can install all dependencies on Ubuntu / Debian by running:
+   sudo apt-get install cmake libqt4-dev libqt4-opengl-dev libboost-dev
     
  * HTML documentation: doxygen
 
