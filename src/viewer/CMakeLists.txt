@@ -14,9 +14,8 @@ include(${QT_USE_FILE})
 
 # Boost (smart ptr)
 find_package(Boost COMPONENTS smart_ptr)
-link_directories ( ${Boost_LIBRARY_DIRS} )
+link_directories ( ${Boost_LIBRARY_DIRS})
 include_directories ( ${Boost_INCLUDE_DIRS} )
-
 
 # sources for this project
 set(viewer_SRCS
@@ -56,21 +55,22 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 # Resource files (icons, ...)
 QT4_ADD_RESOURCES(viewer_RES icons.qrc)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/octomap
-  ${CMAKE_SOURCE_DIR}/extern	# for local copy of libQGLViewer
-)
+#found QGLViewer lib dir
+link_directories(${QGLViewer_LIBRARY_DIR})
 
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/extern/QGLViewer)	# for local copy of libQGLViewer
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_SOURCE_DIR}/octomap
+  ${QGLViewer_INCLUDE_DIR}
+)
 
 # Now add these generated files to the ADD_EXECUTABLE step
 # If this is NOT done, then the ui_*.h files will not be generated
 add_executable(viewer3d ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
 
-add_dependencies(viewer3d qglviewer)
-
 # link the target against the Qt libraries. which libraries exactly, is defined by the "include(${QT_USE_FILE})" line above, which sets up this variable.
 target_link_libraries(viewer3d 
-	QGLViewer
+    ${QGLViewer_LIBRARIES}
 	${QT_LIBRARIES}
 	${Boost_LIBRARIES}
 	octomap 

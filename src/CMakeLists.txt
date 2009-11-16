@@ -25,6 +25,8 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULES_PATH} ${BASE_DIR}/CMakeModules)
+
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/math
@@ -37,17 +39,12 @@ ADD_SUBDIRECTORY( octomap )
 
 # Look for Qt4 for Viewer:
 FIND_PACKAGE(Qt4)
-IF(QT4_FOUND)
-    ADD_CUSTOM_TARGET(qglviewer 
-        qmake-qt4
-        COMMAND make
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/extern/QGLViewer
-        COMMENT "Building libQGLViewer..." VERBATIM)
-        
+FIND_PACKAGE(QGLViewer)
+IF(QT4_FOUND AND QGLViewer_FOUND)
     ADD_SUBDIRECTORY( viewer ) 
-ELSE(QT4_FOUND)
-	MESSAGE(STATUS "Qt4 not found, skipping GUI")
-ENDIF(QT4_FOUND)
+ELSE()
+	MESSAGE(STATUS "Qt4 or QGLViewer not found, skipping GUI")
+ENDIF()
 
 # Documentation target:
 FIND_PACKAGE(Doxygen)

@@ -30,7 +30,7 @@
 #include "SceneObject.h"
 #include <octomap.h>
 #include <boost/shared_ptr.hpp>
-#include <QGLViewer/qglviewer.h>
+#include <qglviewer.h>
 
 namespace octomap{
 
