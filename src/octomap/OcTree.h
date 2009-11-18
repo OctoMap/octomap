@@ -44,7 +44,19 @@ namespace octomap {
 
   public:
 
+    /**
+     * Creates a new (empty) OcTree of a given resolution
+     * @param _resolution
+     */
     OcTree(double _resolution);
+
+    /**
+     * Creates a new OcTree by reading in from a binary file
+     * @param _filename
+     *
+     */
+    OcTree(std::string _filename);
+
     virtual ~OcTree();
 
     /**

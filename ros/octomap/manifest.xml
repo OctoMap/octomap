@@ -1,0 +1,19 @@
+<package>
+  <description brief="octomap">
+
+     octomap - A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
+	 This package provides an integration of the Octomap library into ROS, by forwarding Makefile, 
+	 includes and libs to the right directories.
+
+  </description>
+  <author>Kai M. Wurm and Armin Hornung</author>
+  <license>GPL</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://octomap.sourceforge.net/</url>
+  <export>
+  	<cpp cflags="-I${prefix}/../../src" lflags="-L${prefix}/../../lib -loctomath -loctomap -Wl,-rpath,${prefix}/../../lib" />
+  </export>
+
+</package>
+
+

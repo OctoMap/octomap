@@ -15,10 +15,14 @@ REQUIREMENTS
 
  * octomap: a regular build environment, cmake
  
- * viewer: Boost smart_ptr, Qt4, libQGLViewer (included in "extern") 
+ * viewer: Boost smart_ptr, Qt4, QGLViewer 
 
    You can install all dependencies on Ubuntu / Debian by running:
    sudo apt-get install cmake libqt4-dev libqt4-opengl-dev libboost-dev
+   
+   Since Ubuntu 9.10, there is also a Qt4-linked QGLViewer available 
+   which will be used instead of the version in "extern" whenever available.
+   To use it, install the Ubuntu package "libqglviewer-qt4-dev".
     
  * HTML documentation: doxygen
 
@@ -54,8 +58,16 @@ A HTML-Documentation can be built using Doxygen by running
       "make docs"
 
 in the build directory. The documentation will end up in
-/doc/html/index.html in the main directory.
+doc/html/index.html in the main directory.
 
+
+ROS-INTEGRATION
+############################
+
+Octomap can be directly used in any node running in the Robot
+Operating System (ROS, http://www.ros.org). A virtual ROS package
+is included in the subfolder "ros". Just append that path to your
+ROS_PACKAGE_PATH environment variable.
 
 
 ECLIPSE PROJECT FILES
@@ -68,6 +80,10 @@ http://www.vtk.org/Wiki/Eclipse_CDT4_Generator) by running:
 	
 Import the project (existing project, root is the build folder, do
 not copy contents) into Eclipse afterwards.
+
+
+
+
 
 
 

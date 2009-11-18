@@ -2,6 +2,8 @@
 # Looks for a system-wide version of libQGLViewer (qglviewer-qt4 in Ubuntu).
 # If none is found, it builds and uses the local copy in "extern"
 #
+# Many thanks to L. Ott for assistance!
+#
 # QGLViewer_INCLUDE_DIR      where to find the include files
 # QGLViewer_LIBRARY_DIR      where to find the libraries
 # QGLViewer_LIBRARIES        list of libraries to link

@@ -43,6 +43,16 @@ namespace octomap {
     tree_size++;
   }
 
+  OcTree::OcTree(std::string _filename)
+    : AbstractOcTree<OcTreeNode> (0.1)  {
+    itsRoot = new OcTreeNode();
+    tree_size++;
+
+    // TODO: creates a warning because the resolution is going to change anyways
+    readBinary(_filename);
+  }
+
+
   OcTree::~OcTree() {
     delete itsRoot;
   }
@@ -216,13 +226,13 @@ namespace octomap {
     else {    // max level reached
 
       if (!node->isOccupied()) {
-	double voxelSize = resolution * pow(2., double(tree_depth - depth));
-	if (node->isDelta()) {
-	  delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-	}
-	else {
-	  binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-	}
+        double voxelSize = resolution * pow(2., double(tree_depth - depth));
+        if (node->isDelta()) {
+          delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+        }
+        else {
+          binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+        }
       }
       
     }
