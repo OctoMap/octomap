@@ -28,7 +28,7 @@
 #define SCENEOBJECT_H_
 
 #include <qglviewer.h>
-#include <octomap.h>
+#include <octomap/octomap.h>
 
 namespace octomap {
 

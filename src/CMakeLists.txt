@@ -28,22 +28,23 @@ SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULES_PATH} ${BASE_DIR}/CMakeModules)
 
 
+# Main include dir is the "src" dir
 INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/math
-  ${CMAKE_SOURCE_DIR}/octomap
+  ${CMAKE_SOURCE_DIR}
 )
 
-ADD_SUBDIRECTORY( math )
+ADD_SUBDIRECTORY( octomath )
 ADD_SUBDIRECTORY( octomap )
 
 
 # Look for Qt4 for Viewer:
 FIND_PACKAGE(Qt4)
 FIND_PACKAGE(QGLViewer)
+FIND_PACKAGE(Boost COMPONENTS smart_ptr)
 IF(QT4_FOUND AND QGLViewer_FOUND)
-    ADD_SUBDIRECTORY( viewer ) 
+    ADD_SUBDIRECTORY( octovis ) 
 ELSE()
-	MESSAGE(STATUS "Qt4 or QGLViewer not found, skipping GUI")
+	MESSAGE(STATUS "Skipping GUI, some of the required libraries (Qt4, QGLViewer) are missing!")
 ENDIF()
 
 # Documentation target:

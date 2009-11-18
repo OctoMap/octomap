@@ -28,7 +28,7 @@
 #define VIEWERWIDGET_H_
 
 #include "SceneObject.h"
-#include <octomap.h>
+#include <octomap/octomap.h>
 #include <boost/shared_ptr.hpp>
 #include <qglviewer.h>
 

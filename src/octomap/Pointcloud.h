@@ -27,9 +27,9 @@
 #ifndef OCTOMAP_POINTCLOUD_H
 #define OCTOMAP_POINTCLOUD_H
 
-#include<vector>
-#include<list>
-#include <octomap_types.h>
+#include <vector>
+#include <list>
+#include <octomap/octomap_types.h>
 
 namespace octomap {
 

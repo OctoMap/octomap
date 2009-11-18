@@ -58,18 +58,16 @@ QT4_ADD_RESOURCES(viewer_RES icons.qrc)
 #found QGLViewer lib dir
 link_directories(${QGLViewer_LIBRARY_DIR})
 
-
 INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/octomap
   ${QGLViewer_INCLUDE_DIR}
 )
 
 # Now add these generated files to the ADD_EXECUTABLE step
 # If this is NOT done, then the ui_*.h files will not be generated
-add_executable(viewer3d ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
+add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
 
 # link the target against the Qt libraries. which libraries exactly, is defined by the "include(${QT_USE_FILE})" line above, which sets up this variable.
-target_link_libraries(viewer3d 
+target_link_libraries(octovis 
     ${QGLViewer_LIBRARIES}
 	${QT_LIBRARIES}
 	${Boost_LIBRARIES}

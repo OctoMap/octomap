@@ -29,8 +29,8 @@
 
 #include <vector>
 
-#include <Vector3.h>
-#include <Pose6D.h>
+#include <octomath/Vector3.h>
+#include <octomath/Pose6D.h>
 
 namespace octomap {
 
