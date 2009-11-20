@@ -94,6 +94,10 @@ class ViewerWidget : public QGLViewer {
 
   virtual void draw();
   virtual void init();
+  /**
+   * Overloaded from QGLViewer. Draws own axis and grid in scale, then calls QGLViewer::postDraw().
+   */
+  virtual void postDraw();
   virtual QString helpString() const;
   void drawOctreeGrid();
   void drawOctreeCells() const;
@@ -124,6 +128,8 @@ class ViewerWidget : public QGLViewer {
   bool m_draw_freespaceDeltaOnly;
 
   bool m_octree_grid_vis_initialized;
+  bool m_drawAxis; // actual state of axis (original overwritten)
+  bool m_drawGrid; // actual state of grid (original overwritten)
 
   //! OpenGL representation of Octree cells (cubes)
 
