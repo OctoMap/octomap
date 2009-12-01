@@ -34,7 +34,7 @@ using namespace octomap;
 void printUsage(char* self){
   std::cerr << "USAGE: " << self << " [options]\n"
             "OPTIONS:\n-i <InputFile.graph> (required)\n"
-            "-o <OutputFile.tree> (required) \n"
+            "-o <OutputFile.bt> (required) \n"
             "-res <resolution> (default: 0.1 m)\n";
 
   exit(0);
