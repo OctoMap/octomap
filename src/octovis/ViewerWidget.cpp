@@ -110,6 +110,10 @@ void ViewerWidget::setSceneBoundingBox(const qglviewer::Vec& min, const qglviewe
 
 void ViewerWidget::generateCubes(const std::list<octomap::OcTreeVolume>& voxels, GLfloat** gl_array, GLfloat* gl_color_array) {
 
+  // epsilon to be substracted from cube size so that neighboring planes don't overlap
+  // seems to introduce strange artifacts nevertheless...
+  double eps = 1e-5;
+
   // generate the cubes, 6 quads each
   // min and max-values are computed on-the-fly
   unsigned int i = 0;
@@ -118,7 +122,7 @@ void ViewerWidget::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
 
   for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin(); it != voxels.end(); it++) {
 
-    double half_cube_size = GLfloat(it->second /2.0);
+    double half_cube_size = GLfloat(it->second /2.0 -eps);
 
     x = it->first.x();
     y = it->first.y();
@@ -610,6 +614,44 @@ void ViewerWidget::draw(){
   if (m_drawOcTreeGrid)   drawOctreeGrid();
 
   glDisableClientState(GL_VERTEX_ARRAY);
+
+}
+
+void ViewerWidget::postDraw(){
+
+  // Reset model view matrix to world coordinates origin
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  camera()->loadModelViewMatrix();
+  // TODO restore model loadProjectionMatrixStereo
+
+  // Save OpenGL state
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+  glDisable(GL_COLOR_MATERIAL);
+  qglColor(foregroundColor());
+
+  if (gridIsDrawn()){
+    glLineWidth(1.0);
+    drawGrid(5.0, 10);
+  }
+  if (axisIsDrawn()){
+    glLineWidth(2.0);
+    drawAxis(1.0);
+  }
+
+  // Restore GL state
+  glPopAttrib();
+  glPopMatrix();
+
+  m_drawAxis = axisIsDrawn();
+  m_drawGrid = gridIsDrawn();
+  setAxisIsDrawn(false);
+  setGridIsDrawn(false);
+  QGLViewer::postDraw();
+
+  setAxisIsDrawn(m_drawAxis);
+  setGridIsDrawn(m_drawGrid);
 }
 
 void ViewerWidget::drawOctreeCells() const {

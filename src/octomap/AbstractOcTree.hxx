@@ -72,6 +72,16 @@ namespace octomap {
     }
   }
 
+  template <class NODE>
+  bool AbstractOcTree<NODE>::genKeys(const point3d& point, unsigned short int (&keys)[3]) const{
+    for (unsigned int i=0; i<3; i++) {
+      if ( !genKey( point(i), keys[i]) ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   template <class NODE>
   bool AbstractOcTree<NODE>::genVal(unsigned short int& key, double& val) const{
@@ -110,6 +120,7 @@ namespace octomap {
 
     for (unsigned int i=0; i<3; i++) {
       if ( !genKey( value(i), key[i]) ) {
+        std::cerr << "Error in AbstractOcTree<NODE>: Coordinate "<<i<<" of searched point out of OcTree bounds: "<< value(i)<<"\n";
         return false;
       }
     }

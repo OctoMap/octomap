@@ -97,8 +97,25 @@ namespace octomap {
 
   protected:
 
-    /// generate 16-bit key from/for given value
+    /**
+     * Generates a 16-bit key from/for given value when it is within the octree
+     * bounds, returns false otherwise
+     *
+     * @param val Coordinate of one dimension in the octree
+     * @param key 16bit key of the given coordinate, returned
+     * @return whether val is within the octree bounds
+     */
     bool genKey(double val, unsigned short int& key) const;
+
+    /**
+     * Generates comlpete key for all three dimensions of a given point,
+     * using genKey().
+     *
+     * @param point 3d coordinate of 1 a point
+     * @param keys values that will be computed, an array of fixed size 3.
+     * @return true when point is within the octree, false otherwise
+     */
+    bool genKeys(const point3d& point, unsigned short int (&keys)[3]) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key
     bool genVal(unsigned short int& key, double& val) const;

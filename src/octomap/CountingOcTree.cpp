@@ -86,9 +86,8 @@ namespace octomap {
 
     unsigned short int key[3];
 
-    for (unsigned int i=0; i<3; i++) {
-      if ( !genKey( value(i), key[i]) ) return NULL;
-    }
+    if (!genKeys(value, key))
+        return NULL;
 
     CountingOcTreeNode* curNode = this->getRoot();
     this->traverseNode(curNode);
@@ -100,8 +99,8 @@ namespace octomap {
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {
-	curNode->setChild(pos, new CountingOcTreeNode());
-	tree_size++;
+        curNode->setChild(pos, new CountingOcTreeNode());
+        tree_size++;
       }
 
       // descent tree

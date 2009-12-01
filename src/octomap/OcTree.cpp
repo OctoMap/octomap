@@ -72,10 +72,8 @@ namespace octomap {
 
     // generate key for addressing in tree
     unsigned short int key[3];
-    for (unsigned int i=0; i<3; i++) {
-      if ( !genKey( value(i), key[i]) )
-        return NULL;
-    }
+    if (!genKeys(value, key))
+      return NULL;
 
     return updateNodeRecurs(itsRoot, false, key, 0, occupied);
   }
@@ -174,13 +172,13 @@ namespace octomap {
     else { // max level reached
 
       if (node->isOccupied()) {
-	double voxelSize = resolution * pow(2., double(tree_depth - depth));
-	if (node->isDelta()) {
-	  delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-	}
-	else {
-	  binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-	}
+        double voxelSize = resolution * pow(2., double(tree_depth - depth));
+        if (node->isDelta()) {
+          delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+        }
+        else {
+          binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+        }
       }
     }
   }
@@ -425,6 +423,119 @@ namespace octomap {
       else {
         _ray.push_back(value);
       }
+    } // end while
+
+    return true;
+  }
+
+  bool OcTree::castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange) const {
+
+    // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
+    // basically: DDA in 3D
+
+    // Initialization phase -------------------------------------------------------
+    end = point3d(0.0, 0.0, 0.0);
+
+    point3d direction = directionP.unit();
+
+    OcTreeNode* startingNode;
+    if (search(origin, startingNode)){
+      if (startingNode->isOccupied()){
+        std::cerr << "WARNING: No raycast done, origin node is already occupied.\n";
+        return false;
+      }
+    } else {
+      std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";
+      return false;
+    }
+
+
+    // Voxel integer coordinates are the indices of the OcTree cells
+    // at the lowest level (they may exist or not).
+
+    unsigned short int voxelIdx[3];  // voxel integer coords
+    int step[3];                     // step direction
+
+    double tMax[3];
+    double tDelta[3];
+
+    for(unsigned int i=0; i < 3; ++i) {
+      if (!genKey(origin(i), voxelIdx[i])) {
+        std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i)<<"\n";
+        return false;
+      }
+
+      if (direction(i) > 0.0) step[i] =  1;
+      else if (direction(i) < 0.0)   step[i] = -1;
+      else step[i] = 0;
+
+      double voxelBorder = (double) ( (int) voxelIdx[i] - (int) tree_max_val ) * resolution;
+      if (step[i] > 0) voxelBorder += resolution;
+
+      if (direction(i) != 0.0) {
+        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
+        tDelta[i] = resolution / fabs( direction(i) );
+      }
+      else {
+        tMax[i] = 1e6;
+        tDelta[i] = 1e6;
+      }
+    }
+
+    // Incremental phase  ---------------------------------------------------------
+
+    bool done = false;
+    while (!done) {
+      unsigned int i;
+
+      // find minimum tMax:
+      if (tMax[0] < tMax[1]){
+        if (tMax[0] < tMax[2]) i = 0;
+        else                   i = 2;
+      }
+      else {
+        if (tMax[1] < tMax[2]) i = 1;
+        else                   i = 2;
+      }
+
+      // advance in direction "i":
+      voxelIdx[i] += step[i];
+
+      if ((voxelIdx[i] >= 0) && (voxelIdx[i] < 2*tree_max_val)){
+        tMax[i] += tDelta[i];
+      }
+      else {
+        std::cerr << "WARNING: Ray casting in OcTree::castRay() hit the boundary in dim. "<< i << std::endl;
+        return false;
+      }
+
+      // generate world coords from tree indices
+      double val[3];
+      for (unsigned int j = 0; j < 3; j++) {
+        if(!genVal( voxelIdx[j], val[j] )){
+          std::cerr << "Error in OcTree::castRay(): genVal failed!\n";
+          return false;
+        }
+      }
+      end = point3d(val[0], val[1], val[2]);
+      // reached maxRange?
+      if (maxRange > 0 && (end - origin).norm2() > maxRange) {
+        return false;
+      }
+
+      OcTreeNode* currentNode;
+      if (search(end, currentNode)){
+        if (currentNode->isOccupied())
+          done = true;
+
+        // otherwise: node is free and valid, raycast continues
+      } else{ // no node found, this usually means we are in "unknown" areas
+  //        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
+  //                  << end << std::endl;
+        return false;
+      }
+
+
     } // end while
 
     return true;
@@ -677,8 +788,8 @@ namespace octomap {
   std::istream& OcTree::readBinary(std::ifstream &s) {
 
     if (!s.is_open()){
-      std::cerr << "ERROR: Could not read from input filestream in OcTree::readBinary, exiting!\n";
-      exit(0);
+      std::cerr << "ERROR: Input filestream in OcTree::readBinary not open, nothing read.\n";
+      return s;
     } else if (!s.good()){
       std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
     }
