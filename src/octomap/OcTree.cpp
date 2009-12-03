@@ -305,7 +305,7 @@ namespace octomap {
     if (NO_UNIFORM_SAMPLING){
       std::cerr << "Warning: Uniform sampling of scan is disabled!\n";
 
-      octomath::Pose6D scan_pose (scan.pose);
+      pose6d scan_pose (scan.pose);
 
       // integrate beams
       octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
@@ -332,7 +332,7 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
 
-    octomath::Vector3 direction = (end - origin).unit();
+    point3d direction = (end - origin).unit();
     double maxLength = (end - origin).norm2();
 
     // Voxel integer coordinates are the indices of the OcTree cells
@@ -566,7 +566,7 @@ namespace octomap {
 
 
   void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
-    octomath::Pose6D scan_pose (scan.pose);
+    pose6d scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
     octomap::point3d p;
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
@@ -581,7 +581,7 @@ namespace octomap {
   }
 
   void OcTree::insertScanUniform(const ScanNode& scan) {
-    octomath::Pose6D scan_pose (scan.pose);
+    octomap::pose6d scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
     octomap::point3d p;
 

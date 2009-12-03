@@ -35,6 +35,7 @@
 namespace octomap {
 
   typedef octomath::Vector3               point3d;
+  typedef octomath::Pose6D                pose6d;
   typedef std::vector<octomath::Vector3*> point3d_collection;
   /// A voxel defined by its center point3d and its side length
   typedef std::pair<point3d, double> OcTreeVolume;

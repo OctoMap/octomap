@@ -46,7 +46,7 @@ namespace octomap {
 
    public:
 
-    ScanNode (Pointcloud* _scan, octomath::Pose6D _pose, unsigned int _id)
+    ScanNode (Pointcloud* _scan, pose6d _pose, unsigned int _id)
       : scan(_scan), pose(_pose), id(_id) {}
     ScanNode () {}
 
@@ -61,7 +61,7 @@ namespace octomap {
     std::istream& readPoseASCII(std::istream &s);
 
     Pointcloud* scan;
-    octomath::Pose6D pose; ///< 6D pose from which the scan was performed
+    pose6d pose; ///< 6D pose from which the scan was performed
     unsigned int id;
 
   };
@@ -73,7 +73,7 @@ namespace octomap {
 
    public:
 
-    ScanEdge(ScanNode* _first, ScanNode* _second, octomath::Pose6D _constraint)
+    ScanEdge(ScanNode* _first, ScanNode* _second, pose6d _constraint)
       : first(_first), second(_second), constraint(_constraint), weight(1.0) { }
     ScanEdge() {}
 
@@ -91,7 +91,7 @@ namespace octomap {
     ScanNode* first;
     ScanNode* second;
 
-    octomath::Pose6D constraint;
+    pose6d constraint;
     double weight;
   };
 
@@ -111,8 +111,8 @@ namespace octomap {
     /// Clears all nodes and edges
     void clear();
 
-    ScanNode* addNode(Pointcloud* scan, octomath::Pose6D pose);
-    ScanEdge* addEdge(ScanNode* first, ScanNode* second, octomath::Pose6D constraint);
+    ScanNode* addNode(Pointcloud* scan, pose6d pose);
+    ScanEdge* addEdge(ScanNode* first, ScanNode* second, pose6d constraint);
     ScanEdge* addEdge(unsigned int first_id, unsigned int second_id);
 
     /// will return NULL if node was not found

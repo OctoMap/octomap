@@ -62,6 +62,8 @@ namespace octomap {
     void setResolution(double r);
     double getResolution() const { return resolution; }
 
+    unsigned int getDepth() const { return tree_depth; }
+
     /// \return Pointer to the root node of tree
     NODE* getRoot() const { return itsRoot; }
 

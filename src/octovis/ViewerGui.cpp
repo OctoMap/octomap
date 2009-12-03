@@ -322,7 +322,7 @@ void ViewerGui::openPointcloud(){
   }
 
   std::string tmp;
-  octomath::Vector3 p;
+  point3d p;
   while (!s.eof()) {
     for (unsigned int i=0; i<3; i++){
       s >> p(i);   
@@ -330,7 +330,7 @@ void ViewerGui::openPointcloud(){
     pc.push_back(p);
   }    
 
-  octomath::Pose6D laser_pose(0,0,0,0,0,0);
+  pose6d laser_pose(0,0,0,0,0,0);
   m_scanGraph->addNode(&pc, laser_pose);
 
   loadGraph(true);

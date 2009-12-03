@@ -25,50 +25,43 @@
 */
 
 #include "octomap.h"
-#include <string.h>
-#include <stdlib.h>
 
 using namespace std;
 using namespace octomap;
 
 int main(int argc, char** argv) {
 
-  OcTree t(0.1);
-
-  for (int i=-100; i<100; i++) {
-    for (int j=-100; j<100; j++) {
-      for (int k=-100; k<100; k++) {
-	point3d p(((double) i)*0.01, ((double) j)*0.01, ((double) k)*0.01);
-	t.updateNode(p, true);
-      }
-    }
-  }
-
-  for (int i=-50; i<50; i++) {
-    for (int j=-50; j<50; j++) {
-      for (int k=-50; k<50; k++) {
-	point3d p(((double) i)*0.01+1., ((double) j)*0.01+1., ((double) k)*0.01+1.);
-	t.updateNode(p, false);
-      }
-    }
-  }
-
-
-  unsigned int numBinary, numDelta;
-  t.calcNumberOfNodesPerType(numBinary, numDelta);
-  cout << "Tree size: " << t.size() 
-       <<" ( " <<numBinary<<" binary, "<< numDelta << " delta)\n";
+  OcTree tree(0.1);
+  tree.readBinary("test.bt");
   
-  cout << "size should be 10460\n\n";
+  point3d origin(-1.0 ,4,1.0);
+  point3d direction1(0, 1, 0);
+  point3d direction2(-0.5, 1, 0);
+  point3d direction3(-1.5, 0, 0);
+  point3d direction4(1.0, 0, 0);
 
-  t.prune();
+  point3d hit;
+  if (tree.castRay(origin, direction1, hit)){
+    std::cout << "Raycast1 hit "<<hit << std::endl;
+  } else{
+    std::cout << "Raycast1 no hit\n";
+  }
+  if (tree.castRay(origin, direction2, hit)){
+    std::cout << "Raycast2 hit "<<hit << std::endl;
+  } else{
+    std::cout << "Raycast2 no hit\n";
+  }
+  if (tree.castRay(origin, direction3, hit)){
+    std::cout << "Raycast3 hit "<<hit << std::endl;
+  } else{
+    std::cout << "Raycast3 no hit\n";
+  }
 
-  t.calcNumberOfNodesPerType(numBinary, numDelta);
-  cout << "Tree size after pruning: " << t.size() 
-       <<" ( " <<numBinary<<" binary, "<< numDelta << " delta)\n";
+  if (tree.castRay(origin, direction4, hit)){
+    std::cout << "Raycast4 hit "<<hit << std::endl;
+  } else{
+    std::cout << "Raycast4 no hit\n";
+  }
 
-  cout << "size should be 1596\n\n";
-
-  t.writeBinary("testing.bt");
 
 }

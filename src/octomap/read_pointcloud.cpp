@@ -33,7 +33,6 @@
 
 using namespace std;
 using namespace octomap;
-using namespace octomath;
 
 
 int main(int argc, char** argv) {
@@ -54,7 +53,7 @@ int main(int argc, char** argv) {
   }
 
   std::string tmp;
-  Vector3 p;
+  point3d p;
   while (!s.eof()) {
 
     for (unsigned int i=0; i<3; i++){
@@ -64,8 +63,8 @@ int main(int argc, char** argv) {
   }    
 
   double laser_offset = atof(argv[2]);
-  Pose6D offset_trans(0,0,-laser_offset,0,0,0);
-  Pose6D laser_pose(0,0,laser_offset,0,0,0);
+  pose6d offset_trans(0,0,-laser_offset,0,0,0);
+  pose6d laser_pose(0,0,laser_offset,0,0,0);
   pc.transform(offset_trans);
   
   ScanGraph graph;

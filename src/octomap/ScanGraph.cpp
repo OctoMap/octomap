@@ -77,7 +77,7 @@ namespace octomap {
     this->pose.trans().read(s);
 
     // read rotation from euler angles
-    octomath::Vector3 rot;
+    point3d rot;
     rot.read(s);
     this->pose.rot() = octomath::Quaternion(rot);
 
@@ -163,7 +163,7 @@ namespace octomap {
   }
 
 
-  ScanNode* ScanGraph::addNode(Pointcloud* scan, octomath::Pose6D pose) {
+  ScanNode* ScanGraph::addNode(Pointcloud* scan, pose6d pose) {
 
     if (scan != 0) {
       nodes.push_back(new ScanNode(scan, pose, nodes.size()));
@@ -176,7 +176,7 @@ namespace octomap {
   }
 
 
-  ScanEdge* ScanGraph::addEdge(ScanNode* first, ScanNode*  second, octomath::Pose6D constraint) {
+  ScanEdge* ScanGraph::addEdge(ScanNode* first, ScanNode*  second, pose6d constraint) {
 
     if ((first != 0) && (second != 0)) {
       edges.push_back(new ScanEdge(first, second, constraint));
@@ -201,7 +201,7 @@ namespace octomap {
     ScanNode* second = getNodeByID(second_id);
 
     if ((first != 0) && (second != 0)) {
-      octomath::Pose6D constr = first->pose.inv() * second->pose;
+      pose6d constr = first->pose.inv() * second->pose;
       return this->addEdge(first, second, constr);
     }
     else {
@@ -216,7 +216,7 @@ namespace octomap {
     if (nodes.size() >= 2) {
       ScanNode* first =  nodes[nodes.size()-2];
       ScanNode* second = nodes[nodes.size()-1];
-      octomath::Pose6D c =  (first->pose).inv() * second->pose;
+      pose6d c =  (first->pose).inv() * second->pose;
       this->addEdge(first, second, c);
     }
   }
@@ -542,7 +542,7 @@ namespace octomap {
 
     // for all node in graph...
     for (ScanGraph::iterator it = this->begin(); it != this->end(); it++) {
-      octomath::Pose6D scan_pose = (*it)->pose;
+      pose6d scan_pose = (*it)->pose;
       Pointcloud* pc = new Pointcloud((*it)->scan);
       pc->transformAbsolute(scan_pose);
       pc->crop(lowerBound, upperBound);

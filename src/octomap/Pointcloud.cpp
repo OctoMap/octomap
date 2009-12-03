@@ -106,10 +106,10 @@ namespace octomap {
   }
 
 
-  void Pointcloud::transformAbsolute(octomath::Pose6D transform) {
+  void Pointcloud::transformAbsolute(pose6d transform) {
 
     // undo previous transform, then apply current transform
-    octomath::Pose6D transf = current_inv_transform * transform;
+    pose6d transf = current_inv_transform * transform;
 
     for (unsigned int i=0; i<points.size(); i++) {
       *(points[i]) = transf.transform(*(points[i]));

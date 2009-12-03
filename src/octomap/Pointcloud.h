@@ -61,13 +61,13 @@ namespace octomap {
     void writeVrml(std::string filename);
 
     /// Apply transform to each point
-    void transform(octomath::Pose6D transform);
+    void transform(pose6d transform);
 
     /// Rotate each point in pointcloud
     void rotate(double roll, double pitch, double yaw);
 
     /// Apply transform to each point, undo previous transforms
-    void transformAbsolute(octomath::Pose6D transform);
+    void transformAbsolute(pose6d transform);
 
     /// Calculate bounding box of Pointcloud
     void calcBBX(point3d& lowerBound, point3d& upperBound) const;
@@ -95,7 +95,7 @@ namespace octomap {
 
   protected:
     point3d_collection   points;
-    octomath::Pose6D     current_inv_transform;
+    pose6d     current_inv_transform;
   };
 
 }
