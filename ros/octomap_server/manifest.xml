@@ -10,6 +10,10 @@
   <review status="unreviewed" notes=""/>
   <url>http://octomap.sourceforge.net/</url>
   
+  <export>
+    <cpp cflags="-I${prefix}/include -I${prefix}/msg/cpp -I${prefix}/srv/cpp"/>
+  </export>
+  
   <depend package="octomap"/>
   <depend package="visualization_msgs"/>
 </package>

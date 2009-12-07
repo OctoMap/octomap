@@ -24,7 +24,6 @@
 
 #include <ros/ros.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <octomap_server/GetOctomap.h>
 #include <octomap_server/octomap_server.h>
 #include <octomap/octomap.h>
 

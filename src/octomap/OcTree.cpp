@@ -807,8 +807,6 @@ namespace octomap {
       std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
     }
 
-    this->tree_size = 0;
-    sizeChanged = true;
 
     int tree_type = -1;
     s.read((char*)&tree_type, sizeof(tree_type));
@@ -817,16 +815,19 @@ namespace octomap {
       return s;
     }
 
+    this->tree_size = 0;
+    sizeChanged = true;
+
+    // clear tree if there are nodes:
+    if (itsRoot->hasChildren()){
+      delete itsRoot;
+      itsRoot = new OcTreeNode();
+    }
+
     double tree_resolution;
     s.read((char*)&tree_resolution, sizeof(tree_resolution));
 
-    if (fabs(this->resolution - tree_resolution) > 1e-3) {
-      std::cerr << "WARNING: resolution of tree (" 
-		<< this->resolution << ") and file ("
-		<< tree_resolution 
-		<<") dont match. Changing tree res.\n";
-      this->setResolution(tree_resolution);
-    }
+    this->setResolution(tree_resolution);
 
     unsigned int tree_read_size = 0;
     s.read((char*)&tree_read_size, sizeof(tree_read_size));

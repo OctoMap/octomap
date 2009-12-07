@@ -181,7 +181,8 @@ namespace octomap {
 
     void calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const;
 
-    /// Reads an OcTree from an input stream. You need to verify that it's "good" and opened first.
+    /// Reads an OcTree from an input stream, possibly existing nodes are deleted.
+    /// You need to verify that it's "good" and opened first.
     std::istream& readBinary(std::istream &s);
     /// Writes OcTree to a binary stream. The OcTree is converted to binary and pruned first.
     std::ostream& writeBinary(std::ostream &s);

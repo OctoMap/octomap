@@ -22,11 +22,19 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+
+/*
+ * This file includes some common headers for octomaps in ROS, and provides
+ * converstion between the octomap structure and ROS message format *
+ *
+ */
+
 #ifndef OCTOMAP_SERVER_H_
 #define OCTOMAP_SERVER_H_
 
 #include <octomap/octomap.h>
 #include <octomap_server/OctomapBinary.h>
+#include <octomap_server/GetOctomap.h>
 #include <iostream>
 
 
@@ -38,7 +46,7 @@ namespace octomap_server{
 	 * @param octomap input OcTree
 	 * @param mapMsg output msg
 	 */
-	void octomapMapToMsg(const octomap::OcTree& octomap, OctomapBinary& mapMsg){
+	static inline void octomapMapToMsg(const octomap::OcTree& octomap, OctomapBinary& mapMsg){
 		// conversion via stringstream
 
 		// TODO: read directly into buffer? see
@@ -56,7 +64,7 @@ namespace octomap_server{
 	 * @param mapMsg
 	 * @param octomap
 	 */
-	void octomapMsgToMap(const OctomapBinary& mapMsg, octomap::OcTree& octomap){
+	static inline void octomapMsgToMap(const OctomapBinary& mapMsg, octomap::OcTree& octomap){
 		std::stringstream datastream;
 		assert(mapMsg.data.size() > 0);
 		datastream.write((const char*) &mapMsg.data[0], mapMsg.data.size());
