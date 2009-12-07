@@ -863,6 +863,18 @@ namespace octomap {
     this->deltaToBinary();
     this->prune();
 
+    return writeBinaryConst(s);
+  }
+
+  std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
+
+    if (itsRoot->isDelta()){
+      std::cerr << "Error: trying to write a tree with delta nodes to binary!\n";
+      return s;
+    }
+
+    // format:    treetype | resolution | num nodes | [binary nodes]
+
     unsigned int tree_type = OcTree::TREETYPE;
     s.write((char*)&tree_type, sizeof(tree_type));
 

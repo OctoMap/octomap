@@ -185,6 +185,8 @@ namespace octomap {
     std::istream& readBinary(std::istream &s);
     /// Writes OcTree to a binary stream. The OcTree is converted to binary and pruned first.
     std::ostream& writeBinary(std::ostream &s);
+    /// Writes OcTree to a binary stream (const variant). The OcTree is assumed to be binary and pruned.
+    std::ostream& writeBinaryConst(std::ostream &s) const;
 
     /// Reads an OcTree from a binary file
     void readBinary(std::string filename);
