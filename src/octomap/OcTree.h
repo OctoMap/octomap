@@ -112,8 +112,16 @@ namespace octomap {
     void deltaToBinary();
 
     /**
+     * Convenience function to return all occupied nodes in the OcTree.
+     *
+     * @param occupied_volumes list of occpupied nodes (as point3d and size of the volume)
+     */
+    void getOccupied(std::list<OcTreeVolume>& occupied_volumes) const;
+
+    /**
      * Traverses the tree and collects all OcTreeVolumes regarded as occupied.
-     * MIXED nodes are regarded as occupied.
+     * MIXED nodes are regarded as occupied. This should be for internal use only,
+     * better use getOccupied(occupied_volumes) instead.
      *
      * @param max_depth how deep to traverse the tree
      * @param occ_thres Occupancy threshold for regarding nodes as occupied
@@ -123,8 +131,16 @@ namespace octomap {
     void getOccupied(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
 
     /**
+     * Convenience function to return all free nodes in the OcTree.
+     *
+     * @param free_volumes list of free nodes (as point3d and size of the volume)
+     */
+    void getFreespace(std::list<OcTreeVolume>& free_volumes) const;
+
+    /**
      * Traverses the tree and collects all OcTreeVolumes regarded as free.
-     * MIXED nodes are regarded as occupied.
+     * MIXED nodes are regarded as occupied. This should be for internal use only,
+     * better use getFreespace(free_volumes) instead.
      *
      * @param max_depth how deep to traverse the tree
      * @param occ_thres Occupancy threshold for regarding nodes as free
@@ -165,9 +181,9 @@ namespace octomap {
 
     void calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const;
 
-    /// Reads an OcTree from a binary filestream
-    std::istream& readBinary(std::ifstream &s);
-    /// Writes OcTree to a binary filestream. The OcTree is converted to binary and pruned first.
+    /// Reads an OcTree from an input stream. You need to verify that it's "good" and opened first.
+    std::istream& readBinary(std::istream &s);
+    /// Writes OcTree to a binary stream. The OcTree is converted to binary and pruned first.
     std::ostream& writeBinary(std::ostream &s);
 
     /// Reads an OcTree from a binary file

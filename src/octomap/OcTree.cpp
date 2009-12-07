@@ -131,6 +131,13 @@ namespace octomap {
 
   }
 
+  void OcTree::getOccupied(std::list<OcTreeVolume>& occupied_nodes) const{
+    std::list<OcTreeVolume> delta_nodes;
+
+    getOccupied(tree_depth, ML_OCC_PROB_THRES, occupied_nodes, delta_nodes);
+    occupied_nodes.insert(occupied_nodes.end(), delta_nodes.begin(), delta_nodes.end());
+  }
+
 
   void OcTree::getOccupied(unsigned int max_depth, double occ_thres,
                            std::list<OcTreeVolume>& binary_nodes, 
@@ -183,13 +190,18 @@ namespace octomap {
     }
   }
 
+  void OcTree::getFreespace(std::list<OcTreeVolume>& free_nodes) const{
+      std::list<OcTreeVolume> delta_nodes;
+
+      getOccupied(tree_depth, ML_OCC_PROB_THRES, free_nodes, delta_nodes);
+      free_nodes.insert(free_nodes.end(), delta_nodes.begin(), delta_nodes.end());
+  }
 
   void OcTree::getFreespace(unsigned int max_depth, double occ_thres,
 			    std::list<OcTreeVolume>& binary_nodes, 
 			    std::list<OcTreeVolume>& delta_nodes) const{
     getFreespaceRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, binary_nodes, delta_nodes);
   }
-
 
   void OcTree::getFreespaceRecurs(OcTreeNode* node, unsigned int depth, 
 				  unsigned int max_depth, double occ_thres,
@@ -780,17 +792,18 @@ namespace octomap {
 
   void OcTree::readBinary(std::string filename){
     std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
-    readBinary(binary_infile);
-    binary_infile.close();
+    if (!binary_infile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      return;
+    } else {
+      readBinary(binary_infile);
+      binary_infile.close();
+    }
   }
 
 
-  std::istream& OcTree::readBinary(std::ifstream &s) {
-
-    if (!s.is_open()){
-      std::cerr << "ERROR: Input filestream in OcTree::readBinary not open, nothing read.\n";
-      return s;
-    } else if (!s.good()){
+  std::istream& OcTree::readBinary(std::istream &s) {
+    if (!s.good()){
       std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
     }
 
@@ -833,8 +846,14 @@ namespace octomap {
 
   void OcTree::writeBinary(std::string filename){
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-    writeBinary(binary_outfile);
-    binary_outfile.close();
+
+    if (!binary_outfile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return;
+    } else {
+      writeBinary(binary_outfile);
+      binary_outfile.close();
+    }
   }
 
   std::ostream& OcTree::writeBinary(std::ostream &s){
@@ -851,7 +870,7 @@ namespace octomap {
     s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
     unsigned int tree_write_size = this->size(); // size includes invalid nodes
-    fprintf(stderr, "writing %d nodes to bonsai tree file...", tree_write_size); fflush(stderr);
+    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
     s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
     itsRoot->writeBinary(s);
