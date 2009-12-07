@@ -176,10 +176,8 @@ namespace octomap {
 
 
   void OcTreeNode::convertToBinary() {
-    if (!hasChildren()) {
       if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
       else              setLogOdds(CLAMPING_THRES_MIN);
-    }
   }
 
 
@@ -237,6 +235,11 @@ namespace octomap {
     //     std::cout << "read:  "
     // 	      << child1to4.to_string<char,std::char_traits<char>,std::allocator<char> >() << " "
     // 	      << child5to8.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+
+
+    // inner nodes default to occupied
+    this->setLogOdds(CLAMPING_THRES_MAX);
+
 
     for (unsigned int i=0; i<4; i++) {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
