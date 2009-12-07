@@ -28,6 +28,7 @@
 #include <ext/algorithm>
 #include <list>
 #include <fstream>
+#include <math.h>
 
 namespace octomap {
 
@@ -185,6 +186,25 @@ namespace octomap {
     this->clear();
     this->push_back(result);
 
+  }
+
+
+  void Pointcloud::minDist(double thres) {
+    Pointcloud result;
+
+    double x,y,z;
+    for (Pointcloud::const_iterator it=begin(); it!=end(); it++) {
+
+      x = (**it)(0);
+      y = (**it)(1);
+      z = (**it)(2);
+      double dist = sqrt(x*x+y*y+z*z);
+
+      if ( dist > thres ) result.push_back (x,y,z);
+    } // end for points
+
+    this->clear();
+    this->push_back(result);
   }
 
 

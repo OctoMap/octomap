@@ -74,6 +74,9 @@ namespace octomap {
     /// Crop Pointcloud to given bounding box
     void crop(point3d lowerBound, point3d upperBound);
 
+    // removes any points closer than [thres] to (0,0,0)
+    void minDist(double thres);
+
     void subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud);
 
     // iterators ------------------
