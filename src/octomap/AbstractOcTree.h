@@ -72,30 +72,26 @@ namespace octomap {
      * Search a 3D point in the tree
      *
      * @param value Searched coordinate
-     * @param result Pointer to the resulting NODE when found, else NULL
-     * @return Result of search
+     * @return result Pointer to the resulting NODE when found, else NULL
      */
-    bool search (const point3d& value, NODE*& result) const;
+    NODE* search (const point3d& value) const;
 
 
     /**
      * Traverse the tree and collect all leaf nodes
      *
-     * @param max_depth Depth limit for nodes regarded as leafs
      * @param nodes Leaf nodes as OcTreeVolume
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getLeafNodes(unsigned int max_depth, std::list<OcTreeVolume>& nodes) const;
+    void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const;
 
-    /*! walk tree, add all AbstractOcTree volumes (center w. size)
-     *  used e.g. for visualization
-     */
     /**
      * Traverse the tree and collect all nodes, at all levels. Used e.g. in visualization.
      *
-     * @param max_depth Depth limit for nodes
-     * @param voxels
+     * @param voxels list of all nodes to be returned
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getVoxels(unsigned int max_depth, std::list<OcTreeVolume>& voxels) const;
+    void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
 
   protected:
 

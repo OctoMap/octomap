@@ -225,11 +225,11 @@ void ViewerGui::showOcTree() {
     std::list<octomap::OcTreeVolume> free_delta_voxels;
     std::list<octomap::OcTreeVolume> free_changed_voxels;
 
-    m_ocTree->getOccupied(m_max_tree_depth, m_occupancyThresh, occupied_voxels, occupied_delta_voxels);
+    m_ocTree->getOccupied(occupied_voxels, occupied_delta_voxels, m_max_tree_depth);
 
     if (m_ocTree->size() < 5 * 1e6) {
-      m_ocTree->getFreespace (m_max_tree_depth, m_occupancyThresh, free_voxels, free_delta_voxels);
-      m_ocTree->getVoxels(m_max_tree_depth, grid_voxels);
+      m_ocTree->getFreespace (free_voxels, free_delta_voxels, m_max_tree_depth);
+      m_ocTree->getVoxels(grid_voxels, m_max_tree_depth);
       // FIXME m_ocTree->getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
     }
 

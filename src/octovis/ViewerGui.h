@@ -155,7 +155,7 @@ class ViewerGui : public QMainWindow {
   TrajectoryDrawer* m_trajectoryDrawer;
   PointcloudDrawer* m_pointcloudDrawer;
   double m_octreeResolution;
-  double m_occupancyThresh;
+  double m_occupancyThresh; // FIXME: This is not really used at the moment...
   unsigned int m_max_tree_depth;
   unsigned int m_laserType; // SICK or Hokuyo /URG
   bool m_cameraStored;

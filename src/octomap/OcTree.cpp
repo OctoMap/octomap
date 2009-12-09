@@ -63,8 +63,10 @@ namespace octomap {
     // if (leaf exists)
     //    AND (it is binary) AND (the new information does not contradict the prior):
     //       return leaf
-    OcTreeNode* leaf;
-    if (this->search(value, leaf)) { // TODO: Possible speedup: avoid search in every insert?
+
+    // TODO: Possible speedup: avoid search in every insert?
+    OcTreeNode* leaf = this->search(value);
+    if (leaf) {
       if ((!leaf->isDelta()) && (leaf->isOccupied() == occupied)) {
         return leaf;
       }
@@ -131,25 +133,29 @@ namespace octomap {
 
   }
 
-  void OcTree::getOccupied(std::list<OcTreeVolume>& occupied_nodes) const{
+  void OcTree::getOccupied(std::list<OcTreeVolume>& occupied_nodes, unsigned int max_depth) const{
     std::list<OcTreeVolume> delta_nodes;
 
-    getOccupied(tree_depth, ML_OCC_PROB_THRES, occupied_nodes, delta_nodes);
+    getOccupied(occupied_nodes, delta_nodes, max_depth);
     occupied_nodes.insert(occupied_nodes.end(), delta_nodes.begin(), delta_nodes.end());
   }
 
 
-  void OcTree::getOccupied(unsigned int max_depth, double occ_thres,
-                           std::list<OcTreeVolume>& binary_nodes, 
-			   std::list<OcTreeVolume>& delta_nodes) const{
-    getOccupiedRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, binary_nodes, delta_nodes);
+  void OcTree::getOccupied(std::list<OcTreeVolume>& binary_nodes,
+                            std::list<OcTreeVolume>& delta_nodes,
+                            unsigned int max_depth) const{
+
+    if (max_depth == 0)
+      max_depth = tree_depth;
+
+    getOccupiedRecurs(binary_nodes, delta_nodes, max_depth, itsRoot, 0, tree_center);
   }
 
 
-  void OcTree::getOccupiedRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth,
-				 double occ_thres, const point3d& parent_center,
-				 std::list<OcTreeVolume>& binary_nodes,
-				 std::list<OcTreeVolume>& delta_nodes) const{
+  void OcTree::getOccupiedRecurs( std::list<OcTreeVolume>& binary_nodes,
+          std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
+          OcTreeNode* node, unsigned int depth,
+				 const point3d& parent_center) const{
 
     if (depth < max_depth && node->hasChildren()) {
 
@@ -170,8 +176,7 @@ namespace octomap {
           if (i & 4)  search_center(2) = parent_center(2) + center_offset;
           else        search_center(2) = parent_center(2) - center_offset;
 
-          getOccupiedRecurs(node->getChild(i), depth+1, max_depth, 
-			    occ_thres, search_center, binary_nodes, delta_nodes);
+          getOccupiedRecurs(binary_nodes, delta_nodes, max_depth,  node->getChild(i), depth+1, search_center);
         }
       }
     }
@@ -190,24 +195,26 @@ namespace octomap {
     }
   }
 
-  void OcTree::getFreespace(std::list<OcTreeVolume>& free_nodes) const{
+  void OcTree::getFreespace(std::list<OcTreeVolume>& free_nodes, unsigned int max_depth) const{
       std::list<OcTreeVolume> delta_nodes;
 
-      getOccupied(tree_depth, ML_OCC_PROB_THRES, free_nodes, delta_nodes);
+      getFreespace(free_nodes, delta_nodes, max_depth);
       free_nodes.insert(free_nodes.end(), delta_nodes.begin(), delta_nodes.end());
   }
 
-  void OcTree::getFreespace(unsigned int max_depth, double occ_thres,
-			    std::list<OcTreeVolume>& binary_nodes, 
-			    std::list<OcTreeVolume>& delta_nodes) const{
-    getFreespaceRecurs(itsRoot, 0, max_depth, occ_thres, tree_center, binary_nodes, delta_nodes);
+  void OcTree::getFreespace(std::list<OcTreeVolume>& binary_nodes,
+                            std::list<OcTreeVolume>& delta_nodes,
+                            unsigned int max_depth) const{
+
+    if (max_depth == 0)
+      max_depth = tree_depth;
+
+    getFreespaceRecurs(binary_nodes, delta_nodes, max_depth,  itsRoot, 0, tree_center);
   }
 
-  void OcTree::getFreespaceRecurs(OcTreeNode* node, unsigned int depth, 
-				  unsigned int max_depth, double occ_thres,
-				  const point3d& parent_center, 
-				  std::list<OcTreeVolume>& binary_nodes,
-				  std::list<OcTreeVolume>& delta_nodes) const{
+  void OcTree::getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
+      std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
+      OcTreeNode* node, unsigned int depth, const point3d& parent_center) const{
 
     if (depth < max_depth && node->hasChildren()) {
 
@@ -228,7 +235,7 @@ namespace octomap {
           if (i & 4)  search_center(2) = parent_center(2) + center_offset;
           else        search_center(2) = parent_center(2) - center_offset;
 
-          getFreespaceRecurs(node->getChild(i), depth+1, max_depth, occ_thres, search_center, binary_nodes, delta_nodes);
+          getFreespaceRecurs(binary_nodes, delta_nodes, max_depth, node->getChild(i), depth+1, search_center);
 
         } // GetChild
       } // depth
@@ -450,8 +457,8 @@ namespace octomap {
 
     point3d direction = directionP.unit();
 
-    OcTreeNode* startingNode;
-    if (search(origin, startingNode)){
+    OcTreeNode* startingNode = this->search(origin);
+    if (startingNode){
       if (startingNode->isOccupied()){
         std::cerr << "WARNING: No raycast done, origin node is already occupied.\n";
         return false;
@@ -535,8 +542,8 @@ namespace octomap {
         return false;
       }
 
-      OcTreeNode* currentNode;
-      if (search(end, currentNode)){
+      OcTreeNode* currentNode = this->search(end);
+      if ( currentNode){
         if (currentNode->isOccupied())
           done = true;
 
@@ -612,7 +619,7 @@ namespace octomap {
       }
     }
     std::list<OcTreeVolume> free_cells;
-    free_tree.getLeafNodes(16, free_cells);
+    free_tree.getLeafNodes(free_cells);
 
     // occupied cells
     CountingOcTree occupied_tree(this->getResolution());
@@ -621,13 +628,12 @@ namespace octomap {
       occupied_tree.updateNode(p);
     }
     std::list<OcTreeVolume> occupied_cells;
-    occupied_tree.getLeafNodes(16, occupied_cells);
+    occupied_tree.getLeafNodes(occupied_cells);
 
 
     // delete free cells if cell is also measured occupied
     for (std::list<OcTreeVolume>::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
-      CountingOcTreeNode* hitNode = NULL;
-      if ( occupied_tree.search(cellit->first, hitNode) ) {
+      if ( occupied_tree.search(cellit->first) ) {
         cellit = free_cells.erase(cellit);
       }
       else {
@@ -656,7 +662,7 @@ namespace octomap {
 
     unsigned int node_size = sizeof(OcTreeNode);
     std::list<OcTreeVolume> leafs;
-    this->getLeafNodes(16, leafs);
+    this->getLeafNodes(leafs);
     unsigned int inner_nodes = tree_size - leafs.size();
     return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
   }
@@ -720,7 +726,7 @@ namespace octomap {
     std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
 
     std::list<OcTreeVolume> leafs;
-    this->getLeafNodes(16, leafs);
+    this->getLeafNodes(leafs);
 
     for (std::list<OcTreeVolume>::iterator it = leafs.begin(); it != leafs.end(); ++it){
       double x = it->first(0);

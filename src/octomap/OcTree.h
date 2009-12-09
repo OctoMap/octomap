@@ -115,43 +115,43 @@ namespace octomap {
      * Convenience function to return all occupied nodes in the OcTree.
      *
      * @param occupied_volumes list of occpupied nodes (as point3d and size of the volume)
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getOccupied(std::list<OcTreeVolume>& occupied_volumes) const;
+    void getOccupied(std::list<OcTreeVolume>& occupied_volumes, unsigned int max_depth = 0) const;
 
     /**
      * Traverses the tree and collects all OcTreeVolumes regarded as occupied.
      * MIXED nodes are regarded as occupied. This should be for internal use only,
      * better use getOccupied(occupied_volumes) instead.
      *
-     * @param max_depth how deep to traverse the tree
-     * @param occ_thres Occupancy threshold for regarding nodes as occupied
      * @param binary_nodes list of binary OcTreeVolumes which are occupied
      * @param delta_nodes list of delta OcTreeVolumes which are occupied
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getOccupied(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getOccupied(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth = 0) const;
 
     /**
      * Convenience function to return all free nodes in the OcTree.
      *
      * @param free_volumes list of free nodes (as point3d and size of the volume)
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getFreespace(std::list<OcTreeVolume>& free_volumes) const;
+    void getFreespace(std::list<OcTreeVolume>& free_volumes, unsigned int max_depth = 0) const;
 
     /**
      * Traverses the tree and collects all OcTreeVolumes regarded as free.
-     * MIXED nodes are regarded as occupied. This should be for internal use only,
-     * better use getFreespace(free_volumes) instead.
+     * MIXED nodes are regarded as occupied.
      *
-     * @param max_depth how deep to traverse the tree
-     * @param occ_thres Occupancy threshold for regarding nodes as free
      * @param binary_nodes list of binary OcTreeVolumes which are free
      * @param delta_nodes list of delta OcTreeVolumes which are free
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getFreespace(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getFreespace(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth = 0) const;
 
     /**
      * Traverses the tree and collects all OcTreeVolumes which are potential obstacles.
      * These are nodes labeled "free" (were binary before), but are now delta
+     * \note This is currently deprecated!
      *
      * @param max_depth how deep to traverse the tree
      * @param occ_thres Occupancy threshold for regarding nodes as free
@@ -206,11 +206,11 @@ namespace octomap {
 				 unsigned int depth, bool occupied);
 
     /// recursive call of getOccupied()
-    void getOccupiedRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres, const point3d& parent_center,
-			   std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getOccupiedRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
+        unsigned int max_depth, OcTreeNode* node, unsigned int depth, const point3d& parent_center) const;
     /// recursive call of getFreeSpace()
-    void getFreespaceRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, double occ_thres, const point3d& parent_center,
-			    std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes) const;
+    void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
+        unsigned int max_depth, OcTreeNode* node, unsigned int depth, const point3d& parent_center) const;
 
     ///recursive call of deltaToBinary()
     void deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
