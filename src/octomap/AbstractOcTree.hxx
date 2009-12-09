@@ -159,15 +159,15 @@ namespace octomap {
     if (max_depth == 0)
       max_depth = tree_depth;
 
-    getLeafNodesRecurs(itsRoot, 0, max_depth, tree_center, nodes);
+    getLeafNodesRecurs(nodes, max_depth, itsRoot, 0, tree_center);
   }
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodesRecurs(NODE* node, unsigned int depth, 
-						unsigned int max_depth,
-						const point3d& parent_center,
-						std::list<OcTreeVolume>& nodes) const{
+  void AbstractOcTree<NODE>::getLeafNodesRecurs(std::list<OcTreeVolume>& nodes,
+            unsigned int max_depth,
+            NODE* node, unsigned int depth,
+						const point3d& parent_center) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
 
@@ -190,7 +190,7 @@ namespace octomap {
             if (i & 4)	search_center(2) = parent_center(2) + center_offset;
             else	search_center(2) = parent_center(2) - center_offset;
 
-            getLeafNodesRecurs(static_cast<NODE*>(node->getChild(i)), depth+1, max_depth, search_center, nodes);
+            getLeafNodesRecurs(nodes,max_depth,node->getChild(i), depth+1, search_center);
 
           } // GetChild
         }
@@ -211,16 +211,16 @@ namespace octomap {
     if (max_depth == 0)
       max_depth = tree_depth;
 
-    getVoxelsRecurs(itsRoot, 0, max_depth, tree_center, voxels);
+    getVoxelsRecurs(voxels,max_depth,itsRoot, 0, tree_center);
   }
 
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxelsRecurs(NODE* node, unsigned int depth, 
-					     unsigned int max_depth,
-					     const point3d& parent_center,
-					     std::list<OcTreeVolume>& voxels) const{
+  void AbstractOcTree<NODE>::getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
+      unsigned int max_depth,
+      NODE* node, unsigned int depth,
+      const point3d& parent_center) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
       if (node->hasChildren() && (depth != max_depth)) {
@@ -248,7 +248,7 @@ namespace octomap {
             else
               search_center(2) = parent_center(2) - center_offset;
 
-            getVoxelsRecurs(static_cast<NODE*>(node->getChild(i)), depth + 1, max_depth, search_center, voxels);
+            getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center);
 
           } else{ // GetChild
             double voxelSize = resolution * pow(2., double(tree_depth - depth));

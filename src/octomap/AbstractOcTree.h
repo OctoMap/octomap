@@ -64,7 +64,10 @@ namespace octomap {
 
     unsigned int getDepth() const { return tree_depth; }
 
-    /// \return Pointer to the root node of tree
+    /**
+     * \return Pointer to the root node of tree. This pointer should
+     * not be modified or deleted externally, the OcTree manages the memory itself.
+     */
     NODE* getRoot() const { return itsRoot; }
 
 
@@ -72,7 +75,8 @@ namespace octomap {
      * Search a 3D point in the tree
      *
      * @param value Searched coordinate
-     * @return result Pointer to the resulting NODE when found, else NULL
+     * @return result Pointer to the resulting NODE when found, else NULL. This pointer should
+     * not be modified or deleted externally, the OcTree manages the memory itself.
      */
     NODE* search (const point3d& value) const;
 
@@ -122,12 +126,12 @@ namespace octomap {
     unsigned int genPos(unsigned short int key[], int i) const;
 
     /// Recursive call for getLeafNodes()
-    void getLeafNodesRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
-        const point3d& parent_center, std::list<OcTreeVolume>& points) const;
+    void getLeafNodesRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
+          NODE* node, unsigned int depth, const point3d& parent_center) const;
 
     /// Recursive call for getVoxels()
-    void getVoxelsRecurs(NODE* node, unsigned int depth, unsigned int max_depth,
-        const point3d& parent_center, std::list<OcTreeVolume>& voxels) const;
+    void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
+        NODE* node, unsigned int depth, const point3d& parent_center) const;
 
     NODE* itsRoot;
 
