@@ -44,7 +44,7 @@ namespace octomap {
   }
 
   OcTree::OcTree(std::string _filename)
-    : AbstractOcTree<OcTreeNode> (0.1)  {
+    : AbstractOcTree<OcTreeNode> (0.1)  { // resolution will be set according to tree file
     itsRoot = new OcTreeNode();
     tree_size++;
 
