@@ -51,10 +51,16 @@ namespace octomap {
 
 
   //! \return i-th child of node, NULL if there is none
+  const CountingOcTreeNode* CountingOcTreeNode::getChild(unsigned int i) const {
+    assert(i < 8);
+    return itsChildren[i];
+  }
+
   CountingOcTreeNode* CountingOcTreeNode::getChild(unsigned int i) {
     assert(i < 8);
     return itsChildren[i];
   }
+
 
     //! set i-th child
   void CountingOcTreeNode::setChild(unsigned int i, CountingOcTreeNode* child) {

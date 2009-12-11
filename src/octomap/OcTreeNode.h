@@ -28,6 +28,7 @@
 */
 
 #include "octomap_types.h"
+#include "AbstractOcTreeNode.h"
 
 namespace octomap {
 
@@ -37,13 +38,15 @@ namespace octomap {
 #define ML_OCC_PROB_THRES 0.5
 #define CLAMPING_THRES_MIN -2
 #define CLAMPING_THRES_MAX 3.5
-
 #define UNKOWN_AS_OBSTACLE false
+
+  // TODO : params of tree (const params pointer?)
+
 
   /**
    * Nodes to be used in OcTree, our main data structure.
    */
-  class OcTreeNode {
+  class OcTreeNode : public AbstractOcTreeNode {
 
   public:
 

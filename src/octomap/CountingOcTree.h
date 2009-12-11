@@ -27,7 +27,9 @@
 #ifndef OCTOMAP_COUNTING_OCTREE_HH
 #define OCTOMAP_COUNTING_OCTREE_HH
 
+#include <stdio.h>
 #include "AbstractOcTree.h"
+#include "AbstractOcTreeNode.h"
 
 namespace octomap {
 
@@ -40,14 +42,14 @@ namespace octomap {
    * \note In our mapping system this data structure is used in
    *       CountingOcTree in the sensor model only
    */
-  class CountingOcTreeNode {
+  class CountingOcTreeNode : public AbstractOcTreeNode {
 
   public:
 
     CountingOcTreeNode();
     ~CountingOcTreeNode();
 
-    CountingOcTreeNode* getChild(unsigned int i);
+    virtual CountingOcTreeNode* getChild(unsigned int i);
     void setChild(unsigned int i, CountingOcTreeNode* child);
     bool childExists(unsigned int i) const;
     bool hasChildren() const;
@@ -55,10 +57,24 @@ namespace octomap {
     unsigned int getCount() const { return count; }
     void increaseCount() { count++; }
 
+
+    // implement interface
+    virtual const CountingOcTreeNode* getChild(unsigned int i) const;
+    virtual void integrateHit() { this->increaseCount(); }
+    virtual bool isOccupied() const { return true; }	
+    virtual bool isDelta() const { return true; }
+
+    virtual void convertToBinary() { printf("function not implemented in CountingOcTreeNode.\n"); };
+    virtual void integrateMiss()  { printf("function not implemented in CountingOcTreeNode.\n");  };
+    virtual bool createChild(unsigned int i) { printf("function not implemented in CountingOcTreeNode.\n");  return true; }
+
   protected:
     CountingOcTreeNode* itsChildren[8];
     unsigned int count;
   };
+
+
+
 
   /**
    * An AbstractOcTree which stores an internal counter per node / volume.
@@ -67,7 +83,7 @@ namespace octomap {
    * children.
    *
    * \note In our mapping system this data structure is used in
-   *       the sensor model only
+   *       the sensor model only. Do not use, e.g., insertScan.
    */
   class CountingOcTree : public AbstractOcTree <CountingOcTreeNode> {
 

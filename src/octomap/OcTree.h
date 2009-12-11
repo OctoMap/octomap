@@ -59,18 +59,6 @@ namespace octomap {
 
     virtual ~OcTree();
 
-   /**
-    * Traces a ray from origin to end (excluding), returning all
-    * centers of cells traversed by the beam.
-    * (Essentially using the DDA algorithm in 3D).
-    *
-    * @param origin
-    * @param end
-    * @param _ray
-    * @return Success of operation. A "false" usually means that one of the coordinates is out of the Octree area
-    */
-    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& _ray) const;
-
     /**
      * Performs raycasting in 3d, similar to computeRay().
      *
