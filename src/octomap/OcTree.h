@@ -62,64 +62,11 @@ namespace octomap {
     /// Insert a 3d scan as ScanNode into the tree, creates delta nodes
     void insertScan(const ScanNode& scan);
 
-    /// Insert one ray between origin and end into the tree.
-    /// integrateMissOnRay() is called for the ray, the end point is updated as occupied.
-    virtual bool insertRay(const point3d& origin, const point3d& end);
+    // NOTE: insertScan needs to stay here, insertScanUniform cannot be moved to Base.
 
-    /// Traces a ray from origin to end and updates all voxels on the way as free.
-    /// The volume containing "end" is not updated.
-    void integrateMissOnRay(const point3d& origin, const point3d& end);
 
     /// Convert all delta nodes to binary nodes
     void deltaToBinary();
-
-    /**
-     * Convenience function to return all occupied nodes in the OcTree.
-     *
-     * @param occupied_volumes list of occpupied nodes (as point3d and size of the volume)
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    void getOccupied(std::list<OcTreeVolume>& occupied_volumes, unsigned int max_depth = 0) const;
-
-    /**
-     * Traverses the tree and collects all OcTreeVolumes regarded as occupied.
-     * MIXED nodes are regarded as occupied. This should be for internal use only,
-     * better use getOccupied(occupied_volumes) instead.
-     *
-     * @param binary_nodes list of binary OcTreeVolumes which are occupied
-     * @param delta_nodes list of delta OcTreeVolumes which are occupied
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    void getOccupied(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth = 0) const;
-
-    /**
-     * Convenience function to return all free nodes in the OcTree.
-     *
-     * @param free_volumes list of free nodes (as point3d and size of the volume)
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    void getFreespace(std::list<OcTreeVolume>& free_volumes, unsigned int max_depth = 0) const;
-
-    /**
-     * Traverses the tree and collects all OcTreeVolumes regarded as free.
-     * MIXED nodes are regarded as occupied.
-     *
-     * @param binary_nodes list of binary OcTreeVolumes which are free
-     * @param delta_nodes list of delta OcTreeVolumes which are free
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    void getFreespace(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth = 0) const;
-
-    /**
-     * Traverses the tree and collects all OcTreeVolumes which are potential obstacles.
-     * These are nodes labeled "free" (were binary before), but are now delta
-     * \note This is currently deprecated!
-     *
-     * @param max_depth how deep to traverse the tree
-     * @param occ_thres Occupancy threshold for regarding nodes as free
-     * @param nodes list of OcTreeVolumes which are potential obstacles
-     */
-    void getChangedFreespace(unsigned int max_depth, double occ_thres, std::list<OcTreeVolume>& nodes) const;
 
     /// \return Memory usage of the OcTree in Bytes.
     unsigned int memoryUsage() const;
@@ -162,13 +109,6 @@ namespace octomap {
 
     // insert only freespace (freespace=true) or occupied space
     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace);
-
-    /// recursive call of getOccupied()
-    void getOccupiedRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
-        unsigned int max_depth, OcTreeNode* node, unsigned int depth, const point3d& parent_center) const;
-    /// recursive call of getFreeSpace()
-    void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
-        unsigned int max_depth, OcTreeNode* node, unsigned int depth, const point3d& parent_center) const;
 
     ///recursive call of deltaToBinary()
     void deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);

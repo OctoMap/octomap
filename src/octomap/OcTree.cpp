@@ -32,8 +32,10 @@
 #include "OcTree.h"
 #include "CountingOcTree.h"
 
+
 // switch to true to disable uniform sampling of scans (will "eat" the floor)
 #define NO_UNIFORM_SAMPLING false
+
 
 namespace octomap {
 
@@ -58,127 +60,6 @@ namespace octomap {
   }
 
 
-  void OcTree::getOccupied(std::list<OcTreeVolume>& occupied_nodes, unsigned int max_depth) const{
-    std::list<OcTreeVolume> delta_nodes;
-
-    getOccupied(occupied_nodes, delta_nodes, max_depth);
-    occupied_nodes.insert(occupied_nodes.end(), delta_nodes.begin(), delta_nodes.end());
-  }
-
-
-  void OcTree::getOccupied(std::list<OcTreeVolume>& binary_nodes,
-                            std::list<OcTreeVolume>& delta_nodes,
-                            unsigned int max_depth) const{
-
-    if (max_depth == 0)
-      max_depth = tree_depth;
-
-    getOccupiedRecurs(binary_nodes, delta_nodes, max_depth, itsRoot, 0, tree_center);
-  }
-
-
-  void OcTree::getOccupiedRecurs( std::list<OcTreeVolume>& binary_nodes,
-          std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
-          OcTreeNode* node, unsigned int depth,
-				 const point3d& parent_center) const{
-
-    if (depth < max_depth && node->hasChildren()) {
-
-      double center_offset = tree_center(0) / pow( 2., (double) depth+1);
-      point3d search_center;
-
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-
-          // x-axis
-          if (i & 1)  search_center(0) = parent_center(0) + center_offset;
-          else        search_center(0) = parent_center(0) - center_offset;
-
-          // y-axis
-          if (i & 2)  search_center(1) = parent_center(1) + center_offset;
-          else        search_center(1) = parent_center(1) - center_offset;
-          // z-axis
-          if (i & 4)  search_center(2) = parent_center(2) + center_offset;
-          else        search_center(2) = parent_center(2) - center_offset;
-
-          getOccupiedRecurs(binary_nodes, delta_nodes, max_depth,  node->getChild(i), depth+1, search_center);
-        }
-      }
-    }
-
-    else { // max level reached
-
-      if (node->isOccupied()) {
-        double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (node->isDelta()) {
-          delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        }
-        else {
-          binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        }
-      }
-    }
-  }
-
-  void OcTree::getFreespace(std::list<OcTreeVolume>& free_nodes, unsigned int max_depth) const{
-      std::list<OcTreeVolume> delta_nodes;
-
-      getFreespace(free_nodes, delta_nodes, max_depth);
-      free_nodes.insert(free_nodes.end(), delta_nodes.begin(), delta_nodes.end());
-  }
-
-  void OcTree::getFreespace(std::list<OcTreeVolume>& binary_nodes,
-                            std::list<OcTreeVolume>& delta_nodes,
-                            unsigned int max_depth) const{
-
-    if (max_depth == 0)
-      max_depth = tree_depth;
-
-    getFreespaceRecurs(binary_nodes, delta_nodes, max_depth,  itsRoot, 0, tree_center);
-  }
-
-  void OcTree::getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
-      std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
-      OcTreeNode* node, unsigned int depth, const point3d& parent_center) const{
-
-    if (depth < max_depth && node->hasChildren()) {
-
-      double center_offset = tree_center(0) / pow( 2., (double) depth+1);
-      point3d search_center;
-
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-
-          // x-axis
-          if (i & 1)  search_center(0) = parent_center(0) + center_offset;
-          else        search_center(0) = parent_center(0) - center_offset;
-
-          // y-axis
-          if (i & 2)  search_center(1) = parent_center(1) + center_offset;
-          else        search_center(1) = parent_center(1) - center_offset;
-          // z-axis
-          if (i & 4)  search_center(2) = parent_center(2) + center_offset;
-          else        search_center(2) = parent_center(2) - center_offset;
-
-          getFreespaceRecurs(binary_nodes, delta_nodes, max_depth, node->getChild(i), depth+1, search_center);
-
-        } // GetChild
-      } // depth
-    }
-    else {    // max level reached
-
-      if (!node->isOccupied()) {
-        double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (node->isDelta()) {
-          delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        }
-        else {
-          binary_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
-        }
-      }
-      
-    }
-  }
 
 
   void OcTree::prune() {
@@ -242,6 +123,22 @@ namespace octomap {
   }
 
 
+  void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
+    pose6d scan_pose (scan.pose);
+    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
+    octomap::point3d p;
+    for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
+      p = scan_pose.transform(**point_it);
+      if (freespace) {
+        this->integrateMissOnRay(origin, p);
+      }
+      else {
+        updateNode(p, true);
+      }
+    }
+  }
+
+
   void OcTree::insertScan(const ScanNode& scan) {
     if (scan.scan->size()< 1)
       return;
@@ -260,49 +157,12 @@ namespace octomap {
         p = scan_pose.transform(**point_it);
         this->insertRay(origin, p);
       } // end for all points
-    } else{
+    } 
+    else {
       this->insertScanUniform(scan);
     }
   }
 
-
-  void OcTree::integrateMissOnRay(const point3d& origin, const point3d& end) {
-
-    std::vector<point3d> ray;
-    if (this->computeRay(origin, end, ray)){
-
-      for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
-        //      std::cout << "miss cell " << *it << std::endl;
-        updateNode(*it, false); // insert miss cell
-      }
-    }
-
-  }
-
-
-  bool OcTree::insertRay(const point3d& origin, const point3d& end){
-
-    integrateMissOnRay(origin, end);
-    updateNode(end, true); // insert hit cell
-
-    return true;
-  }
-
-
-  void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
-    pose6d scan_pose (scan.pose);
-    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
-    octomap::point3d p;
-    for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
-      p = scan_pose.transform(**point_it);
-      if (freespace) {
-        this->integrateMissOnRay(origin, p);
-      }
-      else {
-        updateNode(p, true);
-      }
-    }
-  }
 
   void OcTree::insertScanUniform(const ScanNode& scan) {
     octomap::pose6d scan_pose (scan.pose);
