@@ -38,13 +38,13 @@
 namespace octomap {
 
   OcTree::OcTree(double _resolution)
-    : AbstractOcTree<OcTreeNode> (_resolution)  {
+    : OcTreeBase<OcTreeNode> (_resolution)  {
     itsRoot = new OcTreeNode();
     tree_size++;
   }
 
   OcTree::OcTree(std::string _filename)
-    : AbstractOcTree<OcTreeNode> (0.1)  { // resolution will be set according to tree file
+    : OcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file
     itsRoot = new OcTreeNode();
     tree_size++;
 

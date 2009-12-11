@@ -31,7 +31,7 @@ namespace octomap {
 
 
   template <class NODE>
-  AbstractOcTree<NODE>::AbstractOcTree(double _resolution) :
+  OcTreeBase<NODE>::OcTreeBase(double _resolution) :
     itsRoot(NULL), tree_depth(16), tree_max_val(32768), 
     resolution(_resolution), tree_size(0) {
     
@@ -45,11 +45,11 @@ namespace octomap {
 
 
   template <class NODE>
-  AbstractOcTree<NODE>::~AbstractOcTree(){
+  OcTreeBase<NODE>::~OcTreeBase(){
   }
 
   template <class NODE>
-  void AbstractOcTree<NODE>::setResolution(double r) {
+  void OcTreeBase<NODE>::setResolution(double r) {
     resolution = r;
     resolution_factor = 1. / resolution;
     tree_center(0) = tree_center(1) = tree_center(2) = ((double) tree_max_val) / resolution_factor;
@@ -57,7 +57,7 @@ namespace octomap {
 
 
   template <class NODE>
-  bool AbstractOcTree<NODE>::genKey(double val, unsigned short int& key) const{
+  bool OcTreeBase<NODE>::genKey(double val, unsigned short int& key) const{
 
     // scale to resolution and shift center for tree_max_val
     int scaled_val =  ((int) floor(resolution_factor * val)) + tree_max_val;
@@ -73,7 +73,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool AbstractOcTree<NODE>::genKeys(const point3d& point, unsigned short int (&keys)[3]) const{
+  bool OcTreeBase<NODE>::genKeys(const point3d& point, unsigned short int (&keys)[3]) const{
     for (unsigned int i=0; i<3; i++) {
       if ( !genKey( point(i), keys[i]) ) {
         return false;
@@ -84,7 +84,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool AbstractOcTree<NODE>::genVal(unsigned short int& key, double& val) const{
+  bool OcTreeBase<NODE>::genVal(unsigned short int& key, double& val) const{
 
     val = 0.0;
 
@@ -98,7 +98,7 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int AbstractOcTree<NODE>::genPos(unsigned short int key[], int i) const {
+  unsigned int OcTreeBase<NODE>::genPos(unsigned short int key[], int i) const {
 
     unsigned int retval = 0;
     if (key[0] & (1 << i)) retval += 1;
@@ -109,7 +109,7 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* AbstractOcTree<NODE>::search(const point3d& value) const {
+  NODE* OcTreeBase<NODE>::search(const point3d& value) const {
 
     // Search is a variant of insert which aborts if
     // it had to insert nodes
@@ -118,7 +118,7 @@ namespace octomap {
 
     for (unsigned int i=0; i<3; i++) {
       if ( !genKey( value(i), key[i]) ) {
-        std::cerr << "Error in AbstractOcTree<NODE>: Coordinate "<<i<<" of searched point out of OcTree bounds: "<< value(i)<<"\n";
+        std::cerr << "Error in OcTreeBase<NODE>: Coordinate "<<i<<" of searched point out of OcTree bounds: "<< value(i)<<"\n";
         return NULL;
       }
     }
@@ -151,7 +151,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool AbstractOcTree<NODE>::computeRay(const point3d& origin, const point3d& end, 
+  bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
 			  std::vector<point3d>& _ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
@@ -230,7 +230,7 @@ namespace octomap {
         tMax[i] += tDelta[i];
       }
       else {
-        std::cerr << "WARNING: Ray casting in AbstractOcTreeNODE>::getCellsOnRay hit the boundary in dim. "<< i << std::endl;
+        std::cerr << "WARNING: Ray casting in OcTreeBaseNODE>::getCellsOnRay hit the boundary in dim. "<< i << std::endl;
         return false;
       }
 
@@ -259,7 +259,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth) const{
+  void OcTreeBase<NODE>::getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth) const{
     assert(itsRoot);
     if (tree_size <= 1) return; // A tree with only the root is an empty tree (by definition)
 
@@ -271,7 +271,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getLeafNodesRecurs(std::list<OcTreeVolume>& nodes,
+  void OcTreeBase<NODE>::getLeafNodesRecurs(std::list<OcTreeVolume>& nodes,
             unsigned int max_depth,
             NODE* node, unsigned int depth,
 						const point3d& parent_center) const{
@@ -312,7 +312,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth) const{
+  void OcTreeBase<NODE>::getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth) const{
     assert(itsRoot);
 
     if (max_depth == 0)
@@ -324,7 +324,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void AbstractOcTree<NODE>::getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
+  void OcTreeBase<NODE>::getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
       unsigned int max_depth,
       NODE* node, unsigned int depth,
       const point3d& parent_center) const{

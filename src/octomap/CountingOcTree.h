@@ -28,7 +28,7 @@
 #define OCTOMAP_COUNTING_OCTREE_HH
 
 #include <stdio.h>
-#include "AbstractOcTree.h"
+#include "OcTreeBase.h"
 #include "AbstractOcTreeNode.h"
 
 namespace octomap {
@@ -85,7 +85,7 @@ namespace octomap {
    * \note In our mapping system this data structure is used in
    *       the sensor model only. Do not use, e.g., insertScan.
    */
-  class CountingOcTree : public AbstractOcTree <CountingOcTreeNode> {
+  class CountingOcTree : public OcTreeBase <CountingOcTreeNode> {
 
   public:
 

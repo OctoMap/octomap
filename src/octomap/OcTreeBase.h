@@ -24,8 +24,8 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_OCTREE_H
-#define OCTOMAP_OCTREE_H
+#ifndef OCTOMAP_BASE_OCTREE_H
+#define OCTOMAP_BASE_OCTREE_H
 
 
 
@@ -49,12 +49,12 @@ namespace octomap {
    *  Note: the tree does not save individual points.
    */
   template <class NODE>
-    class AbstractOcTree {
+    class OcTreeBase {
 
   public:
 
-    AbstractOcTree(double _resolution);
-    virtual ~AbstractOcTree();
+    OcTreeBase(double _resolution);
+    virtual ~OcTreeBase();
 
     /// \return The number of nodes in the tree
     unsigned int size() const { return tree_size; }
@@ -173,6 +173,6 @@ namespace octomap {
 
 }
 
-#include "AbstractOcTree.hxx"
+#include "OcTreeBase.hxx"
 
 #endif

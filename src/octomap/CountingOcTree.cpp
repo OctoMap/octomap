@@ -78,7 +78,7 @@ namespace octomap {
 
 
   CountingOcTree::CountingOcTree(double _resolution)
-    : AbstractOcTree<CountingOcTreeNode>(_resolution)   {
+    : OcTreeBase<CountingOcTreeNode>(_resolution)   {
 
     itsRoot = new CountingOcTreeNode();
     tree_size++;

@@ -27,6 +27,5 @@
 #include "octomap_types.h"
 #include "Pointcloud.h"
 #include "ScanGraph.h"
-#include "AbstractOcTree.h"
 #include "OcTree.h"
 

@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_ABSTRACT_OCTREE_NODE_H
 #define OCTOMAP_ABSTRACT_OCTREE_NODE_H
 
-// $Id: OcTreeNode.h 32 2009-10-01 10:31:15Z kai_wurm $
+// $Id: AbstractOcTreeNode.h 32 2009-10-01 10:31:15Z kai_wurm $
 
 /**
 * Octomap:

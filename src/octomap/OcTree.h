@@ -24,10 +24,10 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_BINARYOCTREE_HH
-#define OCTOMAP_BINARYOCTREE_HH
+#ifndef OCTOMAP_OCTREE_HH
+#define OCTOMAP_OCTREE_HH
 
-#include "AbstractOcTree.h"
+#include "OcTreeBase.h"
 #include "OcTreeNode.h"
 #include "ScanGraph.h"
 
@@ -37,7 +37,7 @@ namespace octomap {
    * The actual octomap map data structure, stored in an OcTree.
    *
    */
-  class OcTree : public AbstractOcTree <OcTreeNode> {
+  class OcTree : public OcTreeBase <OcTreeNode> {
 
   public:
     static const int TREETYPE=3;

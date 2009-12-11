@@ -60,14 +60,14 @@ namespace octomap {
     virtual bool createChild(unsigned int i);
 
     /// \return true if the i th child exists
-    bool childExists(unsigned int i) const;
+    virtual bool childExists(unsigned int i) const;
     /// \return true if the node has at least one child
-    bool hasChildren() const;
+    virtual bool hasChildren() const;
     /// A node is collapsible if all children exist, don't have children of their own
     /// and are completely binary.
     bool collapsible() const;
 
-    bool isDelta() const;
+    virtual bool isDelta() const;
     virtual void convertToBinary();
  
     /**
@@ -80,10 +80,10 @@ namespace octomap {
      */
     double getMaxChildLogOdds() const;
 
-    void integrateHit();
-    void integrateMiss();
+    virtual void integrateHit();
+    virtual void integrateMiss();
     double getOccupancy() const;
-    bool isOccupied() const;
+    virtual bool isOccupied() const;
 
     float getLogOdds() const{ return log_odds_occupancy; }
     void setLogOdds(float l) { log_odds_occupancy = l; }
