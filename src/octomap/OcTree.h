@@ -59,32 +59,6 @@ namespace octomap {
 
     virtual ~OcTree();
 
-    /**
-     * Performs raycasting in 3d, similar to computeRay().
-     *
-     * A ray is cast from origin with a given direction, the first occupied
-     * cell is returned (as center coordinate)
-     *
-     * Not tested throroughly yet ...
-     *
-     * @param origin
-     * @param direction A vector pointing in the direction of the raycast. Does not need to be normalized.
-     * @param end center of cell that was hit by the ray, if successful
-     * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
-     * @return whether or not an occupied cell was hit
-     */
-    bool castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange=-1.0) const;
-
-
-    /**
-     * Updates an OcTreeNode in the OcTree either as observed free or occupied.
-     *
-     * @param value 3D position of the OcTreeNode that is to be updated
-     * @param occupied Whether the node was observed occupied or free
-     * @return
-     */
-    virtual OcTreeNode* updateNode(const point3d& value, bool occupied);
-
     /// Insert a 3d scan as ScanNode into the tree, creates delta nodes
     void insertScan(const ScanNode& scan);
 
@@ -188,10 +162,6 @@ namespace octomap {
 
     // insert only freespace (freespace=true) or occupied space
     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace);
-
-    /// recursive call of updateNode()
-    OcTreeNode* updateNodeRecurs(OcTreeNode* node, bool node_just_created, unsigned short int key[3],
-				 unsigned int depth, bool occupied);
 
     /// recursive call of getOccupied()
     void getOccupiedRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,

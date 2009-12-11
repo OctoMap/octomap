@@ -156,8 +156,6 @@ namespace octomap {
     return log(mean/(1-mean));
   }
 
-
-
   double OcTreeNode::getMaxChildLogOdds() const{
     double max = -1e6;
     for (unsigned int i=0; i<8; i++) {
@@ -169,6 +167,10 @@ namespace octomap {
     return max;
   }
 
+  void OcTreeNode::updateOccupancyChildren() {
+    //      node->setLogOdds(node->getMeanChildLogOdds());
+    this->setLogOdds(this->getMaxChildLogOdds());  // conservative
+  }
 
   bool OcTreeNode::isOccupied() const {
     return (this->getOccupancy() >= ML_OCC_PROB_THRES);

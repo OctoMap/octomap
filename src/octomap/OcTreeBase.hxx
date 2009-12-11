@@ -150,6 +150,85 @@ namespace octomap {
     return curNode;
   }
 
+
+  template <class NODE>
+  NODE* OcTreeBase<NODE>::updateNode(const point3d& value, bool occupied) {
+
+    // if (leaf exists)
+    //    AND (it is binary) AND (the new information does not contradict the prior):
+    //       return leaf
+
+    // TODO: Possible speedup: avoid search in every insert?
+    NODE* leaf = this->search(value);
+    if (leaf) {
+      if ((!leaf->isDelta()) && (leaf->isOccupied() == occupied)) {
+        return leaf;
+      }
+    }
+
+    // generate key for addressing in tree
+    unsigned short int key[3];
+    if (!genKeys(value, key))
+      return NULL;
+
+    return updateNodeRecurs(itsRoot, false, key, 0, occupied);
+  }
+  
+
+  template <class NODE>
+  NODE* OcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
+                                           unsigned short int key[3], unsigned int depth,
+                                           bool occupied) {
+
+    unsigned int pos = genPos(key, tree_depth-1-depth);
+    bool created_node = false;
+
+    // follow down to last level
+    if (depth < tree_depth) {
+      if (!node->childExists(pos)) {
+        // child does not exist, but maybe it's a pruned node?
+        if ((!node->hasChildren()) && !node_just_created && (node != itsRoot)) {
+          // current node does not have children AND it is not a new node 
+	  // AND its not the root node
+          // -> expand pruned node
+          for (unsigned int k=0; k<8; k++) {
+            node->createChild(k);
+            tree_size++;
+            sizeChanged = true;
+            //node->getChild(k)->setLabel(node->getLabel());
+          }
+        }
+        else {
+          // not a pruned node, create requested child
+          node->createChild(pos);
+          tree_size++;
+          sizeChanged = true;
+        }
+        created_node = true;
+      }
+      NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, 
+                                      key, depth+1, occupied);
+
+      // set own probability according to prob of children
+      node->updateOccupancyChildren(); 
+
+      //       std::cout << "depth: " << depth << " node prob: " << node->getLogOdds()
+      // 		<< " label: " << (int) node->getLabel() << " isDelta: "
+      // 		<< node->isDelta() << " isValid: "  << node->valid() << std::endl;
+      return retval;
+    }
+
+    // at last level, update node, end of recursion
+    else {
+      if (occupied) node->integrateHit();
+      else          node->integrateMiss();
+      return node;
+    }
+
+  }
+
+
+
   template <class NODE>
   bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
 			  std::vector<point3d>& _ray) const {
@@ -256,6 +335,123 @@ namespace octomap {
 
     return true;
   }
+
+
+  
+  template <class NODE>
+  bool OcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange) const {
+    
+    // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
+    // basically: DDA in 3D
+
+    // Initialization phase -------------------------------------------------------
+    end = point3d(0.0, 0.0, 0.0);
+
+    point3d direction = directionP.unit();
+
+    NODE* startingNode = this->search(origin);
+    if (startingNode){
+      if (startingNode->isOccupied()){
+        std::cerr << "WARNING: No raycast done, origin node is already occupied.\n";
+        return false;
+      }
+    } else {
+      std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";
+      return false;
+    }
+
+
+    // Voxel integer coordinates are the indices of the OcTree cells
+    // at the lowest level (they may exist or not).
+
+    unsigned short int voxelIdx[3];  // voxel integer coords
+    int step[3];                     // step direction
+
+    double tMax[3];
+    double tDelta[3];
+
+    for(unsigned int i=0; i < 3; ++i) {
+      if (!genKey(origin(i), voxelIdx[i])) {
+        std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i)<<"\n";
+        return false;
+      }
+
+      if (direction(i) > 0.0) step[i] =  1;
+      else if (direction(i) < 0.0)   step[i] = -1;
+      else step[i] = 0;
+
+      double voxelBorder = (double) ( (int) voxelIdx[i] - (int) tree_max_val ) * resolution;
+      if (step[i] > 0) voxelBorder += resolution;
+
+      if (direction(i) != 0.0) {
+        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
+        tDelta[i] = resolution / fabs( direction(i) );
+      }
+      else {
+        tMax[i] = 1e6;
+        tDelta[i] = 1e6;
+      }
+    }
+
+    // Incremental phase  ---------------------------------------------------------
+
+    bool done = false;
+    while (!done) {
+      unsigned int i;
+
+      // find minimum tMax:
+      if (tMax[0] < tMax[1]){
+        if (tMax[0] < tMax[2]) i = 0;
+        else                   i = 2;
+      }
+      else {
+        if (tMax[1] < tMax[2]) i = 1;
+        else                   i = 2;
+      }
+
+      // advance in direction "i":
+      voxelIdx[i] += step[i];
+
+      if ((voxelIdx[i] >= 0) && (voxelIdx[i] < 2*tree_max_val)){
+        tMax[i] += tDelta[i];
+      }
+      else {
+        std::cerr << "WARNING: Ray casting in OcTree::castRay() hit the boundary in dim. "<< i << std::endl;
+        return false;
+      }
+
+      // generate world coords from tree indices
+      double val[3];
+      for (unsigned int j = 0; j < 3; j++) {
+        if(!genVal( voxelIdx[j], val[j] )){
+          std::cerr << "Error in OcTree::castRay(): genVal failed!\n";
+          return false;
+        }
+      }
+      end = point3d(val[0], val[1], val[2]);
+      // reached maxRange?
+      if (maxRange > 0 && (end - origin).norm2() > maxRange) {
+        return false;
+      }
+
+      NODE* currentNode = this->search(end);
+      if ( currentNode){
+        if (currentNode->isOccupied())
+          done = true;
+
+        // otherwise: node is free and valid, raycast continues
+      } else{ // no node found, this usually means we are in "unknown" areas
+  //        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
+  //                  << end << std::endl;
+        return false;
+      }
+
+
+    } // end while
+
+    return true;
+  }
+
 
 
   template <class NODE>

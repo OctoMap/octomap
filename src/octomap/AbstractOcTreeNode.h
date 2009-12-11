@@ -58,6 +58,8 @@ namespace octomap {
     virtual void integrateHit() = 0;
     virtual void integrateMiss() = 0;
     virtual bool isOccupied() const = 0;
+    /// updates the occupancy of an inner node according to its children
+    virtual void updateOccupancyChildren() = 0;
 
     // clamping ------
 

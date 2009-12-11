@@ -85,6 +85,8 @@ namespace octomap {
     double getOccupancy() const;
     virtual bool isOccupied() const;
 
+    virtual void updateOccupancyChildren();
+
     float getLogOdds() const{ return log_odds_occupancy; }
     void setLogOdds(float l) { log_odds_occupancy = l; }
 

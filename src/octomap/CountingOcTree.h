@@ -64,9 +64,10 @@ namespace octomap {
     virtual bool isOccupied() const { return true; }	
     virtual bool isDelta() const { return true; }
 
-    virtual void convertToBinary() { printf("function not implemented in CountingOcTreeNode.\n"); };
-    virtual void integrateMiss()  { printf("function not implemented in CountingOcTreeNode.\n");  };
-    virtual bool createChild(unsigned int i) { printf("function not implemented in CountingOcTreeNode.\n");  return true; }
+    virtual void updateOccupancyChildren() { printf(" updateOccupancyChildren  not implemented in CountingOcTreeNode.\n"); };
+    virtual void convertToBinary() { printf(" convertToBinary  not implemented in CountingOcTreeNode.\n"); };
+    virtual void integrateMiss()  { printf(" integrateMiss  not implemented in CountingOcTreeNode.\n");  };
+    virtual bool createChild(unsigned int i) { printf(" createChild  not implemented in CountingOcTreeNode.\n");  return true; }
 
   protected:
     CountingOcTreeNode* itsChildren[8];

@@ -82,6 +82,45 @@ namespace octomap {
 
 
     /**
+     * Updates an OcTreeNode in the OcTree either as observed free or occupied.
+     *
+     * @param value 3D position of the OcTreeNode that is to be updated
+     * @param occupied Whether the node was observed occupied or free
+     * @return
+     */
+    virtual NODE* updateNode(const point3d& value, bool occupied);
+
+
+   /**
+    * Traces a ray from origin to end (excluding), returning all
+    * centers of cells traversed by the beam.
+    * (Essentially using the DDA algorithm in 3D).
+    *
+    * @param origin
+    * @param end
+    * @param _ray
+    * @return Success of operation. A "false" usually means that one of the coordinates is out of the Octree area
+    */
+    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& _ray) const;
+
+
+    /**
+     * Performs raycasting in 3d, similar to computeRay().
+     *
+     * A ray is cast from origin with a given direction, the first occupied
+     * cell is returned (as center coordinate)
+     *
+     * Not tested throroughly yet ...
+     *
+     * @param origin
+     * @param direction A vector pointing in the direction of the raycast. Does not need to be normalized.
+     * @param end center of cell that was hit by the ray, if successful
+     * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
+     * @return whether or not an occupied cell was hit
+     */
+    bool castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange=-1.0) const;
+
+    /**
      * Traverse the tree and collect all leaf nodes
      *
      * @param nodes Leaf nodes as OcTreeVolume
@@ -96,20 +135,6 @@ namespace octomap {
      * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
     void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
-
-
-
-   /**
-    * Traces a ray from origin to end (excluding), returning all
-    * centers of cells traversed by the beam.
-    * (Essentially using the DDA algorithm in 3D).
-    *
-    * @param origin
-    * @param end
-    * @param _ray
-    * @return Success of operation. A "false" usually means that one of the coordinates is out of the Octree area
-    */
-    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& _ray) const;
 
 
   protected:
@@ -139,6 +164,11 @@ namespace octomap {
 
     /// generate child number from key at given tree depth
     unsigned int genPos(unsigned short int key[], int i) const;
+
+
+    /// recursive call of updateNode()
+    NODE* updateNodeRecurs(NODE* node, bool node_just_created, unsigned short int key[3],
+                           unsigned int depth, bool occupied);
 
     /// Recursive call for getLeafNodes()
     void getLeafNodesRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
