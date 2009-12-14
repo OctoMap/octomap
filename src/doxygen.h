@@ -1,15 +1,19 @@
+//
+//This file is intentionally left blank ;)
+// (just containing some doxygen definitions)
+
+
 /**
- * This file is intentionally left blank ;)
- * (just containing some doxygen definitions)
- *
- *
- * @defgroup math Math
- *
- * @defgroup octomap Octomap
- *
- * @defgroup visualization Visualization
+ * \namespace octomath Namespace of the mini-math library in Octomap
  *
  */
+
+
+/**
+ * \namespace octomap Namespace the Octomap library and visualization tools
+ *
+ */
+
 
 /** \mainpage Octomap
 
@@ -63,18 +67,19 @@ href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and
 Hornung</a>. Feel free to contact us.</p>
 
   \section install_sec Installation
-    See the file README.txt in the main folder.
+  <p>See the file README.txt in the main folder.
+  </p>
+
+
+  \section gettingstarted_sec Getting Started
+  <p>
+  OcTree is the main class that should be used. You can load an existing
+  map file using \ref OcTree::readBinary().
+  </p>
+
 
 **/
 
-/**
- * \namespace octomath Namespace of the mini-math library in Octomap
- *
- */
 
-/**
- * \namespace octomap Namespace the Octomap library
- *
- */
 
 

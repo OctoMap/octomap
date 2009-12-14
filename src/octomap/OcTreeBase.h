@@ -47,7 +47,7 @@ namespace octomap {
    *  This implementation uses an efficient key generation method
    *  directly from the binary representation of the data.
    *
-   *  Note: the tree does not save individual points.
+   *  \note The tree does not save individual points.
    */
   template <class NODE>
     class OcTreeBase {
@@ -83,26 +83,26 @@ namespace octomap {
 
 
     /**
-     * Updates an OcTreeNode in the OcTree either as observed free or occupied.
+     * Updates a NODE in the OcTree either as observed free or occupied.
      *
      * @param value 3D position of the OcTreeNode that is to be updated
      * @param occupied Whether the node was observed occupied or free
-     * @return
+     * @return Pointer to the updated NODE
      */
     virtual NODE* updateNode(const point3d& value, bool occupied);
 
 
    /**
-    * Traces a ray from origin to end (excluding), returning all
-    * centers of cells traversed by the beam.
+    * Traces a ray from origin to end (excluding), returning the
+    * coordinates of all nodes traversed by the beam.
     * (Essentially using the DDA algorithm in 3D).
     *
-    * @param origin
-    * @param end
-    * @param _ray
+    * @param origin start coordinate of ray
+    * @param end end coordinate of ray
+    * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
     * @return Success of operation. A "false" usually means that one of the coordinates is out of the Octree area
     */
-    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& _ray) const;
+    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray) const;
 
 
     /**
@@ -119,7 +119,7 @@ namespace octomap {
      * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */
-    bool castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange=-1.0) const;
+    bool castRay(const point3d& origin, const point3d& direction, point3d& end, double maxRange=-1.0) const;
 
 
     /**

@@ -34,7 +34,7 @@
 namespace octomap {
 
   /**
-   * The actual octomap map data structure, stored in an OcTree.
+   * The actual octomap map data structure, stores occupancy values in an OcTree.
    *
    */
   class OcTree : public OcTreeBase <OcTreeNode> {
@@ -98,7 +98,7 @@ namespace octomap {
     /// Writes OcTree to a binary stream (const variant). The OcTree is assumed to be binary and pruned.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
-    /// Reads an OcTree from a binary file
+    /// Reads OcTree from a binary file. Possibly existing nodes of the tree are deleted first.
     void readBinary(std::string filename);
     /// Writes OcTree to a binary file using writeBinary(). The OcTree is converted to binary and pruned first.
     void writeBinary(std::string filename);

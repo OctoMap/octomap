@@ -116,14 +116,6 @@ namespace octomap {
   };
 
 
-  // =========================================
-  // for memory computation only
-  class OcTreeNodeLight {
-  public:
-    float log_odds_occupancy;
-    OcTreeNodeLight* itsChildren;
-  };
-
 
   // for memory computation only
   class OcTreeNodeEightPointers {
