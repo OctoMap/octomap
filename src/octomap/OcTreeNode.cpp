@@ -86,13 +86,17 @@ namespace octomap {
   }
 
   bool OcTreeNode::collapsible() const{
-    // all children must exist and they
-    // must not have children of their own
-    // children may not contain delta information
-    for (unsigned int i = 0; i<8; i++) {
+    // all children must exist, must not have children of their own
+    // and have the same occupancy
+    if (!childExists(0) || getChild(0)->hasChildren())
+      return false;
+
+    float logOdds = getChild(0)->getLogOdds();
+
+    for (unsigned int i = 1; i<8; i++) {
       if (!childExists(i)) return false;
       else if (getChild(i)->hasChildren()) return false;
-      else if (getChild(i)->isDelta()) return false;
+      else if (getChild(i)->getLogOdds() != logOdds) return false;
     }
     return true;
   }
@@ -107,9 +111,9 @@ namespace octomap {
   }
 
 
-  bool OcTreeNode::isDelta() const {
-    return ((log_odds_occupancy < CLAMPING_THRES_MAX) && 
-	    (log_odds_occupancy > CLAMPING_THRES_MIN));
+  bool OcTreeNode::isClamped() const {
+    return ((log_odds_occupancy <= CLAMPING_THRES_MIN) ||
+              (log_odds_occupancy >= CLAMPING_THRES_MAX));
   }
 
 
@@ -190,33 +194,27 @@ namespace octomap {
 
   bool OcTreeNode::pruneNode() {
 
-    if (!this->collapsible()) return false;
+    if (!this->collapsible())
+      return false;
 
-    // this node is binary itself, children can not be delta
-    return pruneBinary();
-  }
+    // set occupancy to children's values
+    setLogOdds(getChild(0)->getLogOdds());
 
-  // pre-condition: node has binary children who have no children
-  // post-condition:
-  // children deleted, node's label is common label of children
-  bool OcTreeNode::pruneBinary() {
-    
-    bool occupancy_state = this->getChild(0)->isOccupied();
-    for (unsigned int i=1; i<8; i++) {
-      if (this->getChild(i)->isOccupied() != occupancy_state) return false;
-    }
-
-    // prune children
+    // delete children
     for (unsigned int i=0;i<8;i++) {
-      if (itsChildren[i] != NULL) delete itsChildren[i];
+      delete itsChildren[i];
     }
     delete[] itsChildren;
     itsChildren = NULL;
+  }
 
-    if (isDelta()) convertToBinary();
+  void OcTreeNode::expandNode(){
+    assert(!hasChildren());
 
-    return true;
-
+    for (unsigned int k=0; k<8; k++) {
+      createChild(k);
+      itsChildren[k]->setLogOdds(log_odds_occupancy);
+    }
   }
 
 

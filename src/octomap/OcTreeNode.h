@@ -55,19 +55,26 @@ namespace octomap {
 
     /// \return a pointer to the i th child of the node. The child needs to exist.
     virtual OcTreeNode* getChild(unsigned int i);
+
     /// \return a const pointer to the i th child of the node. The child needs to exist.
     virtual const OcTreeNode* getChild(unsigned int i) const;
+
     virtual bool createChild(unsigned int i);
 
     /// \return true if the i th child exists
     virtual bool childExists(unsigned int i) const;
+
     /// \return true if the node has at least one child
     virtual bool hasChildren() const;
+
     /// A node is collapsible if all children exist, don't have children of their own
-    /// and are completely binary.
+    /// and have the same occupancy value
     bool collapsible() const;
 
-    virtual bool isDelta() const;
+    /// opposite of former isDelta()...
+    virtual bool isClamped() const;
+
+    /// clamps a node's value to occupied or free threshold, depending on its occupancy
     virtual void convertToBinary();
  
     /**
@@ -98,6 +105,14 @@ namespace octomap {
      */
     bool pruneNode();
 
+    /**
+     * Expands a node (reverse of pruning): All children are created and
+     * filled with the values stored in the node itself. You need to verify
+     * that this is indeed a pruned node (i.e. not a leaf at the lowest level)
+     *
+     */
+    void expandNode();
+
     // file I/O
     std::istream& readBinary(std::istream &s);
     std::ostream& writeBinary(std::ostream &s);
@@ -109,7 +124,6 @@ namespace octomap {
     double prior() const;
 
     void allocChildren();
-    bool pruneBinary();
 
     float log_odds_occupancy; // store log odds occupancy probability
     OcTreeNode** itsChildren; // pointer to children, may be NULL

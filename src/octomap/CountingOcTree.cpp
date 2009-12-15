@@ -38,8 +38,19 @@ namespace octomap {
   CountingOcTreeNode::~CountingOcTreeNode() {
     for (unsigned int i = 0; i<8; i++) {
       if (itsChildren[i]){
-	delete itsChildren[i];
+        delete itsChildren[i];
       }
+    }
+  }
+
+  void CountingOcTreeNode::expandNode(){
+    //assert(!hasChildren()); not impl. yet
+
+    // divide "counts" evenly to children
+    unsigned int childCount = (unsigned int)(count/ 8.0 +0.5);
+    for (unsigned int k=0; k<8; k++) {
+      createChild(k);
+      itsChildren[k]->setCount(childCount);
     }
   }
 

@@ -62,8 +62,8 @@ namespace octomap {
     virtual void updateOccupancyChildren() = 0;
 
     // clamping ------
-
-    virtual bool isDelta() const = 0;
+    virtual bool collapsible() const = 0;
+    virtual bool isClamped() const = 0;
     virtual void convertToBinary() = 0;
 
 

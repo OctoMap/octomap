@@ -111,15 +111,16 @@ namespace octomap {
      * A ray is cast from origin with a given direction, the first occupied
      * cell is returned (as center coordinate)
      *
-     * Not tested throroughly yet ...
+     * \note This function is still experimental and might be subject to change
      *
      * @param origin
      * @param direction A vector pointing in the direction of the raycast. Does not need to be normalized.
-     * @param end center of cell that was hit by the ray, if successful
+     * @param end returns the center of the cell that was hit by the ray, if successful
+     * @param ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
      * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */
-    bool castRay(const point3d& origin, const point3d& direction, point3d& end, double maxRange=-1.0) const;
+    bool castRay(const point3d& origin, const point3d& direction, point3d& end, bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
 
     /**

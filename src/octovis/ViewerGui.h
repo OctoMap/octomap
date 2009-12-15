@@ -70,6 +70,7 @@ class ViewerGui : public QMainWindow {
   void on_actionHelp_triggered();
   void on_actionSettings_triggered();
   void on_actionPruned_triggered(bool checked);
+  void on_actionExpand_tree_triggered();
   void on_actionAs_pure_binary_OcTree_triggered(bool checked);
   void on_actionPrintout_mode_toggled(bool checked);
   void on_actionHeight_map_toggled(bool checked);

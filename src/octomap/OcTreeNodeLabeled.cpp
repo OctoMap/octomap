@@ -76,7 +76,7 @@ namespace octomap {
       if (childExists(i)) {
 
         // REMOVE FOR RELEASE
-        if (getChild(i)->isDelta()) {
+        if (!getChild(i)->isClamped()) {
           printf("commonChildLabel:: node has delta children (no %d). This should not happen.\n", i);
           exit(0);
         }

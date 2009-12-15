@@ -42,6 +42,7 @@
     <addaction name="separator"/>
     <addaction name="actionPruned"/>
     <addaction name="actionAs_pure_binary_OcTree"/>
+    <addaction name="actionExpand_tree"/>
     <addaction name="separator"/>
     <addaction name="actionHelp"/>
     <addaction name="actionExit"/>
@@ -278,6 +279,14 @@
    </property>
    <property name="text">
     <string>Changed free only</string>
+   </property>
+  </action>
+  <action name="actionExpand_tree">
+   <property name="text">
+    <string>Expand tree</string>
+   </property>
+   <property name="toolTip">
+    <string>Expand tree</string>
    </property>
   </action>
  </widget>

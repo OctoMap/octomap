@@ -163,7 +163,7 @@ namespace octomap {
     // TODO: Possible speedup: avoid search in every insert?
     NODE* leaf = this->search(value);
     if (leaf) {
-      if ((!leaf->isDelta()) && (leaf->isOccupied() == occupied)) {
+      if ((leaf->isClamped()) && (leaf->isOccupied() == occupied)) {
         return leaf;
       }
     }
@@ -193,12 +193,10 @@ namespace octomap {
           // current node does not have children AND it is not a new node 
 	  // AND its not the root node
           // -> expand pruned node
-          for (unsigned int k=0; k<8; k++) {
-            node->createChild(k);
-            tree_size++;
-            sizeChanged = true;
-            //node->getChild(k)->setLabel(node->getLabel());
-          }
+          node->expandNode();
+          tree_size+=8;
+          sizeChanged = true;
+
         }
         else {
           // not a pruned node, create requested child
@@ -215,8 +213,8 @@ namespace octomap {
       node->updateOccupancyChildren(); 
 
       //       std::cout << "depth: " << depth << " node prob: " << node->getLogOdds()
-      // 		<< " label: " << (int) node->getLabel() << " isDelta: "
-      // 		<< node->isDelta() << " isValid: "  << node->valid() << std::endl;
+      // 		<< " label: " << (int) node->getLabel() << " isClamped: "
+      // 		<< node->isClamped() << " isValid: "  << node->valid() << std::endl;
       return retval;
     }
 
@@ -339,7 +337,7 @@ namespace octomap {
 
   
   template <class NODE>
-  bool OcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, point3d& end, double maxRange) const {
+  bool OcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, point3d& end, bool ignoreUnknown, double maxRange) const {
     
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
@@ -355,7 +353,7 @@ namespace octomap {
         std::cerr << "WARNING: No raycast done, origin node is already occupied.\n";
         return false;
       }
-    } else {
+    } else if(!ignoreUnknown){
       std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";
       return false;
     }
@@ -440,9 +438,9 @@ namespace octomap {
           done = true;
 
         // otherwise: node is free and valid, raycast continues
-      } else{ // no node found, this usually means we are in "unknown" areas
-  //        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
-  //                  << end << std::endl;
+      } else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
+          std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
+                    << end << std::endl;
         return false;
       }
 
@@ -644,7 +642,7 @@ namespace octomap {
 
       if (node->isOccupied()) {
         double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (node->isDelta()) {
+        if (!node->isClamped()) {
           delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
         }
         else {
@@ -706,7 +704,7 @@ namespace octomap {
 
       if (!node->isOccupied()) {
         double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (node->isDelta()) {
+        if (!node->isClamped()) {
           delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
         }
         else {

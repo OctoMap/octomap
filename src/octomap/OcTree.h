@@ -88,6 +88,10 @@ namespace octomap {
     /// have the same value
     void prune();
 
+    /// Expands all pruned nodes down to the last level (reverse of prune())
+    /// \note This is an expensive operation, especially when the tree is nearly empty!
+    void expand();
+
     void calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const;
 
     /// Reads an OcTree from an input stream, possibly existing nodes are deleted.
@@ -115,6 +119,9 @@ namespace octomap {
 
     /// recursive call of prune()
     void pruneRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
+
+    /// recursive call of expand()
+    void expandRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
 
     void calcNumberOfNodesPerTypeRecurs(OcTreeNode* node,
 					unsigned int& num_binary,

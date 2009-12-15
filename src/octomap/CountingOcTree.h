@@ -56,18 +56,22 @@ namespace octomap {
 
     unsigned int getCount() const { return count; }
     void increaseCount() { count++; }
+    void setCount(unsigned c) {count = c; }
 
 
     // implement interface
     virtual const CountingOcTreeNode* getChild(unsigned int i) const;
     virtual void integrateHit() { this->increaseCount(); }
     virtual bool isOccupied() const { return true; }	
-    virtual bool isDelta() const { return true; }
+    virtual bool isClamped() const { return false; }
+    virtual void expandNode();
 
     virtual void updateOccupancyChildren() { printf(" updateOccupancyChildren  not implemented in CountingOcTreeNode.\n"); };
     virtual void convertToBinary() { printf(" convertToBinary  not implemented in CountingOcTreeNode.\n"); };
     virtual void integrateMiss()  { printf(" integrateMiss  not implemented in CountingOcTreeNode.\n");  };
     virtual bool createChild(unsigned int i) { printf(" createChild  not implemented in CountingOcTreeNode.\n");  return true; }
+    virtual bool collapsible() const { printf(" collapsible  not implemented in CountingOcTreeNode.\n");  return false; }
+
 
   protected:
     CountingOcTreeNode* itsChildren[8];

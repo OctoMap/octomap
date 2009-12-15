@@ -50,7 +50,6 @@ namespace octomap {
     itsRoot = new OcTreeNode();
     tree_size++;
 
-    // TODO: creates a warning because the resolution is going to change anyways
     readBinary(_filename);
   }
 
@@ -68,6 +67,11 @@ namespace octomap {
       pruneRecurs(this->itsRoot, 0, depth, num_pruned);
       if (num_pruned == 0) break;
     }
+  }
+
+  void OcTree::expand() {
+    unsigned int num_expanded = 0;
+    expandRecurs(itsRoot,0, tree_depth, num_expanded);
   }
 
   void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth,
@@ -91,6 +95,27 @@ namespace octomap {
     }
   }
 
+  void OcTree::expandRecurs(OcTreeNode* node, unsigned int depth,
+			   unsigned int max_depth, unsigned int& num_expanded) {
+
+    if (depth < max_depth) {
+      // current node has no children => can be expanded
+      if (!node->hasChildren()){
+        node->expandNode();
+        num_expanded +=8;
+        tree_size +=8;
+        sizeChanged = true;
+      }
+
+      // recursively expand children:
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          expandRecurs(node->getChild(i), depth+1, max_depth, num_expanded);
+        }
+      }
+    } // end if depth
+  }
+
 
   // -----------------------------------------------
 
@@ -102,7 +127,7 @@ namespace octomap {
     }
 
     // convert root
-    if (itsRoot->isDelta()) itsRoot->convertToBinary();
+    itsRoot->convertToBinary();
   }
 
   void OcTree::deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, 
@@ -118,7 +143,7 @@ namespace octomap {
 
     else { // max level reached
       //      printf("level %d\n ", depth);
-      if (node->isDelta()) node->convertToBinary();
+      node->convertToBinary();
     }
   }
 
@@ -331,7 +356,7 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (node->childExists(i)) {
         OcTreeNode* child_node = node->getChild(i);
-        if (child_node->isDelta()) num_delta++;
+        if (!child_node->isClamped()) num_delta++;
         else num_binary++;
         calcNumberOfNodesPerTypeRecurs(child_node, num_binary, num_delta);
       } // end if child
@@ -440,7 +465,7 @@ namespace octomap {
 
   std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
 
-    if (itsRoot->isDelta()){
+    if (!itsRoot->isClamped()){
       std::cerr << "Error: trying to write a tree with delta nodes to binary!\n";
       return s;
     }

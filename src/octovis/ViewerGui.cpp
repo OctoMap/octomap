@@ -612,6 +612,24 @@ void ViewerGui::on_actionPruned_triggered(bool checked){
   }
 }
 
+void ViewerGui::on_actionExpand_tree_triggered(){
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    if (m_ocTree) {
+      showInfo("Expanding OcTree... ");
+      m_ocTree->expand();
+
+      showOcTree();
+
+      showInfo("Done.", true);
+    }
+
+    QApplication::restoreOverrideCursor();
+
+
+}
+
 }
 
 

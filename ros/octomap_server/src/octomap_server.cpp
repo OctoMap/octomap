@@ -89,24 +89,6 @@ void OctomapServer::readMap(const std::string& filename){
 	m_occupiedCellsVis.markers.resize(map.getDepth());
 	double lowestRes = map.getResolution();
 
-	for (unsigned i= 0; i < m_occupiedCellsVis.markers.size(); ++i){
-		double size = lowestRes * pow(2,i);
-
-		m_occupiedCellsVis.markers[i].header.frame_id = m_frameId;
-		m_occupiedCellsVis.markers[i].header.stamp = ros::Time::now();
-		m_occupiedCellsVis.markers[i].ns = "map";
-		m_occupiedCellsVis.markers[i].id = i;
-		m_occupiedCellsVis.markers[i].type = visualization_msgs::Marker::CUBE_LIST;
-		m_occupiedCellsVis.markers[i].action = visualization_msgs::Marker::ADD;
-		m_occupiedCellsVis.markers[i].scale.x = size;
-		m_occupiedCellsVis.markers[i].scale.y = size;
-		m_occupiedCellsVis.markers[i].scale.z = size;
-		m_occupiedCellsVis.markers[i].color.r = 1.0f;
-		m_occupiedCellsVis.markers[i].color.g = 0.0f;
-		m_occupiedCellsVis.markers[i].color.b = 0.0f;
-		m_occupiedCellsVis.markers[i].color.a = 0.5f;
-	}
-
 	std::list<octomap::OcTreeVolume> occupiedCells;
 	map.getOccupied(occupiedCells);
 
@@ -129,6 +111,28 @@ void OctomapServer::readMap(const std::string& filename){
 		cubeCenter.z = it->first.z();
 
 		m_occupiedCellsVis.markers[idx].points.push_back(cubeCenter);
+	}
+
+	for (unsigned i= 0; i < m_occupiedCellsVis.markers.size(); ++i){
+		double size = lowestRes * pow(2,i);
+
+		m_occupiedCellsVis.markers[i].header.frame_id = m_frameId;
+		m_occupiedCellsVis.markers[i].header.stamp = ros::Time::now();
+		m_occupiedCellsVis.markers[i].ns = "map";
+		m_occupiedCellsVis.markers[i].id = i;
+		m_occupiedCellsVis.markers[i].type = visualization_msgs::Marker::CUBE_LIST;
+		m_occupiedCellsVis.markers[i].scale.x = size;
+		m_occupiedCellsVis.markers[i].scale.y = size;
+		m_occupiedCellsVis.markers[i].scale.z = size;
+		m_occupiedCellsVis.markers[i].color.r = 1.0f;
+		m_occupiedCellsVis.markers[i].color.g = 0.0f;
+		m_occupiedCellsVis.markers[i].color.b = 0.0f;
+		m_occupiedCellsVis.markers[i].color.a = 0.5f;
+
+		if (m_occupiedCellsVis.markers[i].points.size() > 0)
+			m_occupiedCellsVis.markers[i].action = visualization_msgs::Marker::ADD;
+		else
+			m_occupiedCellsVis.markers[i].action = visualization_msgs::Marker::DELETE;
 	}
 
 	ROS_INFO("Octomap file %s loaded (%d nodes).", filename.c_str(),map.size());
