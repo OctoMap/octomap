@@ -206,6 +206,8 @@ namespace octomap {
     }
     delete[] itsChildren;
     itsChildren = NULL;
+
+    return true;
   }
 
   void OcTreeNode::expandNode(){
