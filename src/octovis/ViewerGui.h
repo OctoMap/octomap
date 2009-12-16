@@ -69,9 +69,10 @@ class ViewerGui : public QMainWindow {
   void on_actionExport_view_triggered();
   void on_actionHelp_triggered();
   void on_actionSettings_triggered();
-  void on_actionPruned_triggered(bool checked);
+  void on_actionPrune_tree_triggered();
   void on_actionExpand_tree_triggered();
-  void on_actionAs_pure_binary_OcTree_triggered(bool checked);
+  void on_actionConvert_ml_tree_triggered();
+  void on_actionReload_Octree_triggered();
   void on_actionPrintout_mode_toggled(bool checked);
   void on_actionHeight_map_toggled(bool checked);
   void on_actionStore_camera_triggered();
@@ -126,22 +127,10 @@ class ViewerGui : public QMainWindow {
   // open binary file containing an octree
   void openTree();
 
-  /**
-   * (Re)-generates the currently viewed OcTree implementation,
-   * depending on which one is currently active (e.g. after a
-   * resolution change)
-   */
-  void regenerateView();
-
   /*!
-   * (Re-)generates delta OcTree from internally stored ScanGraph
+   * (Re-)generates OcTree from the internally stored ScanGraph
    */
-  void generateDeltaOctree();
-
-  /*!
-   * (Re-)generates OcTree
-   */
-  void generateBinaryOctree();
+  void generateOctree();
   void showOcTree();
 
   void showInfo(QString string, bool newline=false);

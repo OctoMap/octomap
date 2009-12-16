@@ -99,7 +99,7 @@ namespace octomap {
     /// You need to verify that it's "good" and opened first.
     std::istream& readBinary(std::istream &s);
     /// Writes OcTree to a binary stream.
-    ///The OcTree is first converted to the maximum likelihood estimate and pruned.
+    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
     std::ostream& writeBinary(std::ostream &s);
     /// Writes the maximum likelihood OcTree to a binary stream (const variant).
     /// Files will be smaller when the tree is pruned first.
@@ -108,8 +108,11 @@ namespace octomap {
     /// Reads OcTree from a binary file. Possibly existing nodes of the tree are deleted first.
     void readBinary(std::string filename);
     /// Writes OcTree to a binary file using writeBinary().
-    ///The OcTree is first converted to the maximum likelihood estimate and pruned.
+    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
     void writeBinary(std::string filename);
+    /// Writes OcTree to a binary file using writeBinaryConst().
+    /// The OcTree is not changed, in particular not pruned first.
+    void writeBinaryConst(std::string filename) const;
 
   protected:
 

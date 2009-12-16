@@ -111,44 +111,30 @@ void ViewerGui::showInfo(QString string, bool newline) {
 }
 
 
-void ViewerGui::regenerateView(){
-  // void the previously stored / cached OcTrees:
-  m_ocTree.reset();
-  generateDeltaOctree();
-}
-
-
-void ViewerGui::generateDeltaOctree() {
+void ViewerGui::generateOctree() {
 
   if (m_scanGraph){
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    // tree is not set => re-generete
-    if (!m_ocTree) {
-      showInfo("Generating delta OcTree... ");
+    showInfo("Generating delta OcTree... ");
 
-      m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
-      octomap::ScanGraph::iterator it;
-      unsigned numScans = m_scanGraph->size();
-      unsigned currentScan = 1;
-      for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
-        m_ocTree->insertScan(**it);
-        std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
-        currentScan++;
-      }
-    } else {
-      showInfo("Reusing delta OcTree... ");
+    m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
+    octomap::ScanGraph::iterator it;
+    unsigned numScans = m_scanGraph->size();
+    unsigned currentScan = 1;
+    for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
+      m_ocTree->insertScan(**it);
+      std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
+      currentScan++;
     }
 
-    if (ui.actionPruned->isChecked()) {
-      showInfo("pruning... ");
-      m_ocTree->prune();
-    }
     showOcTree();
 
     showInfo("Done.", true);
     QApplication::restoreOverrideCursor();
+  } else {
+    std::cerr << "generateOctree called but no ScanGraph present!\n";
   }
 
 }
@@ -177,40 +163,17 @@ void ViewerGui::gotoFirstScan(){
 void ViewerGui::addNextScan(){
   if (m_scanGraph){
     showInfo("Inserting next scan node into tree... ", true);
-    // OcTree is no longer pure (new scans are delta)
-    ui.actionAs_pure_binary_OcTree->setChecked(false);
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (m_nextScanToAdd != m_scanGraph->end()){
       m_ocTree->insertScan(**m_nextScanToAdd);
       m_nextScanToAdd++;
     }
-    // re-prune when pruning activated
-    if (ui.actionPruned->isChecked())
-      m_ocTree->prune();
 
     QApplication::restoreOverrideCursor();
     showOcTree();
 
   }
-}
-
-void ViewerGui::generateBinaryOctree() {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if (m_ocTree) {
-    showInfo("Purifying OcTree... ");
-    m_ocTree->toMaxLikelihood();
-
-    if (ui.actionPruned->isChecked()) {
-      showInfo("pruning... ");
-      m_ocTree->prune();
-    }
-    showOcTree();
-
-    showInfo("Done.", true);
-  }
-
-  QApplication::restoreOverrideCursor();
 }
 
 
@@ -229,7 +192,7 @@ void ViewerGui::showOcTree() {
 
     if (m_ocTree->size() < 5 * 1e6) {
       m_ocTree->getFreespace (free_voxels, free_delta_voxels, m_max_tree_depth);
-      m_ocTree->getVoxels(grid_voxels, m_max_tree_depth);
+      m_ocTree->getVoxels(grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
       // FIXME m_ocTree->getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
     }
 
@@ -363,10 +326,8 @@ void ViewerGui::openTree(){
     ui.actionOctree_structure->setEnabled(true);
     ui.actionOctree_structure->setChecked(false);
     ui.actionTrajectory->setEnabled(false);
-    ui.actionAs_pure_binary_OcTree->setChecked(true);
-    ui.actionAs_pure_binary_OcTree->setEnabled(false);
-    ui.actionPruned->setChecked(true);
-    ui.actionPruned->setEnabled(false);
+    ui.actionConvert_ml_tree->setEnabled(false);
+    ui.actionReload_Octree->setEnabled(false);
     ui.actionSettings->setEnabled(false);
 
     showOcTree();
@@ -387,10 +348,8 @@ void ViewerGui::loadGraph(bool completeGraph){
   ui.actionOctree_structure->setChecked(false);
   ui.actionFree->setChecked(false);
   ui.actionFree->setEnabled(true);
-  ui.actionAs_pure_binary_OcTree->setEnabled(true);
-  ui.actionAs_pure_binary_OcTree->setChecked(false);
-  ui.actionPruned->setEnabled(true);
-  ui.actionPruned->setChecked(false);
+  ui.actionReload_Octree->setEnabled(true);
+  ui.actionConvert_ml_tree->setEnabled(true);
 
   m_ocTree.reset();
 
@@ -399,7 +358,7 @@ void ViewerGui::loadGraph(bool completeGraph){
   if (completeGraph){
     // generate delta by default
     m_nextScanToAdd = m_scanGraph->end();
-    generateDeltaOctree();
+    generateOctree();
     currentScan = graphSize;
   } else{
     m_nextScanToAdd = m_scanGraph->begin();
@@ -475,11 +434,7 @@ void ViewerGui::on_actionSettings_triggered(){
     if (oldType != m_laserType){ // parameters changed, reload file:
       openFile();
     } else if (resolutionChanged){
-        regenerateView();
-
-        if (ui.actionAs_pure_binary_OcTree->isChecked()) {
-          generateBinaryOctree();
-        }
+      generateOctree();
     }
 
   }
@@ -510,7 +465,7 @@ void ViewerGui::on_actionOpen_graph_incremental_triggered(){
 
 void ViewerGui::on_actionSave_file_triggered(){
 
-  if (ui.actionAs_pure_binary_OcTree->isChecked() && m_ocTree) {
+  if (m_ocTree) {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save binary tree file"),
 						    "", tr("Bonsai tree files (*.bt)"));
 
@@ -518,7 +473,7 @@ void ViewerGui::on_actionSave_file_triggered(){
       QApplication::setOverrideCursor(Qt::WaitCursor);
       showInfo("Writing file... ", false);
 
-      m_ocTree->writeBinary(filename.toStdString());
+      m_ocTree->writeBinaryConst(filename.toStdString());
 
       QApplication::restoreOverrideCursor();
       showInfo("Done.", true);
@@ -526,7 +481,7 @@ void ViewerGui::on_actionSave_file_triggered(){
 
   } else{
     QMessageBox::warning(this, tr("3D Mapping Viewer"),
-                                    "Error: No OcTree present, or OcTree is not pure binary. \nPlease convert the current tree first.",
+                                    "Error: No OcTree present.",
                                     QMessageBox::Ok);
 
   }
@@ -587,29 +542,41 @@ void ViewerGui::on_actionTest_triggered(){
 
 }
 
-void ViewerGui::on_actionAs_pure_binary_OcTree_triggered(bool checked){
-  // binary has been enabled
-  if (checked) {
-    generateBinaryOctree();
-  } else{
-    m_ocTree.reset(); // "unpurification": complete re-generation
-    generateDeltaOctree();
-
-  }
+void ViewerGui::on_actionReload_Octree_triggered(){
+  generateOctree();
 }
 
-void ViewerGui::on_actionPruned_triggered(bool checked){
-  // "unpruning": completely re-generate the tree unpruned
-  if (!checked)
-    m_ocTree.reset(); // void previous (pruned) tree
+void ViewerGui::on_actionConvert_ml_tree_triggered(){
 
-  generateDeltaOctree();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  if (m_ocTree) {
+    showInfo("Converting OcTree to maximum Likelihood map... ");
+    m_ocTree->toMaxLikelihood();
 
-  // should it also be converted to binary?
-  if (ui.actionAs_pure_binary_OcTree->isChecked()) {
-    generateBinaryOctree();
+    showOcTree();
+
+    showInfo("Done.", true);
   }
+
+  QApplication::restoreOverrideCursor();
+
+}
+
+void ViewerGui::on_actionPrune_tree_triggered(){
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  if (m_ocTree) {
+    showInfo("Pruning OcTree... ");
+    m_ocTree->prune();
+
+    showOcTree();
+
+    showInfo("Done.", true);
+  }
+
+  QApplication::restoreOverrideCursor();
 }
 
 void ViewerGui::on_actionExpand_tree_triggered(){
@@ -626,8 +593,6 @@ void ViewerGui::on_actionExpand_tree_triggered(){
     }
 
     QApplication::restoreOverrideCursor();
-
-
 }
 
 }

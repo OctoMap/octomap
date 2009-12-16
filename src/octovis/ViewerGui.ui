@@ -34,16 +34,17 @@
     </widget>
     <addaction name="actionOpen_file"/>
     <addaction name="actionOpen_graph_incremental"/>
-    <addaction name="actionSettings"/>
-    <addaction name="menuShow"/>
     <addaction name="separator"/>
     <addaction name="actionSave_file"/>
     <addaction name="actionExport_view"/>
     <addaction name="separator"/>
-    <addaction name="actionPruned"/>
-    <addaction name="actionAs_pure_binary_OcTree"/>
+    <addaction name="actionConvert_ml_tree"/>
+    <addaction name="actionPrune_tree"/>
     <addaction name="actionExpand_tree"/>
+    <addaction name="actionReload_Octree"/>
     <addaction name="separator"/>
+    <addaction name="menuShow"/>
+    <addaction name="actionSettings"/>
     <addaction name="actionHelp"/>
     <addaction name="actionExit"/>
    </widget>
@@ -204,26 +205,27 @@
     <string>Test</string>
    </property>
   </action>
-  <action name="actionPruned">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
+  <action name="actionPrune_tree">
    <property name="checked">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/go-top.png</normaloff>:/icons/go-top.png</iconset>
    </property>
    <property name="text">
     <string>Prune tree</string>
    </property>
   </action>
-  <action name="actionAs_pure_binary_OcTree">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
+  <action name="actionConvert_ml_tree">
    <property name="checked">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Convert to binary tree</string>
+    <string>Convert to maximum likelihood tree</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert to maximum likelihood tree</string>
    </property>
   </action>
   <action name="actionPrintout_mode">
@@ -282,11 +284,27 @@
    </property>
   </action>
   <action name="actionExpand_tree">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/go-bottom.png</normaloff>:/icons/go-bottom.png</iconset>
+   </property>
    <property name="text">
     <string>Expand tree</string>
    </property>
    <property name="toolTip">
     <string>Expand tree</string>
+   </property>
+  </action>
+  <action name="actionReload_Octree">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/view-refresh.png</normaloff>:/icons/view-refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reload Octree</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload the current progress of the Octree</string>
    </property>
   </action>
  </widget>

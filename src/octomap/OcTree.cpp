@@ -453,6 +453,18 @@ namespace octomap {
     }
   }
 
+  void OcTree::writeBinaryConst(std::string filename) const{
+    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
+
+    if (!binary_outfile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return;
+    } else {
+      writeBinaryConst(binary_outfile);
+      binary_outfile.close();
+    }
+  }
+
   std::ostream& OcTree::writeBinary(std::ostream &s){
 
     // format:    treetype | resolution | num nodes | [binary nodes]
