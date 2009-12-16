@@ -76,7 +76,7 @@ namespace octomap {
       if (childExists(i)) {
 
         // REMOVE FOR RELEASE
-        if (!getChild(i)->isClamped()) {
+        if (!getChild(i)->atThreshold()) {
           printf("commonChildLabel:: node has delta children (no %d). This should not happen.\n", i);
           exit(0);
         }
@@ -127,7 +127,7 @@ namespace octomap {
   }
 
 
-  void OcTreeNodeLabeled::convertToBinary() {
+  void OcTreeNodeLabeled::toMaxLikelihood() {
 
     // converting node
     if (hasChildren()) {
@@ -135,7 +135,7 @@ namespace octomap {
 
       // REMOVE FOR RELEASE
       if (getLabel() == UNKNOWN) {
-	printf("convertToBinary:: label is set to UNKOWN. This should not happen.\n");
+	printf("toMaxLikelihood:: label is set to UNKOWN. This should not happen.\n");
 	exit(0);
 	return;
       }
@@ -149,7 +149,7 @@ namespace octomap {
       else              setLabel(FREE);
     }
 
-    OcTreeNode::convertToBinary();
+    OcTreeNode::toMaxLikelihood();
 
   }
 

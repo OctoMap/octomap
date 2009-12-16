@@ -65,8 +65,9 @@ namespace octomap {
     // NOTE: insertScan needs to stay here, insertScanUniform cannot be moved to Base.
 
 
-    /// Convert all delta nodes to binary nodes
-    void deltaToBinary();
+    /// Creates the maximum likelihood map by calling toMaxLikelihood on all
+    /// nodesm, setting their occupancy to the log odds thresholds.
+    void toMaxLikelihood();
 
     /// \return Memory usage of the OcTree in Bytes.
     unsigned int memoryUsage() const;
@@ -97,14 +98,17 @@ namespace octomap {
     /// Reads an OcTree from an input stream, possibly existing nodes are deleted.
     /// You need to verify that it's "good" and opened first.
     std::istream& readBinary(std::istream &s);
-    /// Writes OcTree to a binary stream. The OcTree is converted to binary and pruned first.
+    /// Writes OcTree to a binary stream.
+    ///The OcTree is first converted to the maximum likelihood estimate and pruned.
     std::ostream& writeBinary(std::ostream &s);
-    /// Writes OcTree to a binary stream (const variant). The OcTree is assumed to be binary and pruned.
+    /// Writes the maximum likelihood OcTree to a binary stream (const variant).
+    /// Files will be smaller when the tree is pruned first.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
     /// Reads OcTree from a binary file. Possibly existing nodes of the tree are deleted first.
     void readBinary(std::string filename);
-    /// Writes OcTree to a binary file using writeBinary(). The OcTree is converted to binary and pruned first.
+    /// Writes OcTree to a binary file using writeBinary().
+    ///The OcTree is first converted to the maximum likelihood estimate and pruned.
     void writeBinary(std::string filename);
 
   protected:
@@ -114,8 +118,8 @@ namespace octomap {
     // insert only freespace (freespace=true) or occupied space
     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace);
 
-    ///recursive call of deltaToBinary()
-    void deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
+    ///recursive call of toMaxLikelihood()
+    void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
 
     /// recursive call of prune()
     void pruneRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);

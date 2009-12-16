@@ -52,7 +52,7 @@ namespace octomap {
 
 
     //! set maximum likelihood clamped logodds value and label
-    virtual void convertToBinary();
+    virtual void toMaxLikelihood();
  
     // data
     /**

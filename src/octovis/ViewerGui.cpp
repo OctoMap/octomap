@@ -199,7 +199,7 @@ void ViewerGui::generateBinaryOctree() {
 
   if (m_ocTree) {
     showInfo("Purifying OcTree... ");
-    m_ocTree->deltaToBinary();
+    m_ocTree->toMaxLikelihood();
 
     if (ui.actionPruned->isChecked()) {
       showInfo("pruning... ");

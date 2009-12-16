@@ -63,8 +63,8 @@ namespace octomap {
 
     // clamping ------
     virtual bool collapsible() const = 0;
-    virtual bool isClamped() const = 0;
-    virtual void convertToBinary() = 0;
+    virtual bool atThreshold() const = 0;
+    virtual void toMaxLikelihood() = 0;
 
 
   protected:

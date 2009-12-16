@@ -72,10 +72,11 @@ namespace octomap {
     bool collapsible() const;
 
     /// opposite of former isDelta()...
-    virtual bool isClamped() const;
+    virtual bool atThreshold() const;
 
-    /// clamps a node's value to occupied or free threshold, depending on its occupancy
-    virtual void convertToBinary();
+    /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
+    /// effectively setting occupancy to the maximum likelihood value
+    virtual void toMaxLikelihood();
  
     /**
      * @return mean of all child probabilities (if they exist), in log odds

@@ -163,7 +163,7 @@ namespace octomap {
     // TODO: Possible speedup: avoid search in every insert?
     NODE* leaf = this->search(value);
     if (leaf) {
-      if ((leaf->isClamped()) && (leaf->isOccupied() == occupied)) {
+      if ((leaf->atThreshold()) && (leaf->isOccupied() == occupied)) {
         return leaf;
       }
     }
@@ -642,7 +642,7 @@ namespace octomap {
 
       if (node->isOccupied()) {
         double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (!node->isClamped()) {
+        if (!node->atThreshold()) {
           delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
         }
         else {
@@ -704,7 +704,7 @@ namespace octomap {
 
       if (!node->isOccupied()) {
         double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        if (!node->isClamped()) {
+        if (!node->atThreshold()) {
           delta_nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
         }
         else {

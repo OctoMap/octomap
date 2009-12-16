@@ -119,31 +119,31 @@ namespace octomap {
 
   // -----------------------------------------------
 
-  void OcTree::deltaToBinary() {
+  void OcTree::toMaxLikelihood() {
 
     // convert bottom up
     for (unsigned int depth=tree_depth; depth>0; depth--) {
-      deltaToBinaryRecurs(this->itsRoot, 0, depth);
+      toMaxLikelihoodRecurs(this->itsRoot, 0, depth);
     }
 
     // convert root
-    itsRoot->convertToBinary();
+    itsRoot->toMaxLikelihood();
   }
 
-  void OcTree::deltaToBinaryRecurs(OcTreeNode* node, unsigned int depth, 
+  void OcTree::toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth,
 				   unsigned int max_depth) {
 
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
         if (node->childExists(i)) {
-          deltaToBinaryRecurs(node->getChild(i), depth+1, max_depth);
+          toMaxLikelihoodRecurs(node->getChild(i), depth+1, max_depth);
         }
       }
     }
 
     else { // max level reached
       //      printf("level %d\n ", depth);
-      node->convertToBinary();
+      node->toMaxLikelihood();
     }
   }
 
@@ -356,7 +356,7 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (node->childExists(i)) {
         OcTreeNode* child_node = node->getChild(i);
-        if (!child_node->isClamped()) num_delta++;
+        if (!child_node->atThreshold()) num_delta++;
         else num_binary++;
         calcNumberOfNodesPerTypeRecurs(child_node, num_binary, num_delta);
       } // end if child
@@ -457,7 +457,7 @@ namespace octomap {
 
     // format:    treetype | resolution | num nodes | [binary nodes]
 
-    this->deltaToBinary();
+    this->toMaxLikelihood();
     this->prune();
 
     return writeBinaryConst(s);
@@ -465,7 +465,8 @@ namespace octomap {
 
   std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
 
-    if (!itsRoot->isClamped()){
+    // TODO: this is no longer an indicator of a purely ML tree... =>fix?
+    if (!itsRoot->atThreshold()){
       std::cerr << "Error: trying to write a tree with delta nodes to binary!\n";
       return s;
     }

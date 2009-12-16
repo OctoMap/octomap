@@ -111,7 +111,7 @@ namespace octomap {
   }
 
 
-  bool OcTreeNode::isClamped() const {
+  bool OcTreeNode::atThreshold() const {
     return ((log_odds_occupancy <= CLAMPING_THRES_MIN) ||
               (log_odds_occupancy >= CLAMPING_THRES_MAX));
   }
@@ -138,8 +138,8 @@ namespace octomap {
 
     if (!hasChildren() &&
         ((log_odds_occupancy > CLAMPING_THRES_MAX) || 
-	 (log_odds_occupancy < CLAMPING_THRES_MIN))) {
-      this->convertToBinary();
+            (log_odds_occupancy < CLAMPING_THRES_MIN))) {
+      this->toMaxLikelihood();
     }
   }
 
@@ -181,7 +181,7 @@ namespace octomap {
   }
 
 
-  void OcTreeNode::convertToBinary() {
+  void OcTreeNode::toMaxLikelihood() {
       if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
       else              setLogOdds(CLAMPING_THRES_MIN);
   }
