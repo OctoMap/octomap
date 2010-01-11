@@ -250,12 +250,6 @@ void ViewerWidget::heightMapColor(double h, GLfloat* glArrayPos) const{
     h = (1.0 - std::min(std::max((h-m_zMin)/ (m_zMax - m_zMin), 0.0), 1.0)) *0.8;
   }
 
-  // blue -> red -> yellow
-//  glArrayPos[0] = GLfloat(std::min(std::max(4*(height-0.25), 0.), 1.)); // red
-//  glArrayPos[1] = GLfloat(std::min(std::max(4*fabs(height-0.5)-1., 0.), 1.)); // green
-//  glArrayPos[2] = GLfloat(std::min(std::max(4*(0.75-height), 0.), 1.)); // blue
-//  glArrayPos[3] = 0.5; // alpha
-
   // blend over HSV-values (more colors)
   double r, g, b;
   double s = 1.0;

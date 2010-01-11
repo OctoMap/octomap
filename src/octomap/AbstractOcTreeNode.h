@@ -32,7 +32,7 @@
 namespace octomap {
 
   /**
-   * Interface of OcTreeNodes. Every Node used in an AbstractOcTree has to implement it.
+   * Interface of OcTreeNodes. Every NODE used in an AbstractOcTree has to implement this.
    */
   class AbstractOcTreeNode {
 

@@ -34,7 +34,8 @@
 namespace octomap {
 
   /**
-   * The actual octomap map data structure, stores occupancy values in an OcTree.
+   * octomap main map data structure, stores 3D occupancy grid map in an OcTree.
+   * Basic functionality is implemented in OcTreeBase.
    *
    */
   class OcTree : public OcTreeBase <OcTreeNode> {
@@ -51,32 +52,38 @@ namespace octomap {
     OcTree(double _resolution);
 
     /**
-     * Creates a new OcTree by reading in from a binary file
-     * @param _filename
+     * Reads an OcTree from a binary file 
+    * @param _filename
      *
      */
     OcTree(std::string _filename);
 
     virtual ~OcTree();
 
-    /// Insert a 3d scan as ScanNode into the tree, creates delta nodes
+
+    /// Insert a 3d scan (given as a ScanNode) into the tree
     void insertScan(const ScanNode& scan);
 
-    // NOTE: insertScan needs to stay here, insertScanUniform cannot be moved to Base.
+    /// Lossless compression of OcTree: merge children to parent when there are 
+    /// eight children with identical occupancy values
+    void prune();
 
+    /// Expands all pruned nodes (reverse of prune())
+    /// \note This is an expensive operation, especially when the tree is nearly empty!
+    void expand();
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
-    /// nodesm, setting their occupancy to the log odds thresholds.
+    /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
     void toMaxLikelihood();
 
-    /// \return Memory usage of the OcTree in Bytes.
+
+    // -- Information  ---------------------------------
+
+    /// \return Memory usage of the OcTree in bytes.
     unsigned int memoryUsage() const;
 
-    /// \return Memory usage of a full grid of the same size as the OcTree in Bytes (for comparison)
+    /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
     unsigned int memoryFullGrid();
-
-    /// \return Memory usage of an OcTree using eight pointers in Bytes (for comparison)
-    unsigned int memoryUsageEightPointers();
 
     /// Size of OcTree in meters for x, y and z dimension
     void getMetricSize(double& x, double& y, double& z);
@@ -85,18 +92,14 @@ namespace octomap {
     /// maximum value in x, y, z
     void getMetricMax(double& x, double& y, double& z);
 
-    /// Lossless compression of OcTree: merge children to parent when they
-    /// have the same value
-    void prune();
+    void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const; 
 
-    /// Expands all pruned nodes down to the last level (reverse of prune())
-    /// \note This is an expensive operation, especially when the tree is nearly empty!
-    void expand();
 
-    void calcNumberOfNodesPerType(unsigned int& num_binary, unsigned int& num_delta) const;
+    // -- I/O  -----------------------------------------
 
-    /// Reads an OcTree from an input stream, possibly existing nodes are deleted.
-    /// You need to verify that it's "good" and opened first.
+    /// binary file format: treetype | resolution | num nodes | [binary nodes]
+
+    /// Reads an OcTree from an input stream. Existing nodes are deleted.
     std::istream& readBinary(std::istream &s);
     /// Writes OcTree to a binary stream.
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
@@ -105,7 +108,7 @@ namespace octomap {
     /// Files will be smaller when the tree is pruned first.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
-    /// Reads OcTree from a binary file. Possibly existing nodes of the tree are deleted first.
+    /// Reads OcTree from a binary file. Existing nodes are deleted.
     void readBinary(std::string filename);
     /// Writes OcTree to a binary file using writeBinary().
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
@@ -116,10 +119,10 @@ namespace octomap {
 
   protected:
 
-    void insertScanUniform(const ScanNode& scan);
+    void insertScanUniform(const ScanNode& scan); // FIXME: name
 
-    // insert only freespace (freespace=true) or occupied space
-    void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace);
+/*     // insert only freespace (freespace=true) or occupied space */
+/*     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace); */
 
     ///recursive call of toMaxLikelihood()
     void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
@@ -130,12 +133,13 @@ namespace octomap {
     /// recursive call of expand()
     void expandRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
 
-    void calcNumberOfNodesPerTypeRecurs(OcTreeNode* node,
-					unsigned int& num_binary,
-					unsigned int& num_delta) const;
+    void calcNumThresholdedNodesRecurs (OcTreeNode* node,
+                                        unsigned int& num_thresholded, 
+                                        unsigned int& num_other) const; 
 
     /// Traverses the tree to calculate the total number of nodes
     unsigned int calcNumNodes() const;
+
     void calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const;
     /// recalculates min and max in x, y, z. Only called when needed, after tree size changed.
     void calcMinMax();

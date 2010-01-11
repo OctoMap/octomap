@@ -41,13 +41,13 @@ namespace octomap {
   /**
    * OcTree base class
    *
-   *  This tree has a max depth of 15, at an resolution
-   *  of 1 cm, values have to be < +/- 327.68 meters (2^15)
+   * This tree implementation has a maximum depth of 16. 
+   * At a resolution of 1 cm, values have to be < +/- 327.68 meters (2^15)
    *
-   *  This implementation uses an efficient key generation method
-   *  directly from the binary representation of the data.
+   * This limitation enables the use of an efficient key generation 
+   * method which uses the binary representation of the data.
    *
-   *  \note The tree does not save individual points.
+   * \note The tree does not save individual points.
    */
   template <class NODE>
     class OcTreeBase {
@@ -63,31 +63,29 @@ namespace octomap {
     void setResolution(double r);
     double getResolution() const { return resolution; }
 
-    unsigned int getDepth() const { return tree_depth; }
-
     /**
-     * \return Pointer to the root node of tree. This pointer should
-     * not be modified or deleted externally, the OcTree manages the memory itself.
+     * \return Pointer to the root node of the tree. This pointer should
+     * not be modified or deleted externally, the OcTree manages its
+     * memory itself.
      */
     NODE* getRoot() const { return itsRoot; }
 
-
     /**
-     * Search a 3D point in the tree
+     * Search for a 3d point in the tree
      *
-     * @param value Searched coordinate
-     * @return result Pointer to the resulting NODE when found, else NULL. This pointer should
-     * not be modified or deleted externally, the OcTree manages the memory itself.
+     * @param value 3d coordinate given as a point3d
+     * @return pointer to the corresponding NODE when found, else NULL. This pointer should
+     * not be modified or deleted externally, the OcTree manages its memory itself.
      */
     NODE* search (const point3d& value) const;
 
 
     /**
-     * Updates a NODE in the OcTree either as observed free or occupied.
+     * Integrate occupancy measurement.
      *
-     * @param value 3D position of the OcTreeNode that is to be updated
-     * @param occupied Whether the node was observed occupied or free
-     * @return Pointer to the updated NODE
+     * @param value 3d coordinate of the NODE that is to be updated
+     * @param occupied true if the node was measured occupied, else false
+     * @return pointer to the updated NODE
      */
     virtual NODE* updateNode(const point3d& value, bool occupied);
 
@@ -100,7 +98,7 @@ namespace octomap {
     * @param origin start coordinate of ray
     * @param end end coordinate of ray
     * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
-    * @return Success of operation. A "false" usually means that one of the coordinates is out of the Octree area
+    * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTrees range
     */
     bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray) const;
 
@@ -133,8 +131,8 @@ namespace octomap {
 
     /**
      * Traverses the tree and collects all OcTreeVolumes regarded as occupied.
-     * MIXED nodes are regarded as occupied. This should be for internal use only,
-     * better use getOccupied(occupied_volumes) instead.
+     * Inner nodes with both occupied and free children are regarded as occupied. 
+     * This should be for internal use only, use getOccupied(occupied_volumes) instead.
      *
      * @param binary_nodes list of binary OcTreeVolumes which are occupied
      * @param delta_nodes list of delta OcTreeVolumes which are occupied
@@ -152,7 +150,7 @@ namespace octomap {
 
     /**
      * Traverses the tree and collects all OcTreeVolumes regarded as free.
-     * MIXED nodes are regarded as occupied.
+     * Inner nodes with both occupied and free children are regarded as occupied.
      *
      * @param binary_nodes list of binary OcTreeVolumes which are free
      * @param delta_nodes list of delta OcTreeVolumes which are free
@@ -181,20 +179,20 @@ namespace octomap {
   protected:
 
     /**
-     * Generates a 16-bit key from/for given value when it is within the octree
-     * bounds, returns false otherwise
+     * Generates a 16-bit key from/for given value when it is within
+     * the octree bounds, returns false otherwise
      *
-     * @param val Coordinate of one dimension in the octree
+     * @param val coordinate of one dimension in the octree
      * @param key 16bit key of the given coordinate, returned
-     * @return whether val is within the octree bounds
+     * @return true if val is within the octree bounds
      */
     bool genKey(double val, unsigned short int& key) const;
 
     /**
-     * Generates comlpete key for all three dimensions of a given point,
+     * Generates key for all three dimensions of a given point
      * using genKey().
      *
-     * @param point 3d coordinate of 1 a point
+     * @param point 3d coordinate of a point
      * @param keys values that will be computed, an array of fixed size 3.
      * @return true when point is within the octree, false otherwise
      */

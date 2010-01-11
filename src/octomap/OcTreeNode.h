@@ -35,7 +35,7 @@ namespace octomap {
 
 #define PROB_HIT  0.7
 #define PROB_MISS 0.4
-#define ML_OCC_PROB_THRES 0.5
+#define OCC_PROB_THRES 0.5
 #define CLAMPING_THRES_MIN -2
 #define CLAMPING_THRES_MAX 3.5
 #define UNKOWN_AS_OBSTACLE false
@@ -44,7 +44,7 @@ namespace octomap {
 
 
   /**
-   * Nodes to be used in OcTree, our main data structure.
+   * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
    */
   class OcTreeNode : public AbstractOcTreeNode {
 
@@ -53,25 +53,43 @@ namespace octomap {
     OcTreeNode();
     virtual ~OcTreeNode();
 
-    /// \return a pointer to the i th child of the node. The child needs to exist.
-    virtual OcTreeNode* getChild(unsigned int i);
+    // -- children  ----------------------------------
 
-    /// \return a const pointer to the i th child of the node. The child needs to exist.
-    virtual const OcTreeNode* getChild(unsigned int i) const;
-
+    /// initialize i-th child
     virtual bool createChild(unsigned int i);
 
-    /// \return true if the i th child exists
+    /// \return true if the i-th child exists
     virtual bool childExists(unsigned int i) const;
+
+    /// \return a pointer to the i-th child of the node. The child needs to exist.
+    virtual OcTreeNode* getChild(unsigned int i);
+
+    /// \return a const pointer to the i-th child of the node. The child needs to exist.
+    virtual const OcTreeNode* getChild(unsigned int i) const;
 
     /// \return true if the node has at least one child
     virtual bool hasChildren() const;
 
-    /// A node is collapsible if all children exist, don't have children of their own
-    /// and have the same occupancy value
-    bool collapsible() const;
 
-    /// opposite of former isDelta()...
+    // -- node occupancy  ----------------------------
+
+    /// integrate a measurement (beam ENDED in cell)
+    virtual void integrateHit();
+    /// integrate a measurement (beam PASSED in cell)
+    virtual void integrateMiss();
+
+    /// \return occupancy probability of node
+    double getOccupancy() const;
+
+    /// \return log odds representation of occupancy probability of node
+    float getLogOdds() const{ return log_odds_occupancy; }
+    /// sets log odds occupancy of node
+    void setLogOdds(float l) { log_odds_occupancy = l; }
+
+    /// \return true if occupancy probability of node is >= OCC_PROB_THRES
+    virtual bool isOccupied() const;
+
+    /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
     virtual bool atThreshold() const;
 
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
@@ -79,66 +97,61 @@ namespace octomap {
     virtual void toMaxLikelihood();
  
     /**
-     * @return mean of all child probabilities (if they exist), in log odds
+     * @return mean of all children's occupancy probabilities, in log odds
      */
     double getMeanChildLogOdds() const;
 
     /**
-     * @return max of all child probabilities (when they exist), in log odds
+     * @return maximum of children's occupancy probabilities, in log odds
      */
     double getMaxChildLogOdds() const;
 
-    virtual void integrateHit();
-    virtual void integrateMiss();
-    double getOccupancy() const;
-    virtual bool isOccupied() const;
+    /// update this node's occupancy according to its children's maximum occupancy
+    virtual void updateOccupancyChildren(); 
 
-    virtual void updateOccupancyChildren();
 
-    float getLogOdds() const{ return log_odds_occupancy; }
-    void setLogOdds(float l) { log_odds_occupancy = l; }
+    // -- pruning of children  -----------------------
 
+    /// A node is collapsible if all children exist, don't have children of their own
+    /// and have the same occupancy value
+    bool collapsible() const;
 
     /**
      * Prunes a node when it is collapsible
-     *
-     * @return success of pruning
+     * @return true if pruning was successful
      */
     bool pruneNode();
 
     /**
      * Expands a node (reverse of pruning): All children are created and
-     * filled with the values stored in the node itself. You need to verify
-     * that this is indeed a pruned node (i.e. not a leaf at the lowest level)
+     * their occupancy probability is set to the node's value. 
+     *
+     * You need to verify that this is indeed a pruned node (i.e. not a 
+     * leaf at the lowest level)
      *
      */
     void expandNode();
 
-    // file I/O
+    
+    // -- I/O  ---------------------------------------
+
+    // read from / write to binary stream
     std::istream& readBinary(std::istream &s);
     std::ostream& writeBinary(std::ostream &s);
 
   protected:
 
-    double logodds(double p) const;
-    void updateLogOdds(double p);
-    double prior() const;
-
     void allocChildren();
 
-    float log_odds_occupancy; // store log odds occupancy probability
+    double logodds(double p) const;
+    void updateLogOdds(double p);
+
+  protected:
+
+    float log_odds_occupancy; // stores log odds occupancy probability
     OcTreeNode** itsChildren; // pointer to children, may be NULL
   };
 
-
-
-  // for memory computation only
-  class OcTreeNodeEightPointers {
-  public:
-    float log_odds_occupancy;
-    char data;
-    OcTreeNodeEightPointers* itsChildren[8];
-  };
 
 } // end namespace
 

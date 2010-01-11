@@ -53,114 +53,8 @@ namespace octomap {
     readBinary(_filename);
   }
 
-
   OcTree::~OcTree() {
     delete itsRoot;
-  }
-
-
-
-
-  void OcTree::prune() {
-    for (unsigned int depth=tree_depth-1; depth>0; depth--) {
-      unsigned int num_pruned = 0;
-      pruneRecurs(this->itsRoot, 0, depth, num_pruned);
-      if (num_pruned == 0) break;
-    }
-  }
-
-  void OcTree::expand() {
-    unsigned int num_expanded = 0;
-    expandRecurs(itsRoot,0, tree_depth, num_expanded);
-  }
-
-  void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth,
-			   unsigned int max_depth, unsigned int& num_pruned) {
-
-    if (depth < max_depth) {
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          pruneRecurs(node->getChild(i), depth+1, max_depth, num_pruned);
-        }
-      }
-    } // end if depth
-
-    else {
-      // max level reached
-      if (node->pruneNode()) {
-        num_pruned++;
-        tree_size -= 8;
-        sizeChanged = true;
-      }
-    }
-  }
-
-  void OcTree::expandRecurs(OcTreeNode* node, unsigned int depth,
-			   unsigned int max_depth, unsigned int& num_expanded) {
-
-    if (depth < max_depth) {
-      // current node has no children => can be expanded
-      if (!node->hasChildren()){
-        node->expandNode();
-        num_expanded +=8;
-        tree_size +=8;
-        sizeChanged = true;
-      }
-
-      // recursively expand children:
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          expandRecurs(node->getChild(i), depth+1, max_depth, num_expanded);
-        }
-      }
-    } // end if depth
-  }
-
-
-  // -----------------------------------------------
-
-  void OcTree::toMaxLikelihood() {
-
-    // convert bottom up
-    for (unsigned int depth=tree_depth; depth>0; depth--) {
-      toMaxLikelihoodRecurs(this->itsRoot, 0, depth);
-    }
-
-    // convert root
-    itsRoot->toMaxLikelihood();
-  }
-
-  void OcTree::toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth,
-				   unsigned int max_depth) {
-
-    if (depth < max_depth) {
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          toMaxLikelihoodRecurs(node->getChild(i), depth+1, max_depth);
-        }
-      }
-    }
-
-    else { // max level reached
-      //      printf("level %d\n ", depth);
-      node->toMaxLikelihood();
-    }
-  }
-
-
-  void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
-    pose6d scan_pose (scan.pose);
-    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
-    octomap::point3d p;
-    for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
-      p = scan_pose.transform(**point_it);
-      if (freespace) {
-        this->integrateMissOnRay(origin, p);
-      }
-      else {
-        updateNode(p, true);
-      }
-    }
   }
 
 
@@ -189,12 +83,234 @@ namespace octomap {
   }
 
 
+  void OcTree::prune() {
+    for (unsigned int depth=tree_depth-1; depth>0; depth--) {
+      unsigned int num_pruned = 0;
+      pruneRecurs(this->itsRoot, 0, depth, num_pruned);
+      if (num_pruned == 0) break;
+    }
+  }
+
+  void OcTree::expand() {
+    unsigned int num_expanded = 0;
+    expandRecurs(itsRoot,0, tree_depth, num_expanded);
+  }
+
+
+  void OcTree::toMaxLikelihood() {
+
+    // convert bottom up
+    for (unsigned int depth=tree_depth; depth>0; depth--) {
+      toMaxLikelihoodRecurs(this->itsRoot, 0, depth);
+    }
+
+    // convert root
+    itsRoot->toMaxLikelihood();
+  }
+
+  
+  // -- Information  ---------------------------------  
+
+  unsigned int OcTree::memoryUsage() const{
+
+    unsigned int node_size = sizeof(OcTreeNode);
+    std::list<OcTreeVolume> leafs;
+    this->getLeafNodes(leafs);
+    unsigned int inner_nodes = tree_size - leafs.size();
+    return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
+  }
+
+
+  unsigned int OcTree::memoryFullGrid(){
+    double size_x, size_y, size_z;
+    getMetricSize(size_x, size_y,size_z);
+
+    // assuming best case (one big array and efficient addressing)
+    return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
+        ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
+        ceil(1./resolution * (double) size_z)) *
+        sizeof(GridData);
+  }
+
+
+  void OcTree::getMetricSize(double& x, double& y, double& z){
+
+    double minX, minY, minZ;
+    double maxX, maxY, maxZ;
+
+    getMetricMax(maxX, maxY, maxZ);
+    getMetricMin(minX, minY, minZ);
+
+    x = maxX - minX;
+    y = maxY - minY;
+    z = maxZ - minZ;
+  }
+
+  void OcTree::getMetricMin(double& x, double& y, double& z){
+    if (sizeChanged)
+      calcMinMax();
+
+    x = minValue[0];
+    y = minValue[1];
+    z = minValue[2];
+  }
+
+  void OcTree::getMetricMax(double& x, double& y, double& z){
+    if (sizeChanged)
+          calcMinMax();
+
+    x = maxValue[0];
+    y = maxValue[1];
+    z = maxValue[2];
+  }
+  
+  void OcTree::calcNumThresholdedNodes(unsigned int& num_thresholded, 
+                                       unsigned int& num_other) const {
+    num_thresholded = 0;
+    num_other = 0;
+    calcNumThresholdedNodesRecurs(itsRoot, num_thresholded, num_other);
+  }
+
+
+  unsigned int OcTree::calcNumNodes() const{
+    unsigned int retval = 1; // root node
+    calcNumNodesRecurs(itsRoot, retval);
+    return retval;
+  }
+
+
+
+  void OcTree::readBinary(std::string filename){
+    std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
+    if (!binary_infile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      return;
+    } else {
+      readBinary(binary_infile);
+      binary_infile.close();
+    }
+  }
+
+
+  // -- I/O  -----------------------------------------
+
+  std::istream& OcTree::readBinary(std::istream &s) {
+    
+    if (!s.good()){
+      std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
+    }
+
+    int tree_type = -1;
+    s.read((char*)&tree_type, sizeof(tree_type));
+    if (tree_type != OcTree::TREETYPE){
+      std::cerr << "Binary file does not contain an OcTree!\n";
+      return s;
+    }
+
+    this->tree_size = 0;
+    sizeChanged = true;
+
+    // clear tree if there are nodes
+    if (itsRoot->hasChildren()) {
+      delete itsRoot;
+      itsRoot = new OcTreeNode();
+    }
+
+    double tree_resolution;
+    s.read((char*)&tree_resolution, sizeof(tree_resolution));
+
+    this->setResolution(tree_resolution);
+
+    unsigned int tree_read_size = 0;
+    s.read((char*)&tree_read_size, sizeof(tree_read_size));
+    std::cout << "Reading "
+	      << tree_read_size 
+	      << " nodes from bonsai tree file..." <<std::flush;
+
+    itsRoot->readBinary(s);
+
+    tree_size = calcNumNodes();  // compute number of nodes
+
+    std::cout << " done.\n";
+
+    return s;
+  }
+
+
+  void OcTree::writeBinary(std::string filename){
+    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
+
+    if (!binary_outfile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return;
+    } else {
+      writeBinary(binary_outfile);
+      binary_outfile.close();
+    }
+  }
+
+  void OcTree::writeBinaryConst(std::string filename) const{
+    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
+
+    if (!binary_outfile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return;
+    } 
+    else {
+      writeBinaryConst(binary_outfile);
+      binary_outfile.close();
+    }
+  }
+
+  std::ostream& OcTree::writeBinary(std::ostream &s){
+
+    // format:    treetype | resolution | num nodes | [binary nodes]
+
+    this->toMaxLikelihood();
+    this->prune();
+
+    return writeBinaryConst(s);
+  }
+
+  std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
+
+    // TODO: this is no longer an indicator of a purely ML tree... =>fix?
+    if (!itsRoot->atThreshold()){
+      std::cerr << "Error: trying to write a tree which is not in maximum likelihood form\n";
+      return s;
+    }
+
+    // format:    treetype | resolution | num nodes | [binary nodes]
+
+    unsigned int tree_type = OcTree::TREETYPE;
+    s.write((char*)&tree_type, sizeof(tree_type));
+
+    double tree_resolution = resolution;
+    s.write((char*)&tree_resolution, sizeof(tree_resolution));
+
+    unsigned int tree_write_size = this->size(); // size includes invalid nodes
+    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
+    s.write((char*)&tree_write_size, sizeof(tree_write_size));
+
+    itsRoot->writeBinary(s);
+
+    fprintf(stderr, " done.\n");
+
+    return s;
+  }
+
+
+
+  // --  protected  --------------------------------------------
+
   void OcTree::insertScanUniform(const ScanNode& scan) {
-    octomap::pose6d scan_pose (scan.pose);
+    
+    octomap::pose6d  scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
-    octomap::point3d p;
 
     // preprocess data  --------------------------
+
+    octomap::point3d p;
 
     // free cells
     CountingOcTree free_tree(this->getResolution());
@@ -232,7 +348,7 @@ namespace octomap {
     } // end for
 
 
-    // insert into tree -----------------------
+    // insert data into tree  -----------------------
     for (std::list<OcTreeVolume>::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
       updateNode(it->first, false);
     }
@@ -240,77 +356,121 @@ namespace octomap {
       updateNode(it->first, true);
     }
 
-    unsigned int num_delta = 0;
-    unsigned int num_binary = 0;
-    calcNumberOfNodesPerType(num_binary, num_delta);
-    std::cout << "Inserted scan, num delta: "<< num_delta << ", num binary: "<< num_binary<< std::endl;
+    unsigned int num_thres = 0;
+    unsigned int num_other = 0;
+    calcNumThresholdedNodes(num_thres, num_other);
+    std::cout << "Inserted scan, total num of thresholded nodes: "<< num_thres << ", num of other nodes: "<< num_other << std::endl;
 
   }
 
 
-  unsigned int OcTree::memoryUsage() const{
+//   void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
+//     pose6d scan_pose (scan.pose);
+//     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
+//     octomap::point3d p;
+//     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
+//       p = scan_pose.transform(**point_it);
+//       if (freespace) {
+//         this->integrateMissOnRay(origin, p);
+//       }
+//       else {
+//         updateNode(p, true);
+//       }
+//     }
+//   }
 
-    unsigned int node_size = sizeof(OcTreeNode);
-    std::list<OcTreeVolume> leafs;
-    this->getLeafNodes(leafs);
-    unsigned int inner_nodes = tree_size - leafs.size();
-    return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
+
+  void OcTree::toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth,
+                                     unsigned int max_depth) {
+
+    if (depth < max_depth) {
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          toMaxLikelihoodRecurs(node->getChild(i), depth+1, max_depth);
+        }
+      }
+    }
+
+    else { // max level reached
+      node->toMaxLikelihood();
+    }
   }
 
-  unsigned int OcTree::memoryUsageEightPointers() {
 
-    unsigned int node_size = sizeof (OcTreeNodeEightPointers);
+  void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth,
+			   unsigned int max_depth, unsigned int& num_pruned) {
 
-    // number of initialized nodes
-    unsigned int num_binary = 0; unsigned int num_delta = 0;
-    calcNumberOfNodesPerType(num_binary, num_delta);
-    unsigned int total_nodes = num_binary + num_delta;
+    if (depth < max_depth) {
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          pruneRecurs(node->getChild(i), depth+1, max_depth, num_pruned);
+        }
+      }
+    } // end if depth
 
-    return node_size * total_nodes;
+    else {
+      // max level reached
+      if (node->pruneNode()) {
+        num_pruned++;
+        tree_size -= 8;
+        sizeChanged = true;
+      }
+    }
   }
 
-  unsigned int OcTree::memoryFullGrid(){
-    double size_x, size_y, size_z;
-    getMetricSize(size_x, size_y,size_z);
+  void OcTree::expandRecurs(OcTreeNode* node, unsigned int depth,
+                            unsigned int max_depth, unsigned int& num_expanded) {
 
+    if (depth < max_depth) {
+      // current node has no children => can be expanded
+      if (!node->hasChildren()){
+        node->expandNode();
+        num_expanded +=8;
+        tree_size +=8;
+        sizeChanged = true;
+      }
 
-    // assuming best case (one big array and intelligent addressing)
-    return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_z)) *
-        sizeof(GridData);
+      // recursively expand children:
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          expandRecurs(node->getChild(i), depth+1, max_depth, num_expanded);
+        }
+      }
+    } // end if depth
   }
 
-  void OcTree::getMetricSize(double& x, double& y, double& z){
 
-    double minX, minY, minZ;
-    double maxX, maxY, maxZ;
+  void OcTree::calcNumThresholdedNodesRecurs (OcTreeNode* node,
+                                              unsigned int& num_thresholded, 
+                                              unsigned int& num_other) const { 
+    assert(node != NULL);
 
-    getMetricMax(maxX, maxY, maxZ);
-    getMetricMin(minX, minY, minZ);
-
-    x = maxX - minX;
-    y = maxY - minY;
-    z = maxZ - minZ;
+    for (unsigned int i=0; i<8; i++) {
+      if (node->childExists(i)) {
+        OcTreeNode* child_node = node->getChild(i);
+        if (!child_node->atThreshold()) num_thresholded++;
+        else num_other++;
+        calcNumThresholdedNodesRecurs(child_node, num_thresholded, num_other);
+      } // end if child
+    } // end for children
   }
 
-  void OcTree::getMetricMin(double& x, double& y, double& z){
-    if (sizeChanged)
-      calcMinMax();
 
-    x = minValue[0];
-    y = minValue[1];
-    z = minValue[2];
+  void OcTree::calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const {
+
+    assert (node != NULL);
+
+    if (node->hasChildren()) {
+      //      num_nodes+=8;
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          num_nodes++;
+          calcNumNodesRecurs(node->getChild(i), num_nodes);
+        }
+      }
+    }
   }
 
-  void OcTree::getMetricMax(double& x, double& y, double& z){
-    if (sizeChanged)
-          calcMinMax();
-
-    x = maxValue[0];
-    y = maxValue[1];
-    z = maxValue[2];
-  }
 
   void OcTree::calcMinMax(){
     std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
@@ -332,174 +492,9 @@ namespace octomap {
       if (y+halfSize > maxValue[1]) maxValue[1] = y+halfSize;
       if (z+halfSize > maxValue[2]) maxValue[2] = z+halfSize;
     }
-  std::cout<< "done.\n";
-  sizeChanged = false;
-
+    std::cout<< "done.\n";
+    sizeChanged = false;
   }
 
 
-  void OcTree::calcNumberOfNodesPerType(unsigned int& num_binary,
-					unsigned int& num_delta) const{
-
-    num_binary = 0;
-    num_delta = 0;
-    calcNumberOfNodesPerTypeRecurs(itsRoot, num_binary, num_delta);
-  }
-
-
-  void OcTree::calcNumberOfNodesPerTypeRecurs(OcTreeNode* node,
-					      unsigned int& num_binary,
-					      unsigned int& num_delta) const{
-
-    assert(node != NULL);
-
-    for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        OcTreeNode* child_node = node->getChild(i);
-        if (!child_node->atThreshold()) num_delta++;
-        else num_binary++;
-        calcNumberOfNodesPerTypeRecurs(child_node, num_binary, num_delta);
-      } // end if child
-    } // end for children
-  }
-
-
-  unsigned int OcTree::calcNumNodes() const{
-    unsigned int retval = 1; // root node
-    calcNumNodesRecurs(itsRoot, retval);
-    return retval;
-  }
-
-
-  void OcTree::calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const{
-
-    assert (node != NULL);
-
-    if (node->hasChildren()) {
-      //      num_nodes+=8;
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          num_nodes++;
-          calcNumNodesRecurs(node->getChild(i), num_nodes);
-        }
-      }
-    }
-  }
-
-  void OcTree::readBinary(std::string filename){
-    std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
-    if (!binary_infile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
-      return;
-    } else {
-      readBinary(binary_infile);
-      binary_infile.close();
-    }
-  }
-
-
-  std::istream& OcTree::readBinary(std::istream &s) {
-    if (!s.good()){
-      std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
-    }
-
-
-    int tree_type = -1;
-    s.read((char*)&tree_type, sizeof(tree_type));
-    if (tree_type != OcTree::TREETYPE){
-      std::cerr << "Binary file does not contain an OcTree!\n";
-      return s;
-    }
-
-    this->tree_size = 0;
-    sizeChanged = true;
-
-    // clear tree if there are nodes:
-    if (itsRoot->hasChildren()){
-      delete itsRoot;
-      itsRoot = new OcTreeNode();
-    }
-
-    double tree_resolution;
-    s.read((char*)&tree_resolution, sizeof(tree_resolution));
-
-    this->setResolution(tree_resolution);
-
-    unsigned int tree_read_size = 0;
-    s.read((char*)&tree_read_size, sizeof(tree_read_size));
-    std::cout << "Reading "
-	      << tree_read_size 
-	      << " nodes from bonsai tree file..." <<std::flush;
-
-    itsRoot->readBinary(s);
-
-    tree_size = calcNumNodes();  // compute number of nodes including invalid nodes
-
-    std::cout << " done.\n";
-
-    return s;
-  }
-
-
-  void OcTree::writeBinary(std::string filename){
-    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-
-    if (!binary_outfile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
-      return;
-    } else {
-      writeBinary(binary_outfile);
-      binary_outfile.close();
-    }
-  }
-
-  void OcTree::writeBinaryConst(std::string filename) const{
-    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-
-    if (!binary_outfile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
-      return;
-    } else {
-      writeBinaryConst(binary_outfile);
-      binary_outfile.close();
-    }
-  }
-
-  std::ostream& OcTree::writeBinary(std::ostream &s){
-
-    // format:    treetype | resolution | num nodes | [binary nodes]
-
-    this->toMaxLikelihood();
-    this->prune();
-
-    return writeBinaryConst(s);
-  }
-
-  std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
-
-    // TODO: this is no longer an indicator of a purely ML tree... =>fix?
-    if (!itsRoot->atThreshold()){
-      std::cerr << "Error: trying to write a tree with delta nodes to binary!\n";
-      return s;
-    }
-
-    // format:    treetype | resolution | num nodes | [binary nodes]
-
-    unsigned int tree_type = OcTree::TREETYPE;
-    s.write((char*)&tree_type, sizeof(tree_type));
-
-    double tree_resolution = resolution;
-    s.write((char*)&tree_resolution, sizeof(tree_resolution));
-
-    unsigned int tree_write_size = this->size(); // size includes invalid nodes
-    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
-    s.write((char*)&tree_write_size, sizeof(tree_write_size));
-
-    itsRoot->writeBinary(s);
-
-    fprintf(stderr, " done.\n");
-
-    return s;
-  }
-
-}
+} // namespace

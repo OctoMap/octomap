@@ -53,11 +53,12 @@ namespace octomap {
   // =  children          =======================================
   // ============================================================
 
-  void OcTreeNode::allocChildren() {
-    itsChildren = new OcTreeNode*[8];
-    for (unsigned int i=0; i<8; i++) {
-      itsChildren[i] = NULL;
+  bool OcTreeNode::createChild(unsigned int i) {
+    if (itsChildren == NULL) {
+      allocChildren();
     }
+    itsChildren[i] = new OcTreeNode();
+    return true;
   }
 
   bool OcTreeNode::childExists(unsigned int i) const {
@@ -72,7 +73,7 @@ namespace octomap {
     return itsChildren[i];
   }
 
-  const OcTreeNode* OcTreeNode::getChild(unsigned int i) const{
+  const OcTreeNode* OcTreeNode::getChild(unsigned int i) const {
     assert((i < 8) && (itsChildren != NULL));
     assert(itsChildren[i] != NULL);
     return itsChildren[i];
@@ -85,37 +86,10 @@ namespace octomap {
     return false;
   }
 
-  bool OcTreeNode::collapsible() const{
-    // all children must exist, must not have children of their own
-    // and have the same occupancy
-    if (!childExists(0) || getChild(0)->hasChildren())
-      return false;
 
-    float logOdds = getChild(0)->getLogOdds();
-
-    for (unsigned int i = 1; i<8; i++) {
-      if (!childExists(i)) return false;
-      else if (getChild(i)->hasChildren()) return false;
-      else if (getChild(i)->getLogOdds() != logOdds) return false;
-    }
-    return true;
-  }
-
-
-  bool OcTreeNode::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
-      allocChildren();
-    }
-    itsChildren[i] = new OcTreeNode();
-    return true;
-  }
-
-
-  bool OcTreeNode::atThreshold() const {
-    return ((log_odds_occupancy <= CLAMPING_THRES_MIN) ||
-              (log_odds_occupancy >= CLAMPING_THRES_MAX));
-  }
-
+  // ============================================================
+  // =  occupancy probability  ==================================
+  // ============================================================
 
   void OcTreeNode::integrateHit() {
     updateLogOdds(PROB_HIT);
@@ -125,22 +99,18 @@ namespace octomap {
     updateLogOdds(PROB_MISS);
   }
 
-  double OcTreeNode::logodds(double p) const {
-    return log(p/(1-p));
+  bool OcTreeNode::isOccupied() const {
+    return (this->getOccupancy() >= OCC_PROB_THRES);
   }
 
+  bool OcTreeNode::atThreshold() const {
+    return ((log_odds_occupancy <= CLAMPING_THRES_MIN) ||
+              (log_odds_occupancy >= CLAMPING_THRES_MAX));
+  }
 
-  void OcTreeNode::updateLogOdds(double p) {
-
-//     printf("logodds before: %f\n", log_odds_occupancy);
-    log_odds_occupancy += logodds(p);
-//     printf("logodds after : %f\n\n", log_odds_occupancy);
-
-    if (!hasChildren() &&
-        ((log_odds_occupancy > CLAMPING_THRES_MAX) || 
-            (log_odds_occupancy < CLAMPING_THRES_MIN))) {
-      this->toMaxLikelihood();
-    }
+  void OcTreeNode::toMaxLikelihood() {
+      if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
+      else              setLogOdds(CLAMPING_THRES_MIN);
   }
 
   double OcTreeNode::getOccupancy() const {
@@ -176,21 +146,27 @@ namespace octomap {
     this->setLogOdds(this->getMaxChildLogOdds());  // conservative
   }
 
-  bool OcTreeNode::isOccupied() const {
-    return (this->getOccupancy() >= ML_OCC_PROB_THRES);
-  }
-
-
-  void OcTreeNode::toMaxLikelihood() {
-      if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
-      else              setLogOdds(CLAMPING_THRES_MIN);
-  }
-
 
   // ============================================================
   // =  pruning           =======================================
   // ============================================================
 
+
+  bool OcTreeNode::collapsible() const {
+    // all children must exist, must not have children of 
+    // their own and have the same occupancy probability
+    if (!childExists(0) || getChild(0)->hasChildren())
+      return false;
+
+    float logOdds = getChild(0)->getLogOdds();
+
+    for (unsigned int i = 1; i<8; i++) {
+      if (!childExists(i)) return false;
+      else if (getChild(i)->hasChildren()) return false;
+      else if (getChild(i)->getLogOdds() != logOdds) return false;
+    }
+    return true;
+  }
 
   bool OcTreeNode::pruneNode() {
 
@@ -210,7 +186,7 @@ namespace octomap {
     return true;
   }
 
-  void OcTreeNode::expandNode(){
+  void OcTreeNode::expandNode() {
     assert(!hasChildren());
 
     for (unsigned int k=0; k<8; k++) {
@@ -241,7 +217,6 @@ namespace octomap {
 
     // inner nodes default to occupied
     this->setLogOdds(CLAMPING_THRES_MAX);
-
 
     for (unsigned int i=0; i<4; i++) {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
@@ -353,6 +328,38 @@ namespace octomap {
 
     return s;
   }
+
+
+  // ============================================================
+  // =  private methodes  =======================================
+  // ============================================================
+
+
+  double OcTreeNode::logodds(double p) const {
+    return log(p/(1-p));
+  }
+
+
+  void OcTreeNode::updateLogOdds(double p) {
+
+//     printf("logodds before: %f\n", log_odds_occupancy);
+    log_odds_occupancy += logodds(p);
+//     printf("logodds after : %f\n\n", log_odds_occupancy);
+
+    if (!hasChildren() &&
+        ((log_odds_occupancy > CLAMPING_THRES_MAX) || 
+            (log_odds_occupancy < CLAMPING_THRES_MIN))) {
+      this->toMaxLikelihood();
+    }
+  }
+
+  void OcTreeNode::allocChildren() {
+    itsChildren = new OcTreeNode*[8];
+    for (unsigned int i=0; i<8; i++) {
+      itsChildren[i] = NULL;
+    }
+  }
+
 
 } // end namespace
 

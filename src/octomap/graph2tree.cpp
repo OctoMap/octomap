@@ -79,15 +79,18 @@ int main(int argc, char** argv) {
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
   delete graph;
 
-  unsigned numBinary, numDelta;
-  tree->calcNumberOfNodesPerType(numBinary, numDelta);
+  unsigned numThresholded, numOther;
+  tree->calcNumThresholdedNodes(numThresholded, numOther);
 
   cout << "\nDone building tree.\n";
-  cout << "Tree size: " << tree->size() <<"(" <<numBinary<<" binary, "<< numDelta << " delta)\n";
+  cout << "Tree size: " << tree->size() <<"(" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
   cout << "Memory: " << tree->memoryUsage()
-    <<" B\nFull grid: "<< tree->memoryFullGrid() <<" B\n8Pointers: " << tree->memoryUsageEightPointers() <<" B\n";
+       <<" B\nFull grid: "<< tree->memoryFullGrid() <<" B\n";
+
   tree->prune();
-  cout << "Pruned tree size: " << tree->size() <<"(" <<numBinary<<" binary, "<< numDelta << " delta\n";
+  tree->calcNumThresholdedNodes(numThresholded, numOther);
+
+  cout << "Pruned tree size: " << tree->size() <<"(" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
   cout << "Pruned memory: " << tree->memoryUsage() << " B\n";
 
   cout << "\nWriting tree file\n===========================\n";
