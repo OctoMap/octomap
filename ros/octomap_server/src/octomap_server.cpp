@@ -86,7 +86,7 @@ void OctomapServer::readMap(const std::string& filename){
 	octomap_server::octomapMapToMsg(map, m_mapResponse.map);
 
 	// each array stores all cubes of a different size, one for each depth level:
-	m_occupiedCellsVis.markers.resize(map.getDepth());
+	m_occupiedCellsVis.markers.resize(16);
 	double lowestRes = map.getResolution();
 
 	std::list<octomap::OcTreeVolume> occupiedCells;
