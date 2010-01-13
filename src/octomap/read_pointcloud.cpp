@@ -38,7 +38,22 @@ using namespace octomap;
 int main(int argc, char** argv) {
 
   if (argc != 4) {
-    printf("usage: pointcloud.dat offset outfile.graph\n");
+
+    printf("\nusage: pointcloud.dat laser_height outfile.graph\n\n");
+
+    printf("This tool is used to convert ASCII datasets\n");
+    printf("to binary scan graphs. These can be read by\n");
+    printf("the viewer (octovis) and the graph2tree tool.\n\n");
+
+    printf("ASCII data is given in the following format:\n");
+    printf("x1 y2 z1\n");
+    printf("x2 y2 z2\n");
+    printf("x3 y3 z3\n");
+    printf("...\n\n");
+
+    printf("The laser height above zero is given as a float.\n\n");
+
+
     exit(0);
   }
 

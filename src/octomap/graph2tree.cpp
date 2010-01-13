@@ -32,10 +32,15 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "USAGE: " << self << " [options]\n"
+  std::cerr << "\nUSAGE: " << self << " [options]\n\n"
             "OPTIONS:\n-i <InputFile.graph> (required)\n"
             "-o <OutputFile.bt> (required) \n"
-            "-res <resolution> (default: 0.1 m)\n";
+            "-res <resolution> (default: 0.1 m)\n\n";
+
+  std::cerr << "This tool inserts the data of a binary" << std::endl;
+  std::cerr << "graph file into an octree. A binary octree" << std::endl;
+  std::cerr << "file (.bt, bonsai tree) is generated." << std::endl;
+  std::cerr << std::endl;
 
   exit(0);
 }
