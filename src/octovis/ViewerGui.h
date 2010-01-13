@@ -136,8 +136,8 @@ class ViewerGui : public QMainWindow {
   void showInfo(QString string, bool newline=false);
 
 
-  boost::shared_ptr<octomap::ScanGraph> m_scanGraph;
-  boost::shared_ptr<octomap::OcTree> m_ocTree;
+  octomap::ScanGraph* m_scanGraph;
+  octomap::OcTree*    m_ocTree;
   octomap::ScanGraph::iterator m_nextScanToAdd;
 
   Ui::ViewerGuiClass ui;

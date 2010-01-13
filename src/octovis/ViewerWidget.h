@@ -29,7 +29,6 @@
 
 #include "SceneObject.h"
 #include <octomap/octomap.h>
-#include <boost/shared_ptr.hpp>
 #include <qglviewer.h>
 
 namespace octomap{
@@ -46,11 +45,10 @@ class ViewerWidget : public QGLViewer {
 
 
   /**
-   * Sets a new pointcloud, adjusts view & boundingbox to contain all points
+   * Sets a new pointcloud, adjusts view and bounding box to contain all points
    *
    * @param _cloud
    */
-  void setPointcloud(boost::shared_ptr<octomap::Pointcloud> _cloud);
 
   void setOcTreeVoxels(std::list<octomap::OcTreeVolume>& occupied_voxels,
 		       std::list<octomap::OcTreeVolume>& freespace_voxels,

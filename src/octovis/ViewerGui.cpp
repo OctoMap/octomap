@@ -33,93 +33,93 @@
 
 namespace octomap{
 
-ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
-  : QMainWindow(parent), m_trajectoryDrawer(NULL),m_pointcloudDrawer(NULL),m_octreeResolution(0.1), m_occupancyThresh(0.5), m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
-    m_cameraStored(false),m_filename("")
-{
-	ui.setupUi(this);
-	m_glwidget = new ViewerWidget(this);
-	this->setCentralWidget(m_glwidget);
+  ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
+    : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
+      m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
+      m_octreeResolution(0.1), m_occupancyThresh(0.5), 
+      m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
+      m_cameraStored(false), m_filename("") {
+  
+    ui.setupUi(this);
+    m_glwidget = new ViewerWidget(this);
+    this->setCentralWidget(m_glwidget);
 
-	// Settings panel at the right side:
-	ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
-	QDockWidget* settingsDock = new QDockWidget("Settings panel", this);
-	settingsDock->setWidget(settingsPanel);
-	this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
-	ui.menuShow->addAction(settingsDock->toggleViewAction());
+    // Settings panel at the right side
+    ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
+    QDockWidget* settingsDock = new QDockWidget("Settings panel", this);
+    settingsDock->setWidget(settingsPanel);
+    this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
+    ui.menuShow->addAction(settingsDock->toggleViewAction());
 
-	// status bar:
-	m_mapSizeStatus = new QLabel("Map size", this);
-	m_mapMemoryStatus = new QLabel("Memory consumption", this);
-	m_mapSizeStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-	m_mapMemoryStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-	statusBar()->addPermanentWidget(m_mapSizeStatus);
-	statusBar()->addPermanentWidget(m_mapMemoryStatus);
+    // status bar
+    m_mapSizeStatus = new QLabel("Map size", this);
+    m_mapMemoryStatus = new QLabel("Memory consumption", this);
+    m_mapSizeStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    m_mapMemoryStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    statusBar()->addPermanentWidget(m_mapSizeStatus);
+    statusBar()->addPermanentWidget(m_mapMemoryStatus);
 
+    connect(this, SIGNAL(updateStatusBar(QString, int)), statusBar(), SLOT(showMessage(QString, int)));
 
+    connect(settingsPanel, SIGNAL(treeDepthChanged(int)), this, SLOT(changeTreeDepth(int)));
+    connect(settingsPanel, SIGNAL(addNextScans(unsigned)), this, SLOT(addNextScans(unsigned)));
+    connect(settingsPanel, SIGNAL(gotoFirstScan()), this, SLOT(gotoFirstScan()));
+    connect(this, SIGNAL(changeNumberOfScans(unsigned)), settingsPanel, SLOT(setNumberOfScans(unsigned)));
+    connect(this, SIGNAL(changeCurrentScan(unsigned)), settingsPanel, SLOT(setCurrentScan(unsigned)));
+    connect(this, SIGNAL(changeResolution(double)), settingsPanel, SLOT(setResolution(double)));
 
-	connect(this, SIGNAL(updateStatusBar(QString, int)), statusBar(), SLOT(showMessage(QString, int)));
+    connect(settingsPanel, SIGNAL(changeCamPosition(double, double, double, double, double, double)), 
+            m_glwidget, SLOT(setCamPosition(double, double, double, double, double, double)));
 
-	connect(settingsPanel, SIGNAL(treeDepthChanged(int)), this, SLOT(changeTreeDepth(int)));
-	connect(settingsPanel, SIGNAL(addNextScans(unsigned)), this, SLOT(addNextScans(unsigned)));
-	connect(settingsPanel, SIGNAL(gotoFirstScan()), this, SLOT(gotoFirstScan()));
-	connect(this, SIGNAL(changeNumberOfScans(unsigned)), settingsPanel, SLOT(setNumberOfScans(unsigned)));
-	connect(this, SIGNAL(changeCurrentScan(unsigned)), settingsPanel, SLOT(setCurrentScan(unsigned)));
-	connect(this, SIGNAL(changeResolution(double)), settingsPanel, SLOT(setResolution(double)));
+    connect(ui.actionOctree_cells, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTreeCells(bool)));
+    connect(ui.actionOctree_structure, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTree(bool)));
+    connect(ui.actionFree, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespace(bool)));
+    connect(ui.actionChanged_free_only, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespaceDeltaOnly(bool)));
+    connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
 
-	connect(settingsPanel, SIGNAL(changeCamPosition(double, double, double, double, double, double)), m_glwidget, SLOT(setCamPosition(double, double, double, double, double, double)));
-
-	connect(ui.actionOctree_cells, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTreeCells(bool)));
-	connect(ui.actionOctree_structure, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTree(bool)));
-	connect(ui.actionFree, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespace(bool)));
-	connect(ui.actionChanged_free_only, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespaceDeltaOnly(bool)));
-	connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
-
-
-
-	if (filename != ""){
-	  m_filename = filename;
-	  openFile();
-	}
-}
-
-ViewerGui::~ViewerGui()
-{
-  if (m_trajectoryDrawer){
-    m_glwidget->removeSceneObject(m_trajectoryDrawer);
-    delete m_trajectoryDrawer;
-    m_trajectoryDrawer = NULL;
+    if (filename != ""){
+      m_filename = filename;
+      openFile();
+    }
   }
 
-  if (m_pointcloudDrawer){
-    m_glwidget->removeSceneObject(m_pointcloudDrawer);
-    delete m_pointcloudDrawer;
-    m_pointcloudDrawer = NULL;
+  ViewerGui::~ViewerGui() {
+    if (m_trajectoryDrawer){
+      m_glwidget->removeSceneObject(m_trajectoryDrawer);
+      delete m_trajectoryDrawer;
+      m_trajectoryDrawer = NULL;
+    }
+
+    if (m_pointcloudDrawer){
+      m_glwidget->removeSceneObject(m_pointcloudDrawer);
+      delete m_pointcloudDrawer;
+      m_pointcloudDrawer = NULL;
+    }
   }
 
-}
+  void ViewerGui::showInfo(QString string, bool newline) {
 
-void ViewerGui::showInfo(QString string, bool newline) {
-
-  std::cerr << string.toStdString();
-  if (newline) std::cerr << std::endl;
-  else std::cerr << std::flush;
-  int duration = 0;
-  if (newline)
-    duration = 3000;
-  emit updateStatusBar(string, duration);
-}
+    std::cerr << string.toStdString();
+    if (newline) std::cerr << std::endl;
+    else std::cerr << std::flush;
+    int duration = 0;
+    if (newline)
+      duration = 3000;
+    emit updateStatusBar(string, duration);
+  }
 
 
 void ViewerGui::generateOctree() {
 
-  if (m_scanGraph){
+  if (m_scanGraph) {
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    showInfo("Generating delta OcTree... ");
+    showInfo("Generating OcTree... ");
 
-    m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
+    if (m_ocTree) delete m_ocTree;
+    m_ocTree = new octomap::OcTree(m_octreeResolution);
+
     octomap::ScanGraph::iterator it;
     unsigned numScans = m_scanGraph->size();
     unsigned currentScan = 1;
@@ -133,7 +133,8 @@ void ViewerGui::generateOctree() {
 
     showInfo("Done.", true);
     QApplication::restoreOverrideCursor();
-  } else {
+  }
+  else {
     std::cerr << "generateOctree called but no ScanGraph present!\n";
   }
 
@@ -151,7 +152,9 @@ void ViewerGui::gotoFirstScan(){
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     m_nextScanToAdd = m_scanGraph->begin();
-    m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
+    
+    if (m_ocTree) delete m_ocTree;
+    m_ocTree = new octomap::OcTree(m_octreeResolution);
     addNextScan();
 
     QApplication::restoreOverrideCursor();
@@ -231,11 +234,10 @@ void ViewerGui::showOcTree() {
 
 
 void ViewerGui::openFile(){
+  
   if (m_filename != ""){
-    m_ocTree.reset();
-    m_scanGraph.reset();
-    m_glwidget->clearAll();
 
+    m_glwidget->clearAll();
 
     QFileInfo fileinfo(QString::fromStdString(m_filename));
     if (fileinfo.suffix() == "graph"){
@@ -260,7 +262,8 @@ void ViewerGui::openGraph(bool completeGraph){
   QApplication::setOverrideCursor(Qt::WaitCursor);
   showInfo("Loading scan graph from file "+QString::fromStdString(m_filename)+"...");
 
-  m_scanGraph = boost::shared_ptr<octomap::ScanGraph>(new octomap::ScanGraph());
+  if (m_scanGraph) delete m_scanGraph;
+  m_scanGraph = new octomap::ScanGraph();
   m_scanGraph->readBinary(m_filename);
 
   loadGraph(completeGraph);
@@ -272,7 +275,8 @@ void ViewerGui::openPointcloud(){
   QApplication::setOverrideCursor(Qt::WaitCursor);
   showInfo("Loading ASCII pointcloud from file "+QString::fromStdString(m_filename)+"...");
 
-  m_scanGraph = boost::shared_ptr<octomap::ScanGraph>(new octomap::ScanGraph());
+  if (m_scanGraph) delete m_scanGraph;
+  m_scanGraph = new octomap::ScanGraph();
 
 
   // read pointcloud from file
@@ -311,7 +315,10 @@ void ViewerGui::openTree(){
   binary_test.close();
 
   if (tree_type == octomap::OcTree::TREETYPE){
-    m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
+
+    if (m_ocTree) delete m_ocTree;
+    m_ocTree = new octomap::OcTree(m_octreeResolution);
+
     m_ocTree->readBinary(m_filename);
 
     m_octreeResolution = m_ocTree->getResolution();
@@ -337,7 +344,8 @@ void ViewerGui::openTree(){
 }
 
 
-void ViewerGui::loadGraph(bool completeGraph){
+void ViewerGui::loadGraph(bool completeGraph) {
+  
   ui.actionSettings->setEnabled(true);
   ui.actionPointcloud->setEnabled(true);
   ui.actionPointcloud->setChecked(false);
@@ -351,22 +359,23 @@ void ViewerGui::loadGraph(bool completeGraph){
   ui.actionReload_Octree->setEnabled(true);
   ui.actionConvert_ml_tree->setEnabled(true);
 
-  m_ocTree.reset();
-
   unsigned graphSize = m_scanGraph->size();
   unsigned currentScan;
+  
   if (completeGraph){
-    // generate delta by default
     m_nextScanToAdd = m_scanGraph->end();
     generateOctree();
     currentScan = graphSize;
-  } else{
+  } 
+  else{
     m_nextScanToAdd = m_scanGraph->begin();
-    m_ocTree.reset(new octomap::OcTree(m_octreeResolution));
+    if (m_ocTree) delete m_ocTree;
+    m_ocTree = new octomap::OcTree(m_octreeResolution);
     addNextScan();
 
     currentScan = 1;
   }
+
   m_glwidget->resetView();
   QApplication::restoreOverrideCursor();
 
@@ -481,8 +490,8 @@ void ViewerGui::on_actionSave_file_triggered(){
 
   } else{
     QMessageBox::warning(this, tr("3D Mapping Viewer"),
-                                    "Error: No OcTree present.",
-                                    QMessageBox::Ok);
+                         "Error: No OcTree present.",
+                         QMessageBox::Ok);
 
   }
 

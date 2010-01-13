@@ -11,12 +11,6 @@ set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
 
 
-
-# Boost (smart ptr)
-find_package(Boost COMPONENTS smart_ptr)
-link_directories ( ${Boost_LIBRARY_DIRS})
-include_directories ( ${Boost_INCLUDE_DIRS} )
-
 # sources for this project
 set(viewer_SRCS
 	main.cpp
@@ -70,6 +64,5 @@ add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewe
 target_link_libraries(octovis 
     ${QGLViewer_LIBRARIES}
 	${QT_LIBRARIES}
-	${Boost_LIBRARIES}
 	octomap 
 )
