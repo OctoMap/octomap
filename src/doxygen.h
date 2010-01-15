@@ -1,10 +1,6 @@
-//
-//This file is intentionally left blank ;)
-// (just containing some doxygen definitions)
-
 
 /**
- * \namespace octomath Namespace of the mini-math library in Octomap
+ * \namespace octomath Namespace of the math library in Octomap
  *
  */
 

@@ -45,11 +45,8 @@ class ViewerWidget : public QGLViewer {
 
 
   /**
-   * Sets a new pointcloud, adjusts view and bounding box to contain all points
-   *
-   * @param _cloud
+   * Add voxels of OcTree to viewer, adjusts view and bounding box to contain all points
    */
-
   void setOcTreeVoxels(std::list<octomap::OcTreeVolume>& occupied_voxels,
 		       std::list<octomap::OcTreeVolume>& freespace_voxels,
 		       std::list<octomap::OcTreeVolume>& occupied_delta_voxels,

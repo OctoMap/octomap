@@ -48,14 +48,16 @@ ENDIF()
 # Documentation target:
 FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
-    ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
-                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                     COMMENT "Generating documentation (Doxygen)...")
+  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating documentation (Doxygen)...")
+  MESSAGE (STATUS "doxygen found.")
 ENDIF(DOXYGEN_FOUND)
 
-# Packaging:
-# SET(CPACK_SET_DESTDIR "ON")
-# SET(CPACK_SOURCE_GENERATOR "TGZ")
-# INCLUDE(CPack)
 
+MESSAGE (STATUS "\n")
+MESSAGE (STATUS "Compile octomap using: make")
+MESSAGE (STATUS "Compile API-documentation using: make docs\n")
+
+MESSAGE (STATUS "See README.txt for further information.\n")
 

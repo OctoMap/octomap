@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
 
   if (argc != 4) {
 
-    printf("\nusage: pointcloud.dat laser_height outfile.graph\n\n");
-
+    printf("\n");
+    printf("usage: pointcloud.dat laser_height outfile.graph\n\n");
+    
     printf("This tool is used to convert ASCII datasets\n");
     printf("to binary scan graphs. These can be read by\n");
     printf("the viewer (octovis) and the graph2tree tool.\n\n");
