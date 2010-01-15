@@ -42,7 +42,7 @@ FIND_PACKAGE(QGLViewer)
 IF(QT4_FOUND AND QGLViewer_FOUND)
     ADD_SUBDIRECTORY( octovis ) 
 ELSE()
-	MESSAGE(STATUS "Skipping GUI, some of the required libraries (Qt4, QGLViewer) are missing!")
+  MESSAGE(STATUS "Skipping GUI, some of the required libraries (Qt4, QGLViewer) are missing!")
 ENDIF()
 
 # Documentation target:

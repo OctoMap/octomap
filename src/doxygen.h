@@ -69,7 +69,7 @@ Hornung</a>. Feel free to contact us.</p>
 
 \section gettingstarted_sec Getting Started
 <p>
-  Jump right in and have a look at <br>
+  Jump right in and have a look at the main class octomap::OcTree and the examples<br>
   src/octomap/simple.cpp
 </p>
 
