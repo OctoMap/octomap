@@ -7,26 +7,21 @@ http://octomap.sourceforge.net/
 License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
 
-
-
-
 REQUIREMENTS
 ############################
 
  * octomap: a regular build environment, cmake
  
- * viewer: Boost smart_ptr, Qt4, QGLViewer 
+ * viewer: Qt4, QGLViewer 
 
    You can install all dependencies on Ubuntu / Debian by running:
-   sudo apt-get install cmake libqt4-dev libqt4-opengl-dev libboost-dev
+   sudo apt-get install cmake libqt4-dev libqt4-opengl-dev
    
    Since Ubuntu 9.10, there is also a Qt4-linked QGLViewer available 
    which will be used instead of the version in "extern" whenever available.
    To use it, install the Ubuntu package "libqglviewer-qt4-dev".
     
  * HTML documentation: doxygen
-
-
 
 
 INSTALLATION:
@@ -49,7 +44,6 @@ A debug configuration can be created by running:
 in "build" or a different directory (e.g. "build-debug").
 
 
-
 DOCUMENTATION
 ############################
 
@@ -59,6 +53,20 @@ A HTML-Documentation can be built using Doxygen by running
 
 in the build directory. The documentation will end up in
 doc/html/index.html in the main directory.
+
+
+GETTING STARTED
+############################
+
+Jump right in and have a look at 
+src/octomap/simple.cpp
+
+Or start the 3D viewer
+bin/octovis 
+
+You will find an example scan to load at
+src/examples/scan.dat.bz2     (please bunzip2 it first)
+
 
 
 ROS-INTEGRATION

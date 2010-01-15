@@ -67,10 +67,20 @@ Hornung</a>. Feel free to contact us.</p>
   </p>
 
 
-  \section gettingstarted_sec Getting Started
-  <p>
-  OcTree is the main class that should be used. You can load an existing
-  map file (.bt) using \ref OcTree::readBinary().
+\section gettingstarted_sec Getting Started
+<p>
+  Jump right in and have a look at <br>
+  src/octomap/simple.cpp
+</p>
+
+<p>
+  Or start the 3D viewer<br>
+  bin/octovis 
+</p>
+
+<p>
+  You will find an example scan to load at<br>
+  src/examples/scan.dat.bz2     (please bunzip2 it first)
   </p>
 
 
