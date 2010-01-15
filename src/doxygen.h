@@ -70,7 +70,7 @@ Hornung</a>. Feel free to contact us.</p>
   \section gettingstarted_sec Getting Started
   <p>
   OcTree is the main class that should be used. You can load an existing
-  map file using \ref OcTree::readBinary().
+  map file (.bt) using \ref OcTree::readBinary().
   </p>
 
 

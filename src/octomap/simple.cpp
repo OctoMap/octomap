@@ -25,33 +25,46 @@
 */
 
 #include "octomap.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 using namespace std;
 using namespace octomap;
-using namespace octomath;
+
 
 int main(int argc, char** argv) {
 
-  if (argc != 4) {
-    printf("usage: in.graph offset out.graph\n");
-    exit(0);
+
+  OcTree tree (0.1);  // create empty tree with resolution 0.1
+
+
+  // insert some measurements of occupied cells
+
+  for (int x=-20; x<20; x++) {
+    for (int y=-20; y<20; y++) {
+      for (int z=-20; z<20; z++) {
+        point3d endpoint ((double) x*0.05, (double) y*0.05, (double) z*0.05);
+        tree.updateNode(endpoint, true); // integrate 'occupied' measurement
+      }
+    }
   }
 
-  ScanGraph* graph = new ScanGraph();
-  graph->readBinary(argv[1]);
+  // insert some measurements of free cells
 
-  double offset = atof(argv[2]);
-  Pose6D trans(0,0,-offset,0,0,0);
-
-  for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
-    (*scan_it)->scan->transform(trans);
-    (*scan_it)->pose *= trans.inv();
+  for (int x=-30; x<30; x++) {
+    for (int y=-30; y<30; y++) {
+      for (int z=-30; z<30; z++) {
+        point3d endpoint ((double) x*0.02-1., (double) y*0.02-1., (double) z*0.02-1.);
+        tree.updateNode(endpoint, false);  // integrate 'free' measurement
+      }
+    }
   }
 
- graph->writeBinary(argv[3]);
+  point3d query (0., 0., 0.);
+    
+
+
+  tree.writeBinary("simple_tree.bt");
+  cout << "wrote example file simple_tree.bt" << endl << endl;
+  cout << "now you can use octovis to visualize: octovis simple_tree.bt" << endl << endl;
   
-
 }
+

@@ -1,4 +1,4 @@
-// $Id: graph2tree.cpp 22 2009-09-28 09:59:31Z ahornung $
+// $Id$
 
 /**
 * Octomap:
@@ -86,6 +86,6 @@ int main(int argc, char** argv) {
   ScanGraph graph;
   graph.addNode(&pc, laser_pose);
   graph.writeBinary(argv[3]);
-  
 
 }
+

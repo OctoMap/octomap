@@ -1,4 +1,4 @@
-// $Id: OcTreeNode.cpp 26 2009-09-28 15:35:22Z kai_wurm $
+// $Id$
 
 /**
 * Octomap:

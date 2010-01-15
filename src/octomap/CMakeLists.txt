@@ -20,3 +20,6 @@ TARGET_LINK_LIBRARIES(read_pointcloud octomap)
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap)
 
+ADD_EXECUTABLE(simple simple.cpp)
+TARGET_LINK_LIBRARIES(simple octomap)
+

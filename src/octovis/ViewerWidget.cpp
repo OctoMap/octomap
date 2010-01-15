@@ -604,7 +604,7 @@ void ViewerWidget::draw(){
   glEnableClientState(GL_VERTEX_ARRAY);
 
   if (m_drawOcTreeCells)  drawOctreeCells();
-  if (m_draw_freespace && !m_heightColorMode)  drawFreespace();
+  if (m_draw_freespace)   drawFreespace();
   if (m_drawOcTreeGrid)   drawOctreeGrid();
 
   glDisableClientState(GL_VERTEX_ARRAY);

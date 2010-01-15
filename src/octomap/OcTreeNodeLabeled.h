@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_OCTREE_NODE_LABELED_H
 #define OCTOMAP_OCTREE_NODE_LABELED_H
 
-// $Id: OcTreeNode.h 26 2009-09-28 15:35:22Z kai_wurm $
+// $Id$
 
 /**
 * Octomap:

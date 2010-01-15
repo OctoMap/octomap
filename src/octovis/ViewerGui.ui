@@ -233,7 +233,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Printout</string>
+    <string>Printout (black/white)</string>
    </property>
   </action>
   <action name="actionOpen_graph_incremental">
@@ -272,7 +272,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Height map</string>
+    <string>Height map (color coded)</string>
    </property>
   </action>
   <action name="actionChanged_free_only">
