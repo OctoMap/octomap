@@ -36,14 +36,40 @@ INCLUDE_DIRECTORIES(
 ADD_SUBDIRECTORY( octomath )
 ADD_SUBDIRECTORY( octomap )
 
-# Look for Qt4 for Viewer:
-FIND_PACKAGE(Qt4)
-FIND_PACKAGE(QGLViewer)
-IF(QT4_FOUND AND QGLViewer_FOUND)
-    ADD_SUBDIRECTORY( octovis ) 
+SET( BUILD_VIEWER 0)
+
+FIND_PACKAGE(OpenGL)
+IF(NOT OPENGL_FOUND)
+  MESSAGE ( "\n")
+  MESSAGE ( "OpenGL not found. \n")
 ELSE()
-  MESSAGE(STATUS "Skipping GUI, some of the required libraries (Qt4, QGLViewer) are missing!")
+  MESSAGE (STATUS "OpenGL found at ${OPENGL_LIBRARY}")
+
+  # Look for Qt4
+  FIND_PACKAGE(Qt4)
+  IF(QT4_FOUND)
+    FIND_PACKAGE(QGLViewer)
+    IF(QGLViewer_FOUND)
+      SET( BUILD_VIEWER 1)
+    ELSE()
+      MESSAGE ( "\n")
+      MESSAGE ( "libQGLViewer could not be found or generated.")
+    ENDIF()
+  ELSE()
+    MESSAGE ( "\n")
+    MESSAGE ( "Qt4 development environment could not be found.")
+  ENDIF()
 ENDIF()
+
+IF(BUILD_VIEWER)
+  MESSAGE(STATUS "\n")
+  MESSAGE(STATUS "viewer octovis will be build")
+  ADD_SUBDIRECTORY( octovis ) 
+ELSE()
+    MESSAGE ( "Unfortunately, the viewer (octovis) can not be build.")
+    MESSAGE ( "See README.txt for further information.\n")
+ENDIF()
+
 
 # Documentation target:
 FIND_PACKAGE(Doxygen)
@@ -51,13 +77,12 @@ IF(DOXYGEN_FOUND)
   ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Generating documentation (Doxygen)...")
-  MESSAGE (STATUS "doxygen found.")
 ENDIF(DOXYGEN_FOUND)
 
 
 MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
+MESSAGE (STATUS "")
 
-MESSAGE (STATUS "See README.txt for further information.\n")
 

@@ -69,7 +69,11 @@ void Exporter::exportToFile(const QString& filename,
 {
 	QFile file(filename);
 
+#if QT_VERSION >= 0x040000
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+#else
+        if (!file.open(IO_WriteOnly)) {
+#endif
 		QMessageBox::warning(NULL, QGLViewer::tr("Exporter error", "Message box window title"), QGLViewer::tr("Unable to open file %1.").arg(filename));
 		return;
 	}

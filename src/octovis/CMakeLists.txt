@@ -1,10 +1,5 @@
 # Qt4-support (more info: http://qtnode.net/wiki?title=Qt_with_cmake)
 find_package(Qt4 REQUIRED)
-
-# the next line sets up include and link directories and defines some variables that we will use.
-# you can modify the behavior by setting some variables, e.g.
-#   set(QT_USE_QTOPENGL TRUE)
-# -> this will cause cmake to include and link against the OpenGL module
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
 # include the files enabled above
