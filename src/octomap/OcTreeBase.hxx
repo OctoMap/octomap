@@ -716,5 +716,79 @@ namespace octomap {
     }
   }
 
+  template <class NODE>
+  void OcTreeBase<NODE>::calcMinMax() {
+    //    std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
+    
+    std::list<OcTreeVolume> leafs;
+    this->getLeafNodes(leafs);
+
+    for (std::list<OcTreeVolume>::iterator it = leafs.begin(); it != leafs.end(); ++it){
+      double x = it->first(0);
+      double y = it->first(1);
+      double z = it->first(2);
+      double halfSize = it->second/2.0;
+
+      if (x-halfSize < minValue[0]) minValue[0] = x-halfSize;
+      if (y-halfSize < minValue[1]) minValue[1] = y-halfSize;
+      if (z-halfSize < minValue[2]) minValue[2] = z-halfSize;
+
+      if (x+halfSize > maxValue[0]) maxValue[0] = x+halfSize;
+      if (y+halfSize > maxValue[1]) maxValue[1] = y+halfSize;
+      if (z+halfSize > maxValue[2]) maxValue[2] = z+halfSize;
+    }
+//     std::cout<< "done.\n";
+    sizeChanged = false;
+  }
+
+
+
+  template <class NODE>
+  unsigned int OcTreeBase<NODE>::memoryFullGrid() {
+    double size_x, size_y, size_z;
+    getMetricSize(size_x, size_y,size_z);
+
+    // assuming best case (one big array and efficient addressing)
+    return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
+        ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
+        ceil(1./resolution * (double) size_z)) *
+        sizeof(GridData);
+  }
+
+
+  template <class NODE>
+  void OcTreeBase<NODE>::getMetricSize(double& x, double& y, double& z){
+
+    double minX, minY, minZ;
+    double maxX, maxY, maxZ;
+
+    getMetricMax(maxX, maxY, maxZ);
+    getMetricMin(minX, minY, minZ);
+
+    x = maxX - minX;
+    y = maxY - minY;
+    z = maxZ - minZ;
+  }
+
+  template <class NODE>
+  void OcTreeBase<NODE>::getMetricMin(double& x, double& y, double& z){
+    if (sizeChanged)
+      calcMinMax();
+    
+    x = minValue[0];
+    y = minValue[1];
+    z = minValue[2];
+  }
+
+  template <class NODE>
+  void OcTreeBase<NODE>::getMetricMax(double& x, double& y, double& z){
+    if (sizeChanged)
+      calcMinMax();
+    
+    x = maxValue[0];
+    y = maxValue[1];
+    z = maxValue[2];
+  }
+
 
 }

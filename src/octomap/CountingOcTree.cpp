@@ -30,6 +30,8 @@
 namespace octomap {
 
 
+  /// implementation of CountingOcTreeNode  ----------------------------------
+
   CountingOcTreeNode::CountingOcTreeNode() : count(0) {
     for (unsigned int i = 0; i<8; i++)
       itsChildren[i] = NULL;
@@ -86,7 +88,7 @@ namespace octomap {
   }
 
 
-
+  /// implementation of CountingOcTree  --------------------------------------
 
   CountingOcTree::CountingOcTree(double _resolution)
     : OcTreeBase<CountingOcTreeNode>(_resolution)   {

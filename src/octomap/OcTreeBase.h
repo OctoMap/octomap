@@ -90,6 +90,17 @@ namespace octomap {
     virtual NODE* updateNode(const point3d& value, bool occupied);
 
 
+    /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
+    unsigned int memoryFullGrid();
+
+    /// Size of OcTree in meters for x, y and z dimension
+    void getMetricSize(double& x, double& y, double& z);
+    /// minimum value in x, y, z
+    void getMetricMin(double& x, double& y, double& z);
+    /// maximum value in x, y, z
+    void getMetricMax(double& x, double& y, double& z);
+
+
    /**
     * Traces a ray from origin to end (excluding), returning the
     * coordinates of all nodes traversed by the beam.
@@ -233,6 +244,9 @@ namespace octomap {
     /// recursive call of getFreeSpace()
     void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
                             unsigned int max_depth, NODE* node, unsigned int depth, const point3d& parent_center) const;
+
+    /// recalculates min and max in x, y, z. Only called when needed, after tree size changed.
+    void calcMinMax();
 
 
   protected:

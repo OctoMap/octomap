@@ -120,49 +120,6 @@ namespace octomap {
     return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
   }
 
-
-  unsigned int OcTree::memoryFullGrid(){
-    double size_x, size_y, size_z;
-    getMetricSize(size_x, size_y,size_z);
-
-    // assuming best case (one big array and efficient addressing)
-    return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_z)) *
-        sizeof(GridData);
-  }
-
-
-  void OcTree::getMetricSize(double& x, double& y, double& z){
-
-    double minX, minY, minZ;
-    double maxX, maxY, maxZ;
-
-    getMetricMax(maxX, maxY, maxZ);
-    getMetricMin(minX, minY, minZ);
-
-    x = maxX - minX;
-    y = maxY - minY;
-    z = maxZ - minZ;
-  }
-
-  void OcTree::getMetricMin(double& x, double& y, double& z){
-    if (sizeChanged)
-      calcMinMax();
-
-    x = minValue[0];
-    y = minValue[1];
-    z = minValue[2];
-  }
-
-  void OcTree::getMetricMax(double& x, double& y, double& z){
-    if (sizeChanged)
-          calcMinMax();
-
-    x = maxValue[0];
-    y = maxValue[1];
-    z = maxValue[2];
-  }
   
   void OcTree::calcNumThresholdedNodes(unsigned int& num_thresholded, 
                                        unsigned int& num_other) const {
@@ -288,7 +245,7 @@ namespace octomap {
     double tree_resolution = resolution;
     s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
-    unsigned int tree_write_size = this->size(); // size includes invalid nodes
+    unsigned int tree_write_size = this->size(); 
     fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
     s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
@@ -470,31 +427,5 @@ namespace octomap {
       }
     }
   }
-
-
-  void OcTree::calcMinMax(){
-    std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
-
-    std::list<OcTreeVolume> leafs;
-    this->getLeafNodes(leafs);
-
-    for (std::list<OcTreeVolume>::iterator it = leafs.begin(); it != leafs.end(); ++it){
-      double x = it->first(0);
-      double y = it->first(1);
-      double z = it->first(2);
-      double halfSize = it->second/2.0;
-
-      if (x-halfSize < minValue[0]) minValue[0] = x-halfSize;
-      if (y-halfSize < minValue[1]) minValue[1] = y-halfSize;
-      if (z-halfSize < minValue[2]) minValue[2] = z-halfSize;
-
-      if (x+halfSize > maxValue[0]) maxValue[0] = x+halfSize;
-      if (y+halfSize > maxValue[1]) maxValue[1] = y+halfSize;
-      if (z+halfSize > maxValue[2]) maxValue[2] = z+halfSize;
-    }
-    std::cout<< "done.\n";
-    sizeChanged = false;
-  }
-
 
 } // namespace

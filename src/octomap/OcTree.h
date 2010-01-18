@@ -82,16 +82,6 @@ namespace octomap {
     /// \return Memory usage of the OcTree in bytes.
     unsigned int memoryUsage() const;
 
-    /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
-    unsigned int memoryFullGrid();
-
-    /// Size of OcTree in meters for x, y and z dimension
-    void getMetricSize(double& x, double& y, double& z);
-    /// minimum value in x, y, z
-    void getMetricMin(double& x, double& y, double& z);
-    /// maximum value in x, y, z
-    void getMetricMax(double& x, double& y, double& z);
-
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const; 
 
 
@@ -141,8 +131,6 @@ namespace octomap {
     unsigned int calcNumNodes() const;
 
     void calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const;
-    /// recalculates min and max in x, y, z. Only called when needed, after tree size changed.
-    void calcMinMax();
 
   };
 

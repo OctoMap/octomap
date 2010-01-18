@@ -95,9 +95,9 @@ namespace octomap {
   public:
 
     CountingOcTree(double resolution);
-    ~CountingOcTree();
+    virtual ~CountingOcTree();
 
-    CountingOcTreeNode* updateNode(const point3d& value);
+    virtual CountingOcTreeNode* updateNode(const point3d& value);
 
   protected:
 
