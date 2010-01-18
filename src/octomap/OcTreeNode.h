@@ -136,7 +136,7 @@ namespace octomap {
     // -- I/O  ---------------------------------------
 
     // read from / write to binary stream
-    std::istream& readBinary(std::istream &s);
+    virtual std::istream& readBinary(std::istream &s);
     std::ostream& writeBinary(std::ostream &s);
 
   protected:

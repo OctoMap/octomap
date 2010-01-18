@@ -31,7 +31,7 @@ REQUIREMENTS
        To install it:
 
        sudo apt-get install libqglviewer-qt4-dev
-    
+
 
 INSTALLATION:
 ############################

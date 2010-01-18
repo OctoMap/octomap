@@ -33,48 +33,52 @@ namespace octomap {
 
 
   /**
-   *   Node class storing additional information such as a label 
+   *   Node class storing a label as additional information
    */
   class OcTreeNodeLabeled : public OcTreeNode {
 
   public:
 
-    enum Labels {FREE=0, OCCUPIED=1, MIXED=2, UNKNOWN=3};
+    enum Label {FREE=0, OCCUPIED=1, MIXED=2, UNKNOWN=3};
 
   public:
 
     OcTreeNodeLabeled();
     virtual ~OcTreeNodeLabeled();
 
+
+    // -- children  ----------------------------------
+
+    virtual bool createChild(unsigned int i);
     virtual OcTreeNodeLabeled* getChild(unsigned int i);
     virtual const OcTreeNodeLabeled* getChild(unsigned int i) const;
-    virtual bool createChild(unsigned int i);
 
 
-    //! set maximum likelihood clamped logodds value and label
+    //! set maximum likelihood label and call OcTreeNode::toMaxLikelihood
     virtual void toMaxLikelihood();
  
-    // data
+    // data  -----------------------------------------
+
     /**
-     * set a label out of those defined in OcTreeNode::Labels (0..3)
+     * set a label
      */
-    void setLabel(char l);
+    void setLabel(Label l);
     /**
-     * @return label of node
+     * @return Label of node
      */
-    char getLabel() const;
+    Label getLabel() const;
 
     //! example implementation of additional information on a binary level
     void setAuxFlag(bool a);
     bool getAuxFlag() const;
 
     //! file reading method which set maximum likelihood labels
-    std::istream& readBinary(std::istream &s);
+    virtual std::istream& readBinary(std::istream &s);
 
 
   protected:
 
-    char commonChildLabel() const;
+    Label commonChildLabel() const;
 
     char data; // store label and state
 

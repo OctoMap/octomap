@@ -26,9 +26,7 @@
 
 #include <bitset>
 #include <cassert>
-#include <math.h>
-#include <fstream>
-#include <stdlib.h>
+#include <fstream> // REMOVE
 
 #include "OcTreeNodeLabeled.h"
 
@@ -37,23 +35,26 @@ namespace octomap {
 
   OcTreeNodeLabeled::OcTreeNodeLabeled()
     : OcTreeNode() {
-
     setLabel(UNKNOWN);
+    setAuxFlag(false);
   }
 
   OcTreeNodeLabeled::~OcTreeNodeLabeled(){
-    if (itsChildren != NULL) {
-      for (unsigned int i=0;i<8;i++) {
-        if (itsChildren[i] != NULL) delete itsChildren[i];
-      }
-      delete[] itsChildren;
-    }
+    // children are deleted in parent destructor
   }
 
 
   // ============================================================
   // =  children          =======================================
   // ============================================================
+
+  bool OcTreeNodeLabeled::createChild(unsigned int i) {
+    if (itsChildren == NULL) {
+      allocChildren();
+    }
+    itsChildren[i] = new OcTreeNodeLabeled();
+    return true;
+  }
 
 
   OcTreeNodeLabeled* OcTreeNodeLabeled::getChild(unsigned int i) {
@@ -69,8 +70,29 @@ namespace octomap {
   }
 
   
-  char OcTreeNodeLabeled::commonChildLabel() const{
-    char common_label = UNKNOWN;
+  // ============================================================
+  // =  data              =======================================
+  // ============================================================
+
+  void OcTreeNodeLabeled::setLabel(OcTreeNodeLabeled::Label label) {
+    char l = (char) label;
+    if (l & 1) data |=  1; // set
+    else       data &= ~1; // clear
+    if (l & 2) data |=  2; // set
+    else       data &= ~2; // clear
+  }
+
+
+  OcTreeNodeLabeled::Label OcTreeNodeLabeled::getLabel() const {
+    char retval = 0;
+    if (data & 1) retval += 1;
+    if (data & (1<<1)) retval += 2;
+    return (Label) retval;
+  }
+
+
+  OcTreeNodeLabeled::Label OcTreeNodeLabeled::commonChildLabel() const{
+    Label common_label = UNKNOWN;
     for (unsigned int i=0; i<8; i++) {
 
       if (childExists(i)) {
@@ -78,7 +100,6 @@ namespace octomap {
         // REMOVE FOR RELEASE
         if (!getChild(i)->atThreshold()) {
           printf("commonChildLabel:: node has delta children (no %d). This should not happen.\n", i);
-          exit(0);
         }
 
         if (common_label == UNKNOWN) common_label = getChild(i)->getLabel();
@@ -91,68 +112,44 @@ namespace octomap {
     return common_label;
   }
 
-  bool OcTreeNodeLabeled::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
-      allocChildren();
-    }
-    itsChildren[i] = new OcTreeNodeLabeled();
-    return true;
-  }
-
-  // ============================================================
-  // =  data              =======================================
-  // ============================================================
-
-  bool OcTreeNodeLabeled::getAuxFlag() const {
-    return (data & 4);
-  }
-
-  void OcTreeNodeLabeled::setAuxFlag(bool a) {
-    if (a) data |=  4; // set
-    else   data &= ~4; // clear
-  }
-
-  char OcTreeNodeLabeled::getLabel() const {
-    char retval = 0;
-    if (data & 1) retval += 1;
-    if (data & (1<<1)) retval += 2;
-    return retval;
-  }
-
-  void OcTreeNodeLabeled::setLabel(char l) {
-    if (l & 1) data |=  1; // set
-    else       data &= ~1; // clear
-    if (l & 2) data |=  2; // set
-    else       data &= ~2; // clear
-  }
-
 
   void OcTreeNodeLabeled::toMaxLikelihood() {
 
-    // converting node
-    if (hasChildren()) {
+    // set maximum likelihood label
+
+    if (hasChildren()) {  // update inner node
+
       setLabel(commonChildLabel());
 
       // REMOVE FOR RELEASE
       if (getLabel() == UNKNOWN) {
 	printf("toMaxLikelihood:: label is set to UNKOWN. This should not happen.\n");
-	exit(0);
 	return;
       }
 
       //      printf("{%d}", getLabel());
     }
 
-    // converting leaf
+    // update leaf node
     else {
       if (isOccupied()) setLabel(OCCUPIED);
       else              setLabel(FREE);
     }
 
-    OcTreeNode::toMaxLikelihood();
+    OcTreeNode::toMaxLikelihood();  // update occupancy probability
 
   }
 
+
+  bool OcTreeNodeLabeled::getAuxFlag() const {
+    return (data & 4);
+  }
+
+
+  void OcTreeNodeLabeled::setAuxFlag(bool a) {
+    if (a) data |=  4; // set
+    else   data &= ~4; // clear
+  }
 
   // ============================================================
   // =  file I/O          =======================================
@@ -222,11 +219,11 @@ namespace octomap {
 
           child->readBinary(s);
 
-          char child_label = UNKNOWN;
+          Label child_label = UNKNOWN;
           for (unsigned int j=0; j<8; j++) {
             if (child->childExists(j)) {
               OcTreeNodeLabeled* grand_child = child->getChild(j);
-              char label = grand_child->getLabel();
+              Label label = grand_child->getLabel();
               if      (child_label == UNKNOWN) child_label = label;
               else if (child_label != label)   child_label = MIXED;
 	    }

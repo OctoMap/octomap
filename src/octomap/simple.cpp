@@ -25,13 +25,21 @@
 */
 
 #include "octomap.h"
+#include "OcTreeLabeled.h"
 
 using namespace std;
 using namespace octomap;
 
 
-int main(int argc, char** argv) {
+void print_query_info(point3d query, OcTreeNode* node) {
+  if (node != NULL) {
+    cout << "occupancy probability at " << query << ":\t " << node->getOccupancy() << endl;
+  }
+  else 
+    cout << "occupancy probability at " << query << ":\t is unknown" << endl;    
+}
 
+int main(int argc, char** argv) {
 
   cout << endl;
   cout << "generating example map" << endl;
@@ -63,35 +71,24 @@ int main(int argc, char** argv) {
 
   cout << endl;
   cout << "performing some queries:" << endl;
-
+  
   point3d query (0., 0., 0.);
   OcTreeNode* result = tree.search (query);
-  if (result != NULL) 
-    cout << "occupancy probability at " << query << ":    " << result->getOccupancy() << endl;
-  else 
-    cout << "occupancy probability at " << query << ":    is unknown" << endl;    
+  print_query_info(query, result);
 
   query = point3d(-1.,-1.,-1.);
   result = tree.search (query);
-  if (result != NULL) 
-    cout << "occupancy probability at " << query << ": " << result->getOccupancy() << endl;
-  else 
-    cout << "occupancy probability at " << query << ":    is unknown" << endl;    
+  print_query_info(query, result);
 
   query = point3d(1.,1.,1.);
   result = tree.search (query);
-  if (result != NULL) 
-    cout << "occupancy probability at " << query << ":    " << result->getOccupancy() << endl;
-  else 
-    cout << "occupancy probability at " << query << ":    is unknown" << endl;    
-
-
+  print_query_info(query, result);
 
 
   cout << endl;
   tree.writeBinary("simple_tree.bt");
   cout << "wrote example file simple_tree.bt" << endl << endl;
-  cout << "now you can use octovis to visualize: octovis simple_tree.bt" << endl << endl;
-  
-}
+  cout << "now you can use octovis to visualize: octovis simple_tree.bt"  << endl;
+  cout << "Hint: hit 'F'-key in viewer to see the freespace" << endl  << endl;  
 
+}

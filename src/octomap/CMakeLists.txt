@@ -5,6 +5,7 @@ SET (octomap_SRCS
   OcTree.cpp
   OcTreeNode.cpp
   OcTreeNodeLabeled.cpp
+  OcTreeLabeled.cpp
   )
 
 
@@ -22,4 +23,7 @@ TARGET_LINK_LIBRARIES(graph2tree octomap)
 
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
+
+ADD_EXECUTABLE(labeled_demo labeled_demo.cpp)
+TARGET_LINK_LIBRARIES(labeled_demo octomap)
 
