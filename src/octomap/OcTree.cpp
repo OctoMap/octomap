@@ -405,7 +405,7 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (node->childExists(i)) {
         OcTreeNode* child_node = node->getChild(i);
-        if (!child_node->atThreshold()) num_thresholded++;
+        if (child_node->atThreshold()) num_thresholded++;
         else num_other++;
         calcNumThresholdedNodesRecurs(child_node, num_thresholded, num_other);
       } // end if child

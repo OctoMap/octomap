@@ -1,3 +1,6 @@
+#ifndef OCTOMAP_OCTREE_BASE_H
+#define OCTOMAP_OCTREE_BASE_H
+
 // $Id$
 
 /**
@@ -23,11 +26,6 @@
 * with this program; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
-
-#ifndef OCTOMAP_BASE_OCTREE_H
-#define OCTOMAP_BASE_OCTREE_H
-
-
 
 #include <list>
 
@@ -88,6 +86,11 @@ namespace octomap {
      * @return pointer to the updated NODE
      */
     virtual NODE* updateNode(const point3d& value, bool occupied);
+
+
+    /// Insert one ray between origin and end into the tree.
+    /// integrateMissOnRay() is called for the ray, the end point is updated as occupied.
+    virtual bool insertRay(const point3d& origin, const point3d& end);
 
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
@@ -214,11 +217,6 @@ namespace octomap {
 
     /// generate child number from key at given tree depth
     unsigned int genPos(unsigned short int key[], int i) const;
-
-
-    /// Insert one ray between origin and end into the tree.
-    /// integrateMissOnRay() is called for the ray, the end point is updated as occupied.
-    virtual bool insertRay(const point3d& origin, const point3d& end);
 
     /// Traces a ray from origin to end and updates all voxels on the way as free.
     /// The volume containing "end" is not updated.

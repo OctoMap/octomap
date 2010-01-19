@@ -45,6 +45,10 @@ namespace octomap {
 
   /**
    * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
+   *
+   * Hint: If a class is derived from OcTreeNode, you have to implement (at least) 
+   * createChild, getChild, and getChild const. See OcTreeNodeLabeled for an example.
+   *
    */
   class OcTreeNode : public AbstractOcTreeNode {
 

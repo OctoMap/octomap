@@ -1,3 +1,6 @@
+#ifndef OCTOMAP_OCTREE_H
+#define OCTOMAP_OCTREE_H
+
 // $Id$
 
 /**
@@ -24,8 +27,6 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_OCTREE_HH
-#define OCTOMAP_OCTREE_HH
 
 #include "OcTreeBase.h"
 #include "OcTreeNode.h"
