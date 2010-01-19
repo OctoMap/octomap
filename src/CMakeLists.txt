@@ -36,6 +36,15 @@ INCLUDE_DIRECTORIES(
 ADD_SUBDIRECTORY( octomath )
 ADD_SUBDIRECTORY( octomap )
 
+# Documentation 
+FIND_PACKAGE(Doxygen)
+IF(DOXYGEN_FOUND)
+  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating documentation (Doxygen)...")
+ENDIF(DOXYGEN_FOUND)
+
+
 SET( BUILD_VIEWER 0)
 
 FIND_PACKAGE(OpenGL)
@@ -69,15 +78,6 @@ ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be build.")
     MESSAGE ( "See README.txt for further information.\n")
 ENDIF()
-
-
-# Documentation target:
-FIND_PACKAGE(Doxygen)
-IF(DOXYGEN_FOUND)
-  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Generating documentation (Doxygen)...")
-ENDIF(DOXYGEN_FOUND)
 
 
 MESSAGE (STATUS "\n")
