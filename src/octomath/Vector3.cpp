@@ -200,6 +200,14 @@ namespace octomath {
     return true;
   }
 
+  Vector3 Vector3::operator*  (double x) const {
+    Vector3 result(*this);
+    for (unsigned int i=0; i<3; ++i) {
+      result(i) *= x;
+    }
+    return result;
+  }
+
   void Vector3::operator/= (double x) {
     for (unsigned int i=0; i<3; i++) {
       operator()(i) /= x;

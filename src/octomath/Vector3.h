@@ -47,9 +47,6 @@ namespace octomath {
      */
     Vector3();
 
- //   ~Vector3();
-
-
     /*!
      * \brief Copy constructor
      *
@@ -112,6 +109,7 @@ namespace octomath {
     Vector3 operator- () const;
     Vector3 operator- (const Vector3 &other) const;
     Vector3 operator+ (const Vector3 &other) const;
+    Vector3 operator*  (double x) const;
     void    operator+= (const Vector3 &other);
     bool    operator== (const Vector3 &other) const;
     void operator/= (double x);
