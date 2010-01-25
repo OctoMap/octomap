@@ -93,8 +93,8 @@ namespace octomap {
     // I/O methods
 
     std::istream& readBinary(std::istream &s);
+    std::istream& read(std::istream &s);
     std::ostream& writeBinary(std::ostream &s) const;
-    std::ostream& appendBinary(std::ostream& s) const;
 
   protected:
     point3d_collection   points;

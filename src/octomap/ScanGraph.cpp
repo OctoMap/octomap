@@ -26,6 +26,7 @@
 
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <stdlib.h>
 
 #include <octomath/Pose6D.h>
@@ -326,7 +327,7 @@ namespace octomap {
   }
 
 
-  void ScanGraph::writeBinary(std::string filename) const{
+  void ScanGraph::writeBinary(const std::string& filename) const{
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
     writeBinary(binary_outfile);
     binary_outfile.close();
@@ -361,9 +362,14 @@ namespace octomap {
     return s;
   }
 
-  void ScanGraph::readBinary(std::string filename){
+  void ScanGraph::readBinary(const std::string& filename){
 
     std::ifstream binary_infile(filename.c_str(), std::ios_base::binary);
+    if (!binary_infile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      return;
+    }
+
     readBinary(binary_infile);
     binary_infile.close();
   }
@@ -431,7 +437,71 @@ namespace octomap {
     return s;
   }
 
+  void ScanGraph::readPlainASCII(const std::string& filename){
+      std::ifstream infile(filename.c_str());
+      if (!infile.is_open()){
+        std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+        return;
+      }
 
+      readPlainASCII(infile);
+      infile.close();
+  }
+
+  std::istream& ScanGraph::readPlainASCII(std::istream& s){
+    std::string currentLine;
+    ScanNode* currentNode = NULL;
+    while (true){
+      getline(s, currentLine);
+      if (s.good() && !s.eof()){
+        std::stringstream ss;
+        ss << currentLine;
+        // skip empty and comment lines:
+        if (currentLine.size() == 0
+            || (currentLine.compare(0,1, "#") == 0)
+            || (currentLine.compare(0,1, " ") == 0)){
+
+          continue;
+        } else if(currentLine.compare(0,4,"NODE")==0){
+          if (currentNode){
+            this->nodes.push_back(currentNode);
+            this->connectPrevious();
+            std::cout << "ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size() << std::endl;
+          }
+
+          currentNode = new ScanNode();
+          currentNode->scan = new Pointcloud();
+
+          double x, y, z, roll, pitch, yaw;
+          std::string tmp;
+          ss >> tmp >> x >> y >> z >> roll >> pitch >> yaw;
+          pose6d pose(x, y, z, roll, pitch, yaw);
+          //std::cout << "Pose "<< pose << " found.\n";
+          currentNode->pose = pose;
+        } else{
+          if (currentNode == NULL){
+            // TODO: allow "simple" pc files by setting initial Scan Pose to (0,0,0)
+            std::cerr << "Error parsing log file, no Scan to add point to!\n";
+            break;
+          }
+          double x, y, z;
+          ss >> x >> y >> z;
+
+          //std::cout << "Point "<< x << "," <<y <<"," <<z << " found.\n";
+          currentNode->scan->push_back(x,y,z);
+        }
+      } else{
+        if (currentNode){
+          this->nodes.push_back(currentNode);
+          this->connectPrevious();
+          std::cout << "Final ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size() << std::endl;
+        }
+        break;
+      }
+    }
+
+    return s;
+  }
 
   std::ostream& ScanGraph::writeEdgesASCII(std::ostream &s) const {
 

@@ -160,8 +160,8 @@ namespace octomap {
 
     std::ostream& writeBinary(std::ostream &s) const;
     std::istream& readBinary(std::ifstream &s);
-    void writeBinary(std::string filename) const;
-    void readBinary(std::string filename);
+    void writeBinary(const std::string& filename) const;
+    void readBinary(const std::string& filename);
 
 
     std::ostream& writeEdgesASCII(std::ostream &s) const;
@@ -169,6 +169,25 @@ namespace octomap {
 
     std::ostream& writeNodePosesASCII(std::ostream &s) const;
     std::istream& readNodePosesASCII(std::istream &s);
+
+    /**
+     * Reads in a ScanGraph from a "plain" ASCII file of the form
+     * NODE x y z R P Y
+     * x y z
+     * x y z
+     * x y z
+     * NODE x y z R P Y
+     * x y z
+     *
+     * Lines starting with the NODE keyword contain the 6D pose of a scan node,
+     * all 3D point following until the next NODE keyword (or end of file) are
+     * inserted into that scan node as pointcloud in its local coordinate frame
+     *
+     * @param input stream to read from
+     * @return read stream
+     */
+    std::istream& readPlainASCII(std::istream& s);
+    void readPlainASCII(const std::string& filename);
 
    protected:
 

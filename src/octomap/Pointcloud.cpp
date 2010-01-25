@@ -265,6 +265,22 @@ namespace octomap {
 
   }
 
+  std::istream& Pointcloud::read(std::istream &s){
+    while (!s.eof()){
+      point3d p;
+      for (unsigned int i=0; i<3; i++){
+        s >> p(i);
+      }
+      if (!s.fail()){
+        this->push_back(p);
+      } else {
+        break;
+      }
+    }
+
+    return s;
+  }
+
   std::istream& Pointcloud::readBinary(std::istream &s) {
 
     unsigned int pc_size = 0;
@@ -275,14 +291,14 @@ namespace octomap {
       this->points.reserve(pc_size);
       point3d p;
       for (unsigned int i=0; i<pc_size; i++) {
-	p.readBinary(s);
-	if (!s.fail()) {
-	  this->push_back(p);
-	}
-	else {
-	  printf("Pointcloud::readBinary: ERROR.\n" );
-	  break;
-	}
+        p.readBinary(s);
+        if (!s.fail()) {
+          this->push_back(p);
+        }
+        else {
+          printf("Pointcloud::readBinary: ERROR.\n" );
+          break;
+        }
       }
     }
     fprintf(stderr, "done.\n");

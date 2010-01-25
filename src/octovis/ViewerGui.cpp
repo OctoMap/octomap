@@ -288,14 +288,15 @@ void ViewerGui::openPointcloud(){
     return;
   }
 
-  std::string tmp;
-  point3d p;
-  while (!s.eof()) {
-    for (unsigned int i=0; i<3; i++){
-      s >> p(i);   
-    }
-    pc.push_back(p);
-  }    
+  pc.read(s);
+
+//  point3d p;
+//  while (!s.eof()) {
+//    for (unsigned int i=0; i<3; i++){
+//      s >> p(i);
+//    }
+//    pc.push_back(p);
+//  }
 
   pose6d laser_pose(0,0,0,0,0,0);
   m_scanGraph->addNode(&pc, laser_pose);

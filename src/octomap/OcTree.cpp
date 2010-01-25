@@ -137,7 +137,7 @@ namespace octomap {
 
 
 
-  void OcTree::readBinary(std::string filename){
+  void OcTree::readBinary(const std::string& filename){
     std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
     if (!binary_infile.is_open()){
       std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
@@ -194,7 +194,7 @@ namespace octomap {
   }
 
 
-  void OcTree::writeBinary(std::string filename){
+  void OcTree::writeBinary(const std::string& filename){
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
     if (!binary_outfile.is_open()){
@@ -206,7 +206,7 @@ namespace octomap {
     }
   }
 
-  void OcTree::writeBinaryConst(std::string filename) const{
+  void OcTree::writeBinaryConst(const std::string& filename) const{
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
     if (!binary_outfile.is_open()){

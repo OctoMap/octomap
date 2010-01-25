@@ -100,13 +100,13 @@ namespace octomap {
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
     /// Reads OcTree from a binary file. Existing nodes are deleted.
-    void readBinary(std::string filename);
+    void readBinary(const std::string& filename);
     /// Writes OcTree to a binary file using writeBinary().
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
-    void writeBinary(std::string filename);
+    void writeBinary(const std::string& filename);
     /// Writes OcTree to a binary file using writeBinaryConst().
     /// The OcTree is not changed, in particular not pruned first.
-    void writeBinaryConst(std::string filename) const;
+    void writeBinaryConst(const std::string& filename) const;
 
   protected:
 
