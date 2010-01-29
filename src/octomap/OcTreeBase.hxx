@@ -350,8 +350,9 @@ namespace octomap {
     NODE* startingNode = this->search(origin);
     if (startingNode){
       if (startingNode->isOccupied()){
-        std::cerr << "WARNING: No raycast done, origin node is already occupied.\n";
-        return false;
+        // Occupied node => ray hits starting node (at d=0)
+        end = origin;
+        return true;
       }
     } else if(!ignoreUnknown){
       std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";

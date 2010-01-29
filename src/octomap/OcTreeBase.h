@@ -121,11 +121,12 @@ namespace octomap {
      * Performs raycasting in 3d, similar to computeRay().
      *
      * A ray is cast from origin with a given direction, the first occupied
-     * cell is returned (as center coordinate)
+     * cell is returned (as center coordinate). If the starting coordinate is already
+     * occupied in the tree, this coordinate will be returns as a hit.
      *
      * \note This function is still experimental and might be subject to change
      *
-     * @param origin
+     * @param origin starting coordinate of ray
      * @param direction A vector pointing in the direction of the raycast. Does not need to be normalized.
      * @param end returns the center of the cell that was hit by the ray, if successful
      * @param ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
