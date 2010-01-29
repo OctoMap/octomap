@@ -34,6 +34,7 @@ namespace octomap {
 
 
   Pointcloud::Pointcloud() {
+
   }
 
   Pointcloud::~Pointcloud() {

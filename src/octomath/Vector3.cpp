@@ -32,6 +32,7 @@
 namespace octomath {
 
   Vector3::Vector3() {
+    for (unsigned int i=0; i<3; i++) data[i] = 0;
   }
 
   Vector3::Vector3(const Vector3& other) {
