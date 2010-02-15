@@ -270,7 +270,6 @@ namespace octomap {
   class GridData {
   public:
     float log_odds_occupancy;
-    char data;
   };
 
 }
