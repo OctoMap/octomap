@@ -90,7 +90,8 @@ namespace octomap {
 
     /// Insert one ray between origin and end into the tree.
     /// integrateMissOnRay() is called for the ray, the end point is updated as occupied.
-    virtual bool insertRay(const point3d& origin, const point3d& end);
+    /// maxrange can be used to specify a maximum sensor range that is considered
+    virtual bool insertRay(const point3d& origin, const point3d& end, double maxrange=-1.);
 
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)

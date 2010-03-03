@@ -63,7 +63,7 @@ namespace octomap {
 
 
     /// Insert a 3d scan (given as a ScanNode) into the tree
-    void insertScan(const ScanNode& scan);
+    void insertScan(const ScanNode& scan, double maxrange=-1.);
 
     /// Lossless compression of OcTree: merge children to parent when there are 
     /// eight children with identical occupancy values
@@ -110,7 +110,7 @@ namespace octomap {
 
   protected:
 
-    void insertScanUniform(const ScanNode& scan); // FIXME: name
+    void insertScanUniform(const ScanNode& scan, double maxrange=-1.); // FIXME: name
 
 /*     // insert only freespace (freespace=true) or occupied space */
 /*     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace); */

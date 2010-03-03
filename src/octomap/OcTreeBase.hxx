@@ -230,7 +230,7 @@ namespace octomap {
 
   template <class NODE>
   bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
-			  std::vector<point3d>& _ray) const {
+                                    std::vector<point3d>& _ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
@@ -440,8 +440,8 @@ namespace octomap {
 
         // otherwise: node is free and valid, raycast continues
       } else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
-          std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
-                    << end << std::endl;
+        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: "
+                  << end << std::endl;
         return false;
       }
 
@@ -469,12 +469,23 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBase<NODE>::insertRay(const point3d& origin, const point3d& end){
-    
-    integrateMissOnRay(origin, end);
-    updateNode(end, true); // insert hit cell
+  bool OcTreeBase<NODE>::insertRay(const point3d& origin, const point3d& end, double maxrange){
 
-    return true;
+    // cut ray at maxrange
+    if ((maxrange > 0) 
+        && ((end - origin).norm2() > maxrange)) {
+
+      point3d direction = (end - origin).unit();
+      point3d new_end = origin + direction * maxrange;
+      integrateMissOnRay(origin, new_end);
+      return true;
+    }
+    // insert complete ray
+    else {
+      integrateMissOnRay(origin, end);
+      updateNode(end, true); // insert hit cell
+      return true;
+    }
   }
 
 
@@ -493,9 +504,9 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getLeafNodesRecurs(std::list<OcTreeVolume>& nodes,
-            unsigned int max_depth,
-            NODE* node, unsigned int depth,
-						const point3d& parent_center) const{
+                                            unsigned int max_depth,
+                                            NODE* node, unsigned int depth,
+                                            const point3d& parent_center) const{
 
     if ((depth <= max_depth) && (node != NULL) ) {
 
@@ -738,7 +749,7 @@ namespace octomap {
       if (y+halfSize > maxValue[1]) maxValue[1] = y+halfSize;
       if (z+halfSize > maxValue[2]) maxValue[2] = z+halfSize;
     }
-//     std::cout<< "done.\n";
+    //    std::cout<< "done.\n";
     sizeChanged = false;
   }
 
@@ -748,12 +759,12 @@ namespace octomap {
   unsigned int OcTreeBase<NODE>::memoryFullGrid() {
     double size_x, size_y, size_z;
     getMetricSize(size_x, size_y,size_z);
-
+    
     // assuming best case (one big array and efficient addressing)
     return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
-        ceil(1./resolution * (double) size_z)) *
-        sizeof(GridData);
+                           ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
+                           ceil(1./resolution * (double) size_z)) *
+      sizeof(GridData);
   }
 
 

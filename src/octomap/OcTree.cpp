@@ -58,7 +58,7 @@ namespace octomap {
   }
 
 
-  void OcTree::insertScan(const ScanNode& scan) {
+  void OcTree::insertScan(const ScanNode& scan, double maxrange) {
     if (scan.scan->size()< 1)
       return;
 
@@ -74,11 +74,11 @@ namespace octomap {
       for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); 
 	   point_it != scan.scan->end(); point_it++) {
         p = scan_pose.transform(**point_it);
-        this->insertRay(origin, p);
+        this->insertRay(origin, p, maxrange);
       } // end for all points
     } 
     else {
-      this->insertScanUniform(scan);
+      this->insertScanUniform(scan, maxrange);
     }
   }
 
@@ -260,36 +260,54 @@ namespace octomap {
 
   // --  protected  --------------------------------------------
 
-  void OcTree::insertScanUniform(const ScanNode& scan) {
+  void OcTree::insertScanUniform(const ScanNode& scan, double maxrange) {
     
     octomap::pose6d  scan_pose (scan.pose);
     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
+
 
     // preprocess data  --------------------------
 
     octomap::point3d p;
 
-    // free cells
-    CountingOcTree free_tree(this->getResolution());
+    CountingOcTree free_tree    (this->getResolution());
+    CountingOcTree occupied_tree(this->getResolution());
     std::vector<point3d> ray;
+
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
+
       p = scan_pose.transform(**point_it);
 
-      if (this->computeRay(origin, p, ray)){
-        for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
-          free_tree.updateNode(*it);
+      bool is_maxrange = false;
+      if ( (maxrange > 0) && ((p - origin).norm2() > maxrange) ) is_maxrange = true;
+
+      if (!is_maxrange) {
+        // free cells
+        if (this->computeRay(origin, p, ray)){
+          for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
+            free_tree.updateNode(*it);
+          }
         }
-      }
-    }
+        // occupied cells
+        occupied_tree.updateNode(p);
+      } // end if NOT maxrange
+
+      else {
+        point3d direction = (p - origin).unit();
+        point3d new_end = origin + direction * maxrange;
+        if (this->computeRay(origin, new_end, ray)){
+          for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
+            free_tree.updateNode(*it);
+          }
+        }
+      } // end if maxrange
+
+
+    } // end for all points
+
     std::list<OcTreeVolume> free_cells;
     free_tree.getLeafNodes(free_cells);
 
-    // occupied cells
-    CountingOcTree occupied_tree(this->getResolution());
-    for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
-      p = scan_pose.transform(**point_it);
-      occupied_tree.updateNode(p);
-    }
     std::list<OcTreeVolume> occupied_cells;
     occupied_tree.getLeafNodes(occupied_cells);
 
