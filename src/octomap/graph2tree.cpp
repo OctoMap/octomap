@@ -35,6 +35,7 @@ void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " [options]\n\n"
             "OPTIONS:\n-i <InputFile.graph> (required)\n"
             "-o <OutputFile.bt> (required) \n"
+            "-m <maxrange> (optional) \n"
             "-res <resolution> (default: 0.1 m)\n\n";
 
   std::cerr << "This tool inserts the data of a binary" << std::endl;
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
   double res = 0.1;
   string graphFilename = "";
   string treeFilename = "";
-
+  double maxrange = -1;
 
   int arg = 0;
   while (++arg < argc) {
@@ -60,6 +61,8 @@ int main(int argc, char** argv) {
       treeFilename = std::string(argv[++arg]);
     else if (! strcmp(argv[arg], "-res"))
       res = atof(argv[++arg]);
+    else if (! strcmp(argv[arg], "-m"))
+      maxrange = atof(argv[++arg]);
     else {
       printUsage(argv[0]);
     }
@@ -78,7 +81,7 @@ int main(int argc, char** argv) {
   unsigned currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
     cout << "("<<currentScan << "/" << numScans << ") " << flush;
-    tree->insertScan(**scan_it);
+    tree->insertScan(**scan_it, maxrange);
     currentScan++;
   }
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
@@ -88,16 +91,23 @@ int main(int argc, char** argv) {
   tree->calcNumThresholdedNodes(numThresholded, numOther);
 
   cout << "\nDone building tree.\n";
-  cout << "Tree size: " << tree->size() <<"(" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
-  cout << "Memory: " << tree->memoryUsage()
-       <<" B\nFull grid: "<< tree->memoryFullGrid() <<" B\n";
+  cout << "Tree size: " << tree->size() <<" (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
+  cout << "Memory: " << tree->memoryUsage() << " byte (" << tree->memoryUsage()/(1024.*1024.) << " MB)" << endl;
+  cout << "Full grid: "<< tree->memoryFullGrid() << " byte (" << tree->memoryFullGrid()/(1024.*1024.) << " MB)" << endl;
 
   tree->prune();
   tree->calcNumThresholdedNodes(numThresholded, numOther);
 
-  cout << "Pruned tree size: " << tree->size() <<"(" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
-  cout << "Pruned memory: " << tree->memoryUsage() << " B\n";
+  cout << endl;
+  cout << "Pruned tree size: " << tree->size() <<" (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
+  cout << "Pruned memory: " << tree->memoryUsage() << " byte (" << tree->memoryUsage()/(1024.*1024.) << " MB)" << endl;
+
+  double x, y, z;
+  tree->getMetricSize(x, y, z);
+  cout << "size: " << x << " x " << y << " x " << z << endl;
+  cout << endl;
 
   cout << "\nWriting tree file\n===========================\n";
   tree->writeBinary(treeFilename);
+  cout << endl;
 }
