@@ -37,6 +37,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave_file"/>
     <addaction name="actionExport_view"/>
+    <addaction name="actionExport_sequence"/>
     <addaction name="separator"/>
     <addaction name="actionConvert_ml_tree"/>
     <addaction name="actionPrune_tree"/>
@@ -305,6 +306,25 @@
    </property>
    <property name="toolTip">
     <string>Reload the current progress of the Octree</string>
+   </property>
+  </action>
+  <action name="actionFollow_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fly Mode</string>
+   </property>
+  </action>
+  <action name="actionExport_sequence">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Export view as image sequence...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export view as image sequence. This can be used to create videos.</string>
    </property>
   </action>
  </widget>

@@ -94,11 +94,160 @@ void ViewerWidget::enableHeightColorMode (bool enabled){
   m_heightColorMode = enabled;
 }
 
+qglviewer::Quaternion ViewerWidget::poseToQGLQuaternion(const octomath::Pose6D& pose) {
+	// copying octomap::Quaternion parameters to qglviewer::Quaternion does not work (reason unknown)
+	// octomath::Quaternion quaternion = pose.rot().normalized();
+	// return qglviewer::Quaternion(quaternion.x(), quaternion.y(), quaternion.z(), quaternion.u());
+
+	// Compute viewing direction and use code from libqglviewer's "look at" function
+	octomath::Vector3 dir = pose.rot().rotate(octomath::Vector3(1.,0.,0.));
+	qglviewer::Vec direction(dir.x(), dir.y(), dir.z());
+	qglviewer::Vec xAxis = direction ^ camera()->upVector();
+	qglviewer::Quaternion q;
+	q.setFromRotatedBasis(xAxis, xAxis^direction, -direction);
+	return q;
+}
+
 void ViewerWidget::setCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ){
   this->camera()->setOrientation(-M_PI/2., M_PI/2.);
   camera()->setPosition(qglviewer::Vec(x, y, z));
   camera()->lookAt(qglviewer::Vec(lookX, lookY, lookZ));
   updateGL();
+}
+
+void ViewerWidget::setCamPose(const octomath::Pose6D& pose){
+  octomath::Pose6D ahead = pose * octomath::Pose6D(octomath::Vector3(1,0,0), octomath::Quaternion());
+  setCamPosition(pose.x(), pose.y(), pose.z(), ahead.x(), ahead.y(), ahead.z());
+}
+
+void ViewerWidget::jumpToCamFrame(int id, int frame) {
+  qglviewer::KeyFrameInterpolator *kfi = camera()->keyFrameInterpolator(id);
+  if(kfi && frame >= 0 && frame < kfi->numberOfKeyFrames()) {
+	camera()->setPosition(kfi->keyFrame(frame).position());
+	camera()->setOrientation(kfi->keyFrame(frame).orientation());
+  } else {
+	  std::cerr << "Error: Could not jump to frame " << frame << " of " << kfi->numberOfKeyFrames() << std::endl;
+  }
+  updateGL();
+}
+
+void ViewerWidget::deleteCameraPath(int id) {
+	if(camera()->keyFrameInterpolator(id)) {
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(updateGL()));
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
+		camera()->deletePath(id);
+	}
+}
+
+void ViewerWidget::appendToCameraPath(int id, const octomath::Pose6D& pose) {
+	qglviewer::Vec position(pose.trans().x(), pose.trans().y(), pose.trans().z());
+	qglviewer::Quaternion quaternion = poseToQGLQuaternion(pose);
+	qglviewer::Frame frame(position, quaternion);
+	if(!camera()->keyFrameInterpolator(id)) {
+		camera()->setKeyFrameInterpolator(id, new qglviewer::KeyFrameInterpolator(camera()->frame()));
+	}
+	camera()->keyFrameInterpolator(id)->addKeyFrame(frame);
+}
+
+void ViewerWidget::removeFromCameraPath(int id, int frame) {
+	qglviewer::KeyFrameInterpolator *old_kfi = camera()->keyFrameInterpolator(id);
+	if(old_kfi) {
+		qglviewer::KeyFrameInterpolator *new_kfi = new qglviewer::KeyFrameInterpolator(camera()->frame());
+		for(int i = 0; i < old_kfi->numberOfKeyFrames(); i++) {
+			if(i != frame) {
+				new_kfi->addKeyFrame(old_kfi->keyFrame(i));
+			}
+		}
+		deleteCameraPath(id);
+		camera()->setKeyFrameInterpolator(id, new_kfi);
+	}
+}
+
+void ViewerWidget::updateCameraPath(int id, int frame) {
+	qglviewer::KeyFrameInterpolator *old_kfi = camera()->keyFrameInterpolator(id);
+	if(old_kfi) {
+		qglviewer::KeyFrameInterpolator *new_kfi = new qglviewer::KeyFrameInterpolator(camera()->frame());
+		for(int i = 0; i < old_kfi->numberOfKeyFrames(); i++) {
+			if(i != frame) {
+				new_kfi->addKeyFrame(old_kfi->keyFrame(i));
+			} else {
+				new_kfi->addKeyFrame(*(camera()->frame()));
+			}
+		}
+		deleteCameraPath(id);
+		camera()->setKeyFrameInterpolator(id, new_kfi);
+	}
+}
+
+void ViewerWidget::appendCurrentToCameraPath(int id) {
+	int frame = 0;
+	if(camera()->keyFrameInterpolator(id)) frame = camera()->keyFrameInterpolator(id)->numberOfKeyFrames();
+	addCurrentToCameraPath(id, frame);
+}
+
+void ViewerWidget::addCurrentToCameraPath(int id, int frame) {
+	qglviewer::KeyFrameInterpolator *old_kfi = camera()->keyFrameInterpolator(id);
+	if(!old_kfi || frame >= old_kfi->numberOfKeyFrames()) {
+		camera()->addKeyFrameToPath(id);
+	} else {
+		qglviewer::KeyFrameInterpolator *new_kfi = new qglviewer::KeyFrameInterpolator(camera()->frame());
+		for(int i = 0; i < old_kfi->numberOfKeyFrames(); i++) {
+			new_kfi->addKeyFrame(old_kfi->keyFrame(i));
+			if(i == frame) {
+				new_kfi->addKeyFrame(camera()->frame());
+			}
+		}
+		deleteCameraPath(id);
+		camera()->setKeyFrameInterpolator(id, new_kfi);
+	}
+}
+
+void ViewerWidget::playCameraPath(int id, int start_frame) {
+	qglviewer::KeyFrameInterpolator *kfi = camera()->keyFrameInterpolator(id);
+	if(kfi && !kfi->interpolationIsStarted() && start_frame >= 0 && start_frame < kfi->numberOfKeyFrames()) {
+		m_current_camera_path = id;
+		m_current_camera_frame = start_frame;
+		kfi->setInterpolationTime(kfi->keyFrameTime(start_frame));
+		std::cout << "Playing path of length " << kfi->numberOfKeyFrames() << ", start time " << kfi->keyFrameTime(start_frame) << std::endl;
+		connect(kfi, SIGNAL(interpolated()), this, SLOT(updateGL()));
+		connect(kfi, SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
+		connect(kfi, SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
+		kfi->startInterpolation();
+	}
+}
+
+void ViewerWidget::stopCameraPath(int id) {
+	if(camera()->keyFrameInterpolator(id) && camera()->keyFrameInterpolator(id)->interpolationIsStarted()) {
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(updateGL()));
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
+		disconnect(camera()->keyFrameInterpolator(id), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
+		camera()->keyFrameInterpolator(id)->stopInterpolation();
+	}
+}
+
+void ViewerWidget::cameraPathFinished() {
+	if(camera()->keyFrameInterpolator(m_current_camera_path)) {
+		disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(interpolated()), this, SLOT(updateGL()));
+		disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
+		disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
+		emit cameraPathStopped(m_current_camera_path);
+	}
+}
+
+void ViewerWidget::cameraPathInterpolated() {
+	qglviewer::KeyFrameInterpolator *kfi = camera()->keyFrameInterpolator(m_current_camera_path);
+	if(kfi) {
+		int current_frame = m_current_camera_frame;
+		for(int i = m_current_camera_frame + 1; i < kfi->numberOfKeyFrames(); i++) {
+			if(kfi->keyFrameTime(current_frame) <= kfi->interpolationTime()) current_frame = i;
+			else break;
+		}
+		if(current_frame != m_current_camera_frame) {
+			m_current_camera_frame = current_frame;
+			emit cameraPathFrameChanged(m_current_camera_path, m_current_camera_frame);
+		}
+	}
 }
 
 void ViewerWidget::setSceneBoundingBox(const qglviewer::Vec& min, const qglviewer::Vec& max){

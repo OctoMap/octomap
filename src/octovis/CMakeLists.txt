@@ -16,6 +16,8 @@ set(viewer_SRCS
 	ViewerWidget.cpp
 	ViewerSettings.cpp
 	ViewerSettingsPanel.cpp
+	ViewerSettingsPanelFollowMode.cpp
+	CameraFollowMode.cpp
 )
 
 #class headers which need MOCs:
@@ -24,6 +26,8 @@ SET(viewer_MOC_HDRS
 	ViewerWidget.h
 	ViewerSettings.h
 	ViewerSettingsPanel.h
+	ViewerSettingsPanelFollowMode.h
+	CameraFollowMode.h
 )
 
 # generate list of MOC srcs:
@@ -34,6 +38,7 @@ SET(viewer_UIS
     ViewerGui.ui
     ViewerSettings.ui
     ViewerSettingsPanel.ui
+    ViewerSettingsPanelFollowMode.ui
 )
 QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 

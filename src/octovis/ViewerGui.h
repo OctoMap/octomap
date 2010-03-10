@@ -34,9 +34,11 @@
 #include <string>
 #include "TrajectoryDrawer.h"
 #include "PointcloudDrawer.h"
+#include "CameraFollowMode.h"
 #include "ViewerWidget.h"
 #include "ViewerSettings.h"
 #include "ViewerSettingsPanel.h"
+#include "ViewerSettingsPanelFollowMode.h"
 #include "ui_ViewerGui.h"
 
 namespace octomap {
@@ -67,6 +69,7 @@ class ViewerGui : public QMainWindow {
   void on_actionOpen_graph_incremental_triggered();
   void on_actionSave_file_triggered();
   void on_actionExport_view_triggered();
+  void on_actionExport_sequence_triggered(bool checked);
   void on_actionHelp_triggered();
   void on_actionSettings_triggered();
   void on_actionPrune_tree_triggered();
@@ -88,6 +91,7 @@ class ViewerGui : public QMainWindow {
    void changeNumberOfScans(unsigned scans);
    void changeCurrentScan(unsigned scans);
    void changeResolution(double resolution);
+   void changeCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
 
  private:
   /**
@@ -144,6 +148,7 @@ class ViewerGui : public QMainWindow {
   ViewerWidget* m_glwidget;
   TrajectoryDrawer* m_trajectoryDrawer;
   PointcloudDrawer* m_pointcloudDrawer;
+  CameraFollowMode* m_cameraFollowMode;
   double m_octreeResolution;
   double m_occupancyThresh; // FIXME: This is not really used at the moment...
   unsigned int m_max_tree_depth;

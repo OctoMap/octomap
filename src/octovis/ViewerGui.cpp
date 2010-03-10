@@ -36,6 +36,7 @@ namespace octomap{
   ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
     : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
       m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
+      m_cameraFollowMode(NULL),
       m_octreeResolution(0.1), m_occupancyThresh(0.5), 
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
       m_cameraStored(false), m_filename("") {
@@ -51,6 +52,13 @@ namespace octomap{
     this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
     ui.menuShow->addAction(settingsDock->toggleViewAction());
 
+    // Follow mode panel at the right side
+    ViewerSettingsPanelFollowMode* settingsFollowModePanel = new ViewerSettingsPanelFollowMode(this);
+    QDockWidget *settingsFollowModeDock = new QDockWidget("Camera follow mode panel", this);
+    settingsFollowModeDock->setWidget(settingsFollowModePanel);
+    this->addDockWidget(Qt::RightDockWidgetArea, settingsFollowModeDock);
+    ui.menuShow->addAction(settingsFollowModeDock->toggleViewAction());
+
     // status bar
     m_mapSizeStatus = new QLabel("Map size", this);
     m_mapMemoryStatus = new QLabel("Memory consumption", this);
@@ -59,17 +67,49 @@ namespace octomap{
     statusBar()->addPermanentWidget(m_mapSizeStatus);
     statusBar()->addPermanentWidget(m_mapMemoryStatus);
 
+    m_cameraFollowMode = new CameraFollowMode();
+
     connect(this, SIGNAL(updateStatusBar(QString, int)), statusBar(), SLOT(showMessage(QString, int)));
 
     connect(settingsPanel, SIGNAL(treeDepthChanged(int)), this, SLOT(changeTreeDepth(int)));
     connect(settingsPanel, SIGNAL(addNextScans(unsigned)), this, SLOT(addNextScans(unsigned)));
     connect(settingsPanel, SIGNAL(gotoFirstScan()), this, SLOT(gotoFirstScan()));
+
+    connect(settingsFollowModePanel, SIGNAL(jumpToFrame(unsigned)), m_cameraFollowMode, SLOT(jumpToFrame(unsigned)));
+    connect(settingsFollowModePanel, SIGNAL(play()), m_cameraFollowMode, SLOT(play()));
+    connect(settingsFollowModePanel, SIGNAL(pause()), m_cameraFollowMode, SLOT(pause()));
+    connect(settingsFollowModePanel, SIGNAL(clearCameraPath()), m_cameraFollowMode, SLOT(clearCameraPath()));
+    connect(settingsFollowModePanel, SIGNAL(saveToCameraPath()), m_cameraFollowMode, SLOT(saveToCameraPath()));
+    connect(settingsFollowModePanel, SIGNAL(removeFromCameraPath()), m_cameraFollowMode, SLOT(removeFromCameraPath()));
+    connect(settingsFollowModePanel, SIGNAL(addToCameraPath()), m_cameraFollowMode, SLOT(addToCameraPath()));
+    connect(settingsFollowModePanel, SIGNAL(followCameraPath()), m_cameraFollowMode, SLOT(followCameraPath()));
+    connect(settingsFollowModePanel, SIGNAL(followRobotPath()), m_cameraFollowMode, SLOT(followRobotPath()));
+
+    connect(m_cameraFollowMode, SIGNAL(changeNumberOfFrames(unsigned)), settingsFollowModePanel, SLOT(setNumberOfFrames(unsigned)));
+    connect(m_cameraFollowMode, SIGNAL(frameChanged(unsigned)), settingsFollowModePanel, SLOT(setCurrentFrame(unsigned)));
+    connect(m_cameraFollowMode, SIGNAL(stopped()), settingsFollowModePanel, SLOT(setStopped()));
+    connect(m_cameraFollowMode, SIGNAL(scanGraphAvailable(bool)), settingsFollowModePanel, SLOT(setRobotTrajectoryAvailable(bool)));
+
+    connect(m_cameraFollowMode, SIGNAL(deleteCameraPath(int)), m_glwidget, SLOT(deleteCameraPath(int)));
+    connect(m_cameraFollowMode, SIGNAL(removeFromCameraPath(int,int)), m_glwidget, SLOT(removeFromCameraPath(int,int)));
+	connect(m_cameraFollowMode, SIGNAL(appendToCameraPath(int, const octomath::Pose6D&)), m_glwidget, SLOT(appendToCameraPath(int, const octomath::Pose6D&)));
+	connect(m_cameraFollowMode, SIGNAL(appendCurrentToCameraPath(int)), m_glwidget, SLOT(appendCurrentToCameraPath(int)));
+	connect(m_cameraFollowMode, SIGNAL(addCurrentToCameraPath(int,int)), m_glwidget, SLOT(addCurrentToCameraPath(int,int)));
+	connect(m_cameraFollowMode, SIGNAL(updateCameraPath(int,int)), m_glwidget, SLOT(updateCameraPath(int,int)));
+	connect(m_cameraFollowMode, SIGNAL(playCameraPath(int,int)), m_glwidget, SLOT(playCameraPath(int,int)));
+	connect(m_cameraFollowMode, SIGNAL(stopCameraPath(int)), m_glwidget, SLOT(stopCameraPath(int)));
+	connect(m_cameraFollowMode, SIGNAL(jumpToCamFrame(int, int)), m_glwidget, SLOT(jumpToCamFrame(int, int)));
+	connect(m_glwidget, SIGNAL(cameraPathStopped(int)), m_cameraFollowMode, SLOT(cameraPathStopped(int)));
+	connect(m_glwidget, SIGNAL(cameraPathFrameChanged(int, int)), m_cameraFollowMode, SLOT(cameraPathFrameChanged(int, int)));
+
     connect(this, SIGNAL(changeNumberOfScans(unsigned)), settingsPanel, SLOT(setNumberOfScans(unsigned)));
     connect(this, SIGNAL(changeCurrentScan(unsigned)), settingsPanel, SLOT(setCurrentScan(unsigned)));
     connect(this, SIGNAL(changeResolution(double)), settingsPanel, SLOT(setResolution(double)));
 
     connect(settingsPanel, SIGNAL(changeCamPosition(double, double, double, double, double, double)), 
             m_glwidget, SLOT(setCamPosition(double, double, double, double, double, double)));
+    connect(m_cameraFollowMode, SIGNAL(changeCamPose(const octomath::Pose6D&)),
+            m_glwidget, SLOT(setCamPose(const octomath::Pose6D&)));
 
     connect(ui.actionOctree_cells, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTreeCells(bool)));
     connect(ui.actionOctree_structure, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTree(bool)));
@@ -94,6 +134,11 @@ namespace octomap{
       m_glwidget->removeSceneObject(m_pointcloudDrawer);
       delete m_pointcloudDrawer;
       m_pointcloudDrawer = NULL;
+    }
+
+    if(m_cameraFollowMode) {
+    	delete m_cameraFollowMode;
+    	m_cameraFollowMode = NULL;
     }
   }
 
@@ -394,6 +439,8 @@ void ViewerGui::loadGraph(bool completeGraph) {
   }
   m_pointcloudDrawer->setScanGraph(*m_scanGraph);
 
+  m_cameraFollowMode->setScanGraph(m_scanGraph);
+
   if (ui.actionTrajectory->isChecked())
     m_glwidget->addSceneObject(m_trajectoryDrawer);
 
@@ -502,6 +549,20 @@ void ViewerGui::on_actionSave_file_triggered(){
 void ViewerGui::on_actionExport_view_triggered(){
   m_glwidget->openSnapshotFormatDialog();
   m_glwidget->saveSnapshot(false);
+}
+
+void ViewerGui::on_actionExport_sequence_triggered(bool checked){
+  if(checked) {
+	  if(m_glwidget->openSnapshotFormatDialog()) {
+		  m_glwidget->saveSnapshot(false);
+		  m_glwidget->setSnapshotCounter(0);
+		  connect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
+	  } else {
+		  ui.actionExport_sequence->setChecked(false);
+	  }
+  } else {
+	  disconnect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
+  }
 }
 
 void ViewerGui::on_actionPrintout_mode_toggled(bool checked){

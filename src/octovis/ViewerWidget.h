@@ -78,12 +78,30 @@ class ViewerWidget : public QGLViewer {
   void enablePrintoutMode (bool enabled = true){m_printoutMode = enabled; updateGL();};
   void enableHeightColorMode (bool enabled = true);
   void setCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
+  void setCamPose(const octomath::Pose6D& pose);
   virtual void setSceneBoundingBox(const qglviewer::Vec& min, const qglviewer::Vec& max);
+  void deleteCameraPath(int id);
+  void appendToCameraPath(int id, const octomath::Pose6D& pose);
+  void appendCurrentToCameraPath(int id);
+  void addCurrentToCameraPath(int id, int frame);
+  void removeFromCameraPath(int id, int frame);
+  void updateCameraPath(int id, int frame);
+  void jumpToCamFrame(int id, int frame);
+  void playCameraPath(int id, int start_frame);
+  void stopCameraPath(int id);
 
   /**
    * Resets the 3D viewpoint to the initial value
    */
   void resetView();
+
+private slots:
+   void cameraPathFinished();
+   void cameraPathInterpolated();
+
+signals:
+   void cameraPathStopped(int id);
+   void cameraPathFrameChanged(int id, int current_camera_frame);
 
  protected:
 
@@ -110,6 +128,8 @@ class ViewerWidget : public QGLViewer {
   void initOctreeGridVis();
 
   void heightMapColor(double height, GLfloat* glArrayPos) const;
+
+  qglviewer::Quaternion poseToQGLQuaternion(const octomath::Pose6D& pose);
 
   std::vector<SceneObject*> m_sceneObjects;
 
@@ -150,6 +170,8 @@ class ViewerWidget : public QGLViewer {
   double m_zMin;
   double m_zMax;
 
+  int m_current_camera_path;
+  int m_current_camera_frame;
 };
 
 }
