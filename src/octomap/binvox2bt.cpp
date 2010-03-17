@@ -58,6 +58,8 @@ int main(int argc, char **argv)
     double maxY = 0.0;
     double maxZ = 0.0;
     bool applyBBX = false;
+    bool applyOffset = false;
+    octomap::point3d offset(0.0, 0.0, 0.0);
     OcTree *tree = 0;
 
     if(argc == 1) show_help = true;
@@ -74,6 +76,7 @@ int main(int argc, char **argv)
         cout << "\t --mark-free      Mark not occupied cells as 'free' (default: unknown)" << endl;
         cout << "\t --rotate         Rotate left by 90 deg. to fix the coordinate system when exported from Webots" << endl;
         cout << "\t --bb <minx> <miny> <minz> <maxx> <maxy> <maxz>: force bounding box for OcTree" << endl;
+        cout << "\t --offset <x> <y> <z>: add an offset to the final coordinates" << endl;
         cout << "If more than one binvox file is given, the models are composed to a single bonsai tree->" << endl;
         cout << "All options apply to the subsequent input files.\n\n";
         exit(0);
@@ -112,7 +115,19 @@ int main(int argc, char **argv)
           applyBBX = true;
 
           continue;
+        } else if (strcmp(argv[i], "--offset") == 0 && i < argc - 4) {
+        	i++;
+        	offset(0) = atof(argv[i]);
+        	i++;
+        	offset(1) = atof(argv[i]);
+        	i++;
+        	offset(2) = atof(argv[i]);
+
+        	applyOffset = true;
+
+        	continue;
         }
+
 
         // Open input file
         ifstream *input = new ifstream(argv[i], ios::in | ios::binary);    
@@ -170,15 +185,20 @@ int main(int argc, char **argv)
         }
 
         size = width * height * depth;
+        double res = double(scale)/double(depth);
 
         if(!tree) {
-            cout << "Generate labeled octree with leaf size " << (double(scale)/(double(depth))) << endl << endl;
-            tree = new OcTree(double(scale)/double(depth));
+            cout << "Generate labeled octree with leaf size " << res << endl << endl;
+            tree = new OcTree(res);
         }
 
         if (applyBBX){
           cout << "Bounding box for Octree: [" << minX << ","<< minY << "," << minZ << " - "
               << maxX << ","<< maxY << "," << maxZ << "]\n";
+
+        }
+        if (applyOffset){
+        	std::cout << "Offset on final map: "<< offset << std::endl;
 
         }
                 
@@ -214,10 +234,12 @@ int main(int argc, char **argv)
                     int x = i / (width * height);
                     
                     // voxel coordinates --> world coordinates
-                    point3d endpoint((double) x*scale/depth + tx, (double) y*scale/depth + ty, (double) z*scale/depth + tz);
+                    point3d endpoint((double) x*scale/depth + tx + 0.000001, (double) y*scale/depth + ty  + 0.000001, (double) z*scale/depth + tz  + 0.000001);
                     if(rotate) {
                       endpoint.rotate_IP(M_PI_2, 0.0, 0.0);
                     }
+                    if (applyOffset)
+                    	endpoint += offset;
                     
                     if (!applyBBX  || (endpoint(0) <= maxX && endpoint(0) >= minX
                                    && endpoint(1) <= maxY && endpoint(1) >= minY

@@ -24,6 +24,9 @@ TARGET_LINK_LIBRARIES(graph2tree octomap)
 ADD_EXECUTABLE(log2graph log2graph.cpp)
 TARGET_LINK_LIBRARIES(log2graph octomap)
 
+ADD_EXECUTABLE(binvox2bt binvox2bt.cpp)
+TARGET_LINK_LIBRARIES(binvox2bt octomap)
+
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
