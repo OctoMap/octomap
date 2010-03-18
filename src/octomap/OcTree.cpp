@@ -159,36 +159,38 @@ namespace octomap {
 
     int tree_type = -1;
     s.read((char*)&tree_type, sizeof(tree_type));
-    if (tree_type != OcTree::TREETYPE){
+    if (tree_type == OcTree::TREETYPE){
+
+      this->tree_size = 0;
+      sizeChanged = true;
+
+      // clear tree if there are nodes
+      if (itsRoot->hasChildren()) {
+        delete itsRoot;
+        itsRoot = new OcTreeNode();
+      }
+
+      double tree_resolution;
+      s.read((char*)&tree_resolution, sizeof(tree_resolution));
+
+      this->setResolution(tree_resolution);
+
+      unsigned int tree_read_size = 0;
+      s.read((char*)&tree_read_size, sizeof(tree_read_size));
+      std::cout << "Reading "
+          << tree_read_size
+          << " nodes from bonsai tree file..." <<std::flush;
+
+      itsRoot->readBinary(s);
+
+      tree_size = calcNumNodes();  // compute number of nodes
+
+      std::cout << " done.\n";
+    } else if (tree_type == OcTree::TREETYPE+1){
+      this->read(s);
+    } else{
       std::cerr << "Binary file does not contain an OcTree!\n";
-      return s;
     }
-
-    this->tree_size = 0;
-    sizeChanged = true;
-
-    // clear tree if there are nodes
-    if (itsRoot->hasChildren()) {
-      delete itsRoot;
-      itsRoot = new OcTreeNode();
-    }
-
-    double tree_resolution;
-    s.read((char*)&tree_resolution, sizeof(tree_resolution));
-
-    this->setResolution(tree_resolution);
-
-    unsigned int tree_read_size = 0;
-    s.read((char*)&tree_read_size, sizeof(tree_read_size));
-    std::cout << "Reading "
-	      << tree_read_size 
-	      << " nodes from bonsai tree file..." <<std::flush;
-
-    itsRoot->readBinary(s);
-
-    tree_size = calcNumNodes();  // compute number of nodes
-
-    std::cout << " done.\n";
 
     return s;
   }
@@ -255,6 +257,74 @@ namespace octomap {
 
     return s;
   }
+
+  void OcTree::write(const std::string& filename){
+    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
+
+    if (!binary_outfile.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return;
+    } else {
+      write(binary_outfile);
+      binary_outfile.close();
+    }
+  }
+
+  std::ostream& OcTree::write(std::ostream &s) const{
+
+    unsigned int tree_type = OcTree::TREETYPE+1;
+    s.write((char*)&tree_type, sizeof(tree_type));
+
+    double tree_resolution = resolution;
+    s.write((char*)&tree_resolution, sizeof(tree_resolution));
+
+    unsigned int tree_write_size = this->size();
+    fprintf(stderr, "Writing[LO] %d nodes to output stream...", tree_write_size); fflush(stderr);
+    s.write((char*)&tree_write_size, sizeof(tree_write_size));
+
+    itsRoot->writeValue(s);
+
+    fprintf(stderr, " done.\n");
+
+    return s;
+  }
+
+  std::istream& OcTree::read(std::istream &s) {
+
+      if (!s.good()){
+        std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinaryLO\n";
+      }
+
+      this->tree_size = 0;
+      sizeChanged = true;
+
+      // clear tree if there are nodes
+      if (itsRoot->hasChildren()) {
+        delete itsRoot;
+        itsRoot = new OcTreeNode();
+      }
+
+      double tree_resolution;
+      s.read((char*)&tree_resolution, sizeof(tree_resolution));
+
+      this->setResolution(tree_resolution);
+
+      unsigned int tree_read_size = 0;
+      s.read((char*)&tree_read_size, sizeof(tree_read_size));
+      std::cout << "Reading [LO]"
+          << tree_read_size
+          << " nodes from bonsai tree file..." <<std::flush;
+
+      itsRoot->readValue(s);
+
+      tree_size = calcNumNodes();  // compute number of nodes
+
+      std::cout << tree_size << " done.\n";
+
+      return s;
+    }
+
+
 
 
 

@@ -268,7 +268,7 @@ namespace octomap {
     return s;
   }
 
-  std::ostream& OcTreeNode::writeBinary(std::ostream &s) {
+  std::ostream& OcTreeNode::writeBinary(std::ostream &s) const{
 
     // 2 bits for each children, 8 children per node -> 16 bits
     std::bitset<8> child1to4;
@@ -285,7 +285,7 @@ namespace octomap {
 
     for (unsigned int i=0; i<4; i++) {
       if (childExists(i)) {
-        OcTreeNode* child = this->getChild(i);
+        const OcTreeNode* child = this->getChild(i);
         if      (child->hasChildren())  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
         else if (child->isOccupied())   { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
         else                            { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
@@ -297,7 +297,7 @@ namespace octomap {
 
     for (unsigned int i=0; i<4; i++) {
       if (childExists(i+4)) {
-        OcTreeNode* child = this->getChild(i+4);
+        const OcTreeNode* child = this->getChild(i+4);
         if      (child->hasChildren())  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
         else if (child->isOccupied())   { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
         else                            { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
@@ -319,10 +319,70 @@ namespace octomap {
     // write children's children
     for (unsigned int i=0; i<8; i++) {
       if (childExists(i)) {
-        OcTreeNode* child = this->getChild(i);
+        const OcTreeNode* child = this->getChild(i);
         if (child->hasChildren()) {
           child->writeBinary(s);
         }
+      }
+    }
+
+    return s;
+  }
+
+  std::istream& OcTreeNode::readValue(std::istream &s) {
+
+    char children_char;
+
+    // read data:
+    float value;
+    s.read((char*) &value, sizeof(value));
+    this->setLogOdds(value);
+
+    s.read((char*)&children_char, sizeof(char));
+
+
+    std::bitset<8> children ((unsigned long) children_char);
+
+//    std::cout << "read: " << log_odds_occupancy << " "
+//                << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+
+
+    for (unsigned int i=0; i<8; i++) {
+      if (children[i] == 1){
+        createChild(i);
+        getChild(i)->readValue(s);
+      }
+    }
+
+    return s;
+  }
+
+  std::ostream& OcTreeNode::writeValue(std::ostream &s) const{
+
+    // 1 bit for each children; 0: empty, 1: allocated
+    std::bitset<8> children;
+
+    for (unsigned int i=0; i<8; i++) {
+      if (childExists(i))
+        children[i] = 1;
+      else
+        children[i] = 0;
+    }
+
+
+    char children_char = (char) children.to_ulong();
+
+
+    s.write((const char*) &log_odds_occupancy, sizeof(log_odds_occupancy));
+    s.write((char*)&children_char, sizeof(char));
+
+//    std::cout << "wrote: " << log_odds_occupancy << " "
+//     	      << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+
+    // write children's children
+    for (unsigned int i=0; i<8; i++) {
+      if (children[i] == 1) {
+        this->getChild(i)->writeValue(s);
       }
     }
 

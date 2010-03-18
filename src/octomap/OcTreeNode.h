@@ -139,9 +139,52 @@ namespace octomap {
     
     // -- I/O  ---------------------------------------
 
-    // read from / write to binary stream
+    /**
+     * Read node from binary stream (max-likelihood value), recursively
+     * continue with all children.
+     *
+     * This will set the log_odds_occupancy value of
+     * all leaves to either free or occupied.
+     *
+     * @param s
+     * @return
+     */
     virtual std::istream& readBinary(std::istream &s);
-    std::ostream& writeBinary(std::ostream &s);
+
+    /**
+     * Write node to binary stream (max-likelihood value),
+     * recursively continue with all children.
+     *
+     * This will discard the log_odds_occupancy value, writing
+     * all leaves as either free or occupied.
+     *
+     * @param s
+     * @return
+     */
+    std::ostream& writeBinary(std::ostream &s) const;
+
+    /**
+     * Read node from binary stream (incl. float value),
+     * recursively continue with all children.
+     *
+     * @note This is an experimental feature!
+     *
+     * @param s
+     * @return
+     */
+    virtual std::istream& readValue(std::istream &s);
+
+    /**
+     * Write node to binary stream (incl float value),
+     * recursively continue with all children.
+     * This preserves the complete state of the node.
+     *
+     * @note This is an experimental feature!
+     *
+     * @param s
+     * @return
+     */
+    std::ostream& writeValue(std::ostream &s) const;
 
   protected:
 
