@@ -7,7 +7,7 @@
 namespace octomap {
 
   OcTreeLabeled::OcTreeLabeled(double _resolution) 
-    : OcTreeBase<OcTreeNodeLabeled> (_resolution)  {
+    : OccupancyOcTreeBase<OcTreeNodeLabeled> (_resolution)  {
     itsRoot = new OcTreeNodeLabeled();
     tree_size++;
   }

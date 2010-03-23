@@ -1,5 +1,5 @@
-#ifndef OCTOMAP_ABSTRACT_OCTREE_NODE_H
-#define OCTOMAP_ABSTRACT_OCTREE_NODE_H
+#ifndef OCTOMAP_OCCUPANCY_OCTREE_NODE_H
+#define OCTOMAP_OCCUPANCY_OCTREE_NODE_H
 
 // $Id$
 
@@ -28,33 +28,22 @@
 */
 
 #include "octomap_types.h"
+#include "OcTreeDataNode.h"
 
 namespace octomap {
 
   /**
-   * Interface of OcTreeNodes. Every NODE used in an AbstractOcTree has to implement this.
+   * Abstract interface of OcTreeNodes encoding "occupancy" (e.g. for mapping).
+   * Every NODE used in an OccupancyOcTreeBase has to implement this.
    */
-  class AbstractOcTreeNode {
+  template<typename T> class OccupancyOcTreeNode : public OcTreeDataNode<T>{
 
   public:
+    OccupancyOcTreeNode() : OcTreeDataNode<T>(){};
+    OccupancyOcTreeNode(T initVal) : OcTreeDataNode<T>(initVal){};
 
-    AbstractOcTreeNode() {};
-    virtual ~AbstractOcTreeNode() {};
-
-    // children ------
-
-    /// \return a pointer to the i th child of the node. The child needs to exist.
-    virtual AbstractOcTreeNode* getChild(unsigned int i) = 0;
-    /// \return a const pointer to the i th child of the node. The child needs to exist.
-    virtual const AbstractOcTreeNode* getChild(unsigned int i) const = 0;
-    virtual bool createChild(unsigned int i) = 0;
-    /// \return true if the i th child exists
-    virtual bool childExists(unsigned int i) const = 0;
-    /// \return true if the node has at least one child
-    virtual bool hasChildren() const = 0;
-
-    // occupancy  ----
- 
+    // interface functions: these need to be implemented in each derived class!
+    virtual OcTreeDataNode<T>* newNode() const = 0;
     virtual void integrateHit() = 0;
     virtual void integrateMiss() = 0;
     virtual bool isOccupied() const = 0;
@@ -62,7 +51,6 @@ namespace octomap {
     virtual void updateOccupancyChildren() = 0;
 
     // clamping ------
-    virtual bool collapsible() const = 0;
     virtual bool atThreshold() const = 0;
     virtual void toMaxLikelihood() = 0;
 

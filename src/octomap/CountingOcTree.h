@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 #include "OcTreeBase.h"
-#include "AbstractOcTreeNode.h"
+#include "OcTreeDataNode.h"
 
 namespace octomap {
 
@@ -42,40 +42,29 @@ namespace octomap {
    * \note In our mapping system this data structure is used in
    *       CountingOcTree in the sensor model only
    */
-  class CountingOcTreeNode : public AbstractOcTreeNode {
+  class CountingOcTreeNode : public OcTreeDataNode<unsigned int> {
 
   public:
 
     CountingOcTreeNode();
     ~CountingOcTreeNode();
 
-    virtual CountingOcTreeNode* getChild(unsigned int i);
+    virtual OcTreeDataNode<unsigned int>* newNode() const;
+
+    unsigned int getCount() const { return getValue(); }
+    void increaseCount() { value++; }
+    void setCount(unsigned c) {this->setValue(c); }
     void setChild(unsigned int i, CountingOcTreeNode* child);
-    bool childExists(unsigned int i) const;
-    bool hasChildren() const;
-
-    unsigned int getCount() const { return count; }
-    void increaseCount() { count++; }
-    void setCount(unsigned c) {count = c; }
 
 
-    // implement interface
-    virtual const CountingOcTreeNode* getChild(unsigned int i) const;
-    virtual void integrateHit() { this->increaseCount(); }
-    virtual bool isOccupied() const { return true; }	
-    virtual bool atThreshold() const { return false; }
+
+    // overloaded:
     virtual void expandNode();
 
-    virtual void updateOccupancyChildren() { printf(" updateOccupancyChildren  not implemented in CountingOcTreeNode.\n"); };
-    virtual void toMaxLikelihood() { printf(" toMaxLikelihood  not implemented in CountingOcTreeNode.\n"); };
-    virtual void integrateMiss()  { printf(" integrateMiss  not implemented in CountingOcTreeNode.\n");  };
-    virtual bool createChild(unsigned int i) { printf(" createChild  not implemented in CountingOcTreeNode.\n");  return true; }
-    virtual bool collapsible() const { printf(" collapsible  not implemented in CountingOcTreeNode.\n");  return false; }
 
 
   protected:
-    CountingOcTreeNode* itsChildren[8];
-    unsigned int count;
+
   };
 
 
@@ -101,7 +90,6 @@ namespace octomap {
 
   protected:
 
-    void traverseNode(CountingOcTreeNode* traversedNode);
   };
 
 

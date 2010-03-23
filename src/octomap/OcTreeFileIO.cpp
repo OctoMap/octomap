@@ -24,24 +24,37 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_TYPES_H
-#define OCTOMAP_TYPES_H
-
-#include <vector>
-
-#include <octomath/Vector3.h>
-#include <octomath/Pose6D.h>
+#include <OcTreeFileIO.h>
 
 namespace octomap {
 
-  /// use our Vector3 as point3d in octomap
-  typedef octomath::Vector3               point3d;
-  /// use our Pose6D as pose6d in octomap
-  typedef octomath::Pose6D                pose6d;
-  typedef std::vector<octomath::Vector3*> point3d_collection;
-  /// A voxel defined by its center point3d and its side length
-  typedef std::pair<point3d, double> OcTreeVolume;
+  OcTreeFileIO::OcTreeFileIO() {
+
+
+  }
+
+  OcTreeFileIO::~OcTreeFileIO() {
+
+  }
+
+  bool OcTreeFileIO::write(const OcTreeBase<NODE>& tree, const std::string& filename) const{
+    std::ofstream stream(filename.c_str(), std::ios_base::binary);
+
+    if (!stream.is_open()){
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      return false;
+    } else {
+      // TODO: check is_good of finished stream
+      write(tree, stream);
+      stream.close();
+    }
+  }
+
+  ostream OcTreeFileIO::write(const OcTreeBase<NODE>& tree, std::ostream &s){
+    // write header:
+    ofstream << "# Octomap OcTree file\n";
+
+   return ostream;
+  }
 
 }
-
-#endif

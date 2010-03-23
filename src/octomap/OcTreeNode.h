@@ -28,7 +28,7 @@
 */
 
 #include "octomap_types.h"
-#include "AbstractOcTreeNode.h"
+#include "OccupancyOcTreeNode.h"
 
 namespace octomap {
 
@@ -50,30 +50,18 @@ namespace octomap {
    * createChild, getChild, and getChild const. See OcTreeNodeLabeled for an example.
    *
    */
-  class OcTreeNode : public AbstractOcTreeNode {
+  class OcTreeNode : public OccupancyOcTreeNode<float> {
 
   public:
 
     OcTreeNode();
     virtual ~OcTreeNode();
 
-    // -- children  ----------------------------------
+    virtual OcTreeDataNode<float>* newNode() const;
 
-    /// initialize i-th child
-    virtual bool createChild(unsigned int i);
-
-    /// \return true if the i-th child exists
-    virtual bool childExists(unsigned int i) const;
-
-    /// \return a pointer to the i-th child of the node. The child needs to exist.
+    // overloaded, so that the return type is correct:
     virtual OcTreeNode* getChild(unsigned int i);
-
-    /// \return a const pointer to the i-th child of the node. The child needs to exist.
     virtual const OcTreeNode* getChild(unsigned int i) const;
-
-    /// \return true if the node has at least one child
-    virtual bool hasChildren() const;
-
 
     // -- node occupancy  ----------------------------
 
@@ -86,9 +74,9 @@ namespace octomap {
     double getOccupancy() const;
 
     /// \return log odds representation of occupancy probability of node
-    float getLogOdds() const{ return log_odds_occupancy; }
+    float getLogOdds() const{ return value; }
     /// sets log odds occupancy of node
-    void setLogOdds(float l) { log_odds_occupancy = l; }
+    void setLogOdds(float l) { value = l; }
 
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
     virtual bool isOccupied() const;
@@ -114,27 +102,6 @@ namespace octomap {
     virtual void updateOccupancyChildren(); 
 
 
-    // -- pruning of children  -----------------------
-
-    /// A node is collapsible if all children exist, don't have children of their own
-    /// and have the same occupancy value
-    bool collapsible() const;
-
-    /**
-     * Prunes a node when it is collapsible
-     * @return true if pruning was successful
-     */
-    bool pruneNode();
-
-    /**
-     * Expands a node (reverse of pruning): All children are created and
-     * their occupancy probability is set to the node's value. 
-     *
-     * You need to verify that this is indeed a pruned node (i.e. not a 
-     * leaf at the lowest level)
-     *
-     */
-    void expandNode();
 
     
     // -- I/O  ---------------------------------------
@@ -163,40 +130,13 @@ namespace octomap {
      */
     std::ostream& writeBinary(std::ostream &s) const;
 
-    /**
-     * Read node from binary stream (incl. float value),
-     * recursively continue with all children.
-     *
-     * @note This is an experimental feature!
-     *
-     * @param s
-     * @return
-     */
-    virtual std::istream& readValue(std::istream &s);
-
-    /**
-     * Write node to binary stream (incl float value),
-     * recursively continue with all children.
-     * This preserves the complete state of the node.
-     *
-     * @note This is an experimental feature!
-     *
-     * @param s
-     * @return
-     */
-    std::ostream& writeValue(std::ostream &s) const;
-
   protected:
-
-    void allocChildren();
 
     double logodds(double p) const;
     void updateLogOdds(double p);
 
-  protected:
+ // "value" stores log odds occupancy probability
 
-    float log_odds_occupancy; // stores log odds occupancy probability
-    OcTreeNode** itsChildren; // pointer to children, may be NULL
   };
 
 

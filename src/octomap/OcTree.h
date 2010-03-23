@@ -28,7 +28,7 @@
 */
 
 
-#include "OcTreeBase.h"
+#include "OccupancyOcTreeBase.h"
 #include "OcTreeNode.h"
 #include "ScanGraph.h"
 
@@ -39,7 +39,7 @@ namespace octomap {
    * Basic functionality is implemented in OcTreeBase.
    *
    */
-  class OcTree : public OcTreeBase <OcTreeNode> {
+  class OcTree : public OccupancyOcTreeBase <OcTreeNode> {
 
   public:
     static const int TREETYPE=3;
@@ -65,13 +65,6 @@ namespace octomap {
     /// Insert a 3d scan (given as a ScanNode) into the tree
     void insertScan(const ScanNode& scan, double maxrange=-1.);
 
-    /// Lossless compression of OcTree: merge children to parent when there are 
-    /// eight children with identical occupancy values
-    void prune();
-
-    /// Expands all pruned nodes (reverse of prune())
-    /// \note This is an expensive operation, especially when the tree is nearly empty!
-    void expand();
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
     /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
@@ -130,12 +123,6 @@ namespace octomap {
 
     ///recursive call of toMaxLikelihood()
     void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
-
-    /// recursive call of prune()
-    void pruneRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
-
-    /// recursive call of expand()
-    void expandRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
 
     void calcNumThresholdedNodesRecurs (OcTreeNode* node,
                                         unsigned int& num_thresholded, 

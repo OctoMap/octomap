@@ -24,24 +24,29 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef OCTOMAP_TYPES_H
-#define OCTOMAP_TYPES_H
+#ifndef OCTOMAP_OCTREE_FILEIO_H
+#define OCTOMAP_OCTREE_FILEIO_H
 
-#include <vector>
-
-#include <octomath/Vector3.h>
-#include <octomath/Pose6D.h>
+#include <OcTreeBase.h>
+#include <iostream>
 
 namespace octomap {
 
-  /// use our Vector3 as point3d in octomap
-  typedef octomath::Vector3               point3d;
-  /// use our Pose6D as pose6d in octomap
-  typedef octomath::Pose6D                pose6d;
-  typedef std::vector<octomath::Vector3*> point3d_collection;
-  /// A voxel defined by its center point3d and its side length
-  typedef std::pair<point3d, double> OcTreeVolume;
+  /**
+   * Reading and Writing OcTrees to files. Implements the Factory Design Pattern.
+   *
+   */
+  class OcTreeFileIO {
+  public:
+    OcTreeFileIO();
+    virtual ~OcTreeFileIO();
+
+    bool write(const OcTreeBase<NODE>& tree, const std::string& filename) const;
+    std::ostream write(const OcTreeBase<NODE>& tree, std::ostream &s);
+
+    OcTreeBase<NODE>* read(const std::string& filename);
+  };
 
 }
 
-#endif
+#endif /* OCTREEFILEIO_H_ */

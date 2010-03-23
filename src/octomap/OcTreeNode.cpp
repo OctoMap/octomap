@@ -36,54 +36,24 @@ namespace octomap {
 
 
   OcTreeNode::OcTreeNode()
-    : log_odds_occupancy(0),  itsChildren(NULL) {
+    : OccupancyOcTreeNode<float>(0.0)
+  {
   }
 
   OcTreeNode::~OcTreeNode(){
-    if (itsChildren != NULL) {
-      for (unsigned int i=0;i<8;i++) {
-        if (itsChildren[i] != NULL) delete itsChildren[i];
-      }
-      delete[] itsChildren;
-    }
+
   }
 
-
-  // ============================================================
-  // =  children          =======================================
-  // ============================================================
-
-  bool OcTreeNode::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
-      allocChildren();
-    }
-    itsChildren[i] = new OcTreeNode();
-    return true;
+  OcTreeDataNode<float>* OcTreeNode::newNode() const{
+    return new OcTreeNode();
   }
 
-  bool OcTreeNode::childExists(unsigned int i) const {
-    assert(i < 8);
-    if ((itsChildren != NULL) && (itsChildren[i] != NULL)) return true;
-    else return false;
+  OcTreeNode* OcTreeNode::getChild(unsigned i){
+    return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
   }
 
-  OcTreeNode* OcTreeNode::getChild(unsigned int i) {
-    assert((i < 8) && (itsChildren != NULL));
-    assert(itsChildren[i] != NULL);
-    return itsChildren[i];
-  }
-
-  const OcTreeNode* OcTreeNode::getChild(unsigned int i) const {
-    assert((i < 8) && (itsChildren != NULL));
-    assert(itsChildren[i] != NULL);
-    return itsChildren[i];
-  }
-
-  bool OcTreeNode::hasChildren() const {
-    if (itsChildren == NULL) return false;
-    for (unsigned int i = 0; i<8; i++)
-      if (childExists(i)) return true;
-    return false;
+  const OcTreeNode* OcTreeNode::getChild(unsigned i) const{
+    return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
   }
 
 
@@ -104,8 +74,8 @@ namespace octomap {
   }
 
   bool OcTreeNode::atThreshold() const {
-    return ((log_odds_occupancy <= CLAMPING_THRES_MIN) ||
-              (log_odds_occupancy >= CLAMPING_THRES_MAX));
+    return ((value <= CLAMPING_THRES_MIN) ||
+              (value >= CLAMPING_THRES_MAX));
   }
 
   void OcTreeNode::toMaxLikelihood() {
@@ -114,7 +84,7 @@ namespace octomap {
   }
 
   double OcTreeNode::getOccupancy() const {
-    return 1. - ( 1. / (1. + exp(log_odds_occupancy)) );
+    return 1. - ( 1. / (1. + exp(value)) );
   }
 
   double OcTreeNode::getMeanChildLogOdds() const{
@@ -146,54 +116,6 @@ namespace octomap {
     this->setLogOdds(this->getMaxChildLogOdds());  // conservative
   }
 
-
-  // ============================================================
-  // =  pruning           =======================================
-  // ============================================================
-
-
-  bool OcTreeNode::collapsible() const {
-    // all children must exist, must not have children of 
-    // their own and have the same occupancy probability
-    if (!childExists(0) || getChild(0)->hasChildren())
-      return false;
-
-    float logOdds = getChild(0)->getLogOdds();
-
-    for (unsigned int i = 1; i<8; i++) {
-      if (!childExists(i)) return false;
-      else if (getChild(i)->hasChildren()) return false;
-      else if (getChild(i)->getLogOdds() != logOdds) return false;
-    }
-    return true;
-  }
-
-  bool OcTreeNode::pruneNode() {
-
-    if (!this->collapsible())
-      return false;
-
-    // set occupancy to children's values
-    setLogOdds(getChild(0)->getLogOdds());
-
-    // delete children
-    for (unsigned int i=0;i<8;i++) {
-      delete itsChildren[i];
-    }
-    delete[] itsChildren;
-    itsChildren = NULL;
-
-    return true;
-  }
-
-  void OcTreeNode::expandNode() {
-    assert(!hasChildren());
-
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      itsChildren[k]->setLogOdds(log_odds_occupancy);
-    }
-  }
 
 
   // ============================================================
@@ -329,65 +251,7 @@ namespace octomap {
     return s;
   }
 
-  std::istream& OcTreeNode::readValue(std::istream &s) {
 
-    char children_char;
-
-    // read data:
-    float value;
-    s.read((char*) &value, sizeof(value));
-    this->setLogOdds(value);
-
-    s.read((char*)&children_char, sizeof(char));
-
-
-    std::bitset<8> children ((unsigned long) children_char);
-
-//    std::cout << "read: " << log_odds_occupancy << " "
-//                << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
-
-
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1){
-        createChild(i);
-        getChild(i)->readValue(s);
-      }
-    }
-
-    return s;
-  }
-
-  std::ostream& OcTreeNode::writeValue(std::ostream &s) const{
-
-    // 1 bit for each children; 0: empty, 1: allocated
-    std::bitset<8> children;
-
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i))
-        children[i] = 1;
-      else
-        children[i] = 0;
-    }
-
-
-    char children_char = (char) children.to_ulong();
-
-
-    s.write((const char*) &log_odds_occupancy, sizeof(log_odds_occupancy));
-    s.write((char*)&children_char, sizeof(char));
-
-//    std::cout << "wrote: " << log_odds_occupancy << " "
-//     	      << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
-
-    // write children's children
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1) {
-        this->getChild(i)->writeValue(s);
-      }
-    }
-
-    return s;
-  }
 
 
   // ============================================================
@@ -403,22 +267,16 @@ namespace octomap {
   void OcTreeNode::updateLogOdds(double p) {
 
 //     printf("logodds before: %f\n", log_odds_occupancy);
-    log_odds_occupancy += logodds(p);
+    value += logodds(p);
 //     printf("logodds after : %f\n\n", log_odds_occupancy);
 
     if (!hasChildren() &&
-        ((log_odds_occupancy > CLAMPING_THRES_MAX) || 
-            (log_odds_occupancy < CLAMPING_THRES_MIN))) {
+        ((value > CLAMPING_THRES_MAX) ||
+            (value < CLAMPING_THRES_MIN))) {
       this->toMaxLikelihood();
     }
   }
 
-  void OcTreeNode::allocChildren() {
-    itsChildren = new OcTreeNode*[8];
-    for (unsigned int i=0; i<8; i++) {
-      itsChildren[i] = NULL;
-    }
-  }
 
 
 } // end namespace

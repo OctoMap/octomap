@@ -27,12 +27,12 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "OcTreeBase.h"
+#include "OccupancyOcTreeBase.h"
 #include "OcTreeNodeLabeled.h"
 
 namespace octomap {
 
-  class OcTreeLabeled : public OcTreeBase <OcTreeNodeLabeled> {
+  class OcTreeLabeled : public OccupancyOcTreeBase <OcTreeNodeLabeled> {
 
   public:
     static const int TREETYPE=4;

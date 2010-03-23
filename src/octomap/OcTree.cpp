@@ -24,7 +24,6 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include <bitset>
 #include <cassert>
 #include <fstream>
 #include <stdlib.h>
@@ -40,13 +39,13 @@
 namespace octomap {
 
   OcTree::OcTree(double _resolution)
-    : OcTreeBase<OcTreeNode> (_resolution)  {
+    : OccupancyOcTreeBase<OcTreeNode> (_resolution)  {
     itsRoot = new OcTreeNode();
     tree_size++;
   }
 
   OcTree::OcTree(std::string _filename)
-    : OcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file
+    : OccupancyOcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file
     itsRoot = new OcTreeNode();
     tree_size++;
 
@@ -83,20 +82,6 @@ namespace octomap {
   }
 
 
-  void OcTree::prune() {
-    for (unsigned int depth=tree_depth-1; depth>0; depth--) {
-      unsigned int num_pruned = 0;
-      pruneRecurs(this->itsRoot, 0, depth, num_pruned);
-      if (num_pruned == 0) break;
-    }
-  }
-
-  void OcTree::expand() {
-    unsigned int num_expanded = 0;
-    expandRecurs(itsRoot,0, tree_depth, num_expanded);
-  }
-
-
   void OcTree::toMaxLikelihood() {
 
     // convert bottom up
@@ -112,11 +97,11 @@ namespace octomap {
   // -- Information  ---------------------------------  
 
   unsigned int OcTree::memoryUsage() const{
-
     unsigned int node_size = sizeof(OcTreeNode);
     std::list<OcTreeVolume> leafs;
     this->getLeafNodes(leafs);
     unsigned int inner_nodes = tree_size - leafs.size();
+    std::cout << "Size: " << node_size << " " << sizeof(OcTreeNode*[8]) << std::endl;
     return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
   }
 
@@ -439,49 +424,6 @@ namespace octomap {
     else { // max level reached
       node->toMaxLikelihood();
     }
-  }
-
-
-  void OcTree::pruneRecurs(OcTreeNode* node, unsigned int depth,
-			   unsigned int max_depth, unsigned int& num_pruned) {
-
-    if (depth < max_depth) {
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          pruneRecurs(node->getChild(i), depth+1, max_depth, num_pruned);
-        }
-      }
-    } // end if depth
-
-    else {
-      // max level reached
-      if (node->pruneNode()) {
-        num_pruned++;
-        tree_size -= 8;
-        sizeChanged = true;
-      }
-    }
-  }
-
-  void OcTree::expandRecurs(OcTreeNode* node, unsigned int depth,
-                            unsigned int max_depth, unsigned int& num_expanded) {
-
-    if (depth < max_depth) {
-      // current node has no children => can be expanded
-      if (!node->hasChildren()){
-        node->expandNode();
-        num_expanded +=8;
-        tree_size +=8;
-        sizeChanged = true;
-      }
-
-      // recursively expand children:
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          expandRecurs(node->getChild(i), depth+1, max_depth, num_expanded);
-        }
-      }
-    } // end if depth
   }
 
 

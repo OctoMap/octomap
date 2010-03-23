@@ -32,46 +32,28 @@ namespace octomap {
 
   /// implementation of CountingOcTreeNode  ----------------------------------
 
-  CountingOcTreeNode::CountingOcTreeNode() : count(0) {
-    for (unsigned int i = 0; i<8; i++)
-      itsChildren[i] = NULL;
+  CountingOcTreeNode::CountingOcTreeNode()
+    : OcTreeDataNode<unsigned int>(0)
+  {
   }
 
   CountingOcTreeNode::~CountingOcTreeNode() {
-    for (unsigned int i = 0; i<8; i++) {
-      if (itsChildren[i]){
-        delete itsChildren[i];
-      }
-    }
+
+  }
+
+  OcTreeDataNode<unsigned int>* CountingOcTreeNode::newNode() const{
+    return new CountingOcTreeNode();
   }
 
   void CountingOcTreeNode::expandNode(){
-    //assert(!hasChildren()); not impl. yet
+    assert(!hasChildren());
 
     // divide "counts" evenly to children
-    unsigned int childCount = (unsigned int)(count/ 8.0 +0.5);
+    unsigned int childCount = (unsigned int)(value/ 8.0 +0.5);
     for (unsigned int k=0; k<8; k++) {
       createChild(k);
-      itsChildren[k]->setCount(childCount);
+      itsChildren[k]->setValue(childCount);
     }
-  }
-
-  bool CountingOcTreeNode::childExists(unsigned int i) const {
-    assert(i < 8);
-    if (itsChildren[i] != NULL) return true;
-    else return false;
-  }
-
-
-  //! \return i-th child of node, NULL if there is none
-  const CountingOcTreeNode* CountingOcTreeNode::getChild(unsigned int i) const {
-    assert(i < 8);
-    return itsChildren[i];
-  }
-
-  CountingOcTreeNode* CountingOcTreeNode::getChild(unsigned int i) {
-    assert(i < 8);
-    return itsChildren[i];
   }
 
 
@@ -81,11 +63,6 @@ namespace octomap {
     itsChildren[i] = child;
   }
 
-  bool CountingOcTreeNode::hasChildren() const {
-      for (unsigned int i = 0; i<8; i++)
-	if (childExists(i)) return true;
-      return false;
-  }
 
 
   /// implementation of CountingOcTree  --------------------------------------
@@ -109,7 +86,7 @@ namespace octomap {
         return NULL;
 
     CountingOcTreeNode* curNode = this->getRoot();
-    this->traverseNode(curNode);
+    curNode->increaseCount();
 
     // follow or construct nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
@@ -118,22 +95,20 @@ namespace octomap {
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {
-        curNode->setChild(pos, new CountingOcTreeNode());
+        curNode->createChild(pos);
         tree_size++;
       }
 
       // descent tree
-      curNode = curNode->getChild(pos);
+      // cast needed: (node needs to ensure it's the right pointer)
+      curNode = static_cast<CountingOcTreeNode*> (curNode->getChild(pos));
       // modify traversed nodes
-      this->traverseNode(curNode);
+      curNode->increaseCount();
     }
 
     return curNode;
   }
 
-  void CountingOcTree::traverseNode(CountingOcTreeNode* traversedNode){
-    traversedNode->increaseCount();
-  }
 
 
 } // namespace
