@@ -43,7 +43,7 @@ OcTreeDrawer::OcTreeDrawer() : SceneObject(),
 OcTreeDrawer::~OcTreeDrawer() {
 }
 
-void OcTreeDrawer::setOcTree(octomap::OcTree& octree) {
+void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
   std::list<octomap::OcTreeVolume> occupied_voxels;
   std::list<octomap::OcTreeVolume> free_voxels;
   std::list<octomap::OcTreeVolume> grid_voxels;

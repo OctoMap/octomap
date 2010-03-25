@@ -37,7 +37,7 @@ namespace octomap {
     virtual ~OcTreeDrawer();
     void clear();
     void draw() const;
-    void setOcTree(octomap::OcTree &octree);
+    void setOcTree(const octomap::OcTree &octree);
 
   protected:
     void clearOcTree();

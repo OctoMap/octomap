@@ -26,6 +26,7 @@
 
 #include <math.h>
 #include <cassert>
+#include <cfloat>
 
 
 namespace octomap {
@@ -38,8 +39,8 @@ namespace octomap {
     
     this->setResolution(_resolution);
     for (unsigned i = 0; i< 3; i++){
-      maxValue[i] = -1e6;
-      minValue[i] = 1e6;
+      maxValue[i] = DBL_MIN;
+      minValue[i] = DBL_MAX;
     }
     sizeChanged = true;
   }
@@ -436,12 +437,20 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::calcMinMax() {
+    if (!sizeChanged)
+      return;
+
     //    std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
-    
+
+    for (unsigned i = 0; i< 3; i++){
+      maxValue[i] = DBL_MIN;
+      minValue[i] = DBL_MAX;
+    }
+
     std::list<OcTreeVolume> leafs;
     this->getLeafNodes(leafs);
 
-    for (std::list<OcTreeVolume>::iterator it = leafs.begin(); it != leafs.end(); ++it){
+    for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
       double x = it->first(0);
       double y = it->first(1);
       double z = it->first(2);
@@ -458,7 +467,6 @@ namespace octomap {
     //    std::cout<< "done.\n";
     sizeChanged = false;
   }
-
 
 
   template <class NODE>
@@ -490,8 +498,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getMetricMin(double& x, double& y, double& z){
-    if (sizeChanged)
-      calcMinMax();
+    calcMinMax();
     
     x = minValue[0];
     y = minValue[1];
@@ -499,14 +506,48 @@ namespace octomap {
   }
 
   template <class NODE>
+  void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
+    mx = my = mz = DBL_MAX;
+    if (sizeChanged) {
+      std::list<OcTreeVolume> leafs;
+      this->getLeafNodes(leafs);
+      for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
+        double x = it->first(0);
+        double y = it->first(1);
+        double z = it->first(2);
+        double halfSize = it->second/2.0;
+        if (x-halfSize < mx) mx = x-halfSize;
+        if (y-halfSize < my) my = y-halfSize;
+        if (z-halfSize < mz) mz = z-halfSize;
+      }
+    }
+  }
+
+  template <class NODE>
   void OcTreeBase<NODE>::getMetricMax(double& x, double& y, double& z){
-    if (sizeChanged)
-      calcMinMax();
+    calcMinMax();
     
     x = maxValue[0];
     y = maxValue[1];
     z = maxValue[2];
   }
 
+  template <class NODE>
+  void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
+    mx = my = mz = DBL_MIN;
+    if (sizeChanged) {
+      std::list<OcTreeVolume> leafs;
+      this->getLeafNodes(leafs);
+      for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
+        double x = it->first(0);
+        double y = it->first(1);
+        double z = it->first(2);
+        double halfSize = it->second/2.0;
+        if (x+halfSize > mx) mx = x+halfSize;
+        if (y+halfSize > my) my = y+halfSize;
+        if (z+halfSize > mz) mz = z+halfSize;
+      }
+    }
+ }
 
 }

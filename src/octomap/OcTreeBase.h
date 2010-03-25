@@ -95,8 +95,10 @@ namespace octomap {
     void getMetricSize(double& x, double& y, double& z);
     /// minimum value in x, y, z
     void getMetricMin(double& x, double& y, double& z);
+    void getMetricMin(double& x, double& y, double& z) const;
     /// maximum value in x, y, z
     void getMetricMax(double& x, double& y, double& z);
+    void getMetricMax(double& x, double& y, double& z) const;
 
 
    /**
@@ -171,7 +173,7 @@ namespace octomap {
     void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
         NODE* node, unsigned int depth, const point3d& parent_center) const;
 
-    /// recalculates min and max in x, y, z. Only called when needed, after tree size changed.
+    /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
 
 
