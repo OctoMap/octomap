@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>ViewerSettingsPanelClass</class>
- <widget class="QWidget" name="ViewerSettingsPanelClass">
-  <property name="geometry">
+ <widget class="QWidget" name="ViewerSettingsPanelClass" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,109 +9,109 @@
     <height>479</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>ViewerSettingsPanel</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="MinimumExpanding" hsizetype="Minimum" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title">
+     <property name="title" >
       <string>Tree depth cutoff</string>
      </property>
-     <property name="alignment">
+     <property name="alignment" >
       <set>Qt::AlignHCenter|Qt::AlignTop</set>
      </property>
-     <property name="flat">
+     <property name="flat" >
       <bool>false</bool>
      </property>
-     <property name="checkable">
+     <property name="checkable" >
       <bool>false</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout_3" >
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QSpinBox" name="treeDepth">
-          <property name="minimumSize">
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="0" column="0" >
+         <widget class="QSpinBox" name="treeDepth" >
+          <property name="minimumSize" >
            <size>
             <width>4</width>
             <height>0</height>
            </size>
           </property>
-          <property name="maximumSize">
+          <property name="maximumSize" >
            <size>
             <width>16777196</width>
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
+          <property name="readOnly" >
            <bool>false</bool>
           </property>
-          <property name="buttonSymbols">
+          <property name="buttonSymbols" >
            <enum>QAbstractSpinBox::NoButtons</enum>
           </property>
-          <property name="minimum">
+          <property name="minimum" >
            <number>1</number>
           </property>
-          <property name="maximum">
+          <property name="maximum" >
            <number>16</number>
           </property>
-          <property name="value">
+          <property name="value" >
            <number>16</number>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="treeDepthSlider">
-          <property name="minimumSize">
+        <item row="1" column="0" >
+         <widget class="QSlider" name="treeDepthSlider" >
+          <property name="minimumSize" >
            <size>
             <width>0</width>
             <height>75</height>
            </size>
           </property>
-          <property name="maximumSize">
+          <property name="maximumSize" >
            <size>
             <width>16777215</width>
             <height>500</height>
            </size>
           </property>
-          <property name="minimum">
+          <property name="minimum" >
            <number>1</number>
           </property>
-          <property name="maximum">
+          <property name="maximum" >
            <number>16</number>
           </property>
-          <property name="pageStep">
+          <property name="pageStep" >
            <number>1</number>
           </property>
-          <property name="value">
+          <property name="value" >
            <number>16</number>
           </property>
-          <property name="orientation">
+          <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="invertedAppearance">
+          <property name="invertedAppearance" >
            <bool>true</bool>
           </property>
-          <property name="invertedControls">
+          <property name="invertedControls" >
            <bool>true</bool>
           </property>
-          <property name="tickPosition">
+          <property name="tickPosition" >
            <enum>QSlider::TicksBothSides</enum>
           </property>
-          <property name="tickInterval">
+          <property name="tickInterval" >
            <number>1</number>
           </property>
          </widget>
@@ -120,23 +119,23 @@
        </layout>
       </item>
       <item>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="sizeConstraint">
+       <layout class="QFormLayout" name="formLayout" >
+        <property name="sizeConstraint" >
          <enum>QLayout::SetMinimumSize</enum>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="leafSizeLabel">
-          <property name="text">
+        <item row="0" column="0" >
+         <widget class="QLabel" name="leafSizeLabel" >
+          <property name="text" >
            <string>Leaf size:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="leafSize">
-          <property name="text">
+        <item row="0" column="1" >
+         <widget class="QLabel" name="leafSize" >
+          <property name="text" >
            <string>0 m</string>
           </property>
-          <property name="textFormat">
+          <property name="textFormat" >
            <enum>Qt::PlainText</enum>
           </property>
          </widget>
@@ -147,65 +146,65 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
       <string>Scan graph progress</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout_5" >
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout" >
         <item>
-         <widget class="QToolButton" name="firstScanButton">
-          <property name="toolTip">
+         <widget class="QToolButton" name="firstScanButton" >
+          <property name="toolTip" >
            <string>first scan</string>
           </property>
-          <property name="text">
+          <property name="text" >
            <string>first scan</string>
           </property>
-          <property name="icon">
-           <iconset>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
             <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="nextScanButton">
-          <property name="toolTip">
+         <widget class="QToolButton" name="nextScanButton" >
+          <property name="toolTip" >
            <string>next scan</string>
           </property>
-          <property name="text">
+          <property name="text" >
            <string>next scan</string>
           </property>
-          <property name="icon">
-           <iconset>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
             <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="fastFwdScanButton">
-          <property name="toolTip">
+         <widget class="QToolButton" name="fastFwdScanButton" >
+          <property name="toolTip" >
            <string>next 5 scans</string>
           </property>
-          <property name="text">
+          <property name="text" >
            <string>next 5 scans</string>
           </property>
-          <property name="icon">
-           <iconset>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
             <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="lastScanButton">
-          <property name="toolTip">
+         <widget class="QToolButton" name="lastScanButton" >
+          <property name="toolTip" >
            <string>last scan</string>
           </property>
-          <property name="text">
+          <property name="text" >
            <string>last scan</string>
           </property>
-          <property name="icon">
-           <iconset>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
             <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
           </property>
          </widget>
@@ -213,148 +212,20 @@
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_4" >
         <item>
-         <widget class="QProgressBar" name="scanProgressBar">
-          <property name="value">
+         <widget class="QProgressBar" name="scanProgressBar" >
+          <property name="value" >
            <number>24</number>
           </property>
-          <property name="textVisible">
+          <property name="textVisible" >
            <bool>true</bool>
           </property>
-          <property name="invertedAppearance">
+          <property name="invertedAppearance" >
            <bool>false</bool>
           </property>
-          <property name="format">
+          <property name="format" >
            <string>%v/%m</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Camera position</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>X:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="posX">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Y:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="posY">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Z:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="posZ">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="title">
-      <string>Camera LookAt</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>X:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="lookX">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Y:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="lookY">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Z:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="lookZ">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
           </property>
          </widget>
         </item>
@@ -365,9 +236,9 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
+ <layoutdefault spacing="6" margin="11" />
  <resources>
-  <include location="icons.qrc"/>
+  <include location="icons.qrc" />
  </resources>
  <connections>
   <connection>
@@ -376,11 +247,11 @@
    <receiver>treeDepth</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>150</x>
      <y>89</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>241</x>
      <y>89</y>
     </hint>
@@ -392,11 +263,11 @@
    <receiver>treeDepthSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>246</x>
      <y>99</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>94</x>
      <y>90</y>
     </hint>

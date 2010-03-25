@@ -52,13 +52,11 @@ private slots:
     void on_nextScanButton_clicked();
     void on_fastFwdScanButton_clicked();
     void setTreeDepth(int depth);
-    void positionEditDone(double);
 
 signals:
   void treeDepthChanged(int depth);
   void addNextScans(unsigned scans);
   void gotoFirstScan();
-  void changeCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
 
 
 private:

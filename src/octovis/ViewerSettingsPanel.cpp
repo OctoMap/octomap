@@ -31,12 +31,6 @@ ViewerSettingsPanel::ViewerSettingsPanel(QWidget *parent)
 {
 	ui.setupUi(this);
 	connect(ui.treeDepth, SIGNAL(valueChanged(int)), this, SLOT(setTreeDepth(int)));
-	connect(ui.posX, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
-	connect(ui.posY, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
-	connect(ui.posZ, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
-	connect(ui.lookX, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
-	connect(ui.lookY, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
-	connect(ui.lookZ, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
 
 	scanProgressChanged();
 	leafSizeChanged();
@@ -119,10 +113,6 @@ void ViewerSettingsPanel::setTreeDepth(int depth){
   emit treeDepthChanged(depth);
   m_treeDepth = depth;
   leafSizeChanged();
-}
-
-void ViewerSettingsPanel::positionEditDone(double){
-  emit changeCamPosition(ui.posX->value(), ui.posY->value(), ui.posZ->value(), ui.lookX->value(), ui.lookY->value(), ui.lookZ->value());
 }
 
 void ViewerSettingsPanel::leafSizeChanged(){

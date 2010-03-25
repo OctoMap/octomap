@@ -24,43 +24,54 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "ViewerSettingsPanelFollowMode.h"
+#include "ViewerSettingsPanelCamera.h"
 #include <iostream>
 
-ViewerSettingsPanelFollowMode::ViewerSettingsPanelFollowMode(QWidget *parent)
+ViewerSettingsPanelCamera::ViewerSettingsPanelCamera(QWidget *parent)
     : QWidget(parent), m_currentFrame(1), m_numberFrames(0), m_robotTrajectoryAvailable(false)
 {
 	ui.setupUi(this);
+	connect(ui.posX, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	connect(ui.posY, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	connect(ui.posZ, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	connect(ui.lookX, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	connect(ui.lookY, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	connect(ui.lookZ, SIGNAL(valueChanged(double)), this, SLOT(positionEditDone(double)));
+	
 	ui.followTrajectoryButton->setEnabled(m_robotTrajectoryAvailable);
 	dataChanged();
 }
 
-ViewerSettingsPanelFollowMode::~ViewerSettingsPanelFollowMode()
+ViewerSettingsPanelCamera::~ViewerSettingsPanelCamera()
 {
 
 }
 
-QSize ViewerSettingsPanelFollowMode::sizeHint() const {
+QSize ViewerSettingsPanelCamera::sizeHint() const {
 	return QSize(250, 180);
 }
 
-void ViewerSettingsPanelFollowMode::setNumberOfFrames(unsigned frames){
+void ViewerSettingsPanelCamera::positionEditDone(double){
+  emit changeCamPosition(ui.posX->value(), ui.posY->value(), ui.posZ->value(), ui.lookX->value(), ui.lookY->value(), ui.lookZ->value());
+}
+
+void ViewerSettingsPanelCamera::setNumberOfFrames(unsigned frames){
   m_numberFrames = frames;
   dataChanged();
 }
 
-void ViewerSettingsPanelFollowMode::setCurrentFrame(unsigned frame){
+void ViewerSettingsPanelCamera::setCurrentFrame(unsigned frame){
   m_currentFrame = frame;
   dataChanged();
 }
 
-void ViewerSettingsPanelFollowMode::setRobotTrajectoryAvailable(bool available) {
+void ViewerSettingsPanelCamera::setRobotTrajectoryAvailable(bool available) {
 	m_robotTrajectoryAvailable = available;
 	if(!available) ui.followTrajectoryButton->setChecked(false);
 	ui.followTrajectoryButton->setEnabled(available);
 }
 
-void ViewerSettingsPanelFollowMode::gotoFrame(unsigned int frame) {
+void ViewerSettingsPanelCamera::gotoFrame(unsigned int frame) {
 	if(frame > 0 && frame <= m_numberFrames) {
 		m_currentFrame = frame;
 		emit jumpToFrame(m_currentFrame);
@@ -68,47 +79,47 @@ void ViewerSettingsPanelFollowMode::gotoFrame(unsigned int frame) {
 	}
 }
 
-void ViewerSettingsPanelFollowMode::on_nextScanButton_clicked(){
+void ViewerSettingsPanelCamera::on_nextScanButton_clicked(){
 	gotoFrame(m_currentFrame + 1);
 }
 
-void ViewerSettingsPanelFollowMode::on_previousScanButton_clicked(){
+void ViewerSettingsPanelCamera::on_previousScanButton_clicked(){
 	gotoFrame(m_currentFrame - 1);
 }
 
-void ViewerSettingsPanelFollowMode::on_firstScanButton_clicked(){
+void ViewerSettingsPanelCamera::on_firstScanButton_clicked(){
 	gotoFrame(1);
 }
 
-void ViewerSettingsPanelFollowMode::on_lastScanButton_clicked(){
+void ViewerSettingsPanelCamera::on_lastScanButton_clicked(){
 	gotoFrame(m_numberFrames);
 }
 
-void ViewerSettingsPanelFollowMode::on_followCameraPathButton_clicked(){
+void ViewerSettingsPanelCamera::on_followCameraPathButton_clicked(){
 	emit followCameraPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_followTrajectoryButton_clicked(){
+void ViewerSettingsPanelCamera::on_followTrajectoryButton_clicked(){
 	emit followRobotPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_cameraPathAdd_clicked(){
+void ViewerSettingsPanelCamera::on_cameraPathAdd_clicked(){
 	emit addToCameraPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_cameraPathRemove_clicked(){
+void ViewerSettingsPanelCamera::on_cameraPathRemove_clicked(){
 	emit removeFromCameraPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_cameraPathClear_clicked(){
+void ViewerSettingsPanelCamera::on_cameraPathClear_clicked(){
 	emit clearCameraPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_cameraPathSave_clicked(){
+void ViewerSettingsPanelCamera::on_cameraPathSave_clicked(){
 	emit saveToCameraPath();
 }
 
-void ViewerSettingsPanelFollowMode::on_playScanButton_clicked(){
+void ViewerSettingsPanelCamera::on_playScanButton_clicked(){
 	if(ui.playScanButton->isChecked()) {
 		ui.scanProgressSlider->setEnabled(false);
 		ui.followGroupBox->setEnabled(false);
@@ -121,11 +132,11 @@ void ViewerSettingsPanelFollowMode::on_playScanButton_clicked(){
 	dataChanged();
 }
 
-void ViewerSettingsPanelFollowMode::on_scanProgressSlider_sliderMoved(int value) {
+void ViewerSettingsPanelCamera::on_scanProgressSlider_sliderMoved(int value) {
      gotoFrame(value);
 }
 
-void ViewerSettingsPanelFollowMode::setStopped(){
+void ViewerSettingsPanelCamera::setStopped(){
 	ui.followGroupBox->setEnabled(true);
 	ui.scanProgressSlider->setEnabled(true);
 	ui.playScanButton->setChecked(false);
@@ -133,7 +144,7 @@ void ViewerSettingsPanelFollowMode::setStopped(){
 }
 
 
-void ViewerSettingsPanelFollowMode::dataChanged(){
+void ViewerSettingsPanelCamera::dataChanged(){
   unsigned int max = std::max(0,int(m_numberFrames));
   unsigned int cur = std::min(max, m_currentFrame);
 
@@ -197,6 +208,8 @@ void ViewerSettingsPanelFollowMode::dataChanged(){
 
 }
 
-bool ViewerSettingsPanelFollowMode::followRobotTrajectory(){
+bool ViewerSettingsPanelCamera::followRobotTrajectory(){
 	return ui.followTrajectoryButton->isChecked();
 }
+
+

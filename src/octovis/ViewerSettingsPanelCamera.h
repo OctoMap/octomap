@@ -28,15 +28,15 @@
 #define VIEWERSETTINGSPANELFLYMODE_H
 
 #include <QtGui/QWidget>
-#include "ui_ViewerSettingsPanelFollowMode.h"
+#include "ui_ViewerSettingsPanelCamera.h"
 
-class ViewerSettingsPanelFollowMode : public QWidget
+class ViewerSettingsPanelCamera : public QWidget
 {
     Q_OBJECT
 
 public:
-    ViewerSettingsPanelFollowMode(QWidget *parent = 0);
-    ~ViewerSettingsPanelFollowMode();
+    ViewerSettingsPanelCamera(QWidget *parent = 0);
+    ~ViewerSettingsPanelCamera();
     QSize sizeHint() const;
 
 public slots:
@@ -58,8 +58,11 @@ private slots:
     void on_cameraPathRemove_clicked();
     void on_cameraPathSave_clicked();
     void on_cameraPathClear_clicked();
+    void positionEditDone(double);
+
 
 signals:
+	void changeCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
 	void jumpToFrame(unsigned int frame);
 	void play();
 	void pause();
@@ -74,7 +77,7 @@ private:
     void dataChanged();
     void gotoFrame(unsigned int frame);
     bool followRobotTrajectory();
-    Ui::ViewerSettingsPanelFollowModeClass ui;
+    Ui::ViewerSettingsPanelCameraClass ui;
     unsigned int m_currentFrame;
     unsigned int m_numberFrames;
     bool m_robotTrajectoryAvailable;

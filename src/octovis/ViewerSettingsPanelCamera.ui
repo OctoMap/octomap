@@ -1,0 +1,362 @@
+<ui version="4.0" >
+ <class>ViewerSettingsPanelCameraClass</class>
+ <widget class="QWidget" name="ViewerSettingsPanelCameraClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>326</width>
+    <height>351</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>ViewerSettingsPanelCamera</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Camera position</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6" >
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" >
+        <item>
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>X:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="posX" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Y:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="posY" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3" >
+          <property name="text" >
+           <string>Z:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="posZ" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_4" >
+     <property name="title" >
+      <string>Camera LookAt</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5" >
+        <item>
+         <widget class="QLabel" name="label_6" >
+          <property name="text" >
+           <string>X:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="lookX" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5" >
+          <property name="text" >
+           <string>Y:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="lookY" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>Z:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="lookZ" >
+          <property name="minimum" >
+           <double>-99.000000000000000</double>
+          </property>
+          <property name="singleStep" >
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Camera follow mode</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout" >
+      <item>
+       <widget class="QGroupBox" name="followGroupBox" >
+        <property name="title" >
+         <string>Follow</string>
+        </property>
+        <property name="flat" >
+         <bool>true</bool>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <item>
+          <widget class="QRadioButton" name="followCameraPathButton" >
+           <property name="text" >
+            <string>Camera path</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="followTrajectoryButton" >
+           <property name="text" >
+            <string>Robot trajectory</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="firstScanButton" >
+          <property name="toolTip" >
+           <string>first frame</string>
+          </property>
+          <property name="text" >
+           <string>first position</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="previousScanButton" >
+          <property name="toolTip" >
+           <string>previous frame</string>
+          </property>
+          <property name="text" >
+           <string>previous position</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="playScanButton" >
+          <property name="toolTip" >
+           <string>play from current frame</string>
+          </property>
+          <property name="text" >
+           <string>play</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="checked" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="nextScanButton" >
+          <property name="toolTip" >
+           <string>next frame</string>
+          </property>
+          <property name="text" >
+           <string>next position</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="lastScanButton" >
+          <property name="toolTip" >
+           <string>last frame</string>
+          </property>
+          <property name="text" >
+           <string>last position</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="cameraPathAdd" >
+          <property name="toolTip" >
+           <string>add frame after current frame</string>
+          </property>
+          <property name="text" >
+           <string>add keyframe</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="cameraPathRemove" >
+          <property name="toolTip" >
+           <string>remove current frame</string>
+          </property>
+          <property name="text" >
+           <string>remove keyframe</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="cameraPathSave" >
+          <property name="toolTip" >
+           <string>save camera pose to current frame</string>
+          </property>
+          <property name="text" >
+           <string>save current camera pose</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="cameraPathClear" >
+          <property name="toolTip" >
+           <string>clear all frames</string>
+          </property>
+          <property name="text" >
+           <string>clear camera path</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="icons.qrc" >
+            <normaloff>:/icons/edit-clear-list.png</normaloff>:/icons/edit-clear-list.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <item>
+         <widget class="QSlider" name="scanProgressSlider" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="scanProgressLabel" >
+          <property name="text" >
+           <string>0/1</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources>
+  <include location="icons.qrc" />
+ </resources>
+ <connections/>
+</ui>

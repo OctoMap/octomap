@@ -39,7 +39,7 @@
 #include "ViewerWidget.h"
 #include "ViewerSettings.h"
 #include "ViewerSettingsPanel.h"
-#include "ViewerSettingsPanelFollowMode.h"
+#include "ViewerSettingsPanelCamera.h"
 #include "ui_ViewerGui.h"
 
 namespace octomap {
