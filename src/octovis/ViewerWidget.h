@@ -39,20 +39,7 @@ class ViewerWidget : public QGLViewer {
  public:
 
   ViewerWidget(QWidget* parent = NULL);
-  void clearOcTree();
-  void clearOcTreeStructure();
   void clearAll();
-
-
-  /**
-   * Add voxels of OcTree to viewer, adjusts view and bounding box to contain all points
-   */
-  void setOcTreeVoxels(std::list<octomap::OcTreeVolume>& occupied_voxels,
-		       std::list<octomap::OcTreeVolume>& freespace_voxels,
-		       std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-		       std::list<octomap::OcTreeVolume>& freespace_delta_voxels,
-		       std::list<octomap::OcTreeVolume>& grid_voxels,
-		       std::list<octomap::OcTreeVolume>& changed_free_voxels);
 
   /**
    * Adds an object to the scene that can be drawn
@@ -70,12 +57,7 @@ class ViewerWidget : public QGLViewer {
   void removeSceneObject(SceneObject* obj);
 
  public slots:
-
-  void enableOcTree(bool enabled = true){m_drawOcTreeGrid = enabled; updateGL();};
-  void enableOcTreeCells(bool enabled = true){m_drawOcTreeCells = enabled; updateGL();};
-  void enableFreespace (bool enabled = true){ m_draw_freespace = enabled; updateGL();};
-  void enableFreespaceDeltaOnly (bool enabled = true){ m_draw_freespaceDeltaOnly = enabled; updateGL();};
-  void enablePrintoutMode (bool enabled = true){m_printoutMode = enabled; updateGL();};
+  void enablePrintoutMode (bool enabled = true);
   void enableHeightColorMode (bool enabled = true);
   void setCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
   void setCamPose(const octomath::Pose6D& pose);
@@ -112,20 +94,6 @@ signals:
    */
   virtual void postDraw();
   virtual QString helpString() const;
-  void drawOctreeGrid();
-  void drawOctreeCells() const;
-  void drawFreespace() const;
-  void drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize, GLfloat* cubeColorArray = NULL) const;
-
-  //! setup octree visualizations
-  void initOctreeCubeVis (const std::list<octomap::OcTreeVolume>& occupied_voxels,
-			  const std::list<octomap::OcTreeVolume>& freespace_voxels,
-			  const std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-			  const std::list<octomap::OcTreeVolume>& freespace_delta_voxels,
-			  const std::list<octomap::OcTreeVolume>& changed_free_voxels);
-
-  void generateCubes (const std::list<octomap::OcTreeVolume>& points, GLfloat** gl_array, GLfloat* gl_color_array = NULL);
-  void initOctreeGridVis();
 
   void heightMapColor(double height, GLfloat* glArrayPos) const;
 
@@ -133,39 +101,11 @@ signals:
 
   std::vector<SceneObject*> m_sceneObjects;
 
-  std::list<octomap::OcTreeVolume> m_grid_voxels;
-
-  bool m_drawOcTreeCells;
-  bool m_drawOcTreeGrid;
   bool m_printoutMode;
   bool m_heightColorMode;
-  bool m_draw_freespace;
-  bool m_draw_freespaceDeltaOnly;
 
-  bool m_octree_grid_vis_initialized;
   bool m_drawAxis; // actual state of axis (original overwritten)
   bool m_drawGrid; // actual state of grid (original overwritten)
-
-  //! OpenGL representation of Octree cells (cubes)
-
-  GLfloat**     octree_occupied_cells_vertex_array;
-  unsigned int octree_occupied_cells_vertex_size;
-  GLfloat**     octree_freespace_cells_vertex_array;
-  unsigned int octree_freespace_cells_vertex_size;
-  GLfloat**     octree_occupied_delta_cells_vertex_array;
-  unsigned int octree_occupied_delta_cells_vertex_size;
-  GLfloat**     octree_freespace_delta_cells_vertex_array;
-  unsigned int octree_freespace_delta_cells_vertex_size;
-  GLfloat**     octree_freespace_changed_cells_vertex_array;
-  unsigned int octree_freespace_changed_cells_vertex_size;
-
-  //! Color array for occupied cells (height)
-  GLfloat* octree_occupied_cells_color_array;
-  GLfloat* octree_occupied_delta_cells_color_array;
-
-  //! OpenGL representation of Octree (grid structure)
-  GLfloat*     octree_grid_vertex_array;
-  unsigned int octree_grid_vertex_size;
 
   double m_zMin;
   double m_zMax;

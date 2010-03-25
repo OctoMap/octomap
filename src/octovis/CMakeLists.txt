@@ -5,20 +5,24 @@ set(QT_USE_QTXML TRUE)
 # include the files enabled above
 include(${QT_USE_FILE})
 
-
-# sources for this project
-set(viewer_SRCS
-	main.cpp
-	SceneObject.h
-	TrajectoryDrawer.cpp
+# sources for octovis library
+set(viewerlib_SRCS
+	SceneObject.cpp
 	PointcloudDrawer.cpp
+	OcTreeDrawer.cpp
+	TrajectoryDrawer.cpp
+)
+
+# sources for viewer binary
+set(viewer_SRCS
+	main.cpp	
 	ViewerGui.cpp
 	ViewerWidget.cpp
 	ViewerSettings.cpp
 	ViewerSettingsPanel.cpp
 	ViewerSettingsPanelFollowMode.cpp
 	CameraFollowMode.cpp
-)
+)	
 
 #class headers which need MOCs:
 SET(viewer_MOC_HDRS
@@ -56,6 +60,11 @@ INCLUDE_DIRECTORIES(
   ${QGLViewer_INCLUDE_DIR}
 )
 
+# Library target 
+add_library(octovis_library ${viewerlib_SRCS})
+target_link_libraries(octovis_library)
+set_target_properties(octovis_library PROPERTIES OUTPUT_NAME octovis)
+
 # Now add these generated files to the ADD_EXECUTABLE step
 # If this is NOT done, then the ui_*.h files will not be generated
 add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
@@ -65,4 +74,5 @@ target_link_libraries(octovis
     ${QGLViewer_LIBRARIES}
 	${QT_LIBRARIES}
 	octomap 
+	octovis_library
 )

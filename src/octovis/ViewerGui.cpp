@@ -36,14 +36,17 @@ namespace octomap{
   ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
     : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
       m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
-      m_cameraFollowMode(NULL),
+      m_octreeDrawer(NULL), m_cameraFollowMode(NULL),
       m_octreeResolution(0.1), m_occupancyThresh(0.5), 
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
       m_cameraStored(false), m_filename("") {
-  
+
     ui.setupUi(this);
     m_glwidget = new ViewerWidget(this);
     this->setCentralWidget(m_glwidget);
+
+    m_octreeDrawer = new OcTreeDrawer();
+    m_glwidget->addSceneObject(m_octreeDrawer);
 
     // Settings panel at the right side
     ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
@@ -111,10 +114,6 @@ namespace octomap{
     connect(m_cameraFollowMode, SIGNAL(changeCamPose(const octomath::Pose6D&)),
             m_glwidget, SLOT(setCamPose(const octomath::Pose6D&)));
 
-    connect(ui.actionOctree_cells, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTreeCells(bool)));
-    connect(ui.actionOctree_structure, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableOcTree(bool)));
-    connect(ui.actionFree, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespace(bool)));
-    connect(ui.actionChanged_free_only, SIGNAL(toggled(bool)), m_glwidget, SLOT(enableFreespaceDeltaOnly(bool)));
     connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
 
     if (filename != ""){
@@ -134,6 +133,12 @@ namespace octomap{
       m_glwidget->removeSceneObject(m_pointcloudDrawer);
       delete m_pointcloudDrawer;
       m_pointcloudDrawer = NULL;
+    }
+
+    if (m_octreeDrawer){
+      m_glwidget->removeSceneObject(m_octreeDrawer);
+      delete m_octreeDrawer;
+      m_octreeDrawer = NULL;
     }
 
     if(m_cameraFollowMode) {
@@ -228,33 +233,18 @@ void ViewerGui::addNextScan(){
 void ViewerGui::showOcTree() {
 
   if (m_ocTree) {
-
-    std::list<octomap::OcTreeVolume> occupied_voxels;
-    std::list<octomap::OcTreeVolume> free_voxels;
-    std::list<octomap::OcTreeVolume> grid_voxels;
-    std::list<octomap::OcTreeVolume> occupied_delta_voxels;
-    std::list<octomap::OcTreeVolume> free_delta_voxels;
-    std::list<octomap::OcTreeVolume> free_changed_voxels;
-
-    m_ocTree->getOccupied(occupied_voxels, occupied_delta_voxels, m_max_tree_depth);
-
-    if (m_ocTree->size() < 5 * 1e6) {
-      m_ocTree->getFreespace (free_voxels, free_delta_voxels, m_max_tree_depth);
-      m_ocTree->getVoxels(grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
-      // FIXME m_ocTree->getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
+    if (!m_octreeDrawer){
+      m_octreeDrawer = new OcTreeDrawer();
+      m_glwidget->addSceneObject(m_octreeDrawer);
     }
+    m_octreeDrawer->setMax_tree_depth(m_max_tree_depth);
+    m_octreeDrawer->setOcTree(*m_ocTree);
 
     double minX, minY, minZ, maxX, maxY, maxZ;
     m_ocTree->getMetricMin(minX, minY, minZ);
     m_ocTree->getMetricMax(maxX, maxY, maxZ);
 
     m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
-
-    m_glwidget->setOcTreeVoxels(occupied_voxels,
-				free_voxels,
-				occupied_delta_voxels,
-				free_delta_voxels,
-				grid_voxels, free_changed_voxels);
 
     double sizeX, sizeY, sizeZ;
     m_ocTree->getMetricSize(sizeX, sizeY, sizeZ);
@@ -265,9 +255,7 @@ void ViewerGui::showOcTree() {
       + QString ("%L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
     m_mapMemoryStatus->setText(memory);
     m_mapSizeStatus->setText(size);
-
-
-
+    m_glwidget->updateGL();
   }
   else {
     QMessageBox::warning(this, "Tree not present",
@@ -442,6 +430,7 @@ void ViewerGui::changeTreeDepth(int depth){
     return;
 
   m_max_tree_depth = unsigned(depth);
+
   if (m_ocTree)
     showOcTree();
 }
@@ -661,8 +650,30 @@ void ViewerGui::on_actionExpand_tree_triggered(){
     QApplication::restoreOverrideCursor();
 }
 
+void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
+  if(m_octreeDrawer) {
+    m_octreeDrawer->enableOcTreeCells(enabled);
+  }
 }
 
+void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
+  if(m_octreeDrawer) {
+    m_octreeDrawer->enableOcTree(enabled);
+  }
+}
 
+void ViewerGui::on_actionFree_toggled(bool enabled) {
+  if(m_octreeDrawer) {
+    m_octreeDrawer->enableFreespace(enabled);
+  }
+}
+
+void ViewerGui::on_actionChanged_free_only_toggled(bool enabled) {
+  if(m_octreeDrawer) {
+    m_octreeDrawer->enableFreespaceDeltaOnly(enabled);
+  }
+}
+
+}
 
 

@@ -34,6 +34,7 @@
 #include <string>
 #include "TrajectoryDrawer.h"
 #include "PointcloudDrawer.h"
+#include "OcTreeDrawer.h"
 #include "CameraFollowMode.h"
 #include "ViewerWidget.h"
 #include "ViewerSettings.h"
@@ -82,6 +83,10 @@ class ViewerGui : public QMainWindow {
   void on_actionRestore_camera_triggered();
   void on_actionPointcloud_toggled(bool checked);
   void on_actionTrajectory_toggled(bool checked);
+  void on_actionOctree_cells_toggled(bool enabled);
+  void on_actionOctree_structure_toggled(bool enabled);
+  void on_actionFree_toggled(bool enabled);
+  void on_actionChanged_free_only_toggled(bool enabled);
 
   // use it for testcases etc.
   void on_actionTest_triggered();
@@ -148,6 +153,7 @@ class ViewerGui : public QMainWindow {
   ViewerWidget* m_glwidget;
   TrajectoryDrawer* m_trajectoryDrawer;
   PointcloudDrawer* m_pointcloudDrawer;
+  OcTreeDrawer* m_octreeDrawer;
   CameraFollowMode* m_cameraFollowMode;
   double m_octreeResolution;
   double m_occupancyThresh; // FIXME: This is not really used at the moment...

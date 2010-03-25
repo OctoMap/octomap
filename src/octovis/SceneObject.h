@@ -30,6 +30,8 @@
 #include <qglviewer.h>
 #include <octomap/octomap.h>
 
+#define ALPHA_OCCUPIED 0.8
+
 namespace octomap {
 
   /**
@@ -38,7 +40,7 @@ namespace octomap {
   */
   class SceneObject {
   public:
-    SceneObject(){};
+    SceneObject();
     virtual ~SceneObject(){};
 
     /**
@@ -50,6 +52,17 @@ namespace octomap {
     * Clears the object's representation (will be called when it gets invalid)
     */
     virtual void clear(){};
+
+  protected:
+    void heightMapColor(double h, GLfloat* glArrayPos) const;
+    double m_zMin;
+    double m_zMax;
+    bool m_printoutMode;
+    bool m_heightColorMode;
+
+  public:
+    void enablePrintoutMode(bool enabled = true) {m_printoutMode = enabled; };
+    void enableHeightColorMode(bool enabled = true) {m_heightColorMode = enabled; };
   };
 
   /**
