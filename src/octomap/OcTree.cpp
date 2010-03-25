@@ -57,7 +57,7 @@ namespace octomap {
   }
 
 
-  void OcTree::insertScan(const ScanNode& scan, double maxrange) {
+  void OcTree::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
     if (scan.scan->size()< 1)
       return;
 
@@ -79,6 +79,9 @@ namespace octomap {
     else {
       this->insertScanUniform(scan, maxrange);
     }
+
+    if (pruning)
+      this->prune();
   }
 
 
@@ -101,7 +104,6 @@ namespace octomap {
     std::list<OcTreeVolume> leafs;
     this->getLeafNodes(leafs);
     unsigned int inner_nodes = tree_size - leafs.size();
-    std::cout << "Size: " << node_size << " " << sizeof(OcTreeNode*[8]) << std::endl;
     return node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]);
   }
 
@@ -112,14 +114,6 @@ namespace octomap {
     num_other = 0;
     calcNumThresholdedNodesRecurs(itsRoot, num_thresholded, num_other);
   }
-
-
-  unsigned int OcTree::calcNumNodes() const{
-    unsigned int retval = 1; // root node
-    calcNumNodesRecurs(itsRoot, retval);
-    return retval;
-  }
-
 
 
   void OcTree::readBinary(const std::string& filename){
@@ -218,12 +212,6 @@ namespace octomap {
 
   std::ostream& OcTree::writeBinaryConst(std::ostream &s) const{
 
-    // TODO: this is no longer an indicator of a purely ML tree... =>fix?
-    if (!itsRoot->atThreshold()){
-      std::cerr << "Error: trying to write a tree which is not in maximum likelihood form\n";
-      return s;
-    }
-
     // format:    treetype | resolution | num nodes | [binary nodes]
 
     unsigned int tree_type = OcTree::TREETYPE;
@@ -242,74 +230,6 @@ namespace octomap {
 
     return s;
   }
-
-  void OcTree::write(const std::string& filename){
-    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-
-    if (!binary_outfile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
-      return;
-    } else {
-      write(binary_outfile);
-      binary_outfile.close();
-    }
-  }
-
-  std::ostream& OcTree::write(std::ostream &s) const{
-
-    unsigned int tree_type = OcTree::TREETYPE+1;
-    s.write((char*)&tree_type, sizeof(tree_type));
-
-    double tree_resolution = resolution;
-    s.write((char*)&tree_resolution, sizeof(tree_resolution));
-
-    unsigned int tree_write_size = this->size();
-    fprintf(stderr, "Writing[LO] %d nodes to output stream...", tree_write_size); fflush(stderr);
-    s.write((char*)&tree_write_size, sizeof(tree_write_size));
-
-    itsRoot->writeValue(s);
-
-    fprintf(stderr, " done.\n");
-
-    return s;
-  }
-
-  std::istream& OcTree::read(std::istream &s) {
-
-      if (!s.good()){
-        std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinaryLO\n";
-      }
-
-      this->tree_size = 0;
-      sizeChanged = true;
-
-      // clear tree if there are nodes
-      if (itsRoot->hasChildren()) {
-        delete itsRoot;
-        itsRoot = new OcTreeNode();
-      }
-
-      double tree_resolution;
-      s.read((char*)&tree_resolution, sizeof(tree_resolution));
-
-      this->setResolution(tree_resolution);
-
-      unsigned int tree_read_size = 0;
-      s.read((char*)&tree_read_size, sizeof(tree_read_size));
-      std::cout << "Reading [LO]"
-          << tree_read_size
-          << " nodes from bonsai tree file..." <<std::flush;
-
-      itsRoot->readValue(s);
-
-      tree_size = calcNumNodes();  // compute number of nodes
-
-      std::cout << tree_size << " done.\n";
-
-      return s;
-    }
-
-
 
 
 
@@ -386,28 +306,12 @@ namespace octomap {
       updateNode(it->first, true);
     }
 
-    unsigned int num_thres = 0;
-    unsigned int num_other = 0;
-    calcNumThresholdedNodes(num_thres, num_other);
-    std::cout << "Inserted scan, total num of thresholded nodes: "<< num_thres << ", num of other nodes: "<< num_other << std::endl;
+//    unsigned int num_thres = 0;
+//    unsigned int num_other = 0;
+//    calcNumThresholdedNodes(num_thres, num_other);
+//    std::cout << "Inserted scan, total num of thresholded nodes: "<< num_thres << ", num of other nodes: "<< num_other << std::endl;
 
   }
-
-
-//   void OcTree::insertScanFreeOrOccupied(const ScanNode& scan, bool freespace) {
-//     pose6d scan_pose (scan.pose);
-//     octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
-//     octomap::point3d p;
-//     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
-//       p = scan_pose.transform(**point_it);
-//       if (freespace) {
-//         this->integrateMissOnRay(origin, p);
-//       }
-//       else {
-//         updateNode(p, true);
-//       }
-//     }
-//   }
 
 
   void OcTree::toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth,
@@ -440,22 +344,6 @@ namespace octomap {
         calcNumThresholdedNodesRecurs(child_node, num_thresholded, num_other);
       } // end if child
     } // end for children
-  }
-
-
-  void OcTree::calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const {
-
-    assert (node != NULL);
-
-    if (node->hasChildren()) {
-      //      num_nodes+=8;
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          num_nodes++;
-          calcNumNodesRecurs(node->getChild(i), num_nodes);
-        }
-      }
-    }
   }
 
 } // namespace

@@ -66,6 +66,7 @@ namespace octomap {
     if (itsChildren == NULL) {
       allocChildren();
     }
+    assert (itsChildren[i] == NULL);
     itsChildren[i] = newNode();
     return true;
   }

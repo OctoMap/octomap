@@ -41,6 +41,7 @@
 #include "ViewerSettingsPanel.h"
 #include "ViewerSettingsPanelCamera.h"
 #include "ui_ViewerGui.h"
+#include <octomap/OcTreeFileIO.h>
 
 namespace octomap {
 
@@ -135,6 +136,9 @@ class ViewerGui : public QMainWindow {
 
   // open binary file containing an octree
   void openTree();
+
+  // open "regular" file containing an octree
+  void openOcTree();
 
   /*!
    * (Re-)generates OcTree from the internally stored ScanGraph

@@ -100,6 +100,9 @@ namespace octomap {
     void getMetricMax(double& x, double& y, double& z);
     void getMetricMax(double& x, double& y, double& z) const;
 
+    /// Traverses the tree to calculate the total number of nodes
+    unsigned int calcNumNodes() const;
+
 
    /**
     * Traces a ray from origin to end (excluding), returning the
@@ -129,6 +132,19 @@ namespace octomap {
      * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
     void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
+
+    //---- FILE IO --//
+
+    /// Read complete state of tree from stream
+    /// EXPERIMENTAL!
+    std::istream& read(std::istream &s);
+
+    /// Write complete state of tree to stream, prune tree first (lossless compression)
+    /// EXPERIMENTAL!
+    std::ostream& write(std::ostream &s);
+
+    /// Write complete state of tree to stream, no pruning (const version)
+    std::ostream& writeConst(std::ostream &s) const;
 
 
   protected:
@@ -177,6 +193,9 @@ namespace octomap {
     void calcMinMax();
 
 
+    void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
+
+
 
     NODE* itsRoot;
 
@@ -193,12 +212,6 @@ namespace octomap {
     bool sizeChanged;
   };
 
-
-  // for memory computation only
-  class GridData {
-  public:
-    float log_odds_occupancy;
-  };
 
 }
 

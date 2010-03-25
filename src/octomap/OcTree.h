@@ -62,8 +62,16 @@ namespace octomap {
     virtual ~OcTree();
 
 
-    /// Insert a 3d scan (given as a ScanNode) into the tree
-    void insertScan(const ScanNode& scan, double maxrange=-1.);
+    /**
+     * Insert a 3d scan (given as a ScanNode) into the tree.
+     * By default, the tree is pruned after insertion
+     * (small run-time overhead, but decreases size)
+     *
+     * @param scan
+     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+     */
+    void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true);
 
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
@@ -87,27 +95,22 @@ namespace octomap {
     std::istream& readBinary(std::istream &s);
 
     /// Writes OcTree to a binary stream.
-    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
+    /// The OcTree is first converted to the maximum likelihood estimate and pruned
+    /// for maximum compression.
     std::ostream& writeBinary(std::ostream &s);
 
     /// Writes the maximum likelihood OcTree to a binary stream (const variant).
     /// Files will be smaller when the tree is pruned first.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
-    /// Read complete state of tree (float) from stream
-    /// EXPERIMENTAL!
-    std::istream& read(std::istream &s);
-
-    /// Write complete state of tree (float) to stream
-    /// EXPERIMENTAL!
-    std::ostream& write(std::ostream &s) const;
-    void write(const std::string& filename);
 
     /// Reads OcTree from a binary file. Existing nodes are deleted.
     void readBinary(const std::string& filename);
+
     /// Writes OcTree to a binary file using writeBinary().
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
     void writeBinary(const std::string& filename);
+
     /// Writes OcTree to a binary file using writeBinaryConst().
     /// The OcTree is not changed, in particular not pruned first.
     void writeBinaryConst(const std::string& filename) const;
@@ -116,10 +119,8 @@ namespace octomap {
 
   protected:
 
-    void insertScanUniform(const ScanNode& scan, double maxrange=-1.); // FIXME: name
-
-/*     // insert only freespace (freespace=true) or occupied space */
-/*     void insertScanFreeOrOccupied(const ScanNode& scan, bool freespace); */
+    /// Helper for insertScan (internal use)
+    void insertScanUniform(const ScanNode& scan, double maxrange=-1.);
 
     ///recursive call of toMaxLikelihood()
     void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
@@ -128,10 +129,6 @@ namespace octomap {
                                         unsigned int& num_thresholded, 
                                         unsigned int& num_other) const; 
 
-    /// Traverses the tree to calculate the total number of nodes
-    unsigned int calcNumNodes() const;
-
-    void calcNumNodesRecurs(OcTreeNode* node, unsigned int& num_nodes) const;
 
   };
 

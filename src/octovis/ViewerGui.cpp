@@ -276,8 +276,11 @@ void ViewerGui::openFile(){
     if (fileinfo.suffix() == "graph"){
       openGraph();
     }
-    else if (fileinfo.suffix() == "bt" || fileinfo.suffix() == "ot"){
+    else if (fileinfo.suffix() == "bt"){
       openTree();
+    }
+    else if (fileinfo.suffix() == "ot"){
+      openOcTree();
     }
     else if (fileinfo.suffix() == "dat"){
       openPointcloud();
@@ -362,6 +365,43 @@ void ViewerGui::openTree(){
 
   showOcTree();
   m_glwidget->resetView();
+
+}
+
+void ViewerGui::openOcTree(){
+  if (m_ocTree){
+    delete m_ocTree;
+    m_ocTree = NULL;
+  }
+  //
+  //m_ocTree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
+  octomap::OcTreeBase<octomap::OcTreeNode>* tree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
+  if (tree){
+    m_ocTree = dynamic_cast<OcTree*>(tree);
+  }
+
+  if (m_ocTree){
+    m_octreeResolution = m_ocTree->getResolution();
+    emit changeResolution(m_octreeResolution);
+
+    ui.actionPointcloud->setChecked(false);
+    ui.actionPointcloud->setEnabled(false);
+    ui.actionOctree_cells->setChecked(true);
+    ui.actionOctree_cells->setEnabled(true);
+    ui.actionFree->setChecked(false);
+    ui.actionFree->setEnabled(true);
+    ui.actionOctree_structure->setEnabled(true);
+    ui.actionOctree_structure->setChecked(false);
+    ui.actionTrajectory->setEnabled(false);
+    ui.actionConvert_ml_tree->setEnabled(true);
+    ui.actionReload_Octree->setEnabled(false);
+    ui.actionSettings->setEnabled(false);
+
+    showOcTree();
+    m_glwidget->resetView();
+  } else {
+    QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
+  }
 
 }
 
@@ -476,8 +516,8 @@ void ViewerGui::on_actionSettings_triggered(){
 
 void ViewerGui::on_actionOpen_file_triggered(){
   QString filename = QFileDialog::getOpenFileName(this,
-	      tr("Open log file"), "",
-	  "All supported files (*.graph *.bt *.ot *.dat);;binary scan graph (*.graph);;Bonsai tree (*.bt);;Octree (*.ot);;pointcloud (*.dat);;All files (*)");
+	      tr("Open data file"), "",
+	  "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
   if (filename != ""){
     m_filename = filename.toStdString();
     openFile();
@@ -500,8 +540,8 @@ void ViewerGui::on_actionOpen_graph_incremental_triggered(){
 void ViewerGui::on_actionSave_file_triggered(){
 
   if (m_ocTree) {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save binary tree file"),
-						    "", tr("Bonsai tree files (*.bt);;Octree files (*.ot)"));
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save octree file"),
+						    "", tr("Bonsai Tree file (*.bt);;Full OcTree (*.ot)"));
 
     if (filename != ""){
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -510,8 +550,11 @@ void ViewerGui::on_actionSave_file_triggered(){
       QFileInfo fileinfo(filename);
       if (fileinfo.suffix() == "bt")
         m_ocTree->writeBinaryConst(filename.toStdString());
-      else if (fileinfo.suffix() == "ot")
-        m_ocTree->write(filename.toStdString());
+      else if (fileinfo.suffix() == "ot"){
+        OcTreeFileIO::write( m_ocTree, filename.toStdString());
+        //writer.write((OcTreeBase<octomap::OcTreeDataNode<float> >*) m_ocTree, filename.toStdString());
+        //m_ocTree->write(filename.toStdString());
+      }
       else{
         QMessageBox::warning(this, "Unknown file", "Cannot write file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
       }

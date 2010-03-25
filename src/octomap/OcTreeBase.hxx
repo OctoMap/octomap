@@ -436,6 +436,44 @@ namespace octomap {
 
 
   template <class NODE>
+  std::ostream& OcTreeBase<NODE>::write(std::ostream &s){
+    this->prune();
+
+    return this->writeConst(s);
+  }
+
+  template <class NODE>
+  std::ostream& OcTreeBase<NODE>::writeConst(std::ostream &s) const{
+    itsRoot->writeValue(s);
+
+    return s;
+  }
+
+  template <class NODE>
+  std::istream& OcTreeBase<NODE>::read(std::istream &s) {
+
+    if (!s.good()){
+      std::cerr << __PRETTY_FUNCTION__ << "Warning: Input filestream not \"good\"\n";
+    }
+
+    this->tree_size = 0;
+    sizeChanged = true;
+
+    // tree needs to be newly created or cleared externally!
+    if (itsRoot->hasChildren()) {
+      std::cerr << "Error: Trying to read into a tree that is already constructed!\n";
+      return s;
+    }
+
+    itsRoot->readValue(s);
+
+    tree_size = calcNumNodes();  // compute number of nodes
+
+    return s;
+  }
+
+
+  template <class NODE>
   void OcTreeBase<NODE>::calcMinMax() {
     if (!sizeChanged)
       return;
@@ -549,5 +587,28 @@ namespace octomap {
       }
     }
  }
+
+  template <class NODE>
+  unsigned int OcTreeBase<NODE>::calcNumNodes() const{
+    unsigned int retval = 1; // root node
+    calcNumNodesRecurs(itsRoot, retval);
+    return retval;
+  }
+
+  template <class NODE>
+  void OcTreeBase<NODE>::calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const {
+
+    assert (node != NULL);
+
+    if (node->hasChildren()) {
+      for (unsigned int i=0; i<8; i++) {
+        if (node->childExists(i)) {
+          num_nodes++;
+          calcNumNodesRecurs(node->getChild(i), num_nodes);
+        }
+      }
+    }
+  }
+
 
 }

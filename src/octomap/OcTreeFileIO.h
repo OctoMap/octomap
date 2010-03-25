@@ -27,26 +27,59 @@
 #ifndef OCTOMAP_OCTREE_FILEIO_H
 #define OCTOMAP_OCTREE_FILEIO_H
 
-#include <OcTreeBase.h>
+#include <octomap/OcTree.h>
+#include <octomap/OcTreeBase.h>
+#include <octomap/OcTreeDataNode.h>
+#include <fstream>
+#include <string>
 #include <iostream>
+#include <typeinfo>
 
 namespace octomap {
 
   /**
-   * Reading and Writing OcTrees to files. Implements the Factory Design Pattern.
+   * Static class for reading and writing OcTrees to files.
+   * Implements a simple Factory design pattern.
    *
    */
+
   class OcTreeFileIO {
   public:
-    OcTreeFileIO();
-    virtual ~OcTreeFileIO();
+    template <class NODE>
+    static bool write(OcTreeBase<NODE>* tree, const std::string& filename);
 
-    bool write(const OcTreeBase<NODE>& tree, const std::string& filename) const;
-    std::ostream write(const OcTreeBase<NODE>& tree, std::ostream &s);
+    template <class NODE>
+    static std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
 
-    OcTreeBase<NODE>* read(const std::string& filename);
+    template <class NODE>
+    static OcTreeBase<NODE>* read(const std::string& filename);
+
+    template <class NODE>
+    static std::istream& read(std::istream& s, OcTreeBase<NODE>*& tree);
+
+    /**
+     * Map OcTree classes to IDs
+     *
+     * @param tree
+     * @return unique (unsigned) ID of OcTree class
+     */
+    template <class NODE>
+    static unsigned getTreeID(OcTreeBase<NODE>* tree);
+
+    /**
+     * Creates a certain OcTree (factory pattern)
+     *
+     * @param id unique ID of OcTree
+     * @param res resolution of OcTree
+     * @return pointer to newly created OcTree (empty). NULL if the ID is unknown!
+     */
+    template <class NODE>
+    static OcTreeBase<NODE>* createTree(unsigned id, double res);
+
+
   };
-
 }
 
-#endif /* OCTREEFILEIO_H_ */
+#include "OcTreeFileIO.hxx"
+
+#endif
