@@ -85,7 +85,6 @@ void SceneObject::heightMapColor(double h, GLfloat* glArrayPos) const {
     glArrayPos[0] = r;
     glArrayPos[1] = g;
     glArrayPos[2] = b;
-    glArrayPos[3] = ALPHA_OCCUPIED; // alpha
 }
 
 }

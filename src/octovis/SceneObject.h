@@ -30,8 +30,6 @@
 #include <qglviewer.h>
 #include <octomap/octomap.h>
 
-#define ALPHA_OCCUPIED 0.8
-
 namespace octomap {
 
   /**
@@ -54,6 +52,8 @@ namespace octomap {
     virtual void clear(){};
 
   protected:
+    /// writes rgb values which correspond to a rel. height in the map.
+    /// (glArrayPos needs to have at least size 3!)
     void heightMapColor(double h, GLfloat* glArrayPos) const;
     double m_zMin;
     double m_zMax;

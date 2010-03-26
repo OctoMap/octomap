@@ -24,10 +24,6 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include <math.h>
-#include <cassert>
-#include <cfloat>
-
 
 namespace octomap {
 
@@ -39,8 +35,8 @@ namespace octomap {
     
     this->setResolution(_resolution);
     for (unsigned i = 0; i< 3; i++){
-      maxValue[i] = DBL_MIN;
-      minValue[i] = DBL_MAX;
+      maxValue[i] = -std::numeric_limits<double>::max();
+      minValue[i] = std::numeric_limits<double>::max();
     }
     sizeChanged = true;
   }
@@ -481,8 +477,8 @@ namespace octomap {
     //    std::cout << "Recomputing min and max values of OcTree... "<<std::flush;
 
     for (unsigned i = 0; i< 3; i++){
-      maxValue[i] = DBL_MIN;
-      minValue[i] = DBL_MAX;
+      maxValue[i] = -std::numeric_limits<double>::max();
+      minValue[i] = std::numeric_limits<double>::max();
     }
 
     std::list<OcTreeVolume> leafs;
@@ -545,7 +541,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
-    mx = my = mz = DBL_MAX;
+    mx = my = mz = std::numeric_limits<double>::max();
     if (sizeChanged) {
       std::list<OcTreeVolume> leafs;
       this->getLeafNodes(leafs);
@@ -558,6 +554,10 @@ namespace octomap {
         if (y-halfSize < my) my = y-halfSize;
         if (z-halfSize < mz) mz = z-halfSize;
       }
+    } else {
+      mx = minValue[0];
+      my = minValue[1];
+      mz = minValue[2];
     }
   }
 
@@ -572,7 +572,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
-    mx = my = mz = DBL_MIN;
+    mx = my = mz = -std::numeric_limits<double>::max();
     if (sizeChanged) {
       std::list<OcTreeVolume> leafs;
       this->getLeafNodes(leafs);
@@ -585,6 +585,10 @@ namespace octomap {
         if (y+halfSize > my) my = y+halfSize;
         if (z+halfSize > mz) mz = z+halfSize;
       }
+    } else {
+      mx = maxValue[0];
+      my = maxValue[1];
+      mz = maxValue[2];
     }
  }
 

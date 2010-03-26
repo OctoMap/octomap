@@ -95,8 +95,6 @@ signals:
   virtual void postDraw();
   virtual QString helpString() const;
 
-  void heightMapColor(double height, GLfloat* glArrayPos) const;
-
   qglviewer::Quaternion poseToQGLQuaternion(const octomath::Pose6D& pose);
 
   std::vector<SceneObject*> m_sceneObjects;

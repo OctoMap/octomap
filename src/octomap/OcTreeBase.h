@@ -28,6 +28,9 @@
 */
 
 #include <list>
+#include <limits>
+#include <math.h>
+#include <cassert>
 
 #include "octomap_types.h"
 #include "ScanGraph.h"

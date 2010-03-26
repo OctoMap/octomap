@@ -38,6 +38,8 @@ namespace octomap {
     void clear();
     void draw() const;
     void setOcTree(const octomap::OcTree &octree);
+    /// sets alpha level for occupied cells
+    void setAlphaOccupied(double alpha);
 
   protected:
     void clearOcTree();
@@ -60,7 +62,6 @@ namespace octomap {
     void generateCubes(const std::list<octomap::OcTreeVolume>& points,
         GLfloat** gl_array, GLfloat* gl_color_array = NULL);
     void initOctreeGridVis();
-    void heightMapColor(double height, GLfloat* glArrayPos) const;
 
     /**
      * Add voxels of OcTree to viewer, adjusts view and bounding box to contain all points
@@ -102,6 +103,7 @@ namespace octomap {
     bool m_octree_grid_vis_initialized;
     bool m_octree_set;
     unsigned int m_max_tree_depth;
+    double m_alphaOccupied;
 
   public: // public getters and setters
     void enableOcTree(bool enabled = true);

@@ -294,6 +294,7 @@ void ViewerWidget::draw(){
   // default bg color (printout mode overrides):
  // glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  // TODO: change glClearColor here (and only here) for printout mode!
 
   glEnable(GL_LIGHTING);
   if (m_printoutMode){

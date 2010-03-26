@@ -50,16 +50,18 @@ namespace octomap{
 
     // Settings panel at the right side
     ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
-    QDockWidget* settingsDock = new QDockWidget("Settings panel", this);
+    QDockWidget* settingsDock = new QDockWidget("Octree / Scan graph settings", this);
     settingsDock->setWidget(settingsPanel);
     this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
     ui.menuShow->addAction(settingsDock->toggleViewAction());
 
     // Camera settings panel at the right side
     ViewerSettingsPanelCamera* settingsCameraPanel = new ViewerSettingsPanelCamera(this);
-    QDockWidget *settingsCameraDock = new QDockWidget("Camera settings panel", this);
+    QDockWidget *settingsCameraDock = new QDockWidget("Camera settings", this);
     settingsCameraDock->setWidget(settingsCameraPanel);
     this->addDockWidget(Qt::RightDockWidgetArea, settingsCameraDock);
+    this->tabifyDockWidget(settingsDock, settingsCameraDock);
+    settingsDock->raise();
     ui.menuShow->addAction(settingsCameraDock->toggleViewAction());
 
     // status bar
@@ -696,24 +698,28 @@ void ViewerGui::on_actionExpand_tree_triggered(){
 void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
   if(m_octreeDrawer) {
     m_octreeDrawer->enableOcTreeCells(enabled);
+    m_glwidget->updateGL();
   }
 }
 
 void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
   if(m_octreeDrawer) {
     m_octreeDrawer->enableOcTree(enabled);
+    m_glwidget->updateGL();
   }
 }
 
 void ViewerGui::on_actionFree_toggled(bool enabled) {
   if(m_octreeDrawer) {
     m_octreeDrawer->enableFreespace(enabled);
+    m_glwidget->updateGL();
   }
 }
 
 void ViewerGui::on_actionChanged_free_only_toggled(bool enabled) {
   if(m_octreeDrawer) {
     m_octreeDrawer->enableFreespaceDeltaOnly(enabled);
+    m_glwidget->updateGL();
   }
 }
 

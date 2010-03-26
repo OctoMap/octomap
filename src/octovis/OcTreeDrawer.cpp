@@ -31,7 +31,7 @@ namespace octomap {
 OcTreeDrawer::OcTreeDrawer() : SceneObject(),
   octree_occupied_cells_vertex_size(0), octree_freespace_cells_vertex_size(0),
   octree_occupied_delta_cells_vertex_size(0), octree_freespace_delta_cells_vertex_size(0),
-  octree_freespace_changed_cells_vertex_size(0), octree_grid_vertex_size(0)
+  octree_freespace_changed_cells_vertex_size(0), octree_grid_vertex_size(0), m_alphaOccupied(0.8)
 {
   m_octree_grid_vis_initialized = false;
   m_drawOcTreeCells = true;
@@ -41,6 +41,10 @@ OcTreeDrawer::OcTreeDrawer() : SceneObject(),
 }
 
 OcTreeDrawer::~OcTreeDrawer() {
+}
+
+void OcTreeDrawer::setAlphaOccupied(double alpha){
+  m_alphaOccupied = alpha;
 }
 
 void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
@@ -203,6 +207,8 @@ void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
       // color for 4 vertices (same height)
       for (int k= 0; k < 4; ++k) {
         SceneObject::heightMapColor(z, gl_color_array + colorIdx);
+        // set Alpha value:
+        gl_color_array[colorIdx+3] = m_alphaOccupied;
         colorIdx +=4;
       }
     }
@@ -484,7 +490,6 @@ void OcTreeDrawer::drawOctreeCells() const {
   if (m_printoutMode) {
     if (!m_draw_freespace) { // gray on white background
       glColor3f(0.5f, 0.5f, 0.5f);
-      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else {
       glColor3f(0.1f, 0.1f, 0.1f);
@@ -493,14 +498,14 @@ void OcTreeDrawer::drawOctreeCells() const {
 
   // draw binary occupied cells
   if (octree_occupied_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, ALPHA_OCCUPIED);
+    if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
     if (m_draw_freespaceDeltaOnly) glColor4f(0.2, 0.7, 1.0, 1.0);
     drawCubes(octree_occupied_cells_vertex_array, octree_occupied_cells_vertex_size, octree_occupied_cells_color_array);
   }
 
   // draw delta occupied cells
   if (octree_occupied_delta_cells_vertex_size != 0) {
-    if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, ALPHA_OCCUPIED);
+    if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
     drawCubes(octree_occupied_delta_cells_vertex_array, octree_occupied_delta_cells_vertex_size, octree_occupied_delta_cells_color_array);
   }
 
@@ -512,7 +517,6 @@ void OcTreeDrawer::drawFreespace() const {
   if (m_printoutMode) {
     if (!m_drawOcTreeCells) { // gray on white background
       glColor3f(0.5f, 0.5f, 0.5f);
-      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else {
       glColor3f(0.9f, 0.9f, 0.9f);
@@ -550,7 +554,6 @@ void OcTreeDrawer::drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
   if (m_heightColorMode && cubeColorArray != NULL){
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4, GL_FLOAT, 0, cubeColorArray);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   // top surfaces:
