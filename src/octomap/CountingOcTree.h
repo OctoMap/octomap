@@ -48,18 +48,15 @@ namespace octomap {
 
     CountingOcTreeNode();
     ~CountingOcTreeNode();
-
-    virtual OcTreeDataNode<unsigned int>* newNode() const;
+    bool createChild(unsigned int i);
 
     unsigned int getCount() const { return getValue(); }
     void increaseCount() { value++; }
     void setCount(unsigned c) {this->setValue(c); }
-    void setChild(unsigned int i, CountingOcTreeNode* child);
-
 
 
     // overloaded:
-    virtual void expandNode();
+    void expandNode();
 
 
 
@@ -84,7 +81,6 @@ namespace octomap {
   public:
 
     CountingOcTree(double resolution);
-    virtual ~CountingOcTree();
 
     virtual CountingOcTreeNode* updateNode(const point3d& value);
 

@@ -48,7 +48,10 @@ namespace octomap {
 
     ScanNode (Pointcloud* _scan, pose6d _pose, unsigned int _id)
       : scan(_scan), pose(_pose), id(_id) {}
-    ScanNode () {}
+    ScanNode ()
+      : scan(NULL) {}
+
+    ~ScanNode();
 
     bool operator == (const ScanNode& other) {
       return (id == other.id);

@@ -104,7 +104,10 @@ qglviewer::Quaternion ViewerWidget::poseToQGLQuaternion(const octomath::Pose6D& 
 	// Compute viewing direction and use code from libqglviewer's "look at" function
 	octomath::Vector3 dir = pose.rot().rotate(octomath::Vector3(1.,0.,0.));
 	qglviewer::Vec direction(dir.x(), dir.y(), dir.z());
-	qglviewer::Vec xAxis = direction ^ camera()->upVector();
+	//qglviewer::Vec xAxis = direction ^ camera()->upVector();
+	// useing 0, 0, 1 as upvector instead:
+	qglviewer::Vec xAxis = direction ^ qglviewer::Vec(0.0, 0.0, 1.0);
+
 	qglviewer::Quaternion q;
 	q.setFromRotatedBasis(xAxis, xAxis^direction, -direction);
 	return q;
@@ -114,6 +117,7 @@ void ViewerWidget::setCamPosition(double x, double y, double z, double lookX, do
   this->camera()->setOrientation(-M_PI/2., M_PI/2.);
   camera()->setPosition(qglviewer::Vec(x, y, z));
   camera()->lookAt(qglviewer::Vec(lookX, lookY, lookZ));
+  camera()->setUpVector(qglviewer::Vec(0.0, 0.0, 1.0));
   updateGL();
 }
 

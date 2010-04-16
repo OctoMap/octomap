@@ -57,17 +57,12 @@ namespace octomap {
   // ============================================================
 
   template <typename T>
-  OcTreeDataNode<T>* OcTreeDataNode<T>::newNode() const{
-    return new OcTreeDataNode<T>();
-  }
-
-  template <typename T>
   bool OcTreeDataNode<T>::createChild(unsigned int i) {
     if (itsChildren == NULL) {
       allocChildren();
     }
     assert (itsChildren[i] == NULL);
-    itsChildren[i] = newNode();
+    itsChildren[i] = new OcTreeDataNode<T>();
     return true;
   }
 
@@ -119,7 +114,7 @@ namespace octomap {
     for (unsigned int i = 1; i<8; i++) {
       if (!childExists(i)) return false;
       else if (getChild(i)->hasChildren()) return false;
-      else if (getChild(i)->getValue() != childValue) return false;
+      else if (! (getChild(i)->getValue() == childValue)) return false;
     }
     return true;
   }

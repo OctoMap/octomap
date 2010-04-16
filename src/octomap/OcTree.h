@@ -59,8 +59,6 @@ namespace octomap {
      */
     OcTree(std::string _filename);
 
-    virtual ~OcTree();
-
 
     /**
      * Insert a 3d scan (given as a ScanNode) into the tree.

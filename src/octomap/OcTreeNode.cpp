@@ -36,7 +36,7 @@ namespace octomap {
 
 
   OcTreeNode::OcTreeNode()
-    : OccupancyOcTreeNode<float>(0.0)
+    : OcTreeDataNode<float>(0.0)
   {
   }
 
@@ -44,9 +44,6 @@ namespace octomap {
 
   }
 
-  OcTreeDataNode<float>* OcTreeNode::newNode() const{
-    return new OcTreeNode();
-  }
 
   OcTreeNode* OcTreeNode::getChild(unsigned i){
     return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
@@ -54,6 +51,18 @@ namespace octomap {
 
   const OcTreeNode* OcTreeNode::getChild(unsigned i) const{
     return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
+  }
+
+
+  // TODO: Use Curiously Recurring Template Pattern instead of copying full function
+  // (same for getChild)
+  bool OcTreeNode::createChild(unsigned int i) {
+    if (itsChildren == NULL) {
+      allocChildren();
+    }
+    assert (itsChildren[i] == NULL);
+    itsChildren[i] = new OcTreeNode();
+    return true;
   }
 
 

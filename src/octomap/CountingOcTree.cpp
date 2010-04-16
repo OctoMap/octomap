@@ -41,10 +41,6 @@ namespace octomap {
 
   }
 
-  OcTreeDataNode<unsigned int>* CountingOcTreeNode::newNode() const{
-    return new CountingOcTreeNode();
-  }
-
   void CountingOcTreeNode::expandNode(){
     assert(!hasChildren());
 
@@ -56,13 +52,14 @@ namespace octomap {
     }
   }
 
-
-    //! set i-th child
-  void CountingOcTreeNode::setChild(unsigned int i, CountingOcTreeNode* child) {
-    assert(i < 8);
-    itsChildren[i] = child;
+  bool CountingOcTreeNode::createChild(unsigned int i) {
+    if (itsChildren == NULL) {
+      allocChildren();
+    }
+    assert (itsChildren[i] == NULL);
+    itsChildren[i] = new CountingOcTreeNode();
+    return true;
   }
-
 
 
   /// implementation of CountingOcTree  --------------------------------------
@@ -74,9 +71,6 @@ namespace octomap {
     tree_size++;
   }
 
-  CountingOcTree::~CountingOcTree(){
-    delete itsRoot;
-  }
 
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 

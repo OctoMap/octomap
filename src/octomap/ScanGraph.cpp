@@ -35,6 +35,13 @@
 namespace octomap {
 
 
+  ScanNode::~ScanNode(){
+    if (scan != NULL){
+      delete scan;
+      scan = NULL;
+    }
+  }
+
   std::ostream& ScanNode::writeBinary(std::ostream &s) const {
 
     // file structure:    pointcloud | pose | id

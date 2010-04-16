@@ -25,6 +25,7 @@
 */
 
 #include "octomap.h"
+#include "OcTreeFileIO.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -70,6 +71,9 @@ int main(int argc, char** argv) {
 
   if (graphFilename == "" || treeFilename == "")
     printUsage(argv[0]);
+
+
+  std::string treeFilenameOT = treeFilename + ".ot";
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
   graph->readBinary(graphFilename);
@@ -77,11 +81,12 @@ int main(int argc, char** argv) {
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
 
+
   unsigned numScans = graph->size();
   unsigned currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
     cout << "("<<currentScan << "/" << numScans << ") " << flush;
-    tree->insertScan(**scan_it, maxrange);
+    tree->insertScan(**scan_it, maxrange, false);
     currentScan++;
   }
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
@@ -89,25 +94,33 @@ int main(int argc, char** argv) {
 
   unsigned numThresholded, numOther;
   tree->calcNumThresholdedNodes(numThresholded, numOther);
+  unsigned int memUsage = tree->memoryUsage();
+  unsigned int memFullGrid = tree->memoryFullGrid();
 
   cout << "\nDone building tree.\n";
   cout << "Tree size: " << tree->size() <<" (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
-  cout << "Memory: " << tree->memoryUsage() << " byte (" << tree->memoryUsage()/(1024.*1024.) << " MB)" << endl;
-  cout << "Full grid: "<< tree->memoryFullGrid() << " byte (" << tree->memoryFullGrid()/(1024.*1024.) << " MB)" << endl;
+  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
+  cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
 
   tree->prune();
   tree->calcNumThresholdedNodes(numThresholded, numOther);
+  memUsage = tree->memoryUsage();
 
   cout << endl;
   cout << "Pruned tree size: " << tree->size() <<" (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
-  cout << "Pruned memory: " << tree->memoryUsage() << " byte (" << tree->memoryUsage()/(1024.*1024.) << " MB)" << endl;
+  cout << "Pruned memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
 
   double x, y, z;
   tree->getMetricSize(x, y, z);
   cout << "size: " << x << " x " << y << " x " << z << endl;
   cout << endl;
 
-  cout << "\nWriting tree file\n===========================\n";
+  cout << "\nWriting tree files\n===========================\n";
+  OcTreeFileIO::write(tree, treeFilenameOT);
+  std::cout << "Full Octree written to "<< treeFilenameOT << std::endl;
   tree->writeBinary(treeFilename);
+  std::cout << "Bonsai tree written to "<< treeFilename << std::endl;
   cout << endl;
+
+  delete tree;
 }

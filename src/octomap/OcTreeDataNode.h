@@ -44,37 +44,30 @@ namespace octomap {
 
     OcTreeDataNode();
     OcTreeDataNode(T initVal);
-    virtual ~OcTreeDataNode();
+    ~OcTreeDataNode();
 
-    /**
-     * Creates a new node of the same type and returns a pointer to it.
-     *
-     * If you derive from this class, you need to overload this function
-     * and create a node of your overloaded type instead
-     */
-    virtual OcTreeDataNode<T>* newNode() const;
 
     // -- children  ----------------------------------
 
 
     /// initialize i-th child, allocate children array if needed
-    virtual bool createChild(unsigned int i);
+    bool createChild(unsigned int i);
 
     /// \return true if the i-th child exists
-    virtual bool childExists(unsigned int i) const;
+    bool childExists(unsigned int i) const;
 
     /// \return a pointer to the i-th child of the node. The child needs to exist.
-    virtual OcTreeDataNode<T>* getChild(unsigned int i);
+    OcTreeDataNode<T>* getChild(unsigned int i);
 
     /// \return a const pointer to the i-th child of the node. The child needs to exist.
-    virtual const OcTreeDataNode<T>* getChild(unsigned int i) const;
+    const OcTreeDataNode<T>* getChild(unsigned int i) const;
 
     /// \return true if the node has at least one child
-    virtual bool hasChildren() const;
+    bool hasChildren() const;
 
     /// A node is collapsible if all children exist, don't have children of their own
     /// and have the same occupancy value
-    virtual bool collapsible() const;
+    bool collapsible() const;
 
     // -- pruning of children  -----------------------
 
@@ -83,7 +76,7 @@ namespace octomap {
      * Prunes a node when it is collapsible
      * @return true if pruning was successful
      */
-    virtual bool pruneNode();
+    bool pruneNode();
 
     /**
      * Expands a node (reverse of pruning): All children are created and
@@ -93,12 +86,12 @@ namespace octomap {
      * leaf at the lowest level)
      *
      */
-    virtual void expandNode();
+    void expandNode();
 
     /// @return value stored in the node
-    virtual T getValue() const{return value;};
+    T getValue() const{return value;};
     /// sets value to be stored in the node
-    virtual void setValue(T v) {value = v;};
+    void setValue(T v) {value = v;};
 
     // file IO:
 
@@ -111,7 +104,7 @@ namespace octomap {
      * @param s
      * @return
      */
-    virtual std::istream& readValue(std::istream &s);
+    std::istream& readValue(std::istream &s);
 
     /**
      * Write node to binary stream (incl float value),
@@ -123,7 +116,7 @@ namespace octomap {
      * @param s
      * @return
      */
-    virtual std::ostream& writeValue(std::ostream &s) const;
+    std::ostream& writeValue(std::ostream &s) const;
 
 
   protected:

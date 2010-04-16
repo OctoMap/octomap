@@ -44,6 +44,7 @@ namespace octomap {
 
   template <class NODE>
   OcTreeBase<NODE>::~OcTreeBase(){
+    delete itsRoot;
   }
 
   template <class NODE>
@@ -513,6 +514,7 @@ namespace octomap {
                            ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
                            ceil(1./resolution * (double) size_z)) *
       sizeof(itsRoot->getValue());
+
   }
 
 

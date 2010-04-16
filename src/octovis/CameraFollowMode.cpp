@@ -58,7 +58,12 @@ void CameraFollowMode::play() {
 		//emit appendCurrentToCameraPath(ROBOT_TRAJECTORY_ID);
 		m_start_frame = m_current_scan;
 		for(unsigned int i = m_start_frame; i <= m_scan_graph->size(); i++) {
-			emit appendToCameraPath(ROBOT_TRAJECTORY_ID, m_scan_graph->getNodeByID(i-1)->pose);
+		  octomap::ScanNode* scanNode = m_scan_graph->getNodeByID(i-1);
+		  if (scanNode)
+		    emit appendToCameraPath(ROBOT_TRAJECTORY_ID, scanNode->pose);
+		  else{
+		    std::cerr << "Error in " << __PRETTY_FUNCTION__<<": invalid node ID "<< i-1 << std::endl;
+		  }
 		}
 		emit playCameraPath(ROBOT_TRAJECTORY_ID, 0);
 	} else {

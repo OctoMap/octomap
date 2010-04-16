@@ -52,10 +52,6 @@ namespace octomap {
     readBinary(_filename);
   }
 
-  OcTree::~OcTree() {
-    delete itsRoot;
-  }
-
 
   void OcTree::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
     if (scan.scan->size()< 1)

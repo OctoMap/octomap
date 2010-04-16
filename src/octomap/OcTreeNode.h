@@ -28,7 +28,7 @@
 */
 
 #include "octomap_types.h"
-#include "OccupancyOcTreeNode.h"
+#include "OcTreeDataNode.h"
 
 namespace octomap {
 
@@ -50,25 +50,24 @@ namespace octomap {
    * createChild, getChild, and getChild const. See OcTreeNodeLabeled for an example.
    *
    */
-  class OcTreeNode : public OccupancyOcTreeNode<float> {
+  class OcTreeNode : public OcTreeDataNode<float> {
 
   public:
 
     OcTreeNode();
-    virtual ~OcTreeNode();
-
-    virtual OcTreeDataNode<float>* newNode() const;
+    ~OcTreeNode();
 
     // overloaded, so that the return type is correct:
-    virtual OcTreeNode* getChild(unsigned int i);
-    virtual const OcTreeNode* getChild(unsigned int i) const;
+    OcTreeNode* getChild(unsigned int i);
+    const OcTreeNode* getChild(unsigned int i) const;
+    bool createChild(unsigned int i);
 
     // -- node occupancy  ----------------------------
 
     /// integrate a measurement (beam ENDED in cell)
-    virtual void integrateHit();
+    void integrateHit();
     /// integrate a measurement (beam PASSED in cell)
-    virtual void integrateMiss();
+    void integrateMiss();
 
     /// \return occupancy probability of node
     double getOccupancy() const;
@@ -79,14 +78,14 @@ namespace octomap {
     void setLogOdds(float l) { value = l; }
 
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
-    virtual bool isOccupied() const;
+    bool isOccupied() const;
 
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
-    virtual bool atThreshold() const;
+    bool atThreshold() const;
 
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
-    virtual void toMaxLikelihood();
+    void toMaxLikelihood();
  
     /**
      * @return mean of all children's occupancy probabilities, in log odds
@@ -99,7 +98,7 @@ namespace octomap {
     double getMaxChildLogOdds() const;
 
     /// update this node's occupancy according to its children's maximum occupancy
-    virtual void updateOccupancyChildren(); 
+    void updateOccupancyChildren();
 
 
 
@@ -116,7 +115,7 @@ namespace octomap {
      * @param s
      * @return
      */
-    virtual std::istream& readBinary(std::istream &s);
+    std::istream& readBinary(std::istream &s);
 
     /**
      * Write node to binary stream (max-likelihood value),
