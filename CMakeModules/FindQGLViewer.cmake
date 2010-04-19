@@ -56,12 +56,19 @@ IF(BUILD_LIB_FROM_SOURCE)
   # build own libQGLViewer
   MESSAGE(STATUS "Trying to build libQGLViewer from source...")
 
+  MESSAGE(STATUS "\t generating Makefile using qmake")
   EXECUTE_PROCESS(
-    COMMAND qmake
-    COMMAND make
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/extern/QGLViewer
+    COMMAND qmake
     OUTPUT_QUIET
-    )
+  )
+
+  MESSAGE(STATUS "\t building library")
+  EXECUTE_PROCESS(
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/extern/QGLViewer
+    COMMAND make
+    OUTPUT_QUIET
+  )
 
   FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLViewer_HOME})
   FIND_PATH(QGLLIB libQGLViewer.so  ${CMAKE_SOURCE_DIR}/extern/QGLViewer)
