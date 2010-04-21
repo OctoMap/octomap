@@ -152,7 +152,7 @@ namespace octomap {
     const_iterator end() const { return nodes.end(); }
 
     unsigned int size() const { return nodes.size(); }
-    unsigned int getNumPoints() const;
+    unsigned int getNumPoints(unsigned int max_id = -1) const;
 
     typedef std::vector<ScanEdge*>::iterator edge_iterator;
     typedef std::vector<ScanEdge*>::const_iterator const_edge_iterator;

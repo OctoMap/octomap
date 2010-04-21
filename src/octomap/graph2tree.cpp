@@ -38,6 +38,7 @@ void printUsage(char* self){
             "OPTIONS:\n-i <InputFile.graph> (required)\n"
             "-o <OutputFile.bt> (required) \n"
             "-m <maxrange> (optional) \n"
+            "-n <max scan no.> (optional) \n"
             "-res <resolution> (default: 0.1 m)\n\n";
 
   std::cerr << "This tool inserts the data of a binary" << std::endl;
@@ -54,6 +55,7 @@ int main(int argc, char** argv) {
   string graphFilename = "";
   string treeFilename = "";
   double maxrange = -1;
+  int max_scan_no = -1;
 
   timeval start; 
   timeval stop; 
@@ -68,6 +70,8 @@ int main(int argc, char** argv) {
       res = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-m"))
       maxrange = atof(argv[++arg]);
+    else if (! strcmp(argv[arg], "-n"))
+      max_scan_no = atoi(argv[++arg]);
     else {
       printUsage(argv[0]);
     }
@@ -81,8 +85,16 @@ int main(int argc, char** argv) {
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
   graph->readBinary(graphFilename);
-  unsigned int num_points_in_graph = graph->getNumPoints();
-  cout << "\n Data points in graph: " << num_points_in_graph << endl;
+  unsigned int num_points_in_graph = 0;
+  if (max_scan_no > 0) {
+    num_points_in_graph = graph->getNumPoints(max_scan_no-1);
+    cout << "\n Data points in graph upto scan " << max_scan_no << ": " << num_points_in_graph << endl;
+  }
+  else {
+    num_points_in_graph = graph->getNumPoints();
+    cout << "\n Data points in graph: " << num_points_in_graph << endl;
+  }
+
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
 
@@ -91,9 +103,12 @@ int main(int argc, char** argv) {
   unsigned int numScans = graph->size();
   unsigned int currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
-    cout << "("<<currentScan << "/" << numScans << ") " << flush;
+    if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
+    else cout << "("<<currentScan << "/" << numScans << ") " << flush;
+
     tree->insertScan(**scan_it, maxrange, false);
     currentScan++;
+    if ((max_scan_no > 0) && (currentScan == (unsigned int) max_scan_no)) break;
   }
   gettimeofday(&stop, NULL);  // stop timer
   
@@ -102,15 +117,19 @@ int main(int argc, char** argv) {
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
   delete graph;
 
-  unsigned int numThresholded, numOther;
-  tree->calcNumThresholdedNodes(numThresholded, numOther);
-  unsigned int memUsage = tree->memoryUsage();
-  unsigned int memFullGrid = tree->memoryFullGrid();
+
 
   cout << "\nDone building tree.\n\n";
   cout << "time to insert scans: " << time_to_insert << " sec" << endl;
   cout << "inserting 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (average)" << endl << endl;  
+
+  unsigned int numThresholded, numOther;
+  tree->calcNumThresholdedNodes(numThresholded, numOther);
+
   cout << "Tree size: " << tree->size() <<" (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
+
+  unsigned int memUsage = tree->memoryUsage();
+  unsigned int memFullGrid = tree->memoryFullGrid();
   cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
 
