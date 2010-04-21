@@ -629,6 +629,14 @@ namespace octomap {
     }
   }
 
+  unsigned int ScanGraph::getNumPoints() const {
+    unsigned int retval = 0;
+    for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
+      retval += (*it)->scan->size();
+    }
+    return retval;
+  }
+
 
 } // end namespace
 

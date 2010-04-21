@@ -28,6 +28,7 @@
 #include "OcTreeFileIO.h"
 #include <string.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 using namespace std;
 using namespace octomap;
@@ -54,6 +55,9 @@ int main(int argc, char** argv) {
   string treeFilename = "";
   double maxrange = -1;
 
+  timeval start; 
+  timeval stop; 
+
   int arg = 0;
   while (++arg < argc) {
     if (! strcmp(argv[arg], "-i"))
@@ -77,27 +81,35 @@ int main(int argc, char** argv) {
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
   graph->readBinary(graphFilename);
-
+  unsigned int num_points_in_graph = graph->getNumPoints();
+  cout << "\n Data points in graph: " << num_points_in_graph << endl;
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
 
 
-  unsigned numScans = graph->size();
-  unsigned currentScan = 1;
+  gettimeofday(&start, NULL);  // start timer
+  unsigned int numScans = graph->size();
+  unsigned int currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
     cout << "("<<currentScan << "/" << numScans << ") " << flush;
     tree->insertScan(**scan_it, maxrange, false);
     currentScan++;
   }
+  gettimeofday(&stop, NULL);  // stop timer
+  
+  double time_to_insert = (stop.tv_sec - start.tv_sec) + 1.0e-6 *(stop.tv_usec - start.tv_usec);
+
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
   delete graph;
 
-  unsigned numThresholded, numOther;
+  unsigned int numThresholded, numOther;
   tree->calcNumThresholdedNodes(numThresholded, numOther);
   unsigned int memUsage = tree->memoryUsage();
   unsigned int memFullGrid = tree->memoryFullGrid();
 
-  cout << "\nDone building tree.\n";
+  cout << "\nDone building tree.\n\n";
+  cout << "time to insert scans: " << time_to_insert << " sec" << endl;
+  cout << "inserting 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (average)" << endl << endl;  
   cout << "Tree size: " << tree->size() <<" (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
   cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
