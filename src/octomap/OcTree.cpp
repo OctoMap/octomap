@@ -250,7 +250,7 @@ namespace octomap {
       p = scan_pose.transform(**point_it);
 
       bool is_maxrange = false;
-      if ( (maxrange > 0) && ((p - origin).norm2() > maxrange) ) is_maxrange = true;
+      if ( (maxrange > 0.0) && ((p - origin).norm2() > maxrange) ) is_maxrange = true;
 
       if (!is_maxrange) {
         // free cells

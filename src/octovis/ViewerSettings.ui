@@ -29,17 +29,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Octree resolution (m)</string>
-       </property>
-       <property name="buddy">
-        <cstring>resolution</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="resolution">
        <property name="singleStep">
         <double>0.010000000000000</double>
@@ -62,6 +52,26 @@
         </property>
        </item>
       </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Octree resolution (m)</string>
+       </property>
+       <property name="buddy">
+        <cstring>resolution</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Max. laser range (m) 0: no limit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="maxRange"/>
      </item>
     </layout>
    </item>

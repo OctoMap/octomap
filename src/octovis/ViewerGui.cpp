@@ -37,8 +37,9 @@ namespace octomap{
     : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
       m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
       m_octreeDrawer(NULL), m_cameraFollowMode(NULL),
-      m_octreeResolution(0.1), m_occupancyThresh(0.5), 
+      m_octreeResolution(0.1), m_laserMaxRange(0.0), m_occupancyThresh(0.5),
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
+
       m_cameraStored(false), m_filename("") {
 
     ui.setupUi(this);
@@ -176,7 +177,7 @@ void ViewerGui::generateOctree() {
     unsigned numScans = m_scanGraph->size();
     unsigned currentScan = 1;
     for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
-      m_ocTree->insertScan(**it);
+      m_ocTree->insertScan(**it, m_laserMaxRange);
       std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
       currentScan++;
     }
@@ -221,7 +222,7 @@ void ViewerGui::addNextScan(){
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (m_nextScanToAdd != m_scanGraph->end()){
-      m_ocTree->insertScan(**m_nextScanToAdd);
+      m_ocTree->insertScan(**m_nextScanToAdd, m_laserMaxRange);
       m_nextScanToAdd++;
     }
 
@@ -491,18 +492,22 @@ void ViewerGui::on_actionSettings_triggered(){
   ViewerSettings dialog(this);
   dialog.setResolution(m_octreeResolution);
   dialog.setLaserType(m_laserType);
+  dialog.setMaxRange(m_laserMaxRange);
 
 
   if (dialog.exec()){
 
     double oldResolution = m_octreeResolution;
+    //double oldLaserMaxRange = m_laserMaxRange;
+    // TODO: detect change in maxRange => rebuild tree?
     double oldType = m_laserType;
 
     m_octreeResolution = dialog.getResolution();
     m_laserType = dialog.getLaserType();
+    m_laserMaxRange = dialog.getMaxRange();
   
     // apply new settings
-    bool resolutionChanged = (fabs (oldResolution - m_octreeResolution) > 1e-5);
+    bool resolutionChanged = (fabs(oldResolution - m_octreeResolution) > 1e-5);
 
     if (resolutionChanged)
       emit changeResolution(m_octreeResolution);

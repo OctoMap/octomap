@@ -160,6 +160,7 @@ class ViewerGui : public QMainWindow {
   OcTreeDrawer* m_octreeDrawer;
   CameraFollowMode* m_cameraFollowMode;
   double m_octreeResolution;
+  double m_laserMaxRange;
   double m_occupancyThresh; // FIXME: This is not really used at the moment...
   unsigned int m_max_tree_depth;
   unsigned int m_laserType; // SICK or Hokuyo /URG
