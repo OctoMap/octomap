@@ -33,3 +33,17 @@ TARGET_LINK_LIBRARIES(simple octomap)
 ADD_EXECUTABLE(labeled_demo labeled_demo.cpp)
 TARGET_LINK_LIBRARIES(labeled_demo octomap)
 
+# installation:
+# store all header files to install:
+file(GLOB octomap_HDRS "*.[h|hxx|hpp]")
+
+install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
+
+install(TARGETS octomap 
+	read_pointcloud
+	graph2tree
+	log2graph
+	binvox2bt
+	${INSTALL_TARGETS_DEFAULT_ARGS}
+)
+

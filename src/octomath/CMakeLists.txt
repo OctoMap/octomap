@@ -7,7 +7,14 @@ SET (octomath_SRCS
 
 ADD_LIBRARY( octomath ${octomath_SRCS})
 
-TARGET_LINK_LIBRARIES(
-  octomath
-)
+# no more libs to link from here:
+#TARGET_LINK_LIBRARIES(
+#  octomath
+#)
 
+# store all header files to install:
+file(GLOB octomath_HDRS "*.h")
+
+install(FILES ${octomath_HDRS}	DESTINATION include/octomath)
+	
+install(TARGETS octomath ${INSTALL_TARGETS_DEFAULT_ARGS})

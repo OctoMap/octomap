@@ -1,6 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT( octomap )
 
+# version (e.g. for packaging)
+set(V_MAJOR 0)
+set(V_MINOR 42)
+set(V_PATCH 0)
+
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -36,8 +41,26 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}
 )
 
+
+# Installation
+
+# test dir for install
+# IF(NOT CMAKE_INSTALL_PREFIX)
+# 	set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/install/) 
+# ENDIF(NOT CMAKE_INSTALL_PREFIX)
+
+set(INSTALL_TARGETS_DEFAULT_ARGS
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+)
+
 ADD_SUBDIRECTORY( octomath )
 ADD_SUBDIRECTORY( octomap )
+
+# installation for external targets:
+install(PROGRAMS "extern/binvox/binvox" DESTINATION bin)
+
 
 # Documentation 
 FIND_PACKAGE(Doxygen)
@@ -79,13 +102,28 @@ IF(BUILD_VIEWER)
   ADD_SUBDIRECTORY( octovis ) 
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be build.")
-    MESSAGE ( "See README.txt for further information.\n")
+    MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
 ENDIF()
+
+# Package building stuff - Experimental!
+SET(CPACK_PACKAGE_VERSION_MAJOR "${V_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${V_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${V_PATCH}")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${V_MAJOR}.${V_MINOR}")
+SET(CPACK_PACKAGE_CONTACT "K.M. Wurm and A. Hornung")
+SET(CPACK_PACKAGE_VENDOR "University of Freiburg")
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_SOURCE_GENERATOR "TGZ")
+
+INCLUDE(CPack)
 
 
 MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")
+MESSAGE (STATUS "Install octomap using: make install (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
 MESSAGE (STATUS "")
+
+
 
 

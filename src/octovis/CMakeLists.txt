@@ -76,3 +76,15 @@ target_link_libraries(octovis
 	octomap 
 	octovis_library
 )
+
+
+#installation:
+# store all header files to install:
+file(GLOB octovis_HDRS "*.h")
+
+install(FILES ${octovis_HDRS}	DESTINATION include/octovis)
+
+install(TARGETS octovis
+	octovis_library
+	${INSTALL_TARGETS_DEFAULT_ARGS}
+)
