@@ -35,7 +35,7 @@ TARGET_LINK_LIBRARIES(labeled_demo octomap)
 
 # installation:
 # store all header files to install:
-file(GLOB octomap_HDRS "*.[h|hxx|hpp]")
+file(GLOB octomap_HDRS *.h *.hxx *.hpp)
 
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
 

@@ -80,7 +80,7 @@ target_link_libraries(octovis
 
 #installation:
 # store all header files to install:
-file(GLOB octovis_HDRS "*.h")
+file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
 
 install(FILES ${octovis_HDRS}	DESTINATION include/octovis)
 
