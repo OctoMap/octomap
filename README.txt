@@ -26,9 +26,9 @@ REQUIREMENTS
 
        sudo apt-get install cmake doxygen libqt4-dev libqt4-opengl-dev
        
-       If you are running Ubuntu 9.10 you can use the supplied
-       qglviewer, otherwise it will be compiled from source. 
-       To install it:
+If you are running Ubuntu 9.10 or later, you can use its supplied
+version of qglviewer, otherwise it will be compiled from source. 
+To install it:
 
        sudo apt-get install libqglviewer-qt4-dev
 
@@ -51,6 +51,10 @@ A debug configuration can be created by running:
 	cmake -DCMAKE_BUILD_TYPE=Debug ../src
 
 in "build" or a different directory (e.g. "build-debug").
+
+
+You can install the library by running "make install", though it 
+is not necessary. Be sure to adjust CMAKE_INSTALL_PREFIX before.
 
 
 DOCUMENTATION
@@ -82,8 +86,14 @@ ROS-INTEGRATION
 
 Octomap can directly be used in any node running in the Robot
 Operating System (ROS, http://www.ros.org). A virtual ROS package
-is included in the subfolder "ros". Just append this path to your
-ROS_PACKAGE_PATH environment variable.
+and more code is available in Freiburg's ROS repository at:
+
+http://code.google.com/p/alufr-ros-pkg/
+
+The "octomap" package there will provide ROS integration by 
+downloading and compiling the latest version from SVN. If you
+plan to use octomap mainly in ROS, just install the octomap_mapping
+stack from there.
 
 
 ECLIPSE PROJECT FILES
