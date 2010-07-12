@@ -63,6 +63,7 @@ INCLUDE_DIRECTORIES(
 # Library target 
 add_library(octovis_library ${viewerlib_SRCS})
 target_link_libraries(octovis_library)
+set_target_properties(octovis_library PROPERTIES COMPILE_FLAGS "-fPIC")	
 set_target_properties(octovis_library PROPERTIES OUTPUT_NAME octovis)
 
 # Now add these generated files to the ADD_EXECUTABLE step

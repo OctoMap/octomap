@@ -89,7 +89,8 @@ namespace octomap {
 
     /// binary file format: treetype | resolution | num nodes | [binary nodes]
 
-    /// Reads an OcTree from an input stream. Existing nodes are deleted.
+    /// Reads an OcTree from an input stream.
+    /// Existing nodes of the tree are deleted before the tree is read.
     std::istream& readBinary(std::istream &s);
 
     /// Writes OcTree to a binary stream.
@@ -102,7 +103,8 @@ namespace octomap {
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
 
-    /// Reads OcTree from a binary file. Existing nodes are deleted.
+    /// Reads OcTree from a binary file.
+    /// Existing nodes of the tree are deleted before the tree is read.
     void readBinary(const std::string& filename);
 
     /// Writes OcTree to a binary file using writeBinary().

@@ -46,10 +46,19 @@ namespace octomap {
   class OcTreeFileIO {
   public:
     template <class NODE>
-    static bool write(OcTreeBase<NODE>* tree, const std::string& filename);
+    static bool write(const OcTreeBase<NODE>* tree, const std::string& filename);
+
 
     template <class NODE>
-    static std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
+    static std::ostream& write(const OcTreeBase<NODE>* tree, std::ostream& s);
+
+
+    // TODO: non-const version: prune tree first before writing?
+//    template <class NODE>
+//    static bool write(OcTreeBase<NODE>* tree, const std::string& filename);
+//
+//    template <class NODE>
+//    static std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
 
     template <class NODE>
     static OcTreeBase<NODE>* read(const std::string& filename);
@@ -64,7 +73,7 @@ namespace octomap {
      * @return unique (unsigned) ID of OcTree class
      */
     template <class NODE>
-    static unsigned getTreeID(OcTreeBase<NODE>* tree);
+    static unsigned getTreeID(const OcTreeBase<NODE>* tree);
 
     /**
      * Creates a certain OcTree (factory pattern)

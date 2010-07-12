@@ -28,7 +28,7 @@
 namespace octomap {
 
   template <class NODE>
-  bool OcTreeFileIO::write(OcTreeBase<NODE>* tree, const std::string& filename){
+  bool OcTreeFileIO::write(const OcTreeBase<NODE>* tree, const std::string& filename){
     std::ofstream file(filename.c_str(), std::ios_base::out | std::ios_base::binary);
 
     if (!file.is_open()){
@@ -44,14 +44,14 @@ namespace octomap {
   }
 
   template <class NODE>
-  std::ostream& OcTreeFileIO::write(OcTreeBase<NODE>* tree, std::ostream& s){
+  std::ostream& OcTreeFileIO::write(const OcTreeBase<NODE>* tree, std::ostream& s){
     // write header:
     s << "# Octomap OcTree file\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
     s << "id " << getTreeID(tree) << std::endl;
     s << "size "<< tree->size() << std::endl;
     s << "res " << tree->getResolution() << std::endl;
     s << "data" << std::endl;
-    tree->write(s);
+    tree->writeConst(s);
 
    return s;
   }
@@ -61,7 +61,7 @@ namespace octomap {
     std::ifstream file(filename.c_str(), std::ios_base::in |std::ios_base::binary);
 
     if (!file.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
       return NULL;
     } else {
       // TODO: check is_good of finished stream, warn?
@@ -169,11 +169,11 @@ namespace octomap {
   }
 
   template <class NODE>
-  unsigned OcTreeFileIO::getTreeID(OcTreeBase<NODE>* tree){
+  unsigned OcTreeFileIO::getTreeID(const OcTreeBase<NODE>* tree){
     // check actual type of tree:
-    if (dynamic_cast<OcTree*>(tree)){
+    if (dynamic_cast<const OcTree*>(tree)){
       return 1;
-    } else if (dynamic_cast<OcTreeBase<OcTreeDataNode<float> >*>(tree)){
+    } else if (dynamic_cast<const OcTreeBase<OcTreeDataNode<float> >*>(tree)){
       return 2;
     } else {
       std::cerr << __PRETTY_FUNCTION__ << ": Unknown Octree type "<< typeid(tree).name()<<".\n";

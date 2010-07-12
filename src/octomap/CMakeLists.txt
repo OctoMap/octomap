@@ -8,8 +8,8 @@ SET (octomap_SRCS
   OcTreeLabeled.cpp
   )
 
-
 ADD_LIBRARY( octomap ${octomap_SRCS})
+set_target_properties(octomap PROPERTIES COMPILE_FLAGS "-fPIC")	
 
 TARGET_LINK_LIBRARIES(
   octomap octomath
