@@ -2,10 +2,14 @@
 Octomap
 - A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
-Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2010.
 http://octomap.sourceforge.net/
 
-License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+License: 
+  * New BSD License (see LICENSE.txt)
+  * The viewer "octovis" and all related libraries are licensed under the GPL 
+    (see LICENSE.txt in "src/octovis").
+
 
 
 REQUIREMENTS

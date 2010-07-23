@@ -527,7 +527,8 @@ namespace octomap {
 
     // file structure:    n | edge_1 | ... | edge_n
 
-    fprintf(stderr, "writing %d edges to ASCII file...\n", this->edges.size());
+    std::cout << "Writing " << this->edges.size() << " edges to ASCII file...\n";
+
     s <<  " " << this->edges.size();
     s << std::endl;
 
@@ -535,7 +536,7 @@ namespace octomap {
       (*it)->writeASCII(s);
     }
     s << std::endl;
-    fprintf(stderr, "done.\n");
+    std::cout << "Done.\n";
 
     return s;
   }
