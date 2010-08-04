@@ -120,7 +120,8 @@ INCLUDE(CPack)
 
 MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")
-MESSAGE (STATUS "Install octomap using: make install (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
+MESSAGE (STATUS "Install octomap using: make install")
+MESSAGE (    "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
 MESSAGE (STATUS "")
 
