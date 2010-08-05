@@ -6,13 +6,13 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2010.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2010, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -95,6 +95,13 @@ namespace octomap {
 
     /// Search for a 3d point in the tree, using a point3d (see above)
     NODE* search (const point3d& value) const;
+
+    // TODO make protected
+    /** 
+     *  search node given a set of addressing keys
+     *  @return pointer to node if found, NULL otherwise
+     */
+    NODE* searchKey (OcTreeKey& key) const;
 
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values
@@ -187,12 +194,6 @@ namespace octomap {
     bool genKey(const point3d& point, OcTreeKey& key) const;
 
 
-    /** 
-     *  search node given a set of addressing keys
-     *  @return pointer to node if found, NULL otherwise
-     */
-    NODE* searchKey (OcTreeKey& key) const;
-
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key
     bool genCoordFromKey(unsigned short int& key, double& coord) const;
 
@@ -204,15 +205,15 @@ namespace octomap {
 
     /// recursive call of expand()
     void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
-
+    
     /// Recursive call for getLeafNodes()
     void getLeafNodesRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
-          NODE* node, unsigned int depth, const point3d& parent_center) const;
+                            NODE* node, unsigned int depth, const point3d& parent_center) const;
 
     /// Recursive call for getVoxels()
     void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
                          NODE* node, unsigned int depth, const point3d& parent_center) const;
-
+    
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
 

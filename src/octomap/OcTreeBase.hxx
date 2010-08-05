@@ -86,12 +86,9 @@ namespace octomap {
   template <class NODE>
   bool OcTreeBase<NODE>::genKey(const point3d& point, OcTreeKey& key) const{
 
-    if (
-        ( !genKeyValue( point(0), key.k0 ) ) || 
-        ( !genKeyValue( point(1), key.k1 ) ) ||
-        ( !genKeyValue( point(2), key.k2 ) )
-        ) return false;
-
+    for (unsigned int i=0;i<3;i++) {
+      if (!genKeyValue( point(i), key[i])) return false;
+    }
     return true;
   }
 
@@ -111,9 +108,9 @@ namespace octomap {
   unsigned int OcTreeBase<NODE>::genPos(OcTreeKey& key, int i) const {
 
     unsigned int retval = 0;
-    if (key.k0 & (1 << i)) retval += 1;
-    if (key.k1 & (1 << i)) retval += 2;
-    if (key.k2 & (1 << i)) retval += 4;
+    if (key.k[0] & (1 << i)) retval += 1;
+    if (key.k[1] & (1 << i)) retval += 2;
+    if (key.k[2] & (1 << i)) retval += 4;
     return retval;
   }
 

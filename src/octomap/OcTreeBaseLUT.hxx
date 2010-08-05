@@ -59,6 +59,12 @@ namespace octomap {
 
 
   template <class NODE>
+  void OcTreeBaseLUT<NODE>::discardAncestry () {
+    ancestry->at(0) = NULL;
+  }
+
+
+  template <class NODE>
   NODE* OcTreeBaseLUT<NODE>::getLUTNeighbor (const point3d& node_coord, OcTreeLUT::NeighborDirection dir) const {
 
     OcTreeKey start_key;
@@ -79,17 +85,17 @@ namespace octomap {
     
     unsigned short int _xor[3];
 
-    _xor[0] = key1.k0^key2.k0;
-    _xor[1] = key1.k1^key2.k1;
-    _xor[2] = key1.k2^key2.k2;
+    for (unsigned int i=0;i<3;i++) {
+      _xor[i] = key1[i]^key2[i];
+    }
 
     unsigned int i(0);
 
-    while (    !( _xor[0] & (32768 >> i) ) 
-            && !( _xor[1] & (32768 >> i) )
-            && !( _xor[2] & (32768 >> i) )
-            &&  (i < this->tree_depth)
-          ) {
+    while (!( _xor[0] & (32768 >> i) ) 
+           && !( _xor[1] & (32768 >> i) )
+           && !( _xor[2] & (32768 >> i) )
+           &&  (i < this->tree_depth)
+           ) {
       i++;
     }
     // 15 >= i >= 0
@@ -99,12 +105,12 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump (point3d& coordinate) {
+  NODE* OcTreeBaseLUT<NODE>::jump (point3d& point) {
 
     OcTreeKey key;
 
-    if ( !OcTreeBase<NODE>::genKey(coordinate, key)) {
-      std::cerr << "Error in search: ["<< coordinate <<"] is out of OcTree bounds!\n";
+    if ( !OcTreeBase<NODE>::genKey(point, key)) {
+      std::cerr << "Error in search: ["<< point <<"] is out of OcTree bounds!\n";
       return NULL;
     }
     return this->jump(key);      
@@ -149,7 +155,7 @@ namespace octomap {
           }
           else {
             // it is not, search failed
-            ancestry->at(0) = NULL; // reset ancestry
+            this->discardAncestry();  // do we need to discard here?
             return NULL;
           }
         }
@@ -168,7 +174,7 @@ namespace octomap {
 
       if (!curNode) {
         std::cout << "error while jumping, branching node does not exist." << std::endl;
-        ancestry->at(0) = NULL;
+        this->discardAncestry();
         return jump(key);
       }
       
@@ -191,7 +197,7 @@ namespace octomap {
           }
           else {
             // it is not, search failed
-            ancestry->at(0) = NULL; // reset ancestry
+            this->discardAncestry();
             return NULL;
           }
         }
@@ -202,6 +208,100 @@ namespace octomap {
            
     } // end ancestry jump
   }
+
+
+  template <class NODE>
+  void OcTreeBaseLUT<NODE>::prune() {
+    OcTreeBase<NODE>::prune();
+    this->discardAncestry();
+  }
+  
+
+  template <class NODE>
+  bool OcTreeBaseLUT<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
+                                          std::vector<OcTreeKey>& ray) const {
+
+    // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
+    // basically: DDA in 3D
+
+    ray.clear();
+
+    OcTreeKey key_origin, key_end;
+    if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
+         !OcTreeBase<NODE>::genKey(end, key_end) ) {
+      std::cerr << "WARNING: endpoint out of bounds during ray casting" << std::endl;
+      return false;
+    }
+
+    ray.push_back(key_origin);
+    if (key_origin == key_end) return true; // same tree cell, we're done.
+
+
+    // Initialization phase -------------------------------------------------------
+
+    point3d direction = (end - origin).unit();
+
+    int    step[3];
+    double tMax[3];
+    double tDelta[3];
+
+    OcTreeKey current_key = key_origin; 
+
+    for(unsigned int i=0; i < 3; ++i) {
+      if (direction(i) > 0.0) step[i] =  1;
+      else if (direction(i) < 0.0)   step[i] = -1;
+      else step[i] = 0;
+
+      double voxelBorder = (double) ( (int) current_key[i] - (int) this->tree_max_val ) * this->resolution;
+      if (step[i] > 0) voxelBorder += this->resolution;
+
+      if (direction(i) != 0.0) {
+        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
+        tDelta[i] = this->resolution / fabs( direction(i) );
+      }
+      else {
+        tMax[i] = 1e6;
+        tDelta[i] = 1e6;
+      }
+    }
+
+    // Incremental phase  ---------------------------------------------------------
+
+    bool done = false;
+    while (!done) {
+      unsigned int i;
+
+      // find minimum tMax:
+      if (tMax[0] < tMax[1]){
+        if (tMax[0] < tMax[2]) i = 0;
+        else                   i = 2;
+      }
+      else {
+        if (tMax[1] < tMax[2]) i = 1;
+        else                   i = 2;
+      }
+
+      // advance in direction "i"
+      current_key[i] += step[i];
+      tMax[i] += tDelta[i];
+
+      assert ((current_key[i] >= 0) && (current_key[i] < 2*this->tree_max_val));
+      
+      // reached endpoint?
+      if (current_key == key_end){
+        done = true;
+        break;
+      }
+      else {
+        ray.push_back(current_key);
+      }
+
+    } // end while
+
+    return true;
+  }
+
+
 
 
 }

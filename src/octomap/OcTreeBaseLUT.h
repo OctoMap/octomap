@@ -56,23 +56,25 @@ namespace octomap {
     virtual ~OcTreeBaseLUT();
     
     // search w/ ancestry
-    NODE* jump(point3d& coordinate);
+    NODE* jump(point3d& point);
     NODE* jump(double& x, double& y, double& z);
 
     NODE* getLUTNeighbor(const point3d& value, OcTreeLUT::NeighborDirection dir) const;
 
+    void prune();
 
-/*    /\** */
-/*     * Traces a ray from origin to end (excluding), returning the */
-/*     * coordinates of all nodes traversed by the beam. */
-/*     * (Essentially using the DDA algorithm in 3D). */
-/*     * */
-/*     * @param origin start coordinate of ray */
-/*     * @param end end coordinate of ray */
-/*     * @param ray center coordinates of all nodes traversed by the ray, excluding "end" */
-/*     * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range */
-/*     *\/ */
-/*     bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray) const; */
+
+   /**
+    * Traces a ray from origin to end (excluding), returning the
+    * coordinates of all nodes traversed by the beam.
+    * (Essentially using the DDA algorithm in 3D).
+    *
+    * @param origin start coordinate of ray
+    * @param end end coordinate of ray
+    * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
+    * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
+    */
+    bool computeRayKeys(const point3d& origin, const point3d& end, std::vector<OcTreeKey>& ray) const;
 
 
   protected:
@@ -82,6 +84,9 @@ namespace octomap {
 
     // compute branching point for jump
     unsigned int compareKeys(OcTreeKey& key1, OcTreeKey& key2) const;
+
+    // discard current ancestry, e.g., because the tree changed
+    void discardAncestry();
 
   protected:
 

@@ -49,12 +49,25 @@ namespace octomap {
   class OcTreeKey {
     
   public:  
+
     OcTreeKey () {}
-    OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c):
-    k0(a), k1(b), k2(c) {}
-    unsigned short int k0;
-    unsigned short int k1;
-    unsigned short int k2;
+    OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c)
+      { k[0] = a; k[1] = b; k[2] = c; }
+
+    bool operator== (const OcTreeKey &other) const { 
+      if ( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) ) return false;
+      return true;
+    }
+
+    const unsigned short int& operator[] (unsigned int i) const { 
+      return k[i];
+    }
+
+    unsigned short int& operator[] (unsigned int i) { 
+      return k[i];
+    }
+
+    unsigned short int k[3];
   };
 
 }

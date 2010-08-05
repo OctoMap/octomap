@@ -91,11 +91,6 @@ namespace octomap {
     
     bool genNeighborKey(OcTreeKey node_key, signed char& dir, OcTreeKey neighbor_key) const;
 
-
-    bool computeRay(OcTreeKey origin_key, OcTreeKey endpoint_key,
-                    std::vector<OcTreeKey>& ray) const;
-
-
   protected:
 
     void initLUT();
