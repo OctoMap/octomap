@@ -70,19 +70,17 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genKeyValue(double val, unsigned short int& key) const{
+  bool OcTreeBase<NODE>::genKeyValue(double coordinate, unsigned short int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
-    int scaled_val =  ((int) floor(resolution_factor * val)) + tree_max_val;
+    int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
 
-    // key within range of tree?
-    if (( scaled_val > 0) && (((unsigned int) scaled_val) < (2*tree_max_val))) {
-      key = scaled_val;
+    // keyval within range of tree?
+    if (( scaled_coord > 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+      keyval = scaled_coord;
       return true;
     }
-    else {
-      return false;
-    }
+    return false;
   }
 
   template <class NODE>
@@ -98,14 +96,12 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genVal(unsigned short int& key, double& val) const{
-
-    val = 0.0;
+  bool OcTreeBase<NODE>::genCoordFromKey(unsigned short int& key, double& coord) const {
 
     if (key >= 2*tree_max_val)
       return false;
 
-    val = ((double(key) - tree_max_val) + 0.5) * resolution;
+    coord = ((double(key) - tree_max_val) + 0.5) * resolution;
 
     return true;
   }
@@ -278,8 +274,8 @@ namespace octomap {
       // generate world coords from tree indices
       double val[3];
       for (unsigned int j = 0; j < 3; j++) {
-        if(!genVal( voxelIdx[j], val[j] )){
-          std::cerr << "Error in OcTree::computeRay(): genVal failed!\n";
+        if(!genCoordFromKey( voxelIdx[j], val[j] )){
+          std::cerr << "Error in OcTree::computeRay(): genCoordFromKey failed!\n";
           return false;
         }
       }

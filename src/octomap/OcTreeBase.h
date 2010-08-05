@@ -174,7 +174,7 @@ namespace octomap {
      * @param key 16bit key of the given coordinate, returned
      * @return true if val is within the octree bounds
      */
-    bool genKeyValue(double val, unsigned short int& key) const;
+    bool genKeyValue(double coordinate, unsigned short int& keyval) const;
 
     /**
      * Generates key for all three dimensions of a given point
@@ -194,7 +194,7 @@ namespace octomap {
     NODE* searchKey (OcTreeKey& key) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key
-    bool genVal(unsigned short int& key, double& val) const;
+    bool genCoordFromKey(unsigned short int& key, double& coord) const;
 
     /// generate child index (between 0 and 7) from key at given tree depth
     unsigned int genPos(OcTreeKey& key, int i) const;

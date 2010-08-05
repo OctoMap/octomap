@@ -49,7 +49,6 @@ namespace octomap {
 
     ancestry = new std::vector<NODE*> (this->tree_depth);
     for (unsigned int i=0; i<this->tree_depth; i++) ancestry->at(i) = NULL;
-    lastkey[0] = lastkey[1] = lastkey[2] = 0;
   }
 
   template <class NODE>
@@ -62,29 +61,27 @@ namespace octomap {
   template <class NODE>
   NODE* OcTreeBaseLUT<NODE>::getLUTNeighbor (const point3d& node_coord, OcTreeLUT::NeighborDirection dir) const {
 
-    unsigned short int start_key[3];
+    OcTreeKey start_key;
 
-    if (   !OcTreeBase<NODE>::genKey(node_coord.x(), start_key[0]) 
-        || !OcTreeBase<NODE>::genKey(node_coord.y(), start_key[1]) 
-        || !OcTreeBase<NODE>::genKey(node_coord.z(), start_key[2])) {
+    if (! OcTreeBase<NODE>::genKey(node_coord, start_key)) {
       std::cerr << "Error in search: ["<< node_coord <<"] is out of OcTree bounds!\n";
       return NULL;
     }
 
-    unsigned short int neighbor_key[3];
-    lut->genNeighborKey(start_key, (signed char) dir, neighbor_key);
+    OcTreeKey neighbor_key;
+    lut->genNeighborKey(start_key, (signed char&) dir, neighbor_key);
     return this->searchKey(neighbor_key);
   }
 
 
   template <class NODE>
-  unsigned int  OcTreeBaseLUT<NODE>::compareKeys (unsigned short int key1[], unsigned short int key2[]) const {
+  unsigned int  OcTreeBaseLUT<NODE>::compareKeys (OcTreeKey& key1, OcTreeKey& key2) const {
     
     unsigned short int _xor[3];
 
-    for(int k=0; k<3; k++){
-      _xor[k] = key1[k]^key2[k];
-    }
+    _xor[0] = key1.k0^key2.k0;
+    _xor[1] = key1.k1^key2.k1;
+    _xor[2] = key1.k2^key2.k2;
 
     unsigned int i(0);
 
@@ -103,35 +100,32 @@ namespace octomap {
 
   template <class NODE>
   NODE* OcTreeBaseLUT<NODE>::jump (point3d& coordinate) {
-    return this->jump(coordinate(0), coordinate(1), coordinate(2));
+
+    OcTreeKey key;
+
+    if ( !OcTreeBase<NODE>::genKey(coordinate, key)) {
+      std::cerr << "Error in search: ["<< coordinate <<"] is out of OcTree bounds!\n";
+      return NULL;
+    }
+    return this->jump(key);      
   }
 
   template <class NODE>
   NODE* OcTreeBaseLUT<NODE>::jump (double& x, double& y, double& z) {
-
-    unsigned short int key[3];
-
-    if (   !OcTreeBase<NODE>::genKey(x, key[0]) 
-        || !OcTreeBase<NODE>::genKey(y, key[1]) 
-        || !OcTreeBase<NODE>::genKey(z, key[2])) {
-      std::cerr << "Error in search: ["<< x << "," << y << "," << z <<"] is out of OcTree bounds!\n";
-      return NULL;
-    }
-    
-    return this->jump(key);
-      
+    point3d p(x,y,z);
+    return this->jump(p);
   }
+
+
   
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump(unsigned short int (&key)[3]) {
+  NODE* OcTreeBaseLUT<NODE>::jump (OcTreeKey& key) {
     
     // first jump?
     if (ancestry->at(0) == NULL) {
       
       std::cout << "first jump, creating ancestry. " << std::endl;
-      lastkey[0] = key[0];
-      lastkey[1] = key[1];
-      lastkey[2] = key[2];
+      lastkey = key;
       
       // just like OcTreeBase::searchKey -----------------
       NODE* curNode = this->itsRoot;
@@ -192,9 +186,7 @@ namespace octomap {
           // we expected a child but did not get it
           // is the current node a leaf already?
           if (!curNode->hasChildren()) {
-            lastkey[0] = key[0];
-            lastkey[1] = key[1];
-            lastkey[2] = key[2];
+            lastkey = key;
             return curNode;
           }
           else {
@@ -205,9 +197,7 @@ namespace octomap {
         }
       } // end for
       
-      lastkey[0] = key[0];
-      lastkey[1] = key[1];
-      lastkey[2] = key[2];
+      lastkey = key;
       return curNode;
            
     } // end ancestry jump
