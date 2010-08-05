@@ -163,7 +163,7 @@ namespace octomap {
     double tDelta[3];
 
     for(unsigned int i=0; i < 3; ++i) {
-      if (!this->genKey(origin(i), voxelIdx[i])) {
+      if (!this->genKeyValue(origin(i), voxelIdx[i])) {
         std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i)<<"\n";
         return false;
       }
@@ -215,7 +215,7 @@ namespace octomap {
       // generate world coords from tree indices
       double val[3];
       for (unsigned int j = 0; j < 3; j++) {
-        if(!this->genVal( voxelIdx[j], val[j] )){
+        if(!this->genCoordFromKey( voxelIdx[j], val[j] )){
           std::cerr << "Error in OcTree::castRay(): genVal failed!\n";
           return false;
         }
