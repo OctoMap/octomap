@@ -163,7 +163,7 @@ namespace octomap {
     std::ostream& writeConst(std::ostream &s) const;
 
 
-  protected:
+ protected:
 
     /**
      * Generates a 16-bit key from/for given value when it is within
@@ -184,6 +184,13 @@ namespace octomap {
      * @return true when point is within the octree, false otherwise
      */
     bool genKeys(const point3d& point, unsigned short int (&keys)[3]) const;
+
+
+    /** 
+     *  search node given a set of addressing keys
+     *  @return pointer to node if found, NULL otherwise
+     */
+    NODE* searchKey (unsigned short int (&key)[3]) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key
     bool genVal(unsigned short int& key, double& val) const;
@@ -212,6 +219,7 @@ namespace octomap {
     void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
 
 
+  protected:
 
     NODE* itsRoot;
 
@@ -226,6 +234,7 @@ namespace octomap {
     double maxValue[3]; ///< max in x, y, z
     double minValue[3]; ///< min in x, y, z
     bool sizeChanged;
+
   };
 
 

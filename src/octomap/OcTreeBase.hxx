@@ -52,6 +52,7 @@ namespace octomap {
       minValue[i] = std::numeric_limits<double>::max();
     }
     sizeChanged = true;
+
   }
 
 
@@ -131,11 +132,18 @@ namespace octomap {
     // it had to insert nodes
 
     unsigned short int key[3];
-
     if (!genKey(x, key[0]) || !genKey(y, key[1]) || !genKey(z, key[2])){
       std::cerr << "Error in search: ["<< x <<","<< y <<","<< z <<"] is out of OcTree bounds!\n";
       return NULL;
     }
+    else {
+      return this->searchKey(key);
+    }
+  }
+
+
+  template <class NODE>
+  NODE* OcTreeBase<NODE>::searchKey (unsigned short int (&key)[3]) const {
 
     NODE* curNode = itsRoot;
 
