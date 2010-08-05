@@ -51,27 +51,17 @@ namespace octomap {
     void drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
         GLfloat* cubeColorArray = NULL) const;
 
-    //! setup octree visualizations
+    //! setup octree visualizations from referenced OcTree
     void initOctreeCubeVis(
         const std::list<octomap::OcTreeVolume>& occupied_voxels,
         const std::list<octomap::OcTreeVolume>& freespace_voxels,
         const std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-        const std::list<octomap::OcTreeVolume>& freespace_delta_voxels,
-        const std::list<octomap::OcTreeVolume>& changed_free_voxels);
+        const std::list<octomap::OcTreeVolume>& freespace_delta_voxels);
 
     void generateCubes(const std::list<octomap::OcTreeVolume>& points,
         GLfloat** gl_array, GLfloat* gl_color_array = NULL);
     void initOctreeGridVis();
 
-    /**
-     * Add voxels of OcTree to viewer, adjusts view and bounding box to contain all points
-     */
-    void setOcTreeVoxels(std::list<octomap::OcTreeVolume>& occupied_voxels,
-        std::list<octomap::OcTreeVolume>& freespace_voxels, std::list<
-            octomap::OcTreeVolume>& occupied_delta_voxels, std::list<
-            octomap::OcTreeVolume>& freespace_delta_voxels, std::list<
-            octomap::OcTreeVolume>& grid_voxels,
-        std::list<octomap::OcTreeVolume>& changed_free_voxels);
 
     //! OpenGL representation of Octree cells (cubes)
 
@@ -83,8 +73,6 @@ namespace octomap {
     unsigned int octree_occupied_delta_cells_vertex_size;
     GLfloat** octree_freespace_delta_cells_vertex_array;
     unsigned int octree_freespace_delta_cells_vertex_size;
-    GLfloat** octree_freespace_changed_cells_vertex_array;
-    unsigned int octree_freespace_changed_cells_vertex_size;
 
     //! Color array for occupied cells (height)
     GLfloat* octree_occupied_cells_color_array;
@@ -99,7 +87,6 @@ namespace octomap {
     bool m_drawOcTreeCells;
     bool m_drawOcTreeGrid;
     bool m_draw_freespace;
-    bool m_draw_freespaceDeltaOnly;
     bool m_octree_grid_vis_initialized;
     bool m_octree_set;
     unsigned int m_max_tree_depth;
@@ -109,7 +96,6 @@ namespace octomap {
     void enableOcTree(bool enabled = true);
     void enableOcTreeCells(bool enabled = true) {m_drawOcTreeCells = enabled; };
     void enableFreespace(bool enabled = true) {m_draw_freespace = enabled; };
-    void enableFreespaceDeltaOnly(bool enabled = true) {m_draw_freespaceDeltaOnly = enabled; };
     void setMax_tree_depth(unsigned int max_tree_depth) {m_max_tree_depth = max_tree_depth;};
 
   };

@@ -31,13 +31,12 @@ namespace octomap {
 OcTreeDrawer::OcTreeDrawer() : SceneObject(),
   octree_occupied_cells_vertex_size(0), octree_freespace_cells_vertex_size(0),
   octree_occupied_delta_cells_vertex_size(0), octree_freespace_delta_cells_vertex_size(0),
-  octree_freespace_changed_cells_vertex_size(0), octree_grid_vertex_size(0), m_alphaOccupied(0.8)
+  octree_grid_vertex_size(0), m_alphaOccupied(0.8)
 {
   m_octree_grid_vis_initialized = false;
   m_drawOcTreeCells = true;
   m_drawOcTreeGrid = false;
   m_draw_freespace = false;
-  m_draw_freespaceDeltaOnly = false;
 }
 
 OcTreeDrawer::~OcTreeDrawer() {
@@ -50,17 +49,14 @@ void OcTreeDrawer::setAlphaOccupied(double alpha){
 void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
   std::list<octomap::OcTreeVolume> occupied_voxels;
   std::list<octomap::OcTreeVolume> free_voxels;
-  std::list<octomap::OcTreeVolume> grid_voxels;
   std::list<octomap::OcTreeVolume> occupied_delta_voxels;
   std::list<octomap::OcTreeVolume> free_delta_voxels;
-  std::list<octomap::OcTreeVolume> free_changed_voxels;
 
   octree.getOccupied(occupied_voxels, occupied_delta_voxels, m_max_tree_depth);
 
   if (octree.size() < 5 * 1e6) {
     octree.getFreespace (free_voxels, free_delta_voxels, m_max_tree_depth);
-    octree.getVoxels(grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
-    // FIXME octree.getChangedFreespace(m_max_tree_depth, m_occupancyThresh, free_changed_voxels);
+    octree.getVoxels(m_grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
   }
 
   double minX, minY, minZ, maxX, maxY, maxZ;
@@ -70,11 +66,11 @@ void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
   m_zMin = minZ;
   m_zMax = maxZ;
 
-  setOcTreeVoxels(occupied_voxels,
-      free_voxels,
-      occupied_delta_voxels,
-      free_delta_voxels,
-      grid_voxels, free_changed_voxels);
+
+  m_octree_grid_vis_initialized = false;
+  if(m_drawOcTreeGrid) initOctreeGridVis();
+
+  initOctreeCubeVis(occupied_voxels, free_voxels, occupied_delta_voxels, free_delta_voxels);
 
   m_octree_set = true;
 }
@@ -219,8 +215,7 @@ void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
 void OcTreeDrawer::initOctreeCubeVis (const std::list<octomap::OcTreeVolume>& occupied_voxels,
 				      const std::list<octomap::OcTreeVolume>& freespace_voxels,
 				      const std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-				      const std::list<octomap::OcTreeVolume>& freespace_delta_voxels,
-				      const std::list<octomap::OcTreeVolume>& changed_free_voxels) {
+				      const std::list<octomap::OcTreeVolume>& freespace_delta_voxels) {
 
   clearOcTree();
 
@@ -231,11 +226,8 @@ void OcTreeDrawer::initOctreeCubeVis (const std::list<octomap::OcTreeVolume>& oc
   octree_freespace_cells_vertex_size = freespace_voxels.size() * 4 * 3;
   octree_freespace_cells_vertex_array = new GLfloat* [6];
 
-  if (m_draw_freespaceDeltaOnly){
-    octree_freespace_delta_cells_vertex_size = changed_free_voxels.size() * 4 * 3;
-  } else{
-    octree_freespace_delta_cells_vertex_size = freespace_delta_voxels.size() * 4 * 3;
-  }
+  octree_freespace_delta_cells_vertex_size = freespace_delta_voxels.size() * 4 * 3;
+
 
   octree_occupied_delta_cells_vertex_size = occupied_delta_voxels.size() * 4 * 3;
   octree_occupied_delta_cells_vertex_array = new GLfloat* [6];
@@ -256,30 +248,7 @@ void OcTreeDrawer::initOctreeCubeVis (const std::list<octomap::OcTreeVolume>& oc
   generateCubes(freespace_voxels, octree_freespace_cells_vertex_array);
 
   generateCubes(occupied_delta_voxels, octree_occupied_delta_cells_vertex_array, octree_occupied_delta_cells_color_array);
-  if (m_draw_freespaceDeltaOnly){
-    generateCubes(changed_free_voxels, octree_freespace_delta_cells_vertex_array);
-  } else{
-    generateCubes(freespace_delta_voxels, octree_freespace_delta_cells_vertex_array);
-  }
-}
-
-void OcTreeDrawer::setOcTreeVoxels(std::list<octomap::OcTreeVolume>& occupied_voxels,
-				   std::list<octomap::OcTreeVolume>& freespace_voxels,
-				   std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-				   std::list<octomap::OcTreeVolume>& freespace_delta_voxels,
-				   std::list<octomap::OcTreeVolume>& grid_voxels,
-				   std::list<octomap::OcTreeVolume>& changed_free_voxels) {
-
-  m_octree_grid_vis_initialized = false;
-
-  // copy tree voxels
-  // TODO maybe store them in ViewerGui for each type, then use reference
-//   m_occupied_voxels = occupied_voxels;
-//   m_freespace_voxels = freespace_voxels;
-  m_grid_voxels = grid_voxels;
-
-  initOctreeCubeVis(occupied_voxels, freespace_voxels, occupied_delta_voxels, freespace_delta_voxels, changed_free_voxels);
-  if(m_drawOcTreeGrid) initOctreeGridVis();
+  generateCubes(freespace_delta_voxels, octree_freespace_delta_cells_vertex_array);
 }
 
 void OcTreeDrawer::initOctreeGridVis() {
@@ -499,7 +468,6 @@ void OcTreeDrawer::drawOctreeCells() const {
   // draw binary occupied cells
   if (octree_occupied_cells_vertex_size != 0) {
     if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
-    if (m_draw_freespaceDeltaOnly) glColor4f(0.2, 0.7, 1.0, 1.0);
     drawCubes(octree_occupied_cells_vertex_array, octree_occupied_cells_vertex_size, octree_occupied_cells_color_array);
   }
 
@@ -524,7 +492,7 @@ void OcTreeDrawer::drawFreespace() const {
   }
 
   // draw binary freespace cells
-  if (!m_draw_freespaceDeltaOnly && octree_freespace_cells_vertex_size != 0) {
+  if (octree_freespace_cells_vertex_size != 0) {
     if (!m_printoutMode) glColor4f(0.0, 1.0, 0., 0.3);
     drawCubes(octree_freespace_cells_vertex_array, octree_freespace_cells_vertex_size);
   }
@@ -533,7 +501,6 @@ void OcTreeDrawer::drawFreespace() const {
   // draw delta freespace cells
   if (octree_freespace_delta_cells_vertex_size != 0) {
     if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.3);
-    if (m_draw_freespaceDeltaOnly) glColor4f(1.0, 0., 0., 1.0);
     drawCubes(octree_freespace_delta_cells_vertex_array, octree_freespace_delta_cells_vertex_size);
   }
 }

@@ -721,12 +721,6 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
   }
 }
 
-void ViewerGui::on_actionChanged_free_only_toggled(bool enabled) {
-  if(m_octreeDrawer) {
-    m_octreeDrawer->enableFreespaceDeltaOnly(enabled);
-    m_glwidget->updateGL();
-  }
-}
 
 }
 
