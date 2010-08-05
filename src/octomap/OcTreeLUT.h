@@ -43,6 +43,7 @@
 
 #include "OcTreeLUTdefs.h"
 #include "octomap_types.h"
+#include "OcTreeKey.h"
 
 namespace octomap {
 
@@ -88,19 +89,19 @@ namespace octomap {
     OcTreeLUT(unsigned int _max_depth);
     ~OcTreeLUT();
     
-    bool genNeighborKey(unsigned short int node_key[], const signed char& dir, 
-                        unsigned short int neighbor_key[]) const;
+    bool genNeighborKey(OcTreeKey node_key, signed char& dir, OcTreeKey neighbor_key) const;
 
-    //    std::list<unsigned short int*> genMultipleNeighbourKeys ( unsigned short int node_key[], const signed char& dir) const;
+
+    bool computeRay(OcTreeKey origin_key, OcTreeKey endpoint_key,
+                    std::vector<OcTreeKey>& ray) const;
 
 
   protected:
 
     void initLUT();
 
-    unsigned int genPos(unsigned short int key[], int i) const; // FIXME copy from OcTreeBase
-
-    void changeKey(int val, unsigned short int key[], unsigned short int i) const;
+    unsigned int genPos(OcTreeKey key, int i) const;
+    void changeKey(int val, OcTreeKey key, unsigned short int i) const;
 
   protected:
 

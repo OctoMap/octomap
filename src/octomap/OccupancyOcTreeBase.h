@@ -149,7 +149,7 @@ namespace octomap {
 
 
     /// recursive call of updateNode()
-    NODE* updateNodeRecurs(NODE* node, bool node_just_created, unsigned short int key[3],
+    NODE* updateNodeRecurs(NODE* node, bool node_just_created, OcTreeKey& key,
                            unsigned int depth, bool occupied);
 
     void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,

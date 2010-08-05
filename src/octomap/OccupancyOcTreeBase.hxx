@@ -70,9 +70,8 @@ namespace octomap {
     }
 
     // generate key for addressing in tree
-    unsigned short int key[3];
-    if (!this->genKeys(value, key))
-      return NULL;
+    OcTreeKey key;
+    if (!this->genKey(value, key)) return NULL;
 
     return updateNodeRecurs(this->itsRoot, false, key, 0, occupied);
   }
@@ -80,7 +79,7 @@ namespace octomap {
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
-                                           unsigned short int key[3], unsigned int depth,
+                                           OcTreeKey& key, unsigned int depth,
                                            bool occupied) {
 
 

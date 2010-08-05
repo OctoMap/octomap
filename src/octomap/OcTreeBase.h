@@ -46,6 +46,7 @@
 #include <cassert>
 
 #include "octomap_types.h"
+#include "OcTreeKey.h"
 #include "ScanGraph.h"
 
 
@@ -67,7 +68,7 @@ namespace octomap {
   class OcTreeBase {
 
   public:
-
+    
     OcTreeBase(double _resolution);
     virtual ~OcTreeBase();
 
@@ -173,7 +174,7 @@ namespace octomap {
      * @param key 16bit key of the given coordinate, returned
      * @return true if val is within the octree bounds
      */
-    bool genKey(double val, unsigned short int& key) const;
+    bool genKeyValue(double val, unsigned short int& key) const;
 
     /**
      * Generates key for all three dimensions of a given point
@@ -183,20 +184,20 @@ namespace octomap {
      * @param keys values that will be computed, an array of fixed size 3.
      * @return true when point is within the octree, false otherwise
      */
-    bool genKeys(const point3d& point, unsigned short int (&keys)[3]) const;
+    bool genKey(const point3d& point, OcTreeKey& key) const;
 
 
     /** 
      *  search node given a set of addressing keys
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* searchKey (unsigned short int (&key)[3]) const;
+    NODE* searchKey (OcTreeKey& key) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key
     bool genVal(unsigned short int& key, double& val) const;
 
     /// generate child index (between 0 and 7) from key at given tree depth
-    unsigned int genPos(unsigned short int key[], int i) const;
+    unsigned int genPos(OcTreeKey& key, int i) const;
 
     /// recursive call of prune()
     void pruneRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
@@ -210,7 +211,7 @@ namespace octomap {
 
     /// Recursive call for getVoxels()
     void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
-        NODE* node, unsigned int depth, const point3d& parent_center) const;
+                         NODE* node, unsigned int depth, const point3d& parent_center) const;
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();

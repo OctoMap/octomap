@@ -70,7 +70,7 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genKey(double val, unsigned short int& key) const{
+  bool OcTreeBase<NODE>::genKeyValue(double val, unsigned short int& key) const{
 
     // scale to resolution and shift center for tree_max_val
     int scaled_val =  ((int) floor(resolution_factor * val)) + tree_max_val;
@@ -86,12 +86,13 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genKeys(const point3d& point, unsigned short int (&keys)[3]) const{
-    for (unsigned int i=0; i<3; i++) {
-      if ( !genKey( point(i), keys[i]) ) {
-        return false;
-      }
-    }
+  bool OcTreeBase<NODE>::genKey(const point3d& point, OcTreeKey& key) const{
+
+    if (
+        ( !genKeyValue( point(0), key.k0 ) ) || 
+        ( !genKeyValue( point(1), key.k1 ) ) ||
+        ( !genKeyValue( point(2), key.k2 ) )
+        ) return false;
 
     return true;
   }
@@ -111,39 +112,42 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::genPos(unsigned short int key[], int i) const {
+  unsigned int OcTreeBase<NODE>::genPos(OcTreeKey& key, int i) const {
 
     unsigned int retval = 0;
-    if (key[0] & (1 << i)) retval += 1;
-    if (key[1] & (1 << i)) retval += 2;
-    if (key[2] & (1 << i)) retval += 4;
+    if (key.k0 & (1 << i)) retval += 1;
+    if (key.k1 & (1 << i)) retval += 2;
+    if (key.k2 & (1 << i)) retval += 4;
     return retval;
   }
 
   template <class NODE>
   NODE* OcTreeBase<NODE>::search(const point3d& value) const {
-    return this->search(value(0), value(1), value(2));
-  }
-
-  template <class NODE>
-  NODE* OcTreeBase<NODE>::search(double x, double y, double z) const {
 
     // Search is a variant of insert which aborts if
     // it had to insert nodes
 
-    unsigned short int key[3];
-    if (!genKey(x, key[0]) || !genKey(y, key[1]) || !genKey(z, key[2])){
-      std::cerr << "Error in search: ["<< x <<","<< y <<","<< z <<"] is out of OcTree bounds!\n";
+    OcTreeKey key;
+    if (!genKey(value, key)){
+      std::cerr << "Error in search: ["<< value <<"] is out of OcTree bounds!\n";
       return NULL;
     }
     else {
       return this->searchKey(key);
     }
+
+  }
+
+  template <class NODE>
+  NODE* OcTreeBase<NODE>::search(double x, double y, double z) const {
+
+    point3d p (x,y,z);
+    return this->search(p);
   }
 
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::searchKey (unsigned short int (&key)[3]) const {
+  NODE* OcTreeBase<NODE>::searchKey (OcTreeKey& key) const {
 
     NODE* curNode = itsRoot;
 
@@ -155,7 +159,6 @@ namespace octomap {
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
         curNode = static_cast<NODE*>( curNode->getChild(pos) );
-
       }
       else {
         // we expected a child but did not get it
@@ -213,11 +216,11 @@ namespace octomap {
     double tDelta[3];
 
     for(unsigned int i=0; i < 3; ++i) {
-      if (!genKey(origin(i), voxelIdx[i])) {
+      if (!genKeyValue(origin(i), voxelIdx[i])) {
         std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i)<<"\n";
         return false;
       }
-      if (!genKey(end(i), endIdx[i])) {
+      if (!genKeyValue(end(i), endIdx[i])) {
         std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of endpoint out of OcTree bounds"<< end(i)<<"\n";
         return false;
       }

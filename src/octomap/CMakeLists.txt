@@ -6,6 +6,7 @@ SET (octomap_SRCS
   OcTreeNode.cpp
   OcTreeNodeLabeled.cpp
   OcTreeLabeled.cpp
+  OcTreeLUT.cpp
   )
 
 ADD_LIBRARY( octomap ${octomap_SRCS})

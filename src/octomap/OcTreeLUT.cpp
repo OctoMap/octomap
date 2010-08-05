@@ -528,11 +528,11 @@ namespace octomap {
   };
 
 
-  unsigned int OcTreeLUT::genPos(unsigned short int key[], int i) const {
+  unsigned int OcTreeLUT::genPos(OcTreeKey key, int i) const {
     unsigned int retval = 0;
-    if (key[0] & (1 << i)) retval += 1;
-    if (key[1] & (1 << i)) retval += 2;
-    if (key[2] & (1 << i)) retval += 4;
+    if (key.k0 & (1 << i)) retval += 1;
+    if (key.k1 & (1 << i)) retval += 2;
+    if (key.k2 & (1 << i)) retval += 4;
     return retval;
   }
 
@@ -540,59 +540,57 @@ namespace octomap {
   /*
    * used internally to generate neighbor key from a given key
    */
-  void OcTreeLUT::changeKey(int val, unsigned short int key[],
-                                  unsigned short int i) const {
+  void OcTreeLUT::changeKey(int val, OcTreeKey key, unsigned short int i) const {
     switch (val) {
     case 0:
-      key[0] &= ~(1 << i);
-      key[1] &= ~(1 << i);
-      key[2] &= ~(1 << i);
+      key.k0 &= ~(1 << i);
+      key.k1 &= ~(1 << i);
+      key.k2 &= ~(1 << i);
       break;
     case 1:
-      key[0] |= (1 << i);
-      key[1] &= ~(1 << i);
-      key[2] &= ~(1 << i);
+      key.k0 |= (1 << i);
+      key.k1 &= ~(1 << i);
+      key.k2 &= ~(1 << i);
       break;
     case 2:
-      key[0] &= ~(1 << i);
-      key[1] |= (1 << i);
-      key[2] &= ~(1 << i);
+      key.k0 &= ~(1 << i);
+      key.k1 |= (1 << i);
+      key.k2 &= ~(1 << i);
       break;
     case 3:
-      key[0] |= (1 << i);
-      key[1] |= (1 << i);
-      key[2] &= ~(1 << i);
+      key.k0 |= (1 << i);
+      key.k1 |= (1 << i);
+      key.k2 &= ~(1 << i);
       break;
     case 4:
-      key[0] &= ~(1 << i);
-      key[1] &= ~(1 << i);
-      key[2] |= (1 << i);
+      key.k0 &= ~(1 << i);
+      key.k1 &= ~(1 << i);
+      key.k2 |= (1 << i);
       break;
     case 5:
-      key[0] |= (1 << i);
-      key[1] &= ~(1 << i);
-      key[2] |= (1 << i);
+      key.k0 |= (1 << i);
+      key.k1 &= ~(1 << i);
+      key.k2 |= (1 << i);
       break;
     case 6:
-      key[0] &= ~(1 << i);
-      key[1] |= (1 << i);
-      key[2] |= (1 << i);
+      key.k0 &= ~(1 << i);
+      key.k1 |= (1 << i);
+      key.k2 |= (1 << i);
       break;
     case 7:
-      key[0] |= (1 << i);
-      key[1] |= (1 << i);
-      key[2] |= (1 << i);
+      key.k0 |= (1 << i);
+      key.k1 |= (1 << i);
+      key.k2 |= (1 << i);
       break;
     }
   }
 
 
-  bool OcTreeLUT::genNeighborKey(unsigned short int node_key[], const signed char& dir, 
-                                 unsigned short int neighbor_key[]) const {
+  bool OcTreeLUT::genNeighborKey(OcTreeKey node_key, signed char& dir, OcTreeKey neighbor_key) const {
 
-    neighbor_key[0] = node_key[0];
-    neighbor_key[1] = node_key[1];
-    neighbor_key[2] = node_key[2];
+    neighbor_key.k0 = node_key.k0;
+    neighbor_key.k1 = node_key.k1;
+    neighbor_key.k2 = node_key.k2;
 
     unsigned int depth = 0;
     signed char curDir = dir;
@@ -620,6 +618,11 @@ namespace octomap {
   // ##############################################################
   // ##############################################################
 
+
+  bool OcTreeLUT::computeRay(OcTreeKey origin_key, OcTreeKey endpoint_key,
+                             std::vector<OcTreeKey>& ray) const {
+    return true;
+  }
 
 
 } // namespace

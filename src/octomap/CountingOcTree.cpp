@@ -87,9 +87,9 @@ namespace octomap {
 
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 
-    unsigned short int key[3];
+    OcTreeKey key;
 
-    if (!genKeys(value, key))
+    if (!genKey(value, key))
         return NULL;
 
     CountingOcTreeNode* curNode = this->getRoot();

@@ -120,8 +120,8 @@ int main(int argc, char** argv) {
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;
 
     tree->insertScan(**scan_it, maxrange, false);
-    currentScan++;
     if ((max_scan_no > 0) && (currentScan == (unsigned int) max_scan_no)) break;
+    currentScan++;
   }
   gettimeofday(&stop, NULL);  // stop timer
   
