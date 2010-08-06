@@ -6,7 +6,7 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2010.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
@@ -55,18 +55,6 @@ namespace octomap {
     OcTreeBaseSE(double _resolution);
     virtual ~OcTreeBaseSE();
     
-    // search w/ ancestry
-    NODE* jump(const point3d& point);
-    NODE* jump(double& x, double& y, double& z);
-    // searchKey w/ ancestry
-    NODE* jump(OcTreeKey& key);
-
-
-    NODE* getLUTNeighbor(const point3d& value, OcTreeLUT::NeighborDirection dir) const;
-
-    void prune();
-
-
    /**
     * Traces a ray from origin to end (excluding), returning the
     * coordinates of all nodes traversed by the beam.
@@ -80,22 +68,12 @@ namespace octomap {
     bool computeRayKeys(const point3d& origin, const point3d& end, std::list<OcTreeKey>& ray) const;
 
 
-  protected:
+    NODE* getLUTNeighbor(const point3d& value, OcTreeLUT::NeighborDirection dir) const;
 
-
-    // compute branching point for jump
-    unsigned int compareKeys(OcTreeKey& key1, OcTreeKey& key2) const;
-
-    // discard current ancestry, e.g., because the tree changed
-    void discardAncestry();
-    bool ancestryValid();
 
   protected:
 
     OcTreeLUT* lut;
-    std::vector<NODE*>* ancestry;
-    OcTreeKey lastkey;
-
   };
 
 
