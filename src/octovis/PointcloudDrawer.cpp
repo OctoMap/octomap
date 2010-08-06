@@ -88,7 +88,7 @@ namespace octomap {
 
    // TODO: find a solution for printout-mode (=> separate drawer?)
 //    if (m_printoutMode){
-//      if (!m_draw_freespace) {
+//      if (!m_drawFree) {
 //        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 //      }
 //      glColor4f(0.0, 0.0, 0.0, 1.);

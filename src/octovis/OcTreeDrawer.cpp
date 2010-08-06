@@ -29,17 +29,25 @@
 namespace octomap {
 
 OcTreeDrawer::OcTreeDrawer() : SceneObject(),
-  octree_occupied_cells_vertex_size(0), octree_freespace_cells_vertex_size(0),
-  octree_occupied_delta_cells_vertex_size(0), octree_freespace_delta_cells_vertex_size(0),
+  m_occupiedThresSize(0), m_freeThresSize(0),
+  m_occupiedSize(0), m_freeSize(0),
   octree_grid_vertex_size(0), m_alphaOccupied(0.8)
 {
   m_octree_grid_vis_initialized = false;
-  m_drawOcTreeCells = true;
+  m_drawOccupied = true;
   m_drawOcTreeGrid = false;
-  m_draw_freespace = false;
+  m_drawFree = false;
+
+  m_occupiedArray = NULL;
+  m_freeArray = NULL;
+  m_occupiedThresArray = NULL;
+  m_freeThresArray = NULL;
+  m_occupiedColorArray = NULL;
+  m_occupiedThresColorArray = NULL;
 }
 
 OcTreeDrawer::~OcTreeDrawer() {
+  clear();
 }
 
 void OcTreeDrawer::setAlphaOccupied(double alpha){
@@ -47,15 +55,15 @@ void OcTreeDrawer::setAlphaOccupied(double alpha){
 }
 
 void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
-  std::list<octomap::OcTreeVolume> occupied_voxels;
-  std::list<octomap::OcTreeVolume> free_voxels;
-  std::list<octomap::OcTreeVolume> occupied_delta_voxels;
-  std::list<octomap::OcTreeVolume> free_delta_voxels;
+  std::list<octomap::OcTreeVolume> occupiedThresVoxels;
+  std::list<octomap::OcTreeVolume> freeThresVoxels;
+  std::list<octomap::OcTreeVolume> occupiedVoxels;
+  std::list<octomap::OcTreeVolume> freeVoxels;
 
-  octree.getOccupied(occupied_voxels, occupied_delta_voxels, m_max_tree_depth);
+  octree.getOccupied(occupiedThresVoxels, occupiedVoxels, m_max_tree_depth);
 
   if (octree.size() < 5 * 1e6) {
-    octree.getFreespace (free_voxels, free_delta_voxels, m_max_tree_depth);
+    octree.getFreespace (freeThresVoxels, freeVoxels, m_max_tree_depth);
     octree.getVoxels(m_grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
   }
 
@@ -70,12 +78,34 @@ void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
   m_octree_grid_vis_initialized = false;
   if(m_drawOcTreeGrid) initOctreeGridVis();
 
-  initOctreeCubeVis(occupied_voxels, free_voxels, occupied_delta_voxels, free_delta_voxels);
+  // initialize visualization:
+  generateCubes(occupiedThresVoxels, &m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
+  generateCubes(freeThresVoxels, &m_freeThresArray, m_freeThresSize);
 
-  m_octree_set = true;
+  generateCubes(occupiedVoxels, &m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
+  generateCubes(freeVoxels, &m_freeArray, m_freeSize);
+
+
 }
 
-void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels, GLfloat** gl_array, GLfloat* gl_color_array) {
+void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
+    GLfloat*** glArray, unsigned int& glArraySize, GLfloat** glColorArray)
+{
+
+
+  // clear arrays first if needed:
+  clearCubes(glArray, glArraySize, glColorArray);
+
+  // now, allocate arrays:
+  glArraySize = voxels.size() * 4 * 3;
+  *glArray = new GLfloat* [6];
+
+  for (unsigned i = 0; i<6; ++i){
+    (*glArray)[i] = new GLfloat[glArraySize];
+  }
+
+  if (glColorArray != NULL)
+    *glColorArray = new GLfloat[glArraySize * 4 *4];
 
   // epsilon to be substracted from cube size so that neighboring planes don't overlap
   // seems to introduce strange artifacts nevertheless...
@@ -99,157 +129,135 @@ void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
     // Arrays are filled in parrallel (increasing i for all at once)
     // One color array for all surfaces is filled when requested
 
-    gl_array[0][i]   = x + half_cube_size;
-    gl_array[0][i+1] = y + half_cube_size;
-    gl_array[0][i+2] = z - half_cube_size;
+   (*glArray)[0][i]   = x + half_cube_size;
+   (*glArray)[0][i+1] = y + half_cube_size;
+   (*glArray)[0][i+2] = z - half_cube_size;
 
-    gl_array[1][i]   = x + half_cube_size;
-    gl_array[1][i+1] = y - half_cube_size;
-    gl_array[1][i+2] = z - half_cube_size;
+   (*glArray)[1][i]   = x + half_cube_size;
+   (*glArray)[1][i+1] = y - half_cube_size;
+   (*glArray)[1][i+2] = z - half_cube_size;
 
-    gl_array[2][i]   = x + half_cube_size;
-    gl_array[2][i+1] = y + half_cube_size;
-    gl_array[2][i+2] = z - half_cube_size;
+   (*glArray)[2][i]   = x + half_cube_size;
+   (*glArray)[2][i+1] = y + half_cube_size;
+   (*glArray)[2][i+2] = z - half_cube_size;
 
-    gl_array[3][i]   = x - half_cube_size;
-    gl_array[3][i+1] = y + half_cube_size;
-    gl_array[3][i+2] = z - half_cube_size;
+   (*glArray)[3][i]   = x - half_cube_size;
+   (*glArray)[3][i+1] = y + half_cube_size;
+   (*glArray)[3][i+2] = z - half_cube_size;
 
-    gl_array[4][i]   = x + half_cube_size;
-    gl_array[4][i+1] = y + half_cube_size;
-    gl_array[4][i+2] = z - half_cube_size;
+   (*glArray)[4][i]   = x + half_cube_size;
+   (*glArray)[4][i+1] = y + half_cube_size;
+   (*glArray)[4][i+2] = z - half_cube_size;
 
-    gl_array[5][i]   = x + half_cube_size;
-    gl_array[5][i+1] = y + half_cube_size;
-    gl_array[5][i+2] = z + half_cube_size;
+   (*glArray)[5][i]   = x + half_cube_size;
+   (*glArray)[5][i+1] = y + half_cube_size;
+   (*glArray)[5][i+2] = z + half_cube_size;
     i+= 3;
 
-    gl_array[0][i]   = x - half_cube_size;
-    gl_array[0][i+1] = y + half_cube_size;
-    gl_array[0][i+2] = z - half_cube_size;
+   (*glArray)[0][i]   = x - half_cube_size;
+   (*glArray)[0][i+1] = y + half_cube_size;
+   (*glArray)[0][i+2] = z - half_cube_size;
 
-    gl_array[1][i]   = x - half_cube_size;
-    gl_array[1][i+1] = y - half_cube_size;
-    gl_array[1][i+2] = z - half_cube_size;
+   (*glArray)[1][i]   = x - half_cube_size;
+   (*glArray)[1][i+1] = y - half_cube_size;
+   (*glArray)[1][i+2] = z - half_cube_size;
 
-    gl_array[2][i]   = x + half_cube_size;
-    gl_array[2][i+1] = y + half_cube_size;
-    gl_array[2][i+2] = z + half_cube_size;
+   (*glArray)[2][i]   = x + half_cube_size;
+   (*glArray)[2][i+1] = y + half_cube_size;
+   (*glArray)[2][i+2] = z + half_cube_size;
 
-    gl_array[3][i]   = x - half_cube_size;
-    gl_array[3][i+1] = y + half_cube_size;
-    gl_array[3][i+2] = z + half_cube_size;
+   (*glArray)[3][i]   = x - half_cube_size;
+   (*glArray)[3][i+1] = y + half_cube_size;
+   (*glArray)[3][i+2] = z + half_cube_size;
 
-    gl_array[4][i]   = x + half_cube_size;
-    gl_array[4][i+1] = y - half_cube_size;
-    gl_array[4][i+2] = z - half_cube_size;
+   (*glArray)[4][i]   = x + half_cube_size;
+   (*glArray)[4][i+1] = y - half_cube_size;
+   (*glArray)[4][i+2] = z - half_cube_size;
 
-    gl_array[5][i]   = x + half_cube_size;
-    gl_array[5][i+1] = y - half_cube_size;
-    gl_array[5][i+2] = z + half_cube_size;
+   (*glArray)[5][i]   = x + half_cube_size;
+   (*glArray)[5][i+1] = y - half_cube_size;
+   (*glArray)[5][i+2] = z + half_cube_size;
     i+= 3;
 
-    gl_array[0][i]   = x - half_cube_size;
-    gl_array[0][i+1] = y + half_cube_size;
-    gl_array[0][i+2] = z + half_cube_size;
+   (*glArray)[0][i]   = x - half_cube_size;
+   (*glArray)[0][i+1] = y + half_cube_size;
+   (*glArray)[0][i+2] = z + half_cube_size;
 
-    gl_array[1][i]   = x - half_cube_size;
-    gl_array[1][i+1] = y - half_cube_size;
-    gl_array[1][i+2] = z + half_cube_size;
+   (*glArray)[1][i]   = x - half_cube_size;
+   (*glArray)[1][i+1] = y - half_cube_size;
+   (*glArray)[1][i+2] = z + half_cube_size;
 
-    gl_array[2][i]   = x + half_cube_size;
-    gl_array[2][i+1] = y - half_cube_size;
-    gl_array[2][i+2] = z + half_cube_size;
+   (*glArray)[2][i]   = x + half_cube_size;
+   (*glArray)[2][i+1] = y - half_cube_size;
+   (*glArray)[2][i+2] = z + half_cube_size;
 
-    gl_array[3][i]   = x - half_cube_size;
-    gl_array[3][i+1] = y - half_cube_size;
-    gl_array[3][i+2] = z + half_cube_size;
+   (*glArray)[3][i]   = x - half_cube_size;
+   (*glArray)[3][i+1] = y - half_cube_size;
+   (*glArray)[3][i+2] = z + half_cube_size;
 
-    gl_array[4][i]   = x - half_cube_size;
-    gl_array[4][i+1] = y - half_cube_size;
-    gl_array[4][i+2] = z - half_cube_size;
+   (*glArray)[4][i]   = x - half_cube_size;
+   (*glArray)[4][i+1] = y - half_cube_size;
+   (*glArray)[4][i+2] = z - half_cube_size;
 
-    gl_array[5][i]   = x - half_cube_size;
-    gl_array[5][i+1] = y - half_cube_size;
-    gl_array[5][i+2] = z + half_cube_size;
+   (*glArray)[5][i]   = x - half_cube_size;
+   (*glArray)[5][i+1] = y - half_cube_size;
+   (*glArray)[5][i+2] = z + half_cube_size;
     i+= 3;
 
-    gl_array[0][i]   = x + half_cube_size;
-    gl_array[0][i+1] = y + half_cube_size;
-    gl_array[0][i+2] = z + half_cube_size;
+   (*glArray)[0][i]   = x + half_cube_size;
+   (*glArray)[0][i+1] = y + half_cube_size;
+   (*glArray)[0][i+2] = z + half_cube_size;
 
-    gl_array[1][i]   = x + half_cube_size;
-    gl_array[1][i+1] = y - half_cube_size;
-    gl_array[1][i+2] = z + half_cube_size;
+   (*glArray)[1][i]   = x + half_cube_size;
+   (*glArray)[1][i+1] = y - half_cube_size;
+   (*glArray)[1][i+2] = z + half_cube_size;
 
-    gl_array[2][i]   = x + half_cube_size;
-    gl_array[2][i+1] = y - half_cube_size;
-    gl_array[2][i+2] = z - half_cube_size;
+   (*glArray)[2][i]   = x + half_cube_size;
+   (*glArray)[2][i+1] = y - half_cube_size;
+   (*glArray)[2][i+2] = z - half_cube_size;
 
-    gl_array[3][i]   = x - half_cube_size;
-    gl_array[3][i+1] = y - half_cube_size;
-    gl_array[3][i+2] = z - half_cube_size;
+   (*glArray)[3][i]   = x - half_cube_size;
+   (*glArray)[3][i+1] = y - half_cube_size;
+   (*glArray)[3][i+2] = z - half_cube_size;
 
-    gl_array[4][i]   = x - half_cube_size;
-    gl_array[4][i+1] = y + half_cube_size;
-    gl_array[4][i+2] = z - half_cube_size;
+   (*glArray)[4][i]   = x - half_cube_size;
+   (*glArray)[4][i+1] = y + half_cube_size;
+   (*glArray)[4][i+2] = z - half_cube_size;
 
-    gl_array[5][i]   = x - half_cube_size;
-    gl_array[5][i+1] = y + half_cube_size;
-    gl_array[5][i+2] = z + half_cube_size;
-    i+= 3;
+   (*glArray)[5][i]   = x - half_cube_size;
+   (*glArray)[5][i+1] = y + half_cube_size;
+   (*glArray)[5][i+2] = z + half_cube_size;
+    i += 3;
 
-    if (gl_color_array != NULL){
-      // color for 4 vertices (same height)
-      for (int k= 0; k < 4; ++k) {
-        SceneObject::heightMapColor(z, gl_color_array + colorIdx);
-        // set Alpha value:
-        gl_color_array[colorIdx+3] = m_alphaOccupied;
-        colorIdx +=4;
+      if (glColorArray != NULL) {
+        // color for 4 vertices (same height)
+        for (int k = 0; k < 4; ++k) {
+          SceneObject::heightMapColor(z, *glColorArray + colorIdx);
+          // set Alpha value:
+          (*glColorArray)[colorIdx + 3] = m_alphaOccupied;
+          colorIdx += 4;
+        }
       }
+
     }
+}
 
+void OcTreeDrawer::clearCubes(GLfloat*** glArray, unsigned int& glArraySize, GLfloat** glColorArray){
+  if (glArraySize != 0) {
+    for (unsigned i = 0; i < 6; ++i) {
+      delete[] (*glArray)[i];
+    }
+    delete[] *glArray;
+    *glArray = NULL;
+    glArraySize = 0;
+  }
+
+  if (glColorArray != NULL && *glColorArray != NULL) {
+    delete[] *glColorArray;
+    *glColorArray = NULL;
   }
 }
 
-void OcTreeDrawer::initOctreeCubeVis (const std::list<octomap::OcTreeVolume>& occupied_voxels,
-				      const std::list<octomap::OcTreeVolume>& freespace_voxels,
-				      const std::list<octomap::OcTreeVolume>& occupied_delta_voxels,
-				      const std::list<octomap::OcTreeVolume>& freespace_delta_voxels) {
-
-  clearOcTree();
-
-  // allocate vertex arrays for cubes  -----------------
-  octree_occupied_cells_vertex_size = occupied_voxels.size() * 4 * 3;
-  octree_occupied_cells_vertex_array = new GLfloat* [6];
-
-  octree_freespace_cells_vertex_size = freespace_voxels.size() * 4 * 3;
-  octree_freespace_cells_vertex_array = new GLfloat* [6];
-
-  octree_freespace_delta_cells_vertex_size = freespace_delta_voxels.size() * 4 * 3;
-
-
-  octree_occupied_delta_cells_vertex_size = occupied_delta_voxels.size() * 4 * 3;
-  octree_occupied_delta_cells_vertex_array = new GLfloat* [6];
-  octree_freespace_delta_cells_vertex_array = new GLfloat* [6];
-
-  for (unsigned i = 0; i<6; ++i){
-    octree_occupied_cells_vertex_array[i] = new GLfloat[octree_occupied_cells_vertex_size];
-    octree_freespace_cells_vertex_array[i] = new GLfloat[octree_freespace_cells_vertex_size];
-    octree_occupied_delta_cells_vertex_array[i] = new GLfloat[octree_occupied_delta_cells_vertex_size];
-    octree_freespace_delta_cells_vertex_array[i] = new GLfloat[octree_freespace_delta_cells_vertex_size];
-  }
-  octree_occupied_cells_color_array = new GLfloat[occupied_voxels.size() * 4 *4];
-  octree_occupied_delta_cells_color_array = new GLfloat[occupied_delta_voxels.size() * 4 *4];
-
-  // ---------------------------------------------------
-
-  generateCubes(occupied_voxels, octree_occupied_cells_vertex_array, octree_occupied_cells_color_array);
-  generateCubes(freespace_voxels, octree_freespace_cells_vertex_array);
-
-  generateCubes(occupied_delta_voxels, octree_occupied_delta_cells_vertex_array, octree_occupied_delta_cells_color_array);
-  generateCubes(freespace_delta_voxels, octree_freespace_delta_cells_vertex_array);
-}
 
 void OcTreeDrawer::initOctreeGridVis() {
 
@@ -380,52 +388,6 @@ void OcTreeDrawer::initOctreeGridVis() {
   m_octree_grid_vis_initialized = true;
 }
 
-
-void OcTreeDrawer::clearOcTree(){
-  m_octree_set = false;
-
-  if (octree_occupied_cells_vertex_size != 0) {
-    for (unsigned i = 0; i<6; ++i){
-      delete[] octree_occupied_cells_vertex_array[i];
-    }
-    delete[] octree_occupied_cells_vertex_array;
-    if (octree_occupied_delta_cells_color_array){
-      delete[] octree_occupied_cells_color_array;
-      octree_occupied_cells_color_array = NULL;
-    }
-    octree_occupied_cells_vertex_size = 0;
-  }
-
-  if (octree_freespace_cells_vertex_size != 0) {
-    for (unsigned i = 0; i < 6; ++i){
-      delete[] octree_freespace_cells_vertex_array[i];
-    }
-    delete[] octree_freespace_cells_vertex_array;
-    octree_freespace_cells_vertex_size = 0;
-  }
-
-  if (octree_occupied_delta_cells_vertex_size != 0) {
-    for (unsigned i = 0; i < 6; ++i){
-      delete[] octree_occupied_delta_cells_vertex_array[i];
-    }
-    if (octree_occupied_delta_cells_color_array){
-      delete[] octree_occupied_delta_cells_color_array;
-      octree_occupied_delta_cells_color_array = NULL;
-    }
-
-    delete[] octree_occupied_delta_cells_vertex_array;
-    octree_occupied_delta_cells_vertex_size = 0;
-  }
-  if (octree_freespace_delta_cells_vertex_size != 0) {
-    for (unsigned i = 0; i < 6; ++i){
-      delete[] octree_freespace_delta_cells_vertex_array[i];
-    }
-    delete[] octree_freespace_delta_cells_vertex_array;
-    octree_freespace_delta_cells_vertex_size = 0;
-  }
-
-}
-
 void OcTreeDrawer::clearOcTreeStructure(){
   if (octree_grid_vertex_size != 0) {
     delete[] octree_grid_vertex_array;
@@ -436,28 +398,35 @@ void OcTreeDrawer::clearOcTreeStructure(){
 }
 
 void OcTreeDrawer::clear() {
-  clearOcTree();
+  //clearOcTree();
+  clearCubes(&m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
+  clearCubes(&m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
+  clearCubes(&m_freeArray, m_freeSize);
+  clearCubes(&m_freeThresArray, m_freeThresSize);
+
+
   clearOcTreeStructure();
 }
 
 void OcTreeDrawer::draw() const {
-  if(m_octree_set) {
-    glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_VERTEX_ARRAY);
 
-    if (m_drawOcTreeCells)  drawOctreeCells();
-    if (m_draw_freespace)   drawFreespace();
-    if (m_drawOcTreeGrid)   drawOctreeGrid();
+  if (m_drawOccupied)
+    drawOccupiedVoxels();
+  if (m_drawFree)
+    drawFreeVoxels();
+  if (m_drawOcTreeGrid)
+    drawOctreeGrid();
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-  }
+  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void OcTreeDrawer::drawOctreeCells() const {
+void OcTreeDrawer::drawOccupiedVoxels() const {
 
 
   // colors for printout mode:
   if (m_printoutMode) {
-    if (!m_draw_freespace) { // gray on white background
+    if (!m_drawFree) { // gray on white background
       glColor3f(0.5f, 0.5f, 0.5f);
     }
     else {
@@ -466,24 +435,24 @@ void OcTreeDrawer::drawOctreeCells() const {
   }
 
   // draw binary occupied cells
-  if (octree_occupied_cells_vertex_size != 0) {
+  if (m_occupiedThresSize != 0) {
     if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
-    drawCubes(octree_occupied_cells_vertex_array, octree_occupied_cells_vertex_size, octree_occupied_cells_color_array);
+    drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
   }
 
   // draw delta occupied cells
-  if (octree_occupied_delta_cells_vertex_size != 0) {
+  if (m_occupiedSize != 0) {
     if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
-    drawCubes(octree_occupied_delta_cells_vertex_array, octree_occupied_delta_cells_vertex_size, octree_occupied_delta_cells_color_array);
+    drawCubes(m_occupiedArray, m_occupiedSize, m_occupiedColorArray);
   }
 
 }
 
 
-void OcTreeDrawer::drawFreespace() const {
+void OcTreeDrawer::drawFreeVoxels() const {
 
   if (m_printoutMode) {
-    if (!m_drawOcTreeCells) { // gray on white background
+    if (!m_drawOccupied) { // gray on white background
       glColor3f(0.5f, 0.5f, 0.5f);
     }
     else {
@@ -492,16 +461,16 @@ void OcTreeDrawer::drawFreespace() const {
   }
 
   // draw binary freespace cells
-  if (octree_freespace_cells_vertex_size != 0) {
+  if (m_freeThresSize != 0) {
     if (!m_printoutMode) glColor4f(0.0, 1.0, 0., 0.3);
-    drawCubes(octree_freespace_cells_vertex_array, octree_freespace_cells_vertex_size);
+    drawCubes(m_freeThresArray, m_freeThresSize);
   }
 
 
   // draw delta freespace cells
-  if (octree_freespace_delta_cells_vertex_size != 0) {
+  if (m_freeSize != 0) {
     if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.3);
-    drawCubes(octree_freespace_delta_cells_vertex_array, octree_freespace_delta_cells_vertex_size);
+    drawCubes(m_freeArray, m_freeSize);
   }
 }
 
@@ -509,8 +478,10 @@ void OcTreeDrawer::drawFreespace() const {
 
 void OcTreeDrawer::drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
            GLfloat* cubeColorArray) const {
-  if (cubeArraySize == 0)
+  if (cubeArraySize == 0 || cubeArray == NULL){
+    std::cerr << "Warning: GLfloat array to draw cubes appears to be empty, nothing drawn.\n";
     return;
+  }
 
   // save current color
   GLfloat* curcol = new GLfloat[4];
