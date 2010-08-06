@@ -77,7 +77,7 @@ namespace octomap {
     * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
     * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
     */
-    bool computeRayKeys(const point3d& origin, const point3d& end, std::vector<OcTreeKey>& ray) const;
+    bool computeRayKeys(const point3d& origin, const point3d& end, std::list<OcTreeKey>& ray) const;
 
 
   protected:
@@ -88,6 +88,7 @@ namespace octomap {
 
     // discard current ancestry, e.g., because the tree changed
     void discardAncestry();
+    bool ancestryValid();
 
   protected:
 

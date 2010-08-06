@@ -60,7 +60,15 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBaseSE<NODE>::discardAncestry () {
+    //    std::cout << "discarding ancestry\n";
+    //    ancestry->at((this->tree_depth-1)) = NULL;
     ancestry->at(0) = NULL;
+  }
+
+  template <class NODE>
+  bool OcTreeBaseSE<NODE>::ancestryValid() {
+    //    return (ancestry->at((this->tree_depth-1)) != NULL);
+    return (ancestry->at(0) != NULL);
   }
 
 
@@ -94,7 +102,7 @@ namespace octomap {
     while (!( _xor[0] & (32768 >> i) ) 
            && !( _xor[1] & (32768 >> i) )
            && !( _xor[2] & (32768 >> i) )
-           &&  (i < this->tree_depth)
+           &&  (i < this->tree_depth-1)
            ) {
       i++;
     }
@@ -128,9 +136,9 @@ namespace octomap {
   NODE* OcTreeBaseSE<NODE>::jump (OcTreeKey& key) {
     
     // first jump?
-    if (ancestry->at(0) == NULL) {
+    if (!ancestryValid()) {
       
-      std::cout << "first jump, creating ancestry. " << std::endl;
+      //std::cout << "first jump, creating ancestry. " << std::endl;
       lastkey = key;
       
       // just like OcTreeBase::searchKey -----------------
@@ -140,7 +148,7 @@ namespace octomap {
       for (int i=(this->tree_depth-1); i>=0; i--) {
         
         ancestry->at(i) = curNode;
-        //        std::cout << i << " > " << ancestry->at(i) << std::endl;
+        //  std::cout << i << " > " << ancestry->at(i) << std::endl;
         
 
         unsigned int pos = OcTreeBase<NODE>::genPos(key, i);
@@ -150,13 +158,13 @@ namespace octomap {
         else {
           // we expected a child but did not get it
           // is the current node a leaf already?
-          if (!curNode->hasChildren()) {
+          if (!curNode->hasChildren() && (curNode != this->itsRoot)) {
             return curNode;
           }
           else {
             // it is not, search failed
 //             std::cout << "jump failed (search failed), discarding ancestry"<< std::endl;
-//             this->discardAncestry();  // do we need to discard here?
+            this->discardAncestry();  // do we need to discard here?
             return NULL;
           }
         }
@@ -169,7 +177,7 @@ namespace octomap {
     // use ancestry of last jump
     else {
       unsigned short int branching_point = compareKeys(key, lastkey);
-      std::cout << "branching point: " << branching_point << std::endl;
+      //      std::cout << "jump branching point: " << branching_point << std::endl;
 
       NODE* curNode = ancestry->at(branching_point);
 
@@ -221,7 +229,7 @@ namespace octomap {
 
   template <class NODE>
   bool OcTreeBaseSE<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
-                                          std::vector<OcTreeKey>& ray) const {
+                                          std::list<OcTreeKey>& ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D

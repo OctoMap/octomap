@@ -57,14 +57,14 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBaseSE<NODE>::updateNode(const point3d& value, bool occupied) {
 
-    // if (leaf exists)
-    //    AND (it is binary) AND (the new information does not contradict the prior):
-    //       return leaf
-
-
     // generate key for addressing in tree
     OcTreeKey key;
     if (!this->genKey(value, key)) return NULL;
+
+
+    // if (leaf exists)
+    //    AND (it is at threshold) AND (the new information does not contradict the prior):
+    //       return leaf
 
     NODE* leaf = this->jump(key);
     if (leaf) {
@@ -73,8 +73,70 @@ namespace octomap {
       }
     }
 
+    // perform update at leaf level
 
-    return updateNodeRecurs(this->itsRoot, false, key, 0, occupied);
+    unsigned short int branching_point = this->tree_depth-1;
+    if (this->ancestryValid()) branching_point = compareKeys(key, this->lastkey);
+
+
+//     std::cout << "key:      " << key[0] << " | " << key[1] << " | " << key[2] << std::endl;
+//     std::cout << "last key: " << this->lastkey[0] << " | " << this->lastkey[1] << " | " << this->lastkey[2] << std::endl;
+//    std::cout << "update branching point: " << branching_point << std::endl;
+
+    NODE* curNode = this->ancestry->at(branching_point);
+
+    if (!curNode) {
+      std::cout << "ERROR while jumping for update, branching node does not exist." << std::endl;
+      std::cout << "THIS SHOULD NOT HAPPEN." << std::endl;
+      return NULL;
+    }
+
+    bool node_just_created = false;
+      
+    // follow nodes down to last level...
+    for (int i=branching_point; i>=0; i--) {
+        
+      this->ancestry->at(i) = curNode;
+        
+      unsigned int pos = OcTreeBase<NODE>::genPos(key, i);
+
+      if (curNode->childExists(pos)) {
+        curNode = static_cast<NODE*>( curNode->getChild(pos) );
+        node_just_created = false;
+      }
+
+      else {
+        // child does not exist, but maybe it's a pruned node?
+        if ((!curNode->hasChildren()) && !node_just_created && (curNode != this->itsRoot)) {
+          curNode->expandNode();
+          this->tree_size+=8;
+          this->sizeChanged = true;
+        }
+        else {
+          // not a pruned node, create requested child
+          curNode->createChild(pos);
+          this->tree_size++;
+          this->sizeChanged = true;            
+        }
+
+        curNode = static_cast<NODE*>( curNode->getChild(pos) );
+        node_just_created = true;
+      } // end child creation
+
+    } // end for
+   
+      // update leaf
+    if (occupied) curNode->integrateHit();
+    else          curNode->integrateMiss();
+
+      
+    // update inner nodes from bottom to top (root)
+    for (unsigned int i=1; i<this->tree_depth; i++) {
+      this->ancestry->at(i)->updateOccupancyChildren();         
+    }
+
+    this->lastkey = key;
+    return curNode;
   }
   
 
