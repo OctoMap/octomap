@@ -34,6 +34,9 @@ TARGET_LINK_LIBRARIES(simple octomap)
 ADD_EXECUTABLE(labeled_demo labeled_demo.cpp)
 TARGET_LINK_LIBRARIES(labeled_demo octomap)
 
+ADD_EXECUTABLE(test test.cpp)
+TARGET_LINK_LIBRARIES(test octomap)
+
 # installation:
 # store all header files to install:
 file(GLOB octomap_HDRS *.h *.hxx *.hpp)
