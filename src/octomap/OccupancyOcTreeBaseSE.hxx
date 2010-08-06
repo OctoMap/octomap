@@ -264,10 +264,9 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
-    std::list<OcTreeKey> ray;
-    if (this->computeRayKeys(origin, end, ray)){
+    if (this->computeRayKeys(origin, end, this->keyray)){
 
-      for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
+      for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
         updateNode(*it, false); // insert freespace measurement
       }
     }

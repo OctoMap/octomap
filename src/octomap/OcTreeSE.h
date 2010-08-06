@@ -143,6 +143,7 @@ namespace octomap {
                                         unsigned int& num_other) const; 
 
 
+
   };
 
 

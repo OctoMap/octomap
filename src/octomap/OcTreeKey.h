@@ -70,6 +70,41 @@ namespace octomap {
     unsigned short int k[3];
   };
 
+  
+  class KeyRay {
+
+  public:
+    
+    KeyRay () {
+      ray.resize(100000);
+      reset();
+    }
+
+    void reset() {
+      end_of_ray = begin();
+    }
+
+    void addKey(OcTreeKey& k) {
+      *end_of_ray = k;
+      end_of_ray++;
+    }
+
+    typedef std::vector<OcTreeKey>::iterator iterator;
+    typedef std::vector<OcTreeKey>::const_iterator const_iterator;
+    
+    iterator begin() { return ray.begin(); }
+    iterator end() { return end_of_ray; }
+    const_iterator begin() const { return ray.begin(); }
+    const_iterator end() const   { return end_of_ray; }
+   
+
+  public:
+
+    std::vector<OcTreeKey> ray;
+    std::vector<OcTreeKey>::iterator end_of_ray;
+
+  };
+
 }
 
 #endif

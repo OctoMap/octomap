@@ -256,7 +256,6 @@ namespace octomap {
 
     CountingOcTreeSE free_tree    (this->getResolution());
     CountingOcTreeSE occupied_tree(this->getResolution());
-    std::list<OcTreeKey> ray;
 
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
 
@@ -267,8 +266,8 @@ namespace octomap {
 
       if (!is_maxrange) {
         // free cells
-        if (this->computeRayKeys(origin, p, ray)){
-          for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
+        if (this->computeRayKeys(origin, p, this->keyray)){
+          for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
             free_tree.updateNode(*it);
           }
         }
@@ -279,8 +278,8 @@ namespace octomap {
       else { // used set a maxrange and this is reached
         point3d direction = (p - origin).unit();
         point3d new_end = origin + direction * maxrange;
-        if (this->computeRayKeys(origin, new_end, ray)){
-          for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
+        if (this->computeRayKeys(origin, new_end, this->keyray)){
+          for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
             free_tree.updateNode(*it);
           }
         }

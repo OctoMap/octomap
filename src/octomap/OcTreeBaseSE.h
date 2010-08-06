@@ -62,18 +62,19 @@ namespace octomap {
     *
     * @param origin start coordinate of ray
     * @param end end coordinate of ray
-    * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
+    * @param ray KeyRay structure that holds the keys of all nodes traversed by the ray, excluding "end"
     * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
     */
-    bool computeRayKeys(const point3d& origin, const point3d& end, std::list<OcTreeKey>& ray) const;
-
+    bool computeRayKeys(const point3d& origin, const point3d& end, KeyRay& ray) const;
 
     NODE* getLUTNeighbor(const point3d& value, OcTreeLUT::NeighborDirection dir) const;
 
 
   protected:
 
+    KeyRay keyray;
     OcTreeLUT* lut;
+
   };
 
 

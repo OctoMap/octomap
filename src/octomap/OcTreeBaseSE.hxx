@@ -55,15 +55,17 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBaseSE<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
-                                          std::list<OcTreeKey>& ray) const {
+  bool OcTreeBaseSE<NODE>::computeRayKeys(const point3d& origin, 
+                                          const point3d& end, 
+                                          KeyRay& ray) const {
 
     //    std::cout << "using key ray method\n";
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
 
-    ray.clear();
+//     ray.clear();
+    ray.reset();
 
     OcTreeKey key_origin, key_end;
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
@@ -72,7 +74,9 @@ namespace octomap {
       return false;
     }
 
-    ray.push_back(key_origin);
+    //    ray.push_back(key_origin);
+    ray.addKey(key_origin);
+    
     if (key_origin == key_end) return true; // same tree cell, we're done.
 
 
@@ -132,7 +136,8 @@ namespace octomap {
         break;
       }
       else {
-        ray.push_back(current_key);
+        //        ray.push_back(current_key);
+        ray.addKey(current_key);
       }
 
     } // end while
