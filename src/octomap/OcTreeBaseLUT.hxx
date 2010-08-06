@@ -105,7 +105,7 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump (point3d& point) {
+  NODE* OcTreeBaseLUT<NODE>::jump (const point3d& point) {
 
     OcTreeKey key;
 
@@ -140,7 +140,7 @@ namespace octomap {
       for (int i=(this->tree_depth-1); i>=0; i--) {
         
         ancestry->at(i) = curNode;
-        std::cout << i << " > " << ancestry->at(i) << std::endl;
+        //        std::cout << i << " > " << ancestry->at(i) << std::endl;
         
 
         unsigned int pos = OcTreeBase<NODE>::genPos(key, i);
@@ -155,7 +155,8 @@ namespace octomap {
           }
           else {
             // it is not, search failed
-            this->discardAncestry();  // do we need to discard here?
+//             std::cout << "jump failed (search failed), discarding ancestry"<< std::endl;
+//             this->discardAncestry();  // do we need to discard here?
             return NULL;
           }
         }
@@ -182,7 +183,7 @@ namespace octomap {
       for (int i=branching_point; i>=0; i--) {
         
         ancestry->at(i) = curNode;
-        std::cout << i << " > " << ancestry->at(i) << std::endl;
+        //        std::cout << i << " > " << ancestry->at(i) << std::endl;
         
         unsigned int pos = OcTreeBase<NODE>::genPos(key, i);
         if (curNode->childExists(pos)) {
@@ -197,7 +198,8 @@ namespace octomap {
           }
           else {
             // it is not, search failed
-            this->discardAncestry();
+//             std::cout << "jump failed (not found), discarding ancestry"<< std::endl;
+//             this->discardAncestry();
             return NULL;
           }
         }

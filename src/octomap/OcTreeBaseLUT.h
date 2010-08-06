@@ -56,8 +56,11 @@ namespace octomap {
     virtual ~OcTreeBaseLUT();
     
     // search w/ ancestry
-    NODE* jump(point3d& point);
+    NODE* jump(const point3d& point);
     NODE* jump(double& x, double& y, double& z);
+    // searchKey w/ ancestry
+    NODE* jump(OcTreeKey& key);
+
 
     NODE* getLUTNeighbor(const point3d& value, OcTreeLUT::NeighborDirection dir) const;
 
@@ -79,8 +82,6 @@ namespace octomap {
 
   protected:
 
-    // searchKey w/ ancestry
-    NODE* jump(OcTreeKey& key);
 
     // compute branching point for jump
     unsigned int compareKeys(OcTreeKey& key1, OcTreeKey& key2) const;
