@@ -39,6 +39,7 @@
 
 #include "octomap.h"
 #include "OcTreeFileIO.h"
+#include "OcTreeSE.h"
 #include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -109,7 +110,7 @@ int main(int argc, char** argv) {
   }
 
   cout << "\nCreating tree\n===========================\n";
-  OcTree* tree = new OcTree(res);
+  OcTreeSE* tree = new OcTreeSE(res);
 
 
   gettimeofday(&start, NULL);  // start timer

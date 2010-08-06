@@ -65,6 +65,9 @@ namespace octomap {
      */
     virtual NODE* updateNode(const point3d& value, bool occupied);
 
+    
+    NODE* updateNode(const OcTreeKey& key, bool occupied);
+
     /**
      * Insert one ray between origin and end into the tree.
      *
@@ -135,7 +138,7 @@ namespace octomap {
 
 
     /// recursive call of updateNode()
-    NODE* updateNodeRecurs(NODE* node, bool node_just_created, OcTreeKey& key,
+    NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, bool occupied);
 
     void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,

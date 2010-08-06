@@ -101,7 +101,7 @@ namespace octomap {
      *  search node given a set of addressing keys
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* searchKey (OcTreeKey& key) const;
+    NODE* searchKey (const OcTreeKey& key) const;
 
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values
@@ -198,7 +198,7 @@ namespace octomap {
     bool genCoordFromKey(unsigned short int& key, double& coord) const;
 
     /// generate child index (between 0 and 7) from key at given tree depth
-    unsigned int genPos(OcTreeKey& key, int i) const;
+    unsigned int genPos(const OcTreeKey& key, int i) const;
 
     /// recursive call of prune()
     void pruneRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);

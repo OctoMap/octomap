@@ -105,7 +105,7 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::genPos(OcTreeKey& key, int i) const {
+  unsigned int OcTreeBase<NODE>::genPos(const OcTreeKey& key, int i) const {
 
     unsigned int retval = 0;
     if (key.k[0] & (1 << i)) retval += 1;
@@ -140,7 +140,7 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::searchKey (OcTreeKey& key) const {
+  NODE* OcTreeBase<NODE>::searchKey (const OcTreeKey& key) const {
 
     NODE* curNode = itsRoot;
 

@@ -42,7 +42,7 @@
 #include <stdlib.h>
 
 #include "OcTreeSE.h"
-#include "CountingOcTree.h"
+#include "CountingOcTreeSE.h"
 
 
 // switch to true to disable uniform sampling of scans (will "eat" the floor)
@@ -254,9 +254,9 @@ namespace octomap {
 
     octomap::point3d p;
 
-    CountingOcTree free_tree    (this->getResolution());
-    CountingOcTree occupied_tree(this->getResolution());
-    std::vector<point3d> ray;
+    CountingOcTreeSE free_tree    (this->getResolution());
+    CountingOcTreeSE occupied_tree(this->getResolution());
+    std::list<OcTreeKey> ray;
 
     for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
 
@@ -267,8 +267,8 @@ namespace octomap {
 
       if (!is_maxrange) {
         // free cells
-        if (this->computeRay(origin, p, ray)){
-          for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
+        if (this->computeRayKeys(origin, p, ray)){
+          for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
             free_tree.updateNode(*it);
           }
         }
@@ -279,8 +279,8 @@ namespace octomap {
       else { // used set a maxrange and this is reached
         point3d direction = (p - origin).unit();
         point3d new_end = origin + direction * maxrange;
-        if (this->computeRay(origin, new_end, ray)){
-          for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
+        if (this->computeRayKeys(origin, new_end, ray)){
+          for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
             free_tree.updateNode(*it);
           }
         }

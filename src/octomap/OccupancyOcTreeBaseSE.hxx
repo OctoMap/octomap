@@ -54,17 +54,19 @@ namespace octomap {
   }
 
 
+
   template <class NODE>
   NODE* OccupancyOcTreeBaseSE<NODE>::updateNode(const point3d& value, bool occupied) {
 
-    // generate key for addressing in tree
     OcTreeKey key;
     if (!this->genKey(value, key)) return NULL;
 
+    return updateNode(key, occupied);
+  }
 
-    // if (leaf exists)
-    //    AND (it is at threshold) AND (the new information does not contradict the prior):
-    //       return leaf
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBaseSE<NODE>::updateNode(const OcTreeKey& key, bool occupied) {
 
     NODE* leaf = this->searchKey(key);
     if (leaf) {
@@ -80,7 +82,7 @@ namespace octomap {
 
   template <class NODE>
   NODE* OccupancyOcTreeBaseSE<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
-                                           OcTreeKey& key, unsigned int depth,
+                                           const OcTreeKey& key, unsigned int depth,
                                            bool occupied) {
 
 
@@ -114,9 +116,6 @@ namespace octomap {
       // set own probability according to prob of children
       node->updateOccupancyChildren(); 
 
-      //       std::cout << "depth: " << depth << " node prob: " << node->getLogOdds()
-      // 		<< " label: " << (int) node->getLabel() << " isClamped: "
-      // 		<< node->isClamped() << " isValid: "  << node->valid() << std::endl;
       return retval;
     }
 
@@ -247,16 +246,29 @@ namespace octomap {
   }
 
 
+//   template <class NODE>
+//   void OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
+
+//     std::vector<point3d> ray;
+//     if (this->computeRay(origin, end, ray)){
+
+//       for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
+//         //      std::cout << "miss cell " << *it << std::endl;
+//         updateNode(*it, false); // insert miss cell
+//       }
+//     }
+
+//   }
+
 
   template <class NODE>
   void OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
-    std::vector<point3d> ray;
-    if (this->computeRay(origin, end, ray)){
+    std::list<OcTreeKey> ray;
+    if (this->computeRayKeys(origin, end, ray)){
 
-      for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
-        //      std::cout << "miss cell " << *it << std::endl;
-        updateNode(*it, false); // insert miss cell
+      for(std::list<OcTreeKey>::iterator it=ray.begin(); it != ray.end(); it++) {
+        updateNode(*it, false); // insert freespace measurement
       }
     }
 

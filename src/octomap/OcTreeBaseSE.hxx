@@ -58,6 +58,8 @@ namespace octomap {
   bool OcTreeBaseSE<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
                                           std::list<OcTreeKey>& ray) const {
 
+    //    std::cout << "using key ray method\n";
+
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
 
@@ -66,7 +68,7 @@ namespace octomap {
     OcTreeKey key_origin, key_end;
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
-      std::cerr << "WARNING: endpoint out of bounds during ray casting" << std::endl;
+      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
       return false;
     }
 
