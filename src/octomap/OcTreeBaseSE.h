@@ -1,5 +1,5 @@
-#ifndef OCTOMAP_OCTREE_BASE_LUT_H
-#define OCTOMAP_OCTREE_BASE_LUT_H
+#ifndef OCTOMAP_OCTREE_BASE_SE_H
+#define OCTOMAP_OCTREE_BASE_SE_H
 
 // $Id:  $
 
@@ -48,12 +48,12 @@ namespace octomap {
 
 
   template <class NODE>
-    class OcTreeBaseLUT: public OcTreeBase<NODE> {
+    class OcTreeBaseSE: public OcTreeBase<NODE> {
 
   public:
 
-    OcTreeBaseLUT(double _resolution);
-    virtual ~OcTreeBaseLUT();
+    OcTreeBaseSE(double _resolution);
+    virtual ~OcTreeBaseSE();
     
     // search w/ ancestry
     NODE* jump(const point3d& point);
@@ -100,6 +100,6 @@ namespace octomap {
 
 }
 
-#include "OcTreeBaseLUT.hxx"
+#include "OcTreeBaseSE.hxx"
 
 #endif

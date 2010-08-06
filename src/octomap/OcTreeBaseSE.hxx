@@ -42,7 +42,7 @@ namespace octomap {
 
 
   template <class NODE>
-  OcTreeBaseLUT<NODE>::OcTreeBaseLUT (double _resolution) :
+  OcTreeBaseSE<NODE>::OcTreeBaseSE (double _resolution) :
     OcTreeBase<NODE>(_resolution) {
     
     lut = new OcTreeLUT (this->tree_depth);
@@ -52,20 +52,20 @@ namespace octomap {
   }
 
   template <class NODE>
-  OcTreeBaseLUT<NODE>::~OcTreeBaseLUT () {
+  OcTreeBaseSE<NODE>::~OcTreeBaseSE () {
     delete lut;
     delete ancestry;
   }
 
 
   template <class NODE>
-  void OcTreeBaseLUT<NODE>::discardAncestry () {
+  void OcTreeBaseSE<NODE>::discardAncestry () {
     ancestry->at(0) = NULL;
   }
 
 
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::getLUTNeighbor (const point3d& node_coord, OcTreeLUT::NeighborDirection dir) const {
+  NODE* OcTreeBaseSE<NODE>::getLUTNeighbor (const point3d& node_coord, OcTreeLUT::NeighborDirection dir) const {
 
     OcTreeKey start_key;
 
@@ -81,7 +81,7 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int  OcTreeBaseLUT<NODE>::compareKeys (OcTreeKey& key1, OcTreeKey& key2) const {
+  unsigned int  OcTreeBaseSE<NODE>::compareKeys (OcTreeKey& key1, OcTreeKey& key2) const {
     
     unsigned short int _xor[3];
 
@@ -105,7 +105,7 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump (const point3d& point) {
+  NODE* OcTreeBaseSE<NODE>::jump (const point3d& point) {
 
     OcTreeKey key;
 
@@ -117,7 +117,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump (double& x, double& y, double& z) {
+  NODE* OcTreeBaseSE<NODE>::jump (double& x, double& y, double& z) {
     point3d p(x,y,z);
     return this->jump(p);
   }
@@ -125,7 +125,7 @@ namespace octomap {
 
   
   template <class NODE>
-  NODE* OcTreeBaseLUT<NODE>::jump (OcTreeKey& key) {
+  NODE* OcTreeBaseSE<NODE>::jump (OcTreeKey& key) {
     
     // first jump?
     if (ancestry->at(0) == NULL) {
@@ -213,14 +213,14 @@ namespace octomap {
 
 
   template <class NODE>
-  void OcTreeBaseLUT<NODE>::prune() {
+  void OcTreeBaseSE<NODE>::prune() {
     OcTreeBase<NODE>::prune();
     this->discardAncestry();
   }
   
 
   template <class NODE>
-  bool OcTreeBaseLUT<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
+  bool OcTreeBaseSE<NODE>::computeRayKeys(const point3d& origin, const point3d& end, 
                                           std::vector<OcTreeKey>& ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo

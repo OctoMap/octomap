@@ -7,6 +7,7 @@ SET (octomap_SRCS
   OcTreeNodeLabeled.cpp
   OcTreeLabeled.cpp
   OcTreeLUT.cpp
+  OcTreeSE.cpp
   )
 
 ADD_LIBRARY( octomap ${octomap_SRCS})
@@ -33,9 +34,6 @@ TARGET_LINK_LIBRARIES(simple octomap)
 
 ADD_EXECUTABLE(labeled_demo labeled_demo.cpp)
 TARGET_LINK_LIBRARIES(labeled_demo octomap)
-
-ADD_EXECUTABLE(test test.cpp)
-TARGET_LINK_LIBRARIES(test octomap)
 
 # installation:
 # store all header files to install:

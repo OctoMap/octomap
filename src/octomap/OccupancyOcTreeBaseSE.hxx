@@ -42,20 +42,20 @@ namespace octomap {
 
 
   template <class NODE>
-  OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double _resolution)
-    : OcTreeBaseLUT<NODE>(_resolution)
+  OccupancyOcTreeBaseSE<NODE>::OccupancyOcTreeBaseSE(double _resolution)
+    : OcTreeBaseSE<NODE>(_resolution)
   {
 
   }
 
 
   template <class NODE>
-  OccupancyOcTreeBase<NODE>::~OccupancyOcTreeBase(){
+  OccupancyOcTreeBaseSE<NODE>::~OccupancyOcTreeBaseSE(){
   }
 
 
   template <class NODE>
-  NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, bool occupied) {
+  NODE* OccupancyOcTreeBaseSE<NODE>::updateNode(const point3d& value, bool occupied) {
 
     // if (leaf exists)
     //    AND (it is binary) AND (the new information does not contradict the prior):
@@ -79,7 +79,7 @@ namespace octomap {
   
 
   template <class NODE>
-  NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
+  NODE* OccupancyOcTreeBaseSE<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
                                            OcTreeKey& key, unsigned int depth,
                                            bool occupied) {
 
@@ -131,7 +131,7 @@ namespace octomap {
 
   
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, 
+  bool OccupancyOcTreeBaseSE<NODE>::castRay(const point3d& origin, const point3d& directionP, 
                                           point3d& end, bool ignoreUnknown, double maxRange) const {
     
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
@@ -249,7 +249,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
+  void OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
     std::vector<point3d> ray;
     if (this->computeRay(origin, end, ray)){
@@ -264,7 +264,7 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::insertRay(const point3d& origin, const point3d& end, double maxrange){
+  bool OccupancyOcTreeBaseSE<NODE>::insertRay(const point3d& origin, const point3d& end, double maxrange){
 
     // cut ray at maxrange
     if ((maxrange > 0) 
@@ -285,7 +285,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getOccupied(std::list<OcTreeVolume>& occupied_nodes, unsigned int max_depth) const{
+  void OccupancyOcTreeBaseSE<NODE>::getOccupied(std::list<OcTreeVolume>& occupied_nodes, unsigned int max_depth) const{
     std::list<OcTreeVolume> delta_nodes;
 
     getOccupied(occupied_nodes, delta_nodes, max_depth);
@@ -294,7 +294,7 @@ namespace octomap {
 
   
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getOccupied(std::list<OcTreeVolume>& binary_nodes,
+  void OccupancyOcTreeBaseSE<NODE>::getOccupied(std::list<OcTreeVolume>& binary_nodes,
                                      std::list<OcTreeVolume>& delta_nodes,
                                      unsigned int max_depth) const{
 
@@ -306,7 +306,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getOccupiedRecurs( std::list<OcTreeVolume>& binary_nodes,
+  void OccupancyOcTreeBaseSE<NODE>::getOccupiedRecurs( std::list<OcTreeVolume>& binary_nodes,
                                             std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
                                             NODE* node, unsigned int depth,
                                             const point3d& parent_center) const {
@@ -350,7 +350,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getFreespace(std::list<OcTreeVolume>& free_nodes, unsigned int max_depth) const{
+  void OccupancyOcTreeBaseSE<NODE>::getFreespace(std::list<OcTreeVolume>& free_nodes, unsigned int max_depth) const{
     std::list<OcTreeVolume> delta_nodes;
 
     getFreespace(free_nodes, delta_nodes, max_depth);
@@ -358,7 +358,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getFreespace(std::list<OcTreeVolume>& binary_nodes,
+  void OccupancyOcTreeBaseSE<NODE>::getFreespace(std::list<OcTreeVolume>& binary_nodes,
                                       std::list<OcTreeVolume>& delta_nodes,
                                       unsigned int max_depth) const{
 
@@ -369,7 +369,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
+  void OccupancyOcTreeBaseSE<NODE>::getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
                                             std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
                                             NODE* node, unsigned int depth, const point3d& parent_center) const{
 
