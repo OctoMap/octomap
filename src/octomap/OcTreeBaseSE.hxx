@@ -38,6 +38,11 @@
  */
 
 
+#include <limits>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
+
 namespace octomap {
 
 
@@ -64,7 +69,6 @@ namespace octomap {
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
 
-//     ray.clear();
     ray.reset();
 
     OcTreeKey key_origin, key_end;
@@ -74,7 +78,6 @@ namespace octomap {
       return false;
     }
 
-    //    ray.push_back(key_origin);
     ray.addKey(key_origin);
     
     if (key_origin == key_end) return true; // same tree cell, we're done.
@@ -82,7 +85,9 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
 
-    point3d direction = (end - origin).unit();
+    point3d direction = (end - origin);
+    double length = direction.norm2();
+    direction /= length; // normalize vector
 
     int    step[3];
     double tMax[3];
@@ -91,55 +96,82 @@ namespace octomap {
     OcTreeKey current_key = key_origin; 
 
     for(unsigned int i=0; i < 3; ++i) {
+
+      // compute step direction
       if (direction(i) > 0.0) step[i] =  1;
       else if (direction(i) < 0.0)   step[i] = -1;
       else step[i] = 0;
 
-      double voxelBorder = (double) ( (int) current_key[i] - (int) this->tree_max_val ) * this->resolution;
-      if (step[i] > 0) voxelBorder += this->resolution;
+      // compute tMax, tDelta
+      double voxelBorder(0);
+      this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
+      if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
 
-      if (direction(i) != 0.0) {
+      if (step[i] != 0) {
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
       else {
-        tMax[i] = 1e6;
-        tDelta[i] = 1e6;
+        tMax[i] =  std::numeric_limits<double>::max();
+        tDelta[i] = std::numeric_limits<double>::max();
       }
     }
+
+    // for speedup:
+    point3d origin_scaled = origin;  
+    origin_scaled /= this->resolution;  
+    double length_scaled = length - this->resolution/2.; // safety margin
+    length_scaled /= this->resolution;  // scale 
+    length_scaled = length_scaled*length_scaled;  // avoid sqrt in dist comp.
 
     // Incremental phase  ---------------------------------------------------------
 
     bool done = false;
     while (!done) {
-      unsigned int i;
+
+      unsigned int dim;
 
       // find minimum tMax:
       if (tMax[0] < tMax[1]){
-        if (tMax[0] < tMax[2]) i = 0;
-        else                   i = 2;
+        if (tMax[0] < tMax[2]) dim = 0;
+        else                   dim = 2;
       }
       else {
-        if (tMax[1] < tMax[2]) i = 1;
-        else                   i = 2;
+        if (tMax[1] < tMax[2]) dim = 1;
+        else                   dim = 2;
       }
 
-      // advance in direction "i"
-      current_key[i] += step[i];
-      tMax[i] += tDelta[i];
+      // advance in direction "dim"
+      current_key[dim] += step[dim];
+      tMax[dim] += tDelta[dim];
 
-      assert ((current_key[i] >= 0) && (current_key[i] < 2*this->tree_max_val));
-      
-      // reached endpoint?
-      if (current_key == key_end){
+      assert ((current_key[dim] >= 0) && (current_key[dim] < 2*this->tree_max_val));
+
+      // reached endpoint, key equv?
+      if (current_key == key_end) {
         done = true;
         break;
       }
       else {
-        //        ray.push_back(current_key);
-        ray.addKey(current_key);
+
+        // reached endpoint world coords?
+        double dist_from_endpoint = 0;
+        for (unsigned int j = 0; j < 3; j++) {
+          double coord = (double) current_key[j] - (double) this->tree_max_val;
+          dist_from_endpoint += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
+        }
+        if (dist_from_endpoint > length_scaled) {
+          done = true;
+          break;
+        }
+        
+        else {  // continue to add freespace cells
+          ray.addKey(current_key);
+        }
       }
 
+      assert ( ray.size() < ray.sizeMax() - 1);
+      
     } // end while
 
     return true;

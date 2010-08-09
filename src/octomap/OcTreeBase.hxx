@@ -98,7 +98,7 @@ namespace octomap {
     if (key >= 2*tree_max_val)
       return false;
 
-    coord = ((double(key) - tree_max_val) + 0.5) * resolution;
+    coord = (double) ( (int) key - (int) this->tree_max_val ) * this->resolution;
 
     return true;
   }

@@ -40,6 +40,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <assert.h>
+
 namespace octomap {
 
 
@@ -85,9 +87,13 @@ namespace octomap {
     }
 
     void addKey(OcTreeKey& k) {
+      assert(end_of_ray != ray.end());
       *end_of_ray = k;
       end_of_ray++;
     }
+
+    unsigned int size() const { return end_of_ray - ray.begin(); }
+    unsigned int sizeMax() const { return 100000; }
 
     typedef std::vector<OcTreeKey>::iterator iterator;
     typedef std::vector<OcTreeKey>::const_iterator const_iterator;

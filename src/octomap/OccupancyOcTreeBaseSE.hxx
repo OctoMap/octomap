@@ -262,15 +262,17 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
+  bool OccupancyOcTreeBaseSE<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
-    if (this->computeRayKeys(origin, end, this->keyray)){
-
-      for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-        updateNode(*it, false); // insert freespace measurement
-      }
+    if (!this->computeRayKeys(origin, end, this->keyray)) {
+      return false;
     }
-
+    
+    for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+      updateNode(*it, false); // insert freespace measurement
+    }
+  
+    return true;
   }
 
 
@@ -283,12 +285,11 @@ namespace octomap {
 
       point3d direction = (end - origin).unit();
       point3d new_end = origin + direction * maxrange;
-      integrateMissOnRay(origin, new_end);
-      return true;
+      return integrateMissOnRay(origin, new_end);
     }
     // insert complete ray
     else {
-      integrateMissOnRay(origin, end);
+      if (!integrateMissOnRay(origin, end)) return false;
       updateNode(end, true); // insert hit cell
       return true;
     }
