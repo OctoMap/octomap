@@ -55,7 +55,7 @@
     </property>
     <widget class="QMenu" name="menuView_mode">
      <property name="title">
-      <string>View mode</string>
+      <string>View Mode</string>
      </property>
      <addaction name="actionHeight_map"/>
      <addaction name="actionPrintout_mode"/>
@@ -63,7 +63,7 @@
     <addaction name="actionPointcloud"/>
     <addaction name="actionOctree_cells"/>
     <addaction name="actionFree"/>
-    <addaction name="actionChanged_free_only"/>
+    <addaction name="actionSelected"/>
     <addaction name="actionOctree_structure"/>
     <addaction name="actionTrajectory"/>
     <addaction name="separator"/>
@@ -132,7 +132,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Occupied Octree cells</string>
+    <string>Occupied Octree Volumes</string>
    </property>
    <property name="shortcut">
     <string>O</string>
@@ -143,7 +143,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Octree structure</string>
+    <string>Octree Structure</string>
    </property>
    <property name="shortcut">
     <string>S</string>
@@ -165,7 +165,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Free Octree cells</string>
+    <string>Free Octree Volumes</string>
    </property>
    <property name="shortcut">
     <string>F</string>
@@ -195,7 +195,7 @@
      <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
    </property>
    <property name="text">
-    <string>Reset view</string>
+    <string>Reset View</string>
    </property>
    <property name="toolTip">
     <string>Reset the 3D viewpoint</string>
@@ -257,7 +257,7 @@
   </action>
   <action name="actionStore_camera">
    <property name="text">
-    <string>Store camera</string>
+    <string>Store Camera</string>
    </property>
   </action>
   <action name="actionRestore_camera">
@@ -281,7 +281,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Changed free only</string>
+    <string>Selected Octree Volumes</string>
    </property>
   </action>
   <action name="actionExpand_tree">
@@ -325,6 +325,14 @@
    </property>
    <property name="toolTip">
     <string>Export view as image sequence. This can be used to create videos.</string>
+   </property>
+  </action>
+  <action name="actionSelected">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Selected Octree Volumes</string>
    </property>
   </action>
  </widget>

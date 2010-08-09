@@ -37,7 +37,15 @@ namespace octomap {
     virtual ~OcTreeDrawer();
     void clear();
     void draw() const;
+    /// sets a new OcTree that should be drawn by this drawer
     void setOcTree(const octomap::OcTree &octree);
+
+    /// sets a new selection of the current OcTree to be drawn
+    void setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedPoints);
+
+    /// clear the visualization of the OcTree selection
+    void clearOcTreeSelection();
+
 
     /// sets alpha level for occupied cells
     void setAlphaOccupied(double alpha);
@@ -45,6 +53,7 @@ namespace octomap {
     void enableOcTree(bool enabled = true);
     void enableOcTreeCells(bool enabled = true) {m_drawOccupied = enabled; };
     void enableFreespace(bool enabled = true) {m_drawFree = enabled; };
+    void enableSelection(bool enabled = true) {m_drawSelection = enabled; };
     void setMax_tree_depth(unsigned int max_tree_depth) {m_max_tree_depth = max_tree_depth;};
 
   protected:
@@ -54,6 +63,7 @@ namespace octomap {
     void drawOctreeGrid() const;
     void drawOccupiedVoxels() const;
     void drawFreeVoxels() const;
+    void drawSelection() const;
     void drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
         GLfloat* cubeColorArray = NULL) const;
 
@@ -78,6 +88,8 @@ namespace octomap {
     unsigned int m_occupiedSize;
     GLfloat** m_freeArray;
     unsigned int m_freeSize;
+    GLfloat** m_selectionArray;
+    unsigned int m_selectionSize;
 
     //! Color array for occupied cells (height)
     GLfloat* m_occupiedThresColorArray;
@@ -93,6 +105,7 @@ namespace octomap {
     bool m_drawOccupied;
     bool m_drawOcTreeGrid;
     bool m_drawFree;
+    bool m_drawSelection;
     bool m_octree_grid_vis_initialized;
 
     unsigned int m_max_tree_depth;

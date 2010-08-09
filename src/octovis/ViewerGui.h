@@ -87,6 +87,7 @@ class ViewerGui : public QMainWindow {
   void on_actionOctree_cells_toggled(bool enabled);
   void on_actionOctree_structure_toggled(bool enabled);
   void on_actionFree_toggled(bool enabled);
+  void on_actionSelected_toggled(bool enabled);
   // use it for testcases etc.
   void on_actionTest_triggered();
 

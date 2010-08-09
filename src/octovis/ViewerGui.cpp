@@ -721,6 +721,24 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
   }
 }
 
+void ViewerGui::on_actionSelected_toggled(bool enabled) {
+  if(m_octreeDrawer) {
+    m_octreeDrawer->enableSelection(enabled);
+
+    // just for testing, you should set the selection somewhere else and only enable it here:
+    if (enabled){
+      std::list<OcTreeVolume> selection;
+      std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
+      selection.push_back(volume);
+      m_octreeDrawer->setOcTreeSelection(selection);
+
+    } else{
+      m_octreeDrawer->clearOcTreeSelection();
+    }
+    m_glwidget->updateGL();
+  }
+}
+
 
 }
 

@@ -30,13 +30,14 @@ namespace octomap {
 
 OcTreeDrawer::OcTreeDrawer() : SceneObject(),
   m_occupiedThresSize(0), m_freeThresSize(0),
-  m_occupiedSize(0), m_freeSize(0),
+  m_occupiedSize(0), m_freeSize(0), m_selectionSize(0),
   octree_grid_vertex_size(0), m_alphaOccupied(0.8)
 {
   m_octree_grid_vis_initialized = false;
   m_drawOccupied = true;
   m_drawOcTreeGrid = false;
   m_drawFree = false;
+  m_drawSelection = true;
 
   m_occupiedArray = NULL;
   m_freeArray = NULL;
@@ -44,6 +45,7 @@ OcTreeDrawer::OcTreeDrawer() : SceneObject(),
   m_freeThresArray = NULL;
   m_occupiedColorArray = NULL;
   m_occupiedThresColorArray = NULL;
+  m_selectionArray = NULL;
 }
 
 OcTreeDrawer::~OcTreeDrawer() {
@@ -76,7 +78,8 @@ void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
 
 
   m_octree_grid_vis_initialized = false;
-  if(m_drawOcTreeGrid) initOctreeGridVis();
+  if(m_drawOcTreeGrid)
+    initOctreeGridVis();
 
   // initialize visualization:
   generateCubes(occupiedThresVoxels, &m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
@@ -84,8 +87,15 @@ void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
 
   generateCubes(occupiedVoxels, &m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
   generateCubes(freeVoxels, &m_freeArray, m_freeSize);
+}
 
+void OcTreeDrawer::setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedVoxels){
+  generateCubes(selectedVoxels, &m_selectionArray, m_selectionSize);
 
+}
+
+void OcTreeDrawer::clearOcTreeSelection(){
+  clearCubes(&m_selectionArray, m_selectionSize);
 }
 
 void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
@@ -403,6 +413,7 @@ void OcTreeDrawer::clear() {
   clearCubes(&m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
   clearCubes(&m_freeArray, m_freeSize);
   clearCubes(&m_freeThresArray, m_freeThresSize);
+  clearCubes(&m_selectionArray, m_selectionSize);
 
 
   clearOcTreeStructure();
@@ -417,6 +428,8 @@ void OcTreeDrawer::draw() const {
     drawFreeVoxels();
   if (m_drawOcTreeGrid)
     drawOctreeGrid();
+  if (m_drawSelection)
+    drawSelection();
 
   glDisableClientState(GL_VERTEX_ARRAY);
 }
@@ -471,6 +484,13 @@ void OcTreeDrawer::drawFreeVoxels() const {
   if (m_freeSize != 0) {
     if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.3);
     drawCubes(m_freeArray, m_freeSize);
+  }
+}
+
+void OcTreeDrawer::drawSelection() const {
+  if (m_selectionSize != 0) {
+    glColor4f(1.0, 0.0, 0.0, 0.5);
+    drawCubes(m_selectionArray, m_selectionSize);
   }
 }
 
