@@ -79,6 +79,7 @@ namespace octomap {
      */
     virtual NODE* updateNode(const point3d& value, bool occupied);
 
+
     /**
      * Insert one ray between origin and end into the tree.
      *
@@ -143,13 +144,24 @@ namespace octomap {
 
   protected:
 
-    /// Traces a ray from origin to end and updates all voxels on the way as free.
-    /// The volume containing "end" is not updated.
-    void integrateMissOnRay(const point3d& origin, const point3d& end);
+    /**
+     * Integrate occupancy measurement.
+     *
+     * @param OcTreeKey of the NODE that is to be updated
+     * @param occupied true if the node was measured occupied, else false
+     * @return pointer to the updated NODE
+     */
+    NODE* updateNode(const OcTreeKey& key, bool occupied);
+
+
+    /** Traces a ray from origin to end and updates all voxels on the
+     *  way as free.  The volume containing "end" is not updated.
+     */
+    bool integrateMissOnRay(const point3d& origin, const point3d& end);
 
 
     /// recursive call of updateNode()
-    NODE* updateNodeRecurs(NODE* node, bool node_just_created, OcTreeKey& key,
+    NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, bool occupied);
 
     void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,

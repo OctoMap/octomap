@@ -68,16 +68,9 @@ namespace octomap {
     void increaseCount() { value++; }
     void setCount(unsigned c) {this->setValue(c); }
 
-
     // overloaded:
     void expandNode();
-
-
-
-  protected:
-
   };
-
 
 
 
@@ -97,6 +90,7 @@ namespace octomap {
     CountingOcTree(double resolution);
 
     virtual CountingOcTreeNode* updateNode(const point3d& value);
+    CountingOcTreeNode* updateNode(const OcTreeKey& k);
 
   protected:
 

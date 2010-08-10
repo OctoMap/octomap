@@ -88,9 +88,12 @@ namespace octomap {
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 
     OcTreeKey key;
+    if (!genKey(value, key)) return NULL;
+    return updateNode(key);
+  }
 
-    if (!genKey(value, key))
-        return NULL;
+    
+  CountingOcTreeNode* CountingOcTree::updateNode(const OcTreeKey& k) {
 
     CountingOcTreeNode* curNode = this->getRoot();
     curNode->increaseCount();
@@ -98,7 +101,7 @@ namespace octomap {
     // follow or construct nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      unsigned int pos = genPos(key, i);
+      unsigned int pos = genPos(k, i);
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {

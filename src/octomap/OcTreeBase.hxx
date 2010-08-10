@@ -185,11 +185,126 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
-                                    std::vector<point3d>& _ray) const {
+  bool OcTreeBase<NODE>::computeRayKeys(const point3d& origin, 
+                                          const point3d& end, 
+                                          KeyRay& ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D
+
+    ray.reset();
+
+    OcTreeKey key_origin, key_end;
+    if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
+         !OcTreeBase<NODE>::genKey(end, key_end) ) {
+      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
+      return false;
+    }
+
+    ray.addKey(key_origin);
+    
+    if (key_origin == key_end) return true; // same tree cell, we're done.
+
+
+    // Initialization phase -------------------------------------------------------
+
+    point3d direction = (end - origin);
+    double length = direction.norm2();
+    direction /= length; // normalize vector
+
+    int    step[3];
+    double tMax[3];
+    double tDelta[3];
+
+    OcTreeKey current_key = key_origin; 
+
+    for(unsigned int i=0; i < 3; ++i) {
+
+      // compute step direction
+      if (direction(i) > 0.0) step[i] =  1;
+      else if (direction(i) < 0.0)   step[i] = -1;
+      else step[i] = 0;
+
+      // compute tMax, tDelta
+      double voxelBorder(0);
+      this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
+      if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+
+      if (step[i] != 0) {
+        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
+        tDelta[i] = this->resolution / fabs( direction(i) );
+      }
+      else {
+        tMax[i] =  std::numeric_limits<double>::max();
+        tDelta[i] = std::numeric_limits<double>::max();
+      }
+    }
+
+    // for speedup:
+    point3d origin_scaled = origin;  
+    origin_scaled /= this->resolution;  
+    double length_scaled = length - this->resolution/2.; // safety margin
+    length_scaled /= this->resolution;  // scale 
+    length_scaled = length_scaled*length_scaled;  // avoid sqrt in dist comp.
+
+    // Incremental phase  ---------------------------------------------------------
+
+    bool done = false;
+    while (!done) {
+
+      unsigned int dim;
+
+      // find minimum tMax:
+      if (tMax[0] < tMax[1]){
+        if (tMax[0] < tMax[2]) dim = 0;
+        else                   dim = 2;
+      }
+      else {
+        if (tMax[1] < tMax[2]) dim = 1;
+        else                   dim = 2;
+      }
+
+      // advance in direction "dim"
+      current_key[dim] += step[dim];
+      tMax[dim] += tDelta[dim];
+
+      assert ((current_key[dim] >= 0) && (current_key[dim] < 2*this->tree_max_val));
+
+      // reached endpoint, key equv?
+      if (current_key == key_end) {
+        done = true;
+        break;
+      }
+      else {
+
+        // reached endpoint world coords?
+        double dist_from_endpoint = 0;
+        for (unsigned int j = 0; j < 3; j++) {
+          double coord = (double) current_key[j] - (double) this->tree_max_val;
+          dist_from_endpoint += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
+        }
+        if (dist_from_endpoint > length_scaled) {
+          done = true;
+          break;
+        }
+        
+        else {  // continue to add freespace cells
+          ray.addKey(current_key);
+        }
+      }
+
+      assert ( ray.size() < ray.sizeMax() - 1);
+      
+    } // end while
+
+    return true;
+  }
+
+
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
+                                    std::vector<point3d>& _ray) const {
 
     _ray.clear();
 

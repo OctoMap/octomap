@@ -43,7 +43,7 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double _resolution)
-  : OcTreeBase<NODE>(_resolution)
+    : OcTreeBase<NODE>(_resolution)
   {
 
   }
@@ -57,30 +57,29 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, bool occupied) {
 
-    // if (leaf exists)
-    //    AND (it is binary) AND (the new information does not contradict the prior):
-    //       return leaf
+    OcTreeKey key;
+    if (!this->genKey(value, key)) return NULL;
+    return updateNode(key, occupied);
+  }
 
-    // TODO: Possible speedup: avoid search in every insert?
-    NODE* leaf = this->search(value);
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, bool occupied) {
+
+    NODE* leaf = this->searchKey(key);
     if (leaf) {
       if ((leaf->atThreshold()) && (leaf->isOccupied() == occupied)) {
         return leaf;
       }
     }
-
-    // generate key for addressing in tree
-    OcTreeKey key;
-    if (!this->genKey(value, key)) return NULL;
-
     return updateNodeRecurs(this->itsRoot, false, key, 0, occupied);
   }
   
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
-                                           OcTreeKey& key, unsigned int depth,
-                                           bool occupied) {
+                                                    const OcTreeKey& key, unsigned int depth,
+                                                    bool occupied) {
 
 
     unsigned int pos = this->genPos(key, this->tree_depth-1-depth);
@@ -113,9 +112,6 @@ namespace octomap {
       // set own probability according to prob of children
       node->updateOccupancyChildren(); 
 
-      //       std::cout << "depth: " << depth << " node prob: " << node->getLogOdds()
-      // 		<< " label: " << (int) node->getLabel() << " isClamped: "
-      // 		<< node->isClamped() << " isValid: "  << node->valid() << std::endl;
       return retval;
     }
 
@@ -245,20 +241,20 @@ namespace octomap {
   }
 
 
-
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
+  bool OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
-    std::vector<point3d> ray;
-    if (this->computeRay(origin, end, ray)){
-
-      for(std::vector<point3d>::iterator it=ray.begin(); it != ray.end(); it++) {
-        //      std::cout << "miss cell " << *it << std::endl;
-        updateNode(*it, false); // insert miss cell
-      }
+    if (!this->computeRayKeys(origin, end, this->keyray)) {
+      return false;
     }
-
+    
+    for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+      updateNode(*it, false); // insert freespace measurement
+    }
+  
+    return true;
   }
+
 
 
   template <class NODE>
@@ -270,12 +266,11 @@ namespace octomap {
 
       point3d direction = (end - origin).unit();
       point3d new_end = origin + direction * maxrange;
-      integrateMissOnRay(origin, new_end);
-      return true;
+      return integrateMissOnRay(origin, new_end);
     }
     // insert complete ray
     else {
-      integrateMissOnRay(origin, end);
+      if (!integrateMissOnRay(origin, end)) return false;
       updateNode(end, true); // insert hit cell
       return true;
     }
@@ -293,24 +288,24 @@ namespace octomap {
   
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getOccupied(std::list<OcTreeVolume>& binary_nodes,
-                                     std::list<OcTreeVolume>& delta_nodes,
-                                     unsigned int max_depth) const{
-
+                                              std::list<OcTreeVolume>& delta_nodes,
+                                              unsigned int max_depth) const{
+    
     if (max_depth == 0)
       max_depth = this->tree_depth;
-
+    
     this->getOccupiedRecurs(binary_nodes, delta_nodes, max_depth, this->itsRoot, 0, this->tree_center);
   }
 
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getOccupiedRecurs( std::list<OcTreeVolume>& binary_nodes,
-                                            std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
-                                            NODE* node, unsigned int depth,
-                                            const point3d& parent_center) const {
-
+                                                     std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
+                                                     NODE* node, unsigned int depth,
+                                                     const point3d& parent_center) const {
+    
     if (depth < max_depth && node->hasChildren()) {
-
+      
       double center_offset = this->tree_center(0) / pow( 2., (double) depth+1);
       point3d search_center;
 
@@ -357,8 +352,8 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getFreespace(std::list<OcTreeVolume>& binary_nodes,
-                                      std::list<OcTreeVolume>& delta_nodes,
-                                      unsigned int max_depth) const{
+                                               std::list<OcTreeVolume>& delta_nodes,
+                                               unsigned int max_depth) const{
 
     if (max_depth == 0)
       max_depth = this->tree_depth;
@@ -368,8 +363,8 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
-                                            std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
-                                            NODE* node, unsigned int depth, const point3d& parent_center) const{
+                                                     std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,
+                                                     NODE* node, unsigned int depth, const point3d& parent_center) const{
 
     if (depth < max_depth && node->hasChildren()) {
 

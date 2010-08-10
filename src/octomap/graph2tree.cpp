@@ -39,7 +39,6 @@
 
 #include "octomap.h"
 #include "OcTreeFileIO.h"
-#include "OcTree.h"
 #include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>

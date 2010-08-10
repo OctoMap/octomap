@@ -56,13 +56,15 @@ namespace octomap {
   /**
    * OcTree base class, to be used with with any kind of OcTreeDataNode.
    *
-   * This tree implementation has a maximum depth of 16. 
-   * At a resolution of 1 cm, values have to be < +/- 327.68 meters (2^15)
+   * This tree implementation currently has a maximum depth of 16
+   * nodes. For this reason, coordinates values have to be, e.g.,
+   * below +/- 327.68 meters (2^15) at a maximum resolution of 0.01m.
    *
-   * This limitation enables the use of an efficient key generation 
-   * method which uses the binary representation of the data.
+   * This limitation enables the use of an efficient key generation
+   * method which uses the binary representation of the data point
+   * coordinates.
    *
-   * \note The tree does not save individual points.
+   * \note The tree does not store individual data points.
    */
   template <class NODE>
   class OcTreeBase {
@@ -79,9 +81,9 @@ namespace octomap {
     double getResolution() const { return resolution; }
 
     /**
-     * \return Pointer to the root node of the tree. This pointer should
-     * not be modified or deleted externally, the OcTree manages its
-     * memory itself.
+     * \return Pointer to the root node of the tree. This pointer
+     * should not be modified or deleted externally, the OcTree
+     * manages its memory itself.
      */
     NODE* getRoot() const { return itsRoot; }
 
@@ -129,20 +131,32 @@ namespace octomap {
 
 
    /**
-    * Traces a ray from origin to end (excluding), returning the
-    * coordinates of all nodes traversed by the beam.
-    * (Essentially using the DDA algorithm in 3D).
+    * Traces a ray from origin to end (excluding), returning an
+    * OcTreeKey of all nodes traversed by the beam. 
     *
     * @param origin start coordinate of ray
     * @param end end coordinate of ray
-    * @param ray center coordinates of all nodes traversed by the ray, excluding "end"
+    * @param ray KeyRay structure that holds the keys of all nodes traversed by the ray, excluding "end"
+    * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
+    */
+    bool computeRayKeys(const point3d& origin, const point3d& end, KeyRay& ray) const;
+
+
+   /**
+    * Traces a ray from origin to end (excluding), returning the
+    * coordinates of all nodes traversed by the beam. Note: use the
+    * faster computeRayKeys method if possible.
+    * 
+    * @param origin start coordinate of ray
+    * @param end end coordinate of ray
+    * @param ray KeyRay structure that holds the keys of all nodes traversed by the ray, excluding "end"
     * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
     */
     bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray) const;
 
 
     /**
-     * Traverse the tree and collect all leaf nodes
+     * Traverse the tree and return all leaf nodes
      *
      * @param nodes Leaf nodes as OcTreeVolume
      * @param max_depth Depth limit of query. 0 (default): no depth limit
@@ -150,7 +164,7 @@ namespace octomap {
     void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const;
 
     /**
-     * Traverse the tree and collect all nodes, at all levels. Used e.g. in visualization.
+     * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
      *
      * @param voxels list of all nodes to be returned
      * @param max_depth Depth limit of query. 0 (default): no depth limit
@@ -237,6 +251,7 @@ namespace octomap {
     double minValue[3]; ///< min in x, y, z
     bool sizeChanged;
 
+    KeyRay keyray;  // data structure for ray casting
   };
 
 
