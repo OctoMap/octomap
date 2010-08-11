@@ -228,6 +228,12 @@ namespace octomath {
     }
   }
 
+  void Vector3::operator*= (double x) {
+    for (unsigned int i=0; i<3; i++) {
+      operator()(i) *= x;
+    }
+  }
+
 
   double Vector3::norm2() const {
     double n = 0;

@@ -126,6 +126,7 @@ namespace octomath {
     void    operator+= (const Vector3 &other);
     bool    operator== (const Vector3 &other) const;
     void operator/= (double x);
+    void operator*= (double x);
 
 
     double norm2() const;
