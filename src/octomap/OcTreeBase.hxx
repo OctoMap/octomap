@@ -219,18 +219,17 @@ namespace octomap {
     OcTreeKey current_key = key_origin; 
 
     for(unsigned int i=0; i < 3; ++i) {
-
       // compute step direction
       if (direction(i) > 0.0) step[i] =  1;
       else if (direction(i) < 0.0)   step[i] = -1;
       else step[i] = 0;
 
       // compute tMax, tDelta
-      double voxelBorder(0);
-      this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
-      if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
-
       if (step[i] != 0) {
+        double voxelBorder(0);
+        this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
+        if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
@@ -243,7 +242,7 @@ namespace octomap {
     // for speedup:
     point3d origin_scaled = origin;  
     origin_scaled /= this->resolution;  
-    double length_scaled = length - this->resolution/2.; // safety margin
+    double length_scaled = length - this->resolution/4.; // safety margin
     length_scaled /= this->resolution;  // scale 
     length_scaled = length_scaled*length_scaled;  // avoid sqrt in dist comp.
 
@@ -278,12 +277,12 @@ namespace octomap {
       else {
 
         // reached endpoint world coords?
-        double dist_from_endpoint = 0;
+        double dist_from_origin = 0;
         for (unsigned int j = 0; j < 3; j++) {
           double coord = (double) current_key[j] - (double) this->tree_max_val;
-          dist_from_endpoint += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
+          dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
         }
-        if (dist_from_endpoint > length_scaled) {
+        if (dist_from_origin > length_scaled) {
           done = true;
           break;
         }

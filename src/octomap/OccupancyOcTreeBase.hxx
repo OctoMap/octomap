@@ -126,7 +126,124 @@ namespace octomap {
 
   
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, point3d& end, bool ignoreUnknown, double maxRange) const {
+  bool OccupancyOcTreeBase<NODE>::castRay(const point3d& origin, const point3d& directionP, point3d& end, 
+                                          bool ignoreUnknown, double maxRange) const {
+
+    /// ----------  see OcTreeBase::computeRayKeys  -----------
+
+    // Initialization phase -------------------------------------------------------
+    OcTreeKey current_key;
+    if ( !OcTreeBase<NODE>::genKey(origin, current_key) ) {
+      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
+      return false;
+    }
+
+    NODE* startingNode = this->searchKey(current_key);
+    if (startingNode){
+      if (startingNode->isOccupied()){
+        // Occupied node found at origin 
+        end = origin;
+        return true;
+      }
+    } else if(!ignoreUnknown){
+      std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";
+      return false;
+    }
+
+    point3d direction = directionP.unit();
+    bool max_range_set = (maxRange > 0.);
+
+    int step[3]; 
+    double tMax[3];
+    double tDelta[3];
+
+    for(unsigned int i=0; i < 3; ++i) {
+      // compute step direction
+      if (direction(i) > 0.0) step[i] =  1;
+      else if (direction(i) < 0.0)   step[i] = -1;
+      else step[i] = 0;
+
+      // compute tMax, tDelta
+      if (step[i] != 0) {
+        double voxelBorder(0);
+        this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
+        if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+
+        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
+        tDelta[i] = this->resolution / fabs( direction(i) );
+      }
+      else {
+        tMax[i] =  std::numeric_limits<double>::max();
+        tDelta[i] = std::numeric_limits<double>::max();
+      }
+    }
+
+    // for speedup:
+    point3d origin_scaled = origin;  
+    origin_scaled /= this->resolution;  
+    double maxrange_2 = maxRange / this->resolution;  // scale
+    maxrange_2 = maxrange_2*maxrange_2; // squared dist
+    double res_2 = this->resolution/2.;
+    // Incremental phase  ---------------------------------------------------------
+
+    bool done = false;
+
+    while (!done) {
+      unsigned int dim;
+
+      // find minimum tMax:
+      if (tMax[0] < tMax[1]){
+        if (tMax[0] < tMax[2]) dim = 0;
+        else                   dim = 2;
+      }
+      else {
+        if (tMax[1] < tMax[2]) dim = 1;
+        else                   dim = 2;
+      }
+
+      // advance in direction "dim"
+      current_key[dim] += step[dim];
+      tMax[dim] += tDelta[dim];
+
+      assert ((current_key[dim] >= 0) && (current_key[dim] < 2*this->tree_max_val));
+
+      // generate world coords from key
+      point3d current_endpoint;
+      double dist_from_origin(0);
+      for (unsigned int j = 0; j < 3; j++) {
+        double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
+        dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
+        current_endpoint(j) = coord * this->resolution;
+      }
+
+      if (max_range_set && (dist_from_origin > maxrange_2) ) { // reached user specified maxrange
+//         end = current_endpoint;
+        done = true;
+        return false;
+      }
+
+      NODE* currentNode = this->searchKey(current_key);
+      if ( currentNode){
+        if (currentNode->isOccupied()) {
+          end = current_endpoint;
+          done = true;
+          break;
+        }
+        // otherwise: node is free and valid, raycasting continues
+      } 
+      
+      else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
+        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end << std::endl;
+        return false;
+      }
+    } // end while
+
+    return true;
+  }
+
+
+  template <class NODE>
+  bool OccupancyOcTreeBase<NODE>::castRayOld(const point3d& origin, const point3d& directionP, point3d& end, bool ignoreUnknown, double maxRange) const {
     
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
     // basically: DDA in 3D

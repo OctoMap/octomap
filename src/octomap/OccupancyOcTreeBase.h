@@ -103,6 +103,7 @@ namespace octomap {
      * @return whether or not an occupied cell was hit
      */
     bool castRay(const point3d& origin, const point3d& direction, point3d& end, bool ignoreUnknownCells=false, double maxRange=-1.0) const;
+    bool castRayOld(const point3d& origin, const point3d& direction, point3d& end, bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
 
     /**

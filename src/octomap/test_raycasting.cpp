@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
       if (!tree.insertRay(origin, origin+point_on_surface)) {
         cout << "ERROR while inserting ray from " << origin << " to " << point_on_surface << endl;
       }
-    point_on_surface.rotate_IP (0,0,DEG2RAD(1.));
+      point_on_surface.rotate_IP (0,0,DEG2RAD(1.));
     }
     point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
   }  
