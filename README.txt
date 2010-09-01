@@ -111,3 +111,15 @@ http://www.vtk.org/Wiki/Eclipse_CDT4_Generator) by running:
 Import the project (existing project, root is the build folder, 
 do not copy contents) into Eclipse afterwards.
 
+
+TROUBLESHOOTING
+############################
+
+
+Q: I get linker errors when compiling the viewer from source:
+   " ... undefined reference to `QGLViewer::QGLViewer ... "
+
+A: 1. try using the Ubuntu package libqglviewer-qt4-dev
+   2. make sure that your qmake is actually qmake-qt4
+      "sudo update-alternatives --config qmake"
+
