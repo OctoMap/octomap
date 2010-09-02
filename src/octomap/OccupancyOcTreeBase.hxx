@@ -358,7 +358,7 @@ namespace octomap {
   }
 
 
-  template <class NODE>
+  template <class NODE> inline
   bool OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
 
     if (!this->computeRayKeys(origin, end, this->keyray)) {

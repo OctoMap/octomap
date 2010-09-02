@@ -1,12 +1,12 @@
 // $Id$
 
 /**
-* OctoMap:
-* A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
+ * OctoMap:
+ * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+ * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+ * @see http://octomap.sourceforge.net/
+ * License: New BSD License
+ */
 
 /*
  * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
@@ -41,6 +41,7 @@
 #define OCTOMATH_VECTOR3_H
 
 #include <iostream>
+#include <math.h>
 
 
 namespace octomath {
@@ -80,9 +81,12 @@ namespace octomath {
      *
      * @param other a vector of dimension 3
      */
-    Vector3& operator = (const Vector3& other);
-
-    void operator-= (const Vector3& other);
+    inline Vector3& operator = (const Vector3& other) {
+      for (unsigned int i=0; i<3; i++) {
+        operator()(i) = other(i);
+      }
+      return *this;
+    }
 
     /*!
      * \brief Three-dimensional vector (cross) product
@@ -100,17 +104,22 @@ namespace octomath {
     Vector3& rotate_IP (double roll, double pitch, double yaw);
 
     double sqrDist(const Vector3& other) const;
-    double dist(const Vector3& other) const;
+    inline double dist(const Vector3& other) const {
+      return sqrt(this->sqrDist(other));
+    }
 
-    const double& operator() (unsigned int i) const;
-    double& operator() (unsigned int i);
 
-    double& x();
-    double& y();
-    double& z();
-    const double& x() const;
-    const double& y() const;
-    const double& z() const;
+    inline const double& operator() (unsigned int i) const { return data[i]; }
+    inline double& operator() (unsigned int i) { return data[i]; }
+
+
+    inline double& x() { return data[0]; }
+    inline double& y() { return data[1]; }
+    inline double& z() { return data[2]; }
+
+    inline const double& x() const { return data[0]; }
+    inline const double& y() const { return data[1]; }
+    inline const double& z() const { return data[2]; }
 
     double& roll();
     double& pitch();
@@ -119,14 +128,68 @@ namespace octomath {
     const double& pitch() const;
     const double& yaw() const;
 
-    Vector3 operator- () const;
-    Vector3 operator- (const Vector3 &other) const;
-    Vector3 operator+ (const Vector3 &other) const;
-    Vector3 operator*  (double x) const;
-    void    operator+= (const Vector3 &other);
-    bool    operator== (const Vector3 &other) const;
-    void operator/= (double x);
-    void operator*= (double x);
+
+    inline Vector3 operator- (const Vector3 &other) const {
+      Vector3 result(*this);
+      for (unsigned int i=0; i<3; ++i) {
+        result(i) -= other(i);
+      }
+      return result;
+    }
+
+    inline Vector3 operator- () const {
+      Vector3 result(*this);
+      for (unsigned int i=0; i<3; ++i) {
+        result(i) = -result(i);
+      }
+      return result;
+    }
+    inline Vector3 operator+ (const Vector3 &other) const {
+      Vector3 result(*this);
+      for (unsigned int i=0; i<3; ++i) {
+        result(i) += other(i);
+      }
+      return result;
+    }
+
+    inline Vector3 operator*  (double x) const {
+      Vector3 result(*this);
+      for (unsigned int i=0; i<3; ++i) {
+        result(i) *= x;
+      }
+      return result;
+    }
+
+    inline void operator-= (const Vector3& other){
+      for (unsigned int i=0; i<3; i++) {
+        operator()(i) -= other(i);
+      }
+    }
+
+    inline void operator+= (const Vector3 &other){
+      for (unsigned int i=0; i<3; i++) {
+        operator()(i) += other(i);
+      }
+    }
+
+    inline bool operator== (const Vector3 &other) const {
+      for (unsigned int i=0; i<3; i++) {
+        if (operator()(i) != other(i)) return false;
+      }
+      return true;
+    }
+
+    inline void operator/= (double x) {
+      for (unsigned int i=0; i<3; i++) {
+        operator()(i) /= x;
+      }
+    }
+
+    inline void operator*= (double x) {
+      for (unsigned int i=0; i<3; i++) {
+        operator()(i) *= x;
+      }
+    }
 
 
     double norm2() const;

@@ -111,8 +111,13 @@ namespace octomath {
     Vector3 toEuler() const;
 
 
-    const double& operator() (unsigned int i) const;
-    double& operator() (unsigned int i);
+    inline const double& operator() (unsigned int i) const {
+      return data[i];
+    }
+
+    inline double& operator() (unsigned int i) {
+      return data[i];
+    }
 
     double norm2() const;
     Quaternion  unit () const;
@@ -130,21 +135,31 @@ namespace octomath {
      * commutative.
      * @return this * other
      */
-    Quaternion operator* (const Quaternion& other) const;
+    Quaternion operator* (const Quaternion& other) const {
+      return Quaternion(u()*other.u() - x()*other.x() - y()*other.y() - z()*other.z(),
+                        y()*other.z() - other.y()*z() + u()*other.x() + other.u()*x(),
+                        z()*other.x() - other.z()*x() + u()*other.y() + other.u()*y(),
+                        x()*other.y() - other.x()*y() + u()*other.z() + other.u()*z());
+    }
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return q * (0, v)
      */
-    Quaternion operator* (const Vector3 &v) const;
+    inline Quaternion operator* (const Vector3 &v) const {
+      return *this * Quaternion(0, v(0), v(1), v(2));
+    }
+
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return (0, v) * q
      */
-    friend Quaternion operator* (const Vector3 &v, const Quaternion &q);
+    inline friend Quaternion operator* (const Vector3 &v, const Quaternion &q) {
+      return Quaternion(0, v(0), v(1), v(2)) * q;
+    }
 
     /*!
      * \brief Normalization
@@ -166,7 +181,9 @@ namespace octomath {
      *
      * @return A copy of this Quaterion inverted
      */
-    Quaternion inv() const;
+    inline Quaternion inv() const {
+      return Quaternion(u(), -x(), -y(), -z());
+    }
 
     /*!
      * \brief Inversion
@@ -187,14 +204,15 @@ namespace octomath {
      */
     Vector3 rotate(const Vector3 &v) const;
 
-    double& u();
-    double& x();
-    double& y();
-    double& z();
-    const double& u() const;
-    const double& x() const;
-    const double& y() const;
-    const double& z() const;
+    inline double& u(){ return operator()(0); }
+    inline double& x(){ return operator()(1); } 
+    inline double& y(){ return operator()(2); }
+    inline double& z(){ return operator()(3); }
+
+    inline const double& u() const { return operator()(0); }
+    inline const double& x() const { return operator()(1); }
+    inline const double& y() const { return operator()(2); }
+    inline const double& z() const { return operator()(3); }
 
     std::istream& read(std::istream &s);
     std::ostream& write(std::ostream &s) const;

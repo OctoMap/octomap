@@ -75,17 +75,17 @@ namespace octomap {
     virtual ~OcTreeBase();
 
     /// \return The number of nodes in the tree
-    unsigned int size() const { return tree_size; }
+    inline unsigned int size() const { return tree_size; }
 
     void setResolution(double r);
-    double getResolution() const { return resolution; }
+    inline double getResolution() const { return resolution; }
 
     /**
      * \return Pointer to the root node of the tree. This pointer
      * should not be modified or deleted externally, the OcTree
      * manages its memory itself.
      */
-    NODE* getRoot() const { return itsRoot; }
+    inline NODE* getRoot() const { return itsRoot; }
 
     /**
      * Search for a 3d point in the tree
@@ -230,7 +230,6 @@ namespace octomap {
     
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
-
 
     void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
 

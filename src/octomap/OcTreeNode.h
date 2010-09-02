@@ -70,32 +70,45 @@ namespace octomap {
     OcTreeNode();
     ~OcTreeNode();
 
-    // overloaded, so that the return type is correct:
-    OcTreeNode* getChild(unsigned int i);
-    const OcTreeNode* getChild(unsigned int i) const;
+
     bool createChild(unsigned int i);
+
+    // overloaded, so that the return type is correct:
+    inline OcTreeNode* getChild(unsigned int i) {
+      return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
+    }
+    inline const OcTreeNode* getChild(unsigned int i) const {
+      return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
+    }
+
 
     // -- node occupancy  ----------------------------
 
     /// integrate a measurement (beam ENDED in cell)
-    void integrateHit();
+    inline void integrateHit() {  updateLogOdds(PROB_HIT); }
     /// integrate a measurement (beam PASSED in cell)
-    void integrateMiss();
+    inline void integrateMiss() { updateLogOdds(PROB_MISS); }
+
 
     /// \return occupancy probability of node
-    double getOccupancy() const;
+    inline double getOccupancy() const { return 1. - ( 1. / (1. + exp(value)) ); }
 
     /// \return log odds representation of occupancy probability of node
-    float getLogOdds() const{ return value; }
+    inline float getLogOdds() const{ return value; }
     /// sets log odds occupancy of node
-    void setLogOdds(float l) { value = l; }
+    inline void setLogOdds(float l) { value = l; }
 
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
-    bool isOccupied() const;
+    inline bool isOccupied() const {
+      return (this->getOccupancy() >= OCC_PROB_THRES);
+    }
 
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
-    bool atThreshold() const;
-
+    inline bool atThreshold() const {
+      return ((value <= CLAMPING_THRES_MIN) ||
+              (value >= CLAMPING_THRES_MAX));
+    }
+    
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
     void toMaxLikelihood();
@@ -111,7 +124,10 @@ namespace octomap {
     double getMaxChildLogOdds() const;
 
     /// update this node's occupancy according to its children's maximum occupancy
-    void updateOccupancyChildren();
+    inline void updateOccupancyChildren() {
+      this->setLogOdds(this->getMaxChildLogOdds());  // conservative
+    }
+
 
 
 

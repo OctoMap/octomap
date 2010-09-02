@@ -58,15 +58,6 @@ namespace octomap {
   }
 
 
-  OcTreeNode* OcTreeNode::getChild(unsigned i){
-    return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
-  }
-
-  const OcTreeNode* OcTreeNode::getChild(unsigned i) const{
-    return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
-  }
-
-
   // TODO: Use Curiously Recurring Template Pattern instead of copying full function
   // (same for getChild)
   bool OcTreeNode::createChild(unsigned int i) {
@@ -83,31 +74,12 @@ namespace octomap {
   // =  occupancy probability  ==================================
   // ============================================================
 
-  void OcTreeNode::integrateHit() {
-    updateLogOdds(PROB_HIT);
-  }
-
-  void OcTreeNode::integrateMiss() {
-    updateLogOdds(PROB_MISS);
-  }
-
-  bool OcTreeNode::isOccupied() const {
-    return (this->getOccupancy() >= OCC_PROB_THRES);
-  }
-
-  bool OcTreeNode::atThreshold() const {
-    return ((value <= CLAMPING_THRES_MIN) ||
-              (value >= CLAMPING_THRES_MAX));
-  }
 
   void OcTreeNode::toMaxLikelihood() {
       if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
       else              setLogOdds(CLAMPING_THRES_MIN);
   }
 
-  double OcTreeNode::getOccupancy() const {
-    return 1. - ( 1. / (1. + exp(value)) );
-  }
 
   double OcTreeNode::getMeanChildLogOdds() const{
     double mean = 0;
@@ -132,12 +104,6 @@ namespace octomap {
     }
     return max;
   }
-
-  void OcTreeNode::updateOccupancyChildren() {
-    //      node->setLogOdds(node->getMeanChildLogOdds());
-    this->setLogOdds(this->getMaxChildLogOdds());  // conservative
-  }
-
 
 
   // ============================================================

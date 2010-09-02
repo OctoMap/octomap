@@ -158,7 +158,7 @@ namespace octomap {
     /** Traces a ray from origin to end and updates all voxels on the
      *  way as free.  The volume containing "end" is not updated.
      */
-    bool integrateMissOnRay(const point3d& origin, const point3d& end);
+    inline bool integrateMissOnRay(const point3d& origin, const point3d& end);
 
 
     /// recursive call of updateNode()

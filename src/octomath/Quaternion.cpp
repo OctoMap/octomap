@@ -56,12 +56,6 @@ namespace octomath {
     z() = 0;
   }
 
-  const double& Quaternion::operator() (unsigned int i) const{
-    return data[i];
-  }
-  double& Quaternion::operator() (unsigned int i){
-    return data[i];
-  }
 
   Quaternion::Quaternion(const Quaternion &other) {
     for (unsigned int i=0; i<4; i++) {
@@ -178,20 +172,6 @@ namespace octomath {
     return *this;
   }
 
-  Quaternion Quaternion::operator* (const Quaternion& other) const {
-    return Quaternion(u()*other.u() - x()*other.x() - y()*other.y() - z()*other.z(),
-		      y()*other.z() - other.y()*z() + u()*other.x() + other.u()*x(),
-		      z()*other.x() - other.z()*x() + u()*other.y() + other.u()*y(),
-		      x()*other.y() - other.x()*y() + u()*other.z() + other.u()*z());
-  }
-
-  Quaternion Quaternion::operator* (const Vector3& v) const {
-    return *this * Quaternion(0, v(0), v(1), v(2));
-  }
-
-  Quaternion operator* (const Vector3& v, const Quaternion& q) {
-    return Quaternion(0, v(0), v(1), v(2)) * q;
-  }
 
   Quaternion& Quaternion::unit_IP (){
     double len = norm2();
@@ -215,10 +195,6 @@ namespace octomath {
     return *this;
   }
 
-  Quaternion Quaternion::inv() const {
-    return Quaternion(u(), -x(), -y(), -z());
-  }
-
   Quaternion& Quaternion::inv_IP() {
     x() = -x();
     y() = -y();
@@ -230,40 +206,6 @@ namespace octomath {
     Quaternion q = *this * v * this->inv();
     return Vector3(q.x(), q.y(), q.z());
   }
-
-  double& Quaternion::u() {
-    return operator()(0);
-  }
-
-  double& Quaternion::x() {
-    return operator()(1);
-  }
-
-  double& Quaternion::y() {
-    return operator()(2);
-  }
-
-  double& Quaternion::z() {
-    return operator()(3);
-  }
-
-  const double& Quaternion::u() const {
-    return operator()(0);
-  }
-
-  const double& Quaternion::x() const {
-    return operator()(1);
-  }
-
-  const double& Quaternion::y() const {
-    return operator()(2);
-  }
-
-  const double& Quaternion::z() const {
-    return operator()(3);
-  }
-
-
 
 
   std::istream& Quaternion::read(std::istream &s) {

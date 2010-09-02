@@ -39,7 +39,6 @@
 
 #include "Vector3.h"
 #include <cassert>
-#include <math.h>
 #include <string.h>
 
 namespace octomath {
@@ -50,27 +49,14 @@ namespace octomath {
 
   Vector3::Vector3(const Vector3& other) {
     for (unsigned int i=0; i<3; i++) {
-      operator()(i) = other(i);
+      data[i] = other(i);
     }
   }
 
   Vector3::Vector3(double x, double y, double z) {
-    operator()(0) = x;
-    operator()(1) = y;
-    operator()(2) = z;
-  }
-
-  Vector3 & Vector3::operator= (const Vector3& other) {
-    for (unsigned int i=0; i<3; i++) {
-      operator()(i) = other(i);
-    }
-    return *this;
-  }
-
-  void Vector3::operator-= (const Vector3& other){
-    for (unsigned int i=0; i<3; i++) {
-      operator()(i) -= other(i);
-    }
+    data[0] = x;
+    data[1] = y;
+    data[2] = z;
   }
 
 
@@ -117,42 +103,6 @@ namespace octomath {
     return ret;
   }
 
-  double Vector3::dist(const Vector3& other) const {
-    return sqrt(this->sqrDist(other));
-  }
-
-
-  const double& Vector3::operator() (unsigned int i) const{
-    return data[i];
-  }
-  double& Vector3::operator() (unsigned int i){
-    return data[i];
-  }
-
-  double& Vector3::x() {
-    return operator()(0);
-  }
-
-  double& Vector3::y() {
-    return operator()(1);
-  }
-
-  double& Vector3::z() {
-    return operator()(2);
-  }
-
-  const double& Vector3::x() const {
-    return operator()(0);
-  }
-
-  const double& Vector3::y() const {
-    return operator()(1);
-  }
-
-  const double& Vector3::z() const {
-    return operator()(2);
-  }
-
   double& Vector3::roll() {
     return operator()(0);
   }
@@ -177,63 +127,6 @@ namespace octomath {
     return operator()(2);
   }
 
-  Vector3 Vector3::operator- () const {
-    Vector3 result(*this);
-    for (unsigned int i=0; i<3; ++i) {
-      result(i) = -result(i);
-    }
-    return result;
-  }
-
-  Vector3 Vector3::operator+ (const Vector3 &other) const {
-    Vector3 result(*this);
-    for (unsigned int i=0; i<3; ++i) {
-      result(i) += other(i);
-    }
-    return result;
-  }
-
-  Vector3 Vector3::operator- (const Vector3 &other) const {
-    Vector3 result(*this);
-    for (unsigned int i=0; i<3; ++i) {
-      result(i) -= other(i);
-    }
-    return result;
-  }
-
-  void Vector3::operator+= (const Vector3 &other){
-    for (unsigned int i=0; i<3; i++) {
-      operator()(i) += other(i);
-    }
-  }
-
-  bool Vector3::operator== (const Vector3 &other) const {
-    for (unsigned int i=0; i<3; i++) {
-      if (operator()(i) != other(i)) return false;
-    }
-    return true;
-  }
-
-  Vector3 Vector3::operator*  (double x) const {
-    Vector3 result(*this);
-    for (unsigned int i=0; i<3; ++i) {
-      result(i) *= x;
-    }
-    return result;
-  }
-
-  void Vector3::operator/= (double x) {
-    for (unsigned int i=0; i<3; i++) {
-      operator()(i) /= x;
-    }
-  }
-
-  void Vector3::operator*= (double x) {
-    for (unsigned int i=0; i<3; i++) {
-      operator()(i) *= x;
-    }
-  }
-
 
   double Vector3::norm2() const {
     double n = 0;
@@ -256,14 +149,6 @@ namespace octomath {
     result.unit_IP();
     return result;
   }
-
-
-
-//   void Vector3::read(unsigned char * src, unsigned int size){
-//     memcpy(&data[0],src, sizeof(double));
-//     memcpy(&data[1],src, sizeof(double));
-//     memcpy(&data[2],src, sizeof(double));
-//   }
 
 
   std::istream& Vector3::read(std::istream &s) {
