@@ -51,6 +51,8 @@ install(TARGETS octomap
 	graph2tree
 	log2graph
 	binvox2bt
+	bt2vrml
+	test_raycasting
 	${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
