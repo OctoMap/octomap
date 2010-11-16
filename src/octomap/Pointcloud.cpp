@@ -299,7 +299,7 @@ namespace octomap {
 
     unsigned int pc_size = 0;
     s.read((char*)&pc_size, sizeof(pc_size));
-    fprintf(stderr, "reading %d points from binary file...", pc_size); fflush(stderr);
+    printf("Reading %d points from binary file...", pc_size); fflush(stdout);
 
     if (pc_size > 0) {
       this->points.reserve(pc_size);
@@ -315,7 +315,7 @@ namespace octomap {
         }
       }
     }
-    fprintf(stderr, "done.\n");
+    printf(" done.\n");
 
     return s;
   }
@@ -324,13 +324,13 @@ namespace octomap {
   std::ostream& Pointcloud::writeBinary(std::ostream &s) const {
 
     unsigned int pc_size = this->size();
-    fprintf(stderr, "writing %d points to binary file...", pc_size); fflush(stderr);
+    printf("Writing %d points to binary file...", pc_size); fflush(stdout);
     s.write((char*)&pc_size, sizeof(pc_size));
 
     for (Pointcloud::const_iterator it = this->begin(); it != this->end(); it++) {
       (*it)->writeBinary(s);
     }
-    fprintf(stderr, "done.\n");
+    printf(" done.\n");
 
     return s;
   }

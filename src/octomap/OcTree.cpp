@@ -230,12 +230,12 @@ namespace octomap {
     s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
     unsigned int tree_write_size = this->size(); 
-    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
+    std::cout << "Writing "<< tree_write_size<<" nodes to output stream..." << std::flush;
     s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
     itsRoot->writeBinary(s);
 
-    fprintf(stderr, " done.\n");
+    std::cout << " done.\n";
 
     return s;
   }

@@ -359,25 +359,25 @@ namespace octomap {
 
     // write nodes  ---------------------------------
     unsigned int graph_size = this->size();
-    if (graph_size) fprintf(stderr, "writing %d nodes to binary file...\n", graph_size);
+    if (graph_size) printf("Writing %d nodes to binary file...\n", graph_size);
     s.write((char*)&graph_size, sizeof(graph_size));
 
     for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
       (*it)->writeBinary(s);
     }
 
-    if (graph_size) fprintf(stderr, "done.\n");
+    if (graph_size) printf(" done.\n");
 
     // write edges  ---------------------------------
     unsigned int num_edges = this->edges.size();
-    if (num_edges) fprintf(stderr, "writing %d edges to binary file...\n", num_edges);
+    if (num_edges) printf("Writing %d edges to binary file...\n", num_edges);
     s.write((char*)&num_edges, sizeof(num_edges));
 
     for (ScanGraph::const_edge_iterator it = this->edges_begin(); it != this->edges_end(); it++) {
       (*it)->writeBinary(s);
     }
 
-    if (num_edges) fprintf(stderr, "done.\n");
+    if (num_edges) printf(" done.\n");
 
     return s;
   }
@@ -409,7 +409,7 @@ namespace octomap {
 
     unsigned int graph_size = 0;
     s.read((char*)&graph_size, sizeof(graph_size));
-    if (graph_size) fprintf(stderr, "reading %d nodes from binary file...\n", graph_size);
+    if (graph_size) printf("Reading %d nodes from binary file...\n", graph_size);
 
     if (graph_size > 0) {
       this->nodes.reserve(graph_size);
@@ -427,12 +427,12 @@ namespace octomap {
 	}
       }
     }
-    if (graph_size)     fprintf(stderr, "done.\n");
+    if (graph_size) printf(" done.\n");
 
     // read edges  ---------------------------------
     unsigned int num_edges = 0;
     s.read((char*)&num_edges, sizeof(num_edges));
-    if (num_edges) fprintf(stderr, "reading %d edges from binary file...\n", num_edges);
+    if (num_edges) printf("Reading %d edges from binary file...\n", num_edges);
 
     if (num_edges > 0) {
       this->edges.reserve(num_edges);
@@ -451,7 +451,7 @@ namespace octomap {
       }
     }
 
-    if (num_edges) fprintf(stderr, "done.\n");
+    if (num_edges) printf(" done.\n");
 
 
     return s;
@@ -546,7 +546,7 @@ namespace octomap {
 
     unsigned int num_edges = 0;
     s >> num_edges;
-    fprintf(stderr, "reading %d edges from ASCII file...\n", num_edges);
+    printf("Reading %d edges from ASCII file...\n", num_edges);
 
     if (num_edges > 0) {
 
@@ -569,7 +569,7 @@ namespace octomap {
       }
     }
 
-    fprintf(stderr, "done.\n");
+    printf(" done.\n");
 
     return s;
   }
@@ -577,13 +577,13 @@ namespace octomap {
 
   std::ostream& ScanGraph::writeNodePosesASCII(std::ostream &s) const {
 
-    fprintf(stderr, "writing %d node poses to ASCII file...\n", this->size());
+    printf("Writing %d node poses to ASCII file...\n", this->size());
 
     for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
       (*it)->writePoseASCII(s);
     }
     s << std::endl;
-    fprintf(stderr, "done.\n");
+    printf(" done.\n");
 
     return s;
   }
