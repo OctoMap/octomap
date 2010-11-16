@@ -48,7 +48,11 @@ namespace octomap {
 
 #define PROB_HIT  0.7
 #define PROB_MISS 0.4
+
+// definition of "Occupancy" => these really need to be moved to parameters!
+// If changing OCC_PROB_THRES, also change OCC_PROB_THRES_LOG in log-Odds!
 #define OCC_PROB_THRES 0.5
+#define OCC_PROB_THRES_LOG 0.0
 #define CLAMPING_THRES_MIN -2
 #define CLAMPING_THRES_MAX 3.5
 #define UNKOWN_AS_OBSTACLE false
@@ -99,8 +103,9 @@ namespace octomap {
     inline void setLogOdds(float l) { value = l; }
 
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
+    /// For efficiency, values are compared in log-space (no need for exp-computation)
     inline bool isOccupied() const {
-      return (this->getOccupancy() >= OCC_PROB_THRES);
+      return (this->getLogOdds() >= OCC_PROB_THRES_LOG);
     }
 
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
