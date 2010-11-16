@@ -3,7 +3,7 @@ PROJECT( octomap )
 
 # version (e.g. for packaging)
 set(V_MAJOR 0)
-set(V_MINOR 6)
+set(V_MINOR 8)
 set(V_PATCH 0)
 
 # get rid of a useless warning:

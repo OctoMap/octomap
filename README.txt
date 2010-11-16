@@ -40,6 +40,8 @@ To install it:
 INSTALLATION:
 ############################
 
+*Note: skip to the end if you want to use OctoMap in ROS! *
+
 Build the complete project by changing into the "build" directory 
 and running cmake:
 	
@@ -95,7 +97,7 @@ and more code is available in Freiburg's ROS repository at:
 http://code.google.com/p/alufr-ros-pkg/
 
 The "octomap" package there will provide ROS integration by 
-downloading and compiling the latest version from SVN. If you
+downloading and compiling the latest release. If you
 plan to use octomap mainly in ROS, just install the octomap_mapping
 stack from there.
 
@@ -110,16 +112,4 @@ http://www.vtk.org/Wiki/Eclipse_CDT4_Generator) by running:
 	
 Import the project (existing project, root is the build folder, 
 do not copy contents) into Eclipse afterwards.
-
-
-TROUBLESHOOTING
-############################
-
-
-Q: I get linker errors when compiling the viewer from source:
-   " ... undefined reference to `QGLViewer::QGLViewer ... "
-
-A: 1. try using the Ubuntu package libqglviewer-qt4-dev
-   2. make sure that your qmake is actually qmake-qt4
-      "sudo update-alternatives --config qmake"
 
