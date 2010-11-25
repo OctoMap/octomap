@@ -47,10 +47,10 @@
 namespace octomath {
 
   /*!
-   * \brief This class represents a tree-dimensional vector
+   * \brief This class represents a three-dimensional vector
    *
-   * The tree-dimensional vector can be used to represent a
-   * translation in tree-dimensional space or to represent the
+   * The three-dimensional vector can be used to represent a
+   * translation in three-dimensional space or to represent the
    * attitude of an object using Euler angle.
    */
   class Vector3 {
@@ -71,8 +71,8 @@ namespace octomath {
     /*!
      * \brief Constructor
      *
-     * Constructs a tree-dimensional vector from
-     * tree single values x, y, z or roll, pitch, yaw
+     * Constructs a three-dimensional vector from
+     * three single values x, y, z or roll, pitch, yaw
      */
     Vector3(double x, double y, double z);
 
@@ -91,7 +91,7 @@ namespace octomath {
     /*!
      * \brief Three-dimensional vector (cross) product
      *
-     * Calculates the tree-dimensional cross product, which
+     * Calculates the three-dimensional cross product, which
      * represents the vector orthogonal to the plane defined
      * by this and other.
      * @return this x other

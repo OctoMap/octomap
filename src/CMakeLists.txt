@@ -60,6 +60,9 @@ ADD_SUBDIRECTORY( octomap )
 
 # installation for external targets:
 install(PROGRAMS "extern/binvox/binvox" DESTINATION bin)
+install(PROGRAMS "extern/binvox/binvox64" DESTINATION bin)
+install(PROGRAMS "extern/binvox/viewvox" DESTINATION bin)
+install(PROGRAMS "extern/binvox/viewvox64" DESTINATION bin)
 
 
 # Documentation 

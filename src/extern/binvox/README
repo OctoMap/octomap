@@ -1,3 +1,16 @@
+This directory contains the "binvox" Linux binaries 
+(32 and 64 Bit), provided by Patrick Min at 
+http://www.cs.princeton.edu/~min/binvox
+
+These binaries provide support for more 3D source files 
+than the open source versions.
+
+You can view "binvox" files with "viewvox".
+
+-------------
+
+Original README from binvox:
+
 
 "binvox" reads a 3D model file and rasterizes it into
 a 3D voxel grid. For documentation, go to
