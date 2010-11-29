@@ -31,6 +31,9 @@ TARGET_LINK_LIBRARIES(binvox2bt octomap)
 ADD_EXECUTABLE(bt2vrml bt2vrml.cpp)
 TARGET_LINK_LIBRARIES(bt2vrml octomap)
 
+ADD_EXECUTABLE(edit_octree edit_octree.cpp)
+TARGET_LINK_LIBRARIES(edit_octree octomap)
+
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 

@@ -78,19 +78,21 @@ int main(int argc, char **argv)
     if(argc == 1) show_help = true;
     for(int i = 1; i < argc && !show_help; i++) {
         if(strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-help") == 0 ||
-           strcmp(argv[i], "--usage") == 0 || strcmp(argv[i], "-usage") == 0)
+           strcmp(argv[i], "--usage") == 0 || strcmp(argv[i], "-usage") == 0 ||
+           strcmp(argv[i], "-h") == 0
+          )
                show_help = true;
     }
     
     if(show_help) {
-        cout << "Usage: read_binvox [OPTIONS] <binvox filenames>" << endl;
+        cout << "Usage: "<<argv[0]<<" [OPTIONS] <binvox filenames>" << endl;
         cout << "\tOPTIONS:" << endl;
-        cout << "\t -o <file>        Output filename (default: first input filename + .bt)" << endl;
-        cout << "\t --mark-free      Mark not occupied cells as 'free' (default: unknown)" << endl;
-        cout << "\t --rotate         Rotate left by 90 deg. to fix the coordinate system when exported from Webots" << endl;
-        cout << "\t --bb <minx> <miny> <minz> <maxx> <maxy> <maxz>: force bounding box for OcTree" << endl;
-        cout << "\t --offset <x> <y> <z>: add an offset to the final coordinates" << endl;
-        cout << "If more than one binvox file is given, the models are composed to a single bonsai tree->" << endl;
+        cout << "\t -o <file>        Output filename (default: first input filename + .bt)\n";
+        cout << "\t --mark-free      Mark not occupied cells as 'free' (default: unknown)\n";
+        cout << "\t --rotate         Rotate left by 90 deg. to fix the coordinate system when exported from Webots\n";
+        cout << "\t --bb <minx> <miny> <minz> <maxx> <maxy> <maxz>: force bounding box for OcTree\n";
+        cout << "\t --offset <x> <y> <z>: add an offset to the final coordinates\n";
+        cout << "If more than one binvox file is given, the models are composed to a single bonsai tree->\n";
         cout << "All options apply to the subsequent input files.\n\n";
         exit(0);
     }
@@ -109,7 +111,7 @@ int main(int argc, char **argv)
         } else if(strcmp(argv[i], "-o") == 0 && i < argc - 1) {            
             i++;
             output_filename = argv[i];
-            i++;
+
             continue;
         } else if (strcmp(argv[i], "--bb") == 0 && i < argc - 7) {
           i++;
