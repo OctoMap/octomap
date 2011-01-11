@@ -388,6 +388,7 @@ namespace octomap {
         if(!genCoordFromKey( voxelIdx[j], val[j] )){
           std::cerr << "Error in OcTree::computeRay(): genCoordFromKey failed!\n";
           return false;
+          val[j] += this->resolution * 0.5;  // center of voxel
         }
       }
       point3d value(val[0], val[1], val[2]);
