@@ -126,7 +126,7 @@ namespace octomap {
       return NULL;
     }
     else {
-      return this->searchKey(key);
+      return this->search(key);
     }
 
   }
@@ -140,7 +140,7 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::searchKey (const OcTreeKey& key) const {
+  NODE* OcTreeBase<NODE>::search(const OcTreeKey& key) const {
 
     NODE* curNode = itsRoot;
 

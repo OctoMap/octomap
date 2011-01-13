@@ -16,8 +16,6 @@ TARGET_LINK_LIBRARIES(
   octomap octomath
   )
 
-ADD_EXECUTABLE(read_pointcloud read_pointcloud.cpp)
-TARGET_LINK_LIBRARIES(read_pointcloud octomap)
 
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap)
@@ -50,7 +48,6 @@ file(GLOB octomap_HDRS *.h *.hxx *.hpp)
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
 
 install(TARGETS octomap 
-	read_pointcloud
 	graph2tree
 	log2graph
 	binvox2bt

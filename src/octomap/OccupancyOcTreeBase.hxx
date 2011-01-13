@@ -66,7 +66,7 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, bool occupied) {
 
-    NODE* leaf = this->searchKey(key);
+    NODE* leaf = this->search(key);
     if (leaf) {
       if ((leaf->atThreshold()) && (leaf->isOccupied() == occupied)) {
         return leaf;
@@ -138,7 +138,7 @@ namespace octomap {
       return false;
     }
 
-    NODE* startingNode = this->searchKey(current_key);
+    NODE* startingNode = this->search(current_key);
     if (startingNode){
       if (startingNode->isOccupied()){
         // Occupied node found at origin 
@@ -222,7 +222,7 @@ namespace octomap {
         return false;
       }
 
-      NODE* currentNode = this->searchKey(current_key);
+      NODE* currentNode = this->search(current_key);
       if ( currentNode){
         if (currentNode->isOccupied()) {
           end = current_endpoint;

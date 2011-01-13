@@ -103,7 +103,7 @@ namespace octomap {
      *  search node given a set of addressing keys
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* searchKey (const OcTreeKey& key) const;
+    NODE* search (const OcTreeKey& key) const;
 
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values

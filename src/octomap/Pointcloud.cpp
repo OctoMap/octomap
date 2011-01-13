@@ -59,7 +59,7 @@ namespace octomap {
     // delete the points
     if (points.size()) {
       for (unsigned int i=0; i < points.size(); i++) {
-	delete (points[i]);
+        delete (points[i]);
 	//  printf("-");
       }
       points.clear();

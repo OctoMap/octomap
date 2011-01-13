@@ -191,7 +191,7 @@ namespace octomap {
 
     OcTreeKey neighbor_key;
     lut->genNeighborKey(start_key, (signed char&) dir, neighbor_key);
-    return this->searchKey(neighbor_key);
+    return this->search(neighbor_key);
   }
 
 
