@@ -72,13 +72,32 @@ namespace octomap {
      */
     OcTree(std::string _filename);
 
+    /**
+     *
+     *
+     *
+     * @param scan
+     * @param maxrange
+     * @param pruning
+     */
+
+    /**
+     * Integrate a 3d scan (given as a Pointcloud relative to the measurement origin) into the tree.
+     *
+     * @param pc Pointcloud (measurement endpoints), relative to originPose
+     * @param originPose origin of pc as 6D transform
+     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+     */
+    void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true);
 
     /**
      * Insert a 3d scan (given as a ScanNode) into the tree.
      * By default, the tree is pruned after insertion
-     * (small run-time overhead, but decreases size)
+     * (small run-time overhead, but decreases size). Preferably,
+     * you should use inserScan on a Pointcloud with origin instead.
      *
-     * @param scan
+     * @param scan endpoints of a 3D scan as Pointcloud with an origin
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
      */
@@ -133,7 +152,7 @@ namespace octomap {
   protected:
 
     /// Helper for insertScan (internal use)
-    void insertScanUniform(const ScanNode& scan, double maxrange=-1.);
+    void insertScanUniform(const Pointcloud& pc, const pose6d& scan_pose, double maxrange=-1.);
 
     ///recursive call of toMaxLikelihood()
     void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);

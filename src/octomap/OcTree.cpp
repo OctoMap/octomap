@@ -65,33 +65,38 @@ namespace octomap {
     readBinary(_filename);
   }
 
-
-  void OcTree::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
-    if (scan.scan->size()< 1)
+  void OcTree::insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange, bool pruning){
+    if (pc.size() < 1)
       return;
 
     if (NO_UNIFORM_SAMPLING){
       std::cerr << "Warning: Uniform sampling of scan is disabled!\n";
 
-      pose6d scan_pose (scan.pose);
-
       // integrate beams
-      octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
       octomap::point3d p;
-
-      for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); 
-	   point_it != scan.scan->end(); point_it++) {
-        p = scan_pose.transform(**point_it);
-        this->insertRay(origin, p, maxrange);
+      for (octomap::Pointcloud::const_iterator point_it = pc.begin();
+          point_it != pc.end(); point_it++)
+      {
+        p = originPose.transform(**point_it);
+        this->insertRay(originPose.trans(), p, maxrange);
       } // end for all points
-    } 
+    }
     else {
-      this->insertScanUniform(scan, maxrange);
+      this->insertScanUniform(pc, originPose, maxrange);
     }
 
     if (pruning)
       this->prune();
+
+
   }
+
+
+  void OcTree::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
+    insertScan(*(scan.scan), scan.pose, maxrange, pruning);
+
+  }
+
 
 
   void OcTree::toMaxLikelihood() {
@@ -244,10 +249,9 @@ namespace octomap {
 
   // --  protected  --------------------------------------------
 
-  void OcTree::insertScanUniform(const ScanNode& scan, double maxrange) {
+  void OcTree::insertScanUniform(const Pointcloud& pc, const pose6d& scan_pose, double maxrange) {
     
-    octomap::pose6d  scan_pose (scan.pose);
-    octomap::point3d origin (scan_pose.x(), scan_pose.y(), scan_pose.z());
+    octomap::point3d origin (scan_pose.trans());
 
 
     // preprocess data  --------------------------
@@ -257,7 +261,7 @@ namespace octomap {
     CountingOcTree free_tree    (this->getResolution());
     CountingOcTree occupied_tree(this->getResolution());
 
-    for (octomap::Pointcloud::iterator point_it = scan.scan->begin(); point_it != scan.scan->end(); point_it++) {
+    for (octomap::Pointcloud::const_iterator point_it = pc.begin(); point_it != pc.end(); point_it++) {
 
       p = scan_pose.transform(**point_it);
 

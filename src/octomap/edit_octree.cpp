@@ -66,8 +66,6 @@ int main(int argc, char **argv)
     double maxZ = 0.0;
     bool applyBBX = false;
     bool applyOffset = false;
-    bool applyScale = false;
-    bool applyResolution = false;
     octomap::point3d offset(0.0, 0.0, 0.0);
 
     double scale = 1.0;
@@ -88,7 +86,7 @@ int main(int argc, char **argv)
         cout << "\t -o <file>        Output filename (default: first input filename + .bt)" << endl;
 //        cout << "\t --mark-free      Mark not occupied cells as 'free' (default: unknown)" << endl;
 //        cout << "\t --rotate         Rotate left by 90 deg. to fix the coordinate system when exported from Webots" << endl;
-//        cout << "\t --offset <x> <y> <z>: add an offset to the final coordinates\n\n";
+        cout << "\t --offset <x> <y> <z>: add an offset to the octree coordinates (translation)\n";
 //        cout << "\t --bb <minx> <miny> <minz> <maxx> <maxy> <maxz>: force bounding box for OcTree" << endl;
         cout << "\t --res <resolution>: set ressolution of OcTree to new value\n";
         cout << "\t --scale <scale>: scale  octree resolution by a value\n";
@@ -131,14 +129,10 @@ int main(int argc, char **argv)
         i++;
         res = atof(argv[i]);
 
-        applyResolution = true;
-
         continue;
       } else if (strcmp(argv[i], "--scale") == 0 && i < argc - 1) {
         i++;
         scale = atof(argv[i]);
-
-        applyScale = true;
 
         continue;
       } else if (strcmp(argv[i], "--offset") == 0 && i < argc - 4) {

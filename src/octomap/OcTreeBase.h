@@ -132,7 +132,8 @@ namespace octomap {
 
    /**
     * Traces a ray from origin to end (excluding), returning an
-    * OcTreeKey of all nodes traversed by the beam. 
+    * OcTreeKey of all nodes traversed by the beam. You still need to check
+    * if a node at that coordinate exists (e.g. with search()).
     *
     * @param origin start coordinate of ray
     * @param end end coordinate of ray
@@ -144,8 +145,9 @@ namespace octomap {
 
    /**
     * Traces a ray from origin to end (excluding), returning the
-    * coordinates of all nodes traversed by the beam. Note: use the
-    * faster computeRayKeys method if possible.
+    * coordinates of all nodes traversed by the beam. You still need to check
+    * if a node at that coordinate exists (e.g. with search()).
+    * @note: use the faster computeRayKeys method if possible.
     * 
     * @param origin start coordinate of ray
     * @param end end coordinate of ray

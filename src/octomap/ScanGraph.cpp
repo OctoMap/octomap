@@ -173,12 +173,18 @@ namespace octomap {
   void ScanGraph::clear() {
 
     for (unsigned int i=0; i<nodes.size(); i++) {
-      delete nodes[i];
+      if (nodes[i]){
+        delete nodes[i];
+        nodes[i] = NULL;
+      }
     }
     nodes.clear();
 
     for (unsigned int i=0; i<edges.size(); i++) {
-      delete edges[i];
+      if (edges[i]){
+        delete edges[i];
+        edges[i] = NULL;
+      }
     }
     edges.clear();
   }

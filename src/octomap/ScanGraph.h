@@ -124,11 +124,30 @@ namespace octomap {
     ScanGraph() {};
     ~ScanGraph();
 
-    /// Clears all nodes and edges
+    /// Clears all nodes and edges, and will delete the corresponding objects
     void clear();
 
+    /**
+     * Creates a new ScanNode in the graph from a Pointcloud.
+     *
+     * @param scan Pointer to a pointcloud to be added to the ScanGraph.
+     *        ScanGraph will delete the object when it's no longer needed, don't delete it yourself.
+     * @param pose 6D pose of the origin of the Pointcloud
+     * @return Pointer to the new node
+     */
     ScanNode* addNode(Pointcloud* scan, pose6d pose);
+
+    /**
+     * Creates an edge between two ScanNodes.
+     * ScanGraph will delete the object when it's no longer needed, don't delete it yourself.
+     *
+     * @param first ScanNode
+     * @param second ScanNode
+     * @param constraint 6D transform between the two nodes
+     * @return
+     */
     ScanEdge* addEdge(ScanNode* first, ScanNode* second, pose6d constraint);
+
     ScanEdge* addEdge(unsigned int first_id, unsigned int second_id);
 
     /// will return NULL if node was not found
@@ -137,7 +156,7 @@ namespace octomap {
     /// \return true when an edge between first_id and second_id exists
     bool edgeExists(unsigned int first_id, unsigned int second_id);
 
-    /// Connect previously added point to the one before that
+    /// Connect previously added ScanNode to the one before that
     void connectPrevious();
 
     std::vector<unsigned int> getNeighborIDs(unsigned int id);

@@ -70,7 +70,10 @@ Hornung</a>. Feel free to contact us.</p>
 \section gettingstarted_sec Getting Started
 <p>
   Jump right in and have a look at the main class octomap::OcTree and the examples<br>
-  src/octomap/simple.cpp
+  src/octomap/simple.cpp. To integrate single measurements into the 3D map have a look at
+  octomap::Octree::insertRay(...), to insert full 3D scans (pointclouds) please have a look at
+  octomap::Octree::insertScan(). Queries can be performed e.g. with octomap::Octree::search(...) or
+  octomap::Octree::castRay(...).
 </p>
 
 <p>
