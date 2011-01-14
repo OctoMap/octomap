@@ -545,6 +545,18 @@ namespace octomap {
   }
 
 
+  // deprecated!
+  template <class NODE>
+  void OcTreeBase<NODE>::getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth) const {
+    point3d_list node_centers;
+    this->getLeafNodes(node_centers);
+    for (point3d_list::iterator it = node_centers.begin(); it != node_centers.end(); it++) {
+      OcTreeVolume v = std::make_pair(*it, this->resolution);
+      nodes.push_back(v);
+    }
+  }
+
+
   template <class NODE>
   void OcTreeBase<NODE>::getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth) const{
     assert(itsRoot);

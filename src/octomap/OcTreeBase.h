@@ -147,6 +147,9 @@ namespace octomap {
      */
     void getLeafNodes(point3d_list& node_centers) const;
 
+    // replaced by getLeafNodes(point3d_list&)
+    void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const __attribute__ ((deprecated));
+
     /**
      * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
      *
