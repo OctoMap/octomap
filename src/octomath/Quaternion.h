@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@
 #include "Vector3.h"
 
 #include <iostream>
+#include <vector>
 
 
 namespace octomath {
@@ -68,7 +69,7 @@ namespace octomath {
      * Constructs the (1,0,0,0) Unit Quaternion
      * representing the identity rotation.
      */
-    Quaternion();
+    inline Quaternion() { u() = 1;  x() = 0; y() = 0; z() = 0;  }
 
     /*!
      * \brief Copy constructor
@@ -81,7 +82,7 @@ namespace octomath {
      * Constructs a Quaternion from four single
      * values
      */
-    Quaternion(double u, double x, double y, double z);
+    Quaternion(float u, float x, float y, float z);
 
     /*!
      * \brief Constructor
@@ -102,6 +103,11 @@ namespace octomath {
     Quaternion(double roll, double pitch, double yaw);
 
 
+     
+    //! Constructs a Unit Quaternion from a rotation angle and axis.  
+    Quaternion(const Vector3& axis, double angle);
+
+
     /*!
      * \brief Conversion to Euler angles
      *
@@ -110,23 +116,20 @@ namespace octomath {
      */
     Vector3 toEuler() const;
 
-
-    inline const double& operator() (unsigned int i) const {
-      return data[i];
-    }
-
-    inline double& operator() (unsigned int i) {
-      return data[i];
-    }
-
-    double norm2() const;
-    Quaternion  unit () const;
-    Quaternion& unit_IP ();
+    void toRotMatrix(std::vector <double>& rot_matrix_3_3) const;
 
 
-    void operator/= (double x);
+    inline const float& operator() (unsigned int i) const { return data[i]; }
+    inline float& operator() (unsigned int i) { return data[i]; }
+
+    float norm () const;
+    Quaternion  normalized () const;
+    Quaternion& normalize ();
+
+
+    void operator/= (float x);
     Quaternion& operator= (const Quaternion& other);
-    bool operator== (const Quaternion&other) const;
+    bool operator== (const Quaternion& other) const;
 
     /*!
      * \brief Quaternion multiplication
@@ -135,55 +138,29 @@ namespace octomath {
      * commutative.
      * @return this * other
      */
-    Quaternion operator* (const Quaternion& other) const {
-      return Quaternion(u()*other.u() - x()*other.x() - y()*other.y() - z()*other.z(),
-                        y()*other.z() - other.y()*z() + u()*other.x() + other.u()*x(),
-                        z()*other.x() - other.z()*x() + u()*other.y() + other.u()*y(),
-                        x()*other.y() - other.x()*y() + u()*other.z() + other.u()*z());
-    }
+    Quaternion operator* (const Quaternion& other) const;
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return q * (0, v)
      */
-    inline Quaternion operator* (const Vector3 &v) const {
-      return *this * Quaternion(0, v(0), v(1), v(2));
-    }
-
+    Quaternion operator* (const Vector3 &v) const;
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return (0, v) * q
      */
-    inline friend Quaternion operator* (const Vector3 &v, const Quaternion &q) {
-      return Quaternion(0, v(0), v(1), v(2)) * q;
-    }
-
-    /*!
-     * \brief Normalization
-     *
-     * @return A copy of this Quaternion as Unit Quaternion
-     */
-    Quaternion normalized() const;
-
-    /*!
-     * \brief Normalization
-     *
-     * Normalizes this Quaternion.
-     * @return a reference to this Quaternion
-     */
-    Quaternion& normalize();
+    friend Quaternion operator* (const Vector3 &v, const Quaternion &q);
 
     /*!
      * \brief Inversion
      *
      * @return A copy of this Quaterion inverted
      */
-    inline Quaternion inv() const {
-      return Quaternion(u(), -x(), -y(), -z());
-    }
+    inline Quaternion inv() const {  return Quaternion(u(), -x(), -y(), -z()); }
+
 
     /*!
      * \brief Inversion
@@ -204,15 +181,15 @@ namespace octomath {
      */
     Vector3 rotate(const Vector3 &v) const;
 
-    inline double& u(){ return operator()(0); }
-    inline double& x(){ return operator()(1); } 
-    inline double& y(){ return operator()(2); }
-    inline double& z(){ return operator()(3); }
+    inline float& u() { return data[0]; }
+    inline float& x() { return data[1]; }
+    inline float& y() { return data[2]; }
+    inline float& z() { return data[3]; }
 
-    inline const double& u() const { return operator()(0); }
-    inline const double& x() const { return operator()(1); }
-    inline const double& y() const { return operator()(2); }
-    inline const double& z() const { return operator()(3); }
+    inline const float& u() const { return data[0]; }
+    inline const float& x() const { return data[1]; }
+    inline const float& y() const { return data[2]; }
+    inline const float& z() const { return data[3]; }
 
     std::istream& read(std::istream &s);
     std::ostream& write(std::ostream &s) const;
@@ -220,8 +197,7 @@ namespace octomath {
     std::ostream& writeBinary(std::ostream &s) const;
 
   protected:
-
-    double data[4];
+    float data[4];
 
   };
 

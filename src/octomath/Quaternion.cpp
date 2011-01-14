@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,21 +49,15 @@
 
 namespace octomath {
 
-  Quaternion::Quaternion(){
-    u() = 1;
-    x() = 0;
-    y() = 0;
-    z() = 0;
-  }
-
 
   Quaternion::Quaternion(const Quaternion &other) {
-    for (unsigned int i=0; i<4; i++) {
-      operator()(i) = other(i);
-    }
+    data[0] = other(0);
+    data[1] = other(1);
+    data[2] = other(2);
+    data[3] = other(3);
   }
 
-  Quaternion::Quaternion(double uu, double xx, double yy, double zz) {
+  Quaternion::Quaternion(float uu, float xx, float yy, float zz) {
     u() = uu;
     x() = xx;
     y() = yy;
@@ -98,8 +92,16 @@ namespace octomath {
     z() = (m[1][0] - m[0][1])>=0?fabs(_z):-fabs(_z);
   }
 
+  Quaternion::Quaternion(const Vector3& axis, double angle) {
+    double sa = sin(angle/2);
+    double ca = cos(angle/2);
+    x() = axis.x()*sa;
+    y() = axis.y()*sa;
+    z() = axis.z()*sa;
+    u() = ca;
+  }
 
-  double Quaternion::norm2() const {
+  float Quaternion::norm () const {
     double n = 0;
     for (unsigned int i=0; i<4; i++) {
       n += operator()(i) * operator()(i);
@@ -107,15 +109,18 @@ namespace octomath {
     return sqrt(n);
   }
 
-  void Quaternion::operator/= (double x) {
-    for (unsigned int i=0; i<4; i++) {
+  void Quaternion::operator/= (float x) 
+  { 
+    for (unsigned int i=0; i<4; ++i)
       operator()(i) /= x;
-    }
   }
 
-  bool Quaternion::operator== (const Quaternion& other) const {
-    for (unsigned int i=0; i<4; i++) {
-      if (operator()(i) != other(i)) return false;
+  bool Quaternion::operator== (const Quaternion& other) const 
+  {
+    for (unsigned int i=0; i<4; i++) 
+    {
+      if (operator()(i) != other(i)) 
+        return false;
     }
     return true;
   }
@@ -123,7 +128,7 @@ namespace octomath {
 
   Vector3 Quaternion::toEuler() const {
     // create rotational matrix
-    double n = norm2();
+    double n = norm ();
     double s = n > 0?2./(n*n):0.;
 
     double xs = x()*s;
@@ -164,6 +169,50 @@ namespace octomath {
   }
 
 
+  void Quaternion::toRotMatrix(std::vector <double>& rot_matrix_3_3) const {
+
+    // create rotational matrix
+    double n = norm ();
+    double s = n > 0?2./(n*n):0.;
+
+    double xs = x()*s;
+    double ys = y()*s;
+    double zs = z()*s;
+
+    double ux = u()*xs;
+    double uy = u()*ys;
+    double uz = u()*zs;
+
+    double xx = x()*xs;
+    double xy = x()*ys;
+    double xz = x()*zs;
+
+    double yy = y()*ys;
+    double yz = y()*zs;
+    double zz = z()*zs;
+
+    double m[3][3];
+    m[0][0] = 1.0 - (yy + zz);
+    m[1][1] = 1.0 - (xx + zz);
+    m[2][2] = 1.0 - (xx + yy);
+
+    m[1][0] = xy + uz;
+    m[0][1] = xy - uz;
+
+    m[2][0] = xz - uy;
+    m[0][2] = xz + uy;
+    m[2][1] = yz + ux;
+    m[1][2] = yz - ux;
+
+    rot_matrix_3_3.clear();
+    rot_matrix_3_3.resize(9,0.);
+    for (unsigned int i=0; i<3; i++) {
+      rot_matrix_3_3[i*3] = m[i][0];
+      rot_matrix_3_3[i*3+1] = m[i][1];
+      rot_matrix_3_3[i*3+2] = m[i][2];
+    }
+  }
+
   Quaternion& Quaternion::operator= (const Quaternion& other) {
     u() = other.u();
     x() = other.x();
@@ -172,28 +221,34 @@ namespace octomath {
     return *this;
   }
 
+  Quaternion Quaternion::operator* (const Quaternion& other) const {
+    return Quaternion(u()*other.u() - x()*other.x() - y()*other.y() - z()*other.z(),
+		      y()*other.z() - other.y()*z() + u()*other.x() + other.u()*x(),
+		      z()*other.x() - other.z()*x() + u()*other.y() + other.u()*y(),
+		      x()*other.y() - other.x()*y() + u()*other.z() + other.u()*z());
+  }
 
-  Quaternion& Quaternion::unit_IP (){
-    double len = norm2();
+  Quaternion Quaternion::operator* (const Vector3& v) const {
+    return *this * Quaternion(0, v(0), v(1), v(2));
+  }
+
+  Quaternion operator* (const Vector3& v, const Quaternion& q) {
+    return Quaternion(0, v(0), v(1), v(2)) * q;
+  }
+
+  Quaternion& Quaternion::normalize (){
+    double len = norm ();
     if (len > 0)
       *this /= len;
     return *this;
   }
 
-  Quaternion Quaternion::unit () const {
+  Quaternion Quaternion::normalized () const {
     Quaternion result(*this);
-    result.unit_IP();
+    result.normalize ();
     return result;
   }
 
-  Quaternion Quaternion::normalized() const {
-    return unit();
-  }
-
-  Quaternion& Quaternion::normalize() {
-    unit_IP();
-    return *this;
-  }
 
   Quaternion& Quaternion::inv_IP() {
     x() = -x();

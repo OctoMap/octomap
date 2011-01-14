@@ -150,7 +150,7 @@ namespace octomap {
       return false;
     }
 
-    point3d direction = directionP.unit();
+    point3d direction = directionP.normalized();
     bool max_range_set = (maxRange > 0.);
 
     int step[3]; 
@@ -379,9 +379,9 @@ namespace octomap {
 
     // cut ray at maxrange
     if ((maxrange > 0) 
-        && ((end - origin).norm2() > maxrange)) {
+        && ((end - origin).norm() > maxrange)) {
 
-      point3d direction = (end - origin).unit();
+      point3d direction = (end - origin).normalized();
       point3d new_end = origin + direction * maxrange;
       return integrateMissOnRay(origin, new_end);
     }

@@ -209,7 +209,7 @@ namespace octomap {
     // Initialization phase -------------------------------------------------------
 
     point3d direction = (end - origin);
-    double length = direction.norm2();
+    double length = direction.norm();
     direction /= length; // normalize vector
 
     int    step[3];

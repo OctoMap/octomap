@@ -9,7 +9,7 @@
  */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,14 +59,18 @@ namespace octomath {
     /*!
      * \brief Default constructor
      */
-    Vector3();
+    Vector3 () { data[0] = data[1] = data[2] = 0; }
 
     /*!
      * \brief Copy constructor
      *
      * @param other a vector of dimension 3
      */
-    Vector3(const Vector3& other);
+    Vector3 (const Vector3& other) {
+      data[0] = other(0);
+      data[1] = other(1);
+      data[2] = other(2);
+    }
 
     /*!
      * \brief Constructor
@@ -74,128 +78,241 @@ namespace octomath {
      * Constructs a three-dimensional vector from
      * three single values x, y, z or roll, pitch, yaw
      */
-    Vector3(double x, double y, double z);
+    Vector3 (float x, float y, float z) {
+      data[0] = x;
+      data[1] = y;
+      data[2] = z;
+    }
+
+
+    /* inline Eigen3::Vector3f getVector3f() const { return Eigen3::Vector3f(data[0], data[1], data[2]) ; } */
+    /* inline Eigen3::Vector4f& getVector4f() { return data; } */
+    /* inline Eigen3::Vector4f getVector4f() const { return data; } */
 
     /*!
      * \brief Assignment operator
      *
      * @param other a vector of dimension 3
      */
-    inline Vector3& operator = (const Vector3& other) {
-      for (unsigned int i=0; i<3; i++) {
-        operator()(i) = other(i);
-      }
+    inline Vector3& operator= (const Vector3& other)  {
+      data[0] = other(0);
+      data[1] = other(1);
+      data[2] = other(2);      
       return *this;
     }
+
 
     /*!
      * \brief Three-dimensional vector (cross) product
      *
-     * Calculates the three-dimensional cross product, which
+     * Calculates the tree-dimensional cross product, which
      * represents the vector orthogonal to the plane defined
      * by this and other.
      * @return this x other
      */
-    Vector3 crossProduct(const Vector3& other) const;
-
-    double dotProduct(const Vector3& other) const;
-    double innerProd(const Vector3& other) const { return dotProduct(other); }
-
-    Vector3& rotate_IP (double roll, double pitch, double yaw);
-
-    double sqrDist(const Vector3& other) const;
-    inline double dist(const Vector3& other) const {
-      return sqrt(this->sqrDist(other));
+    inline Vector3 cross (const Vector3& other) const 
+    {
+      //return (data.start<3> ().cross (other.data.start<3> ()));
+      // \note should this be renamed?
+      return Vector3(y()*other.z() - z()*other.y(),
+                     z()*other.x() - x()*other.z(),
+                     x()*other.y() - y()*other.x());
     }
 
+    inline double dot (const Vector3& other) const 
+    {
+      return x()*other.x() + y()*other.y() + z()*other.z();
+    }
 
-    inline const double& operator() (unsigned int i) const { return data[i]; }
-    inline double& operator() (unsigned int i) { return data[i]; }
+    inline const float& operator() (unsigned int i) const
+    {
+      return data[i];
+    }
+    inline float& operator() (unsigned int i)
+    {
+      return data[i];
+    }
 
+    inline float& x() 
+    {
+      return operator()(0);
+    }
 
-    inline double& x() { return data[0]; }
-    inline double& y() { return data[1]; }
-    inline double& z() { return data[2]; }
+    inline float& y() 
+    {
+      return operator()(1);
+    }
 
-    inline const double& x() const { return data[0]; }
-    inline const double& y() const { return data[1]; }
-    inline const double& z() const { return data[2]; }
+    inline float& z() 
+    {
+      return operator()(2);
+    }
 
-    double& roll();
-    double& pitch();
-    double& yaw();
-    const double& roll() const;
-    const double& pitch() const;
-    const double& yaw() const;
+    inline const float& x() const 
+    {
+      return operator()(0);
+    }
 
+    inline const float& y() const 
+    {
+      return operator()(1);
+    }
 
-    inline Vector3 operator- (const Vector3 &other) const {
-      Vector3 result(*this);
-      for (unsigned int i=0; i<3; ++i) {
-        result(i) -= other(i);
-      }
+    inline const float& z() const 
+    {
+      return operator()(2);
+    }
+
+    inline float& roll() 
+    {
+      return operator()(0);
+    }
+
+    inline float& pitch() 
+    {
+      return operator()(1);
+    }
+
+    inline float& yaw() 
+    {
+      return operator()(2);
+    }
+
+    inline const float& roll() const 
+    {
+      return operator()(0);
+    }
+
+    inline const float& pitch() const 
+    {
+      return operator()(1);
+    }
+
+    inline const float& yaw() const 
+    {
+      return operator()(2);
+    }
+
+    inline Vector3 operator- () const 
+    {
+      Vector3 result;
+      result(0) = -data[0];
+      result(1) = -data[1];
+      result(2) = -data[2];
       return result;
     }
 
-    inline Vector3 operator- () const {
+    inline Vector3 operator+ (const Vector3 &other) const 
+    {
       Vector3 result(*this);
-      for (unsigned int i=0; i<3; ++i) {
-        result(i) = -result(i);
-      }
-      return result;
-    }
-    inline Vector3 operator+ (const Vector3 &other) const {
-      Vector3 result(*this);
-      for (unsigned int i=0; i<3; ++i) {
-        result(i) += other(i);
-      }
+      result(0) += other(0);
+      result(1) += other(1);
+      result(2) += other(2);
       return result;
     }
 
     inline Vector3 operator*  (double x) const {
       Vector3 result(*this);
-      for (unsigned int i=0; i<3; ++i) {
-        result(i) *= x;
-      }
+      result(0) *= x;
+      result(1) *= x;
+      result(2) *= x;
       return result;
     }
 
-    inline void operator-= (const Vector3& other){
-      for (unsigned int i=0; i<3; i++) {
-        operator()(i) -= other(i);
-      }
+    inline Vector3 operator- (const Vector3 &other) const 
+    {
+      Vector3 result(*this);
+      result(0) -= other(0);
+      result(1) -= other(1);
+      result(2) -= other(2);
+      return result;
     }
 
-    inline void operator+= (const Vector3 &other){
-      for (unsigned int i=0; i<3; i++) {
-        operator()(i) += other(i);
-      }
+    inline void operator+= (const Vector3 &other)
+    {
+      data[0] += other(0);
+      data[1] += other(1);
+      data[2] += other(2);      
+    }
+
+    inline void operator-= (const Vector3& other) {
+      data[0] -= other(0);
+      data[1] -= other(1);
+      data[2] -= other(2);      
+    }
+
+    inline void operator/= (double x) {
+      data[0] /= x;
+      data[1] /= x;
+      data[2] /= x;      
+    }
+
+    inline void operator*= (double x) {    
+      data[0] *= x;
+      data[1] *= x;
+      data[2] *= x;      
     }
 
     inline bool operator== (const Vector3 &other) const {
       for (unsigned int i=0; i<3; i++) {
-        if (operator()(i) != other(i)) return false;
+        if (operator()(i) != other(i)) 
+          return false;
       }
       return true;
     }
-
-    inline void operator/= (double x) {
+        
+    inline double norm () const {
+      double n = 0;
       for (unsigned int i=0; i<3; i++) {
-        operator()(i) /= x;
+        n += operator()(i) * operator()(i);
       }
+      return sqrt(n);
     }
 
-    inline void operator*= (double x) {
-      for (unsigned int i=0; i<3; i++) {
-        operator()(i) *= x;
-      }
+    inline double norm2 () const __attribute__ ((deprecated)) { // replaced by norm()
+      return norm();
+    }
+
+    inline Vector3& normalize () {
+      double len = norm ();
+      if (len > 0)
+        *this /= len;
+      return *this;
+    }
+
+    inline Vector3 normalized () const {
+      Vector3 result(*this);
+      result.normalize ();
+      return result;
+    }
+
+    inline Vector3 unit () const __attribute__ ((deprecated)) { // replaced by normalized()
+      return normalized();
     }
 
 
-    double norm2() const;
-    Vector3  unit () const;
-    Vector3& unit_IP ();
+    inline double angleTo(const Vector3& other) const { 
+      double dot_prod = this->dot(other);
+      double len1 = this->norm();
+      double len2 = other.norm();
+      return acos(dot_prod / (len1*len2));
+    }
 
+
+    inline double distance (const Vector3& other) const {
+      double dist_x = x() - other.x();
+      double dist_y = y() - other.y();
+      double dist_z = z() - other.z();
+      return sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z);
+    }
+
+    inline double distanceXY (const Vector3& other) const {
+      double dist_x = x() - other.x();
+      double dist_y = y() - other.y();
+      return sqrt(dist_x*dist_x + dist_y*dist_y);
+    }
+
+    Vector3& rotate_IP (double roll, double pitch, double yaw);
 
     //    void read (unsigned char * src, unsigned int size);
     std::istream& read(std::istream &s);
@@ -205,7 +322,8 @@ namespace octomath {
 
 
   protected:
-    double data[3];
+    float data[3];
+
   };
 
 

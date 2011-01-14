@@ -266,7 +266,7 @@ namespace octomap {
       p = scan_pose.transform(**point_it);
 
       bool is_maxrange = false;
-      if ( (maxrange > 0.0) && ((p - origin).norm2() > maxrange) ) is_maxrange = true;
+      if ( (maxrange > 0.0) && ((p - origin).norm() > maxrange) ) is_maxrange = true;
 
       if (!is_maxrange) {
         // free cells
@@ -280,7 +280,7 @@ namespace octomap {
       } // end if NOT maxrange
 
       else { // used set a maxrange and this is reached
-        point3d direction = (p - origin).unit();
+        point3d direction = (p - origin).normalized();
         point3d new_end = origin + direction * maxrange;
         if (this->computeRayKeys(origin, new_end, this->keyray)){
           for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {

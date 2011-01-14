@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,26 +65,6 @@ namespace octomath {
     translation = other.trans();
     rotation = other.rot();
     return *this;
-  }
-
-
-  Vector3& Pose6D::trans() {
-    return translation;
-  }
-
-
-  const Vector3& Pose6D::trans() const {
-    return translation;
-  }
-
-
-  Quaternion& Pose6D::rot() {
-    return rotation;
-  }
-
-
-  const Quaternion& Pose6D::rot() const {
-    return rotation;
   }
 
 

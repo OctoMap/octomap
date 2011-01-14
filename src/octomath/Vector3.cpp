@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,39 +39,13 @@
 
 #include "Vector3.h"
 #include <cassert>
+#include <math.h>
 #include <string.h>
 
 namespace octomath {
 
-  Vector3::Vector3() {
-    for (unsigned int i=0; i<3; i++) data[i] = 0;
-  }
-
-  Vector3::Vector3(const Vector3& other) {
-    for (unsigned int i=0; i<3; i++) {
-      data[i] = other(i);
-    }
-  }
-
-  Vector3::Vector3(double x, double y, double z) {
-    data[0] = x;
-    data[1] = y;
-    data[2] = z;
-  }
-
-
-  Vector3 Vector3::crossProduct(const Vector3& other) const {
-    return Vector3(y()*other.z() - z()*other.y(),
-		   z()*other.x() - x()*other.z(),
-		   x()*other.y() - y()*other.x());
-  }
-
-  double Vector3::dotProduct(const Vector3& other) const {
-    return x()*other.x() + y()*other.y() + z()*other.z();
-  }
-
-  Vector3& Vector3::rotate_IP (double roll, double pitch, double yaw) {
-
+  Vector3& Vector3::rotate_IP (double roll, double pitch, double yaw) 
+  {
     double x, y, z;
 
     // pitch (around y)
@@ -93,62 +67,11 @@ namespace octomath {
     return *this;
   }
 
-  double Vector3::sqrDist(const Vector3& other) const {
-    double diff = (*this)(0) - other(0);
-    double ret = diff*diff;
-    diff = (*this)(1) - other(1);
-    ret += diff*diff;
-    diff = (*this)(2) - other(2);
-    ret += diff*diff;
-    return ret;
-  }
-
-  double& Vector3::roll() {
-    return operator()(0);
-  }
-
-  double& Vector3::pitch() {
-    return operator()(1);
-  }
-
-  double& Vector3::yaw() {
-    return operator()(2);
-  }
-
-  const double& Vector3::roll() const {
-    return operator()(0);
-  }
-
-  const double& Vector3::pitch() const {
-    return operator()(1);
-  }
-
-  const double& Vector3::yaw() const {
-    return operator()(2);
-  }
-
-
-  double Vector3::norm2() const {
-    double n = 0;
-    for (unsigned int i=0; i<3; i++) {
-      n += operator()(i) * operator()(i);
-    }
-    return sqrt(n);
-  }
-
-
-  Vector3& Vector3::unit_IP (){
-    double len = norm2();
-    if (len > 0)
-      *this /= len;
-    return *this;
-  }
-
-  Vector3 Vector3::unit () const {
-    Vector3 result(*this);
-    result.unit_IP();
-    return result;
-  }
+//   void Vector3::read(unsigned char * src, unsigned int size){
+//     memcpy(&data[0],src, sizeof(double));
+//     memcpy(&data[1],src, sizeof(double));
+//     memcpy(&data[2],src, sizeof(double));
+//   }
 
 
   std::istream& Vector3::read(std::istream &s) {

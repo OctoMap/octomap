@@ -83,38 +83,39 @@ namespace octomath {
      *
      * @return the translational component of this pose
      */
-    Vector3& trans();
+    inline Vector3& trans() { return translation; }
     /*!
      * \brief Rotational component
      *
      * @return the rotational component of this pose
      */
-    Quaternion& rot();
+    inline Quaternion& rot() { return rotation; }
     /*!
      * \brief Translational component
      *
      * @return the translational component of this pose
      */
-    const Vector3& trans() const;
+    const Vector3& trans() const { return translation; }
     /*!
      * \brief Rotational component
      * @return the rotational component of this pose
      */
-    const Quaternion& rot() const;
+    const Quaternion& rot() const { return rotation; }
 
-    double& x() { return translation(0); }
-    double& y() { return translation(1); }
-    double& z() { return translation(2); }
-    const double& x() const { return translation(0); }
-    const double& y() const { return translation(1); }
-    const double& z() const { return translation(2); }
 
-    double roll() const {return (rotation.toEuler())(0); }
-    double pitch() const {return (rotation.toEuler())(1); }
-    double yaw() const {return (rotation.toEuler())(2); }
+    inline float& x() { return translation(0); }
+    inline float& y() { return translation(1); }
+    inline float& z() { return translation(2); }
+    inline const float& x() const { return translation(0); }
+    inline const float& y() const { return translation(1); }
+    inline const float& z() const { return translation(2); }
+
+    inline double roll()  const {return (rotation.toEuler())(0); }
+    inline double pitch() const {return (rotation.toEuler())(1); }
+    inline double yaw()   const {return (rotation.toEuler())(2); }
 
     /*!
-     * \brief Transformation a vector
+     * \brief Transformation of a vector
      *
      * Transforms the vector v by the transformation which is
      * specified by this.

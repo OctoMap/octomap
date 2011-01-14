@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
       }
       else {
         hit++;
-        mean_dist += (obstacle - origin).norm2();
+        mean_dist += (obstacle - origin).norm();
         sampled_surface.updateNode(obstacle, true);
       }
       direction.rotate_IP (0,0,DEG2RAD(1.));
