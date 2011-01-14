@@ -61,9 +61,9 @@ namespace octomap {
       scan->transformAbsolute((*graph_it)->pose);
 
       for (Pointcloud::iterator pc_it = scan->begin(); pc_it != scan->end(); ++pc_it){
-        m_pointsArray[3*i] = (*pc_it)->x();
-        m_pointsArray[3*i +1] = (*pc_it)->y();
-        m_pointsArray[3*i +2] = (*pc_it)->z();
+        m_pointsArray[3*i] = (pc_it)->x();
+        m_pointsArray[3*i +1] = (pc_it)->y();
+        m_pointsArray[3*i +2] = (pc_it)->z();
 
         i++;
       }

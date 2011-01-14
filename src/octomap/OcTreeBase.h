@@ -12,7 +12,7 @@
 */
 
 /*
- * Copyright (c) 2010, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,11 +74,11 @@ namespace octomap {
     OcTreeBase(double _resolution);
     virtual ~OcTreeBase();
 
-    /// \return The number of nodes in the tree
-    inline unsigned int size() const { return tree_size; }
 
     void setResolution(double r);
     inline double getResolution() const { return resolution; }
+
+    inline unsigned int getTreeDepth () const { return tree_depth; }
 
     /**
      * \return Pointer to the root node of the tree. This pointer
@@ -87,20 +87,20 @@ namespace octomap {
      */
     inline NODE* getRoot() const { return itsRoot; }
 
-    /**
-     * Search for a 3d point in the tree
-     *
-     * @return pointer to the corresponding NODE when found, else NULL. This pointer should
-     * not be modified or deleted externally, the OcTree manages its memory itself.
+    /** 
+     *  search node given a 3d point 
+     *  @return pointer to node if found, NULL otherwise
      */
-    NODE* search (double x, double y, double z) const;
+    NODE* search (float x, float y, float z) const;
 
-    /// Search for a 3d point in the tree, using a point3d (see above)
+    /** 
+     *  search node given a 3d point
+     *  @return pointer to node if found, NULL otherwise
+     */
     NODE* search (const point3d& value) const;
 
-    // TODO make protected
     /** 
-     *  search node given a set of addressing keys
+     *  search node given an addressing keys
      *  @return pointer to node if found, NULL otherwise
      */
     NODE* search (const OcTreeKey& key) const;
@@ -113,6 +113,13 @@ namespace octomap {
     /// \note This is an expensive operation, especially when the tree is nearly empty!
     void expand();
 
+
+    // -- statistics  ----------------------
+
+    /// \return The number of nodes in the tree
+    inline unsigned int size() const { return tree_size; }
+
+    unsigned int memoryUsage() const;
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
     unsigned int memoryFullGrid();
@@ -129,6 +136,31 @@ namespace octomap {
     /// Traverses the tree to calculate the total number of nodes
     unsigned int calcNumNodes() const;
 
+
+    // -- access tree nodes  ------------------
+
+    /**
+     * Traverse the tree and return all leaf nodes
+     *
+     * @param node_centers collection of center points
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
+     */
+    void getLeafNodes(point3d_list& node_centers) const;
+
+    /**
+     * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
+     *
+     * @param voxels list of all nodes to be returned
+     * @param max_depth Depth limit of query. 0 (default): no depth limit
+     */
+    void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
+
+
+    /// return centers of leafs that to NOT exist (but could) in a given bounding box
+    void getUnknownLeafCenters(point3d_list& node_centers, point3d min, point3d max) const;
+
+
+    // -- raytracing  -----------------------
 
    /**
     * Traces a ray from origin to end (excluding), returning an
@@ -158,22 +190,18 @@ namespace octomap {
 
 
     /**
-     * Traverse the tree and return all leaf nodes
+     * Generates key for all three dimensions of a given point
+     * using genKeyValue().
      *
-     * @param nodes Leaf nodes as OcTreeVolume
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
+     * @param point 3d coordinate of a point
+     * @param keys values that will be computed, an array of fixed size 3.
+     * @return true when point is within the octree, false otherwise
      */
-    void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const;
+    bool genKey(const point3d& point, OcTreeKey& key) const;
 
-    /**
-     * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
-     *
-     * @param voxels list of all nodes to be returned
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
 
-    //---- FILE IO --//
+    // -- experimental section  -----------------------
+    // file IO
 
     /// Read complete state of tree from stream
     /// EXPERIMENTAL!
@@ -199,22 +227,38 @@ namespace octomap {
      */
     bool genKeyValue(double coordinate, unsigned short int& keyval) const;
 
-    /**
-     * Generates key for all three dimensions of a given point
-     * using genKey().
-     *
-     * @param point 3d coordinate of a point
-     * @param keys values that will be computed, an array of fixed size 3.
-     * @return true when point is within the octree, false otherwise
-     */
-    bool genKey(const point3d& point, OcTreeKey& key) const;
 
+    /// generates a new key value at a specified depth in the tree given a key value at the final tree depth
+    bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const;
 
-    /// reverse of genKey(), generates center coordinate of cell corresponding to a key
-    bool genCoordFromKey(unsigned short int& key, double& coord) const;
+    /// generates a new key for all three dimensions at a specified depth, calling genKeyValueAtDepth
+    bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const;
+
+    /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
+    bool genCoordFromKey(const unsigned short int& key, float& coord) const;
+
+    /// generates the center coordinate of a cell for a given key at the last level
+    bool genLastCoordFromKey(const unsigned short int& key, float& coord) const;
+
+    // generates 3d coordinates from a key at a given depth
+    bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const;
 
     /// generate child index (between 0 and 7) from key at given tree depth
-    unsigned int genPos(const OcTreeKey& key, int i) const;
+    void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const;
+
+    /// compute center point of child voxel cell, for internal use
+    void computeChildCenter (const unsigned int& pos, const double& center_offset, 
+                             const point3d& parent_center, point3d& child_center) const;
+    /// compute OcTreeKey of child voxel cell, for internal use
+    void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key, 
+                          const OcTreeKey& parent_key, OcTreeKey& child_key) const;
+
+
+    /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
+    void calcMinMax();
+
+    void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
+
 
     /// recursive call of prune()
     void pruneRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
@@ -223,19 +267,13 @@ namespace octomap {
     void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
     
     /// Recursive call for getLeafNodes()
-    void getLeafNodesRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
+    void getLeafNodesRecurs(point3d_list& node_centers, unsigned int max_depth,
                             NODE* node, unsigned int depth, const point3d& parent_center) const;
 
     /// Recursive call for getVoxels()
     void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
                          NODE* node, unsigned int depth, const point3d& parent_center) const;
     
-    /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
-    void calcMinMax();
-
-    void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
-
-
   protected:
 
     NODE* itsRoot;
@@ -245,12 +283,14 @@ namespace octomap {
     unsigned int tree_max_val;
     double resolution;  ///< in meters
     double resolution_factor; ///< = 1. / resolution
-    point3d tree_center;
-
+  
     unsigned int tree_size; ///< number of nodes in tree
+    bool sizeChanged;
+
+    point3d tree_center;  // coordinate offset of tree
+
     double maxValue[3]; ///< max in x, y, z
     double minValue[3]; ///< min in x, y, z
-    bool sizeChanged;
 
     KeyRay keyray;  // data structure for ray casting
   };

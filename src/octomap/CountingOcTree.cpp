@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,33 +92,69 @@ namespace octomap {
     return updateNode(key);
   }
 
-    
+
+  // Note: do not inline this method, will decrease speed (KMW)
   CountingOcTreeNode* CountingOcTree::updateNode(const OcTreeKey& k) {
 
-    CountingOcTreeNode* curNode = this->getRoot();
+    CountingOcTreeNode* curNode (itsRoot);
     curNode->increaseCount();
+    unsigned int pos(0);
 
     // follow or construct nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      unsigned int pos = genPos(k, i);
+      genPos(k, i, pos);
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {
         curNode->createChild(pos);
         tree_size++;
       }
-
       // descent tree
-      // cast needed: (node needs to ensure it's the right pointer)
       curNode = static_cast<CountingOcTreeNode*> (curNode->getChild(pos));
-      // modify traversed nodes
-      curNode->increaseCount();
+      curNode->increaseCount(); // modify traversed nodes
     }
 
     return curNode;
   }
 
+
+  void CountingOcTree::getCentersMinHits(point3d_list& node_centers, unsigned int min_hits) const {
+
+    OcTreeKey root_key;
+    root_key[0] = root_key[1] = root_key[2] = this->tree_max_val;
+    getCentersMinHitsRecurs(node_centers, min_hits, this->tree_depth, this->itsRoot, 0, root_key);    
+  }
+
+
+  void CountingOcTree::getCentersMinHitsRecurs( point3d_list& node_centers,
+                                                unsigned int& min_hits,
+                                                unsigned int max_depth,
+                                                CountingOcTreeNode* node, unsigned int depth,
+                                                const OcTreeKey& parent_key) const {
+
+    if (depth < max_depth && node->hasChildren()) {
+
+      unsigned short int center_offset_key = this->tree_max_val >> (depth + 1);
+      OcTreeKey search_key;
+
+      for (unsigned int i=0; i<8; ++i) {
+        if (node->childExists(i)) {
+          OcTreeBase<CountingOcTreeNode>::computeChildKey(i, center_offset_key, parent_key, search_key);
+          getCentersMinHitsRecurs(node_centers, min_hits, max_depth, node->getChild(i), depth+1, search_key);
+        }
+      }
+    }
+
+    else { // max level reached
+
+      if (node->getCount() >= min_hits) {
+        point3d p;
+	this->genCoords(parent_key, depth, p);
+        node_centers.push_back(p);        
+      }
+    }
+  }
 
 
 } // namespace

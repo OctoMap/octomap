@@ -12,7 +12,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,9 +64,17 @@ namespace octomap {
     ~CountingOcTreeNode();
     bool createChild(unsigned int i);
 
-    unsigned int getCount() const { return getValue(); }
-    void increaseCount() { value++; }
-    void setCount(unsigned c) {this->setValue(c); }
+    inline CountingOcTreeNode* getChild(unsigned int i) {
+      return static_cast<CountingOcTreeNode*> (OcTreeDataNode<unsigned int>::getChild(i));
+    }
+
+    inline const CountingOcTreeNode* getChild(unsigned int i) const {
+      return static_cast<const CountingOcTreeNode*> (OcTreeDataNode<unsigned int>::getChild(i));
+    }
+
+    inline unsigned int getCount() const { return getValue(); }
+    inline void increaseCount() { value++; }
+    inline void setCount(unsigned c) {this->setValue(c); }
 
     // overloaded:
     void expandNode();
@@ -91,8 +99,16 @@ namespace octomap {
 
     virtual CountingOcTreeNode* updateNode(const point3d& value);
     CountingOcTreeNode* updateNode(const OcTreeKey& k);
+    void getCentersMinHits(point3d_list& node_centers, unsigned int min_hits) const;
 
   protected:
+
+    void getCentersMinHitsRecurs( point3d_list& node_centers,
+                                  unsigned int& min_hits,
+                                  unsigned int max_depth,
+                                  CountingOcTreeNode* node, unsigned int depth,
+                                  const OcTreeKey& parent_key) const;
+
 
   };
 

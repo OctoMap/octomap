@@ -97,11 +97,15 @@ namespace octomap {
 
     typedef std::vector<OcTreeKey>::iterator iterator;
     typedef std::vector<OcTreeKey>::const_iterator const_iterator;
+    typedef std::vector<OcTreeKey>::reverse_iterator reverse_iterator;
     
     iterator begin() { return ray.begin(); }
     iterator end() { return end_of_ray; }
     const_iterator begin() const { return ray.begin(); }
     const_iterator end() const   { return end_of_ray; }
+
+    reverse_iterator rbegin() { return (reverse_iterator) end_of_ray; }
+    reverse_iterator rend() { return ray.rend(); }
    
 
   public:

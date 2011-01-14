@@ -41,6 +41,8 @@
 #define OCTOMAP_TYPES_H
 
 #include <vector>
+#include <list>
+
 
 #include <octomath/Vector3.h>
 #include <octomath/Pose6D.h>
@@ -51,7 +53,10 @@ namespace octomap {
   typedef octomath::Vector3               point3d;
   /// use our Pose6D as pose6d in octomap
   typedef octomath::Pose6D                pose6d;
-  typedef std::vector<octomath::Vector3*> point3d_collection;
+
+  typedef std::vector<octomath::Vector3>  point3d_collection;
+  typedef std::list<octomath::Vector3>    point3d_list;
+
   /// A voxel defined by its center point3d and its side length
   typedef std::pair<point3d, double> OcTreeVolume;
 

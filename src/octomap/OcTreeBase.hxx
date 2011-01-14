@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@ namespace octomap {
   void OcTreeBase<NODE>::setResolution(double r) {
     resolution = r;
     resolution_factor = 1. / resolution;
+
     tree_center(0) = tree_center(1) = tree_center(2) = ((double) tree_max_val) / resolution_factor;
   }
 
@@ -93,7 +94,36 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genCoordFromKey(unsigned short int& key, double& coord) const {
+  bool OcTreeBase<NODE>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
+
+    if (keyval >= 2*tree_max_val)
+      return false;
+    
+    unsigned int diff = tree_depth - depth;
+
+    if(!diff)
+    {
+      out_keyval = keyval;
+    }
+    else
+    {
+      out_keyval = (((keyval-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
+    }
+
+    return true;
+  }
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
+
+    for (unsigned int i=0;i<3;i++) {
+      if (!genKeyValueAtDepth( key[i], depth, out_key[i])) return false;
+    }
+    return true;
+  }
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord) const {
 
     if (key >= 2*tree_max_val)
       return false;
@@ -103,16 +133,80 @@ namespace octomap {
     return true;
   }
 
+  template <class NODE>
+  bool OcTreeBase<NODE>::genLastCoordFromKey(const unsigned short int& key, float& coord) const {
+
+    if (key >= 2*tree_max_val)
+      return false;
+
+    coord = ((double) ( (int) key - (int) this->tree_max_val ) + 0.5) * this->resolution;
+
+    return true;
+  }
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::genPos(const OcTreeKey& key, int i) const {
+  bool OcTreeBase<NODE>::genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const {
 
-    unsigned int retval = 0;
-    if (key.k[0] & (1 << i)) retval += 1;
-    if (key.k[1] & (1 << i)) retval += 2;
-    if (key.k[2] & (1 << i)) retval += 4;
-    return retval;
+    if(depth < this->tree_depth)
+    {
+      for (unsigned int i=0; i<3; ++i) {
+        if ( !genCoordFromKey(key[i], point(i)) ) {
+          return false;
+        }
+      }
+    }
+    else
+    {
+      for (unsigned int i=0; i<3; ++i) {
+        if ( !genLastCoordFromKey(key[i], point(i)) ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
+
+  template <class NODE> void  // do not inline
+  OcTreeBase<NODE>::genPos(const OcTreeKey& key, int depth, unsigned int& pos) const {
+    pos = 0;
+    if (key.k[0] & (1 << depth)) pos += 1;
+    if (key.k[1] & (1 << depth)) pos += 2;
+    if (key.k[2] & (1 << depth)) pos += 4;
+  }
+
+
+  template <class NODE> 
+  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, const double& center_offset, 
+                                             const point3d& parent_center, point3d& child_center) const {
+    // x-axis
+    if (pos & 1) child_center(0) = parent_center(0) + center_offset;
+    else  	 child_center(0) = parent_center(0) - center_offset;
+
+    // y-axis
+    if (pos & 2) child_center(1) = parent_center(1) + center_offset;
+    else	 child_center(1) = parent_center(1) - center_offset;
+    // z-axis
+    if (pos & 4) child_center(2) = parent_center(2) + center_offset;
+    else	 child_center(2) = parent_center(2) - center_offset;
+  }
+
+
+  template <class NODE> 
+  void OcTreeBase<NODE>::computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key, 
+                                          const OcTreeKey& parent_key, OcTreeKey& child_key) const {
+
+    if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
+    else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
+    // y-axis
+    if (pos & 2) child_key[1] = parent_key[1] + center_offset_key;
+    else         child_key[1] = parent_key[1] - center_offset_key - (center_offset_key ? 0 : 1);
+    // z-axis
+    if (pos & 4) child_key[2] = parent_key[2] + center_offset_key;
+    else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
+  }
+
+
 
   template <class NODE>
   NODE* OcTreeBase<NODE>::search(const point3d& value) const {
@@ -132,7 +226,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::search(double x, double y, double z) const {
+  NODE* OcTreeBase<NODE>::search(float x, float y, float z) const {
 
     point3d p (x,y,z);
     return this->search(p);
@@ -140,14 +234,15 @@ namespace octomap {
 
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::search(const OcTreeKey& key) const {
+  NODE* OcTreeBase<NODE>::search (const OcTreeKey& key) const {
 
-    NODE* curNode = itsRoot;
+    NODE* curNode (itsRoot);
+    unsigned int pos (0);
 
     // follow nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      unsigned int pos = genPos(key, i);
+      genPos(key, i, pos);
 
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
@@ -197,7 +292,8 @@ namespace octomap {
     OcTreeKey key_origin, key_end;
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
-      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
+      std::cerr << "WARNING: coordinates ( "
+                << origin << " -> " << end << ") out of bounds during ray casting" << std::endl;
       return false;
     }
 
@@ -226,7 +322,7 @@ namespace octomap {
 
       // compute tMax, tDelta
       if (step[i] != 0) {
-        double voxelBorder(0);
+        float voxelBorder(0);
         this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
         if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
 
@@ -309,8 +405,8 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
 
-    point3d direction = (end - origin).unit();
-    double maxLength = (end - origin).norm2();
+    point3d direction = (end - origin).normalized ();
+    double maxLength = (end - origin).norm ();
 
     // Voxel integer coordinates are the indices of the OcTree cells
     // at the lowest level (they may exist or not).
@@ -394,7 +490,7 @@ namespace octomap {
       point3d value(val[0], val[1], val[2]);
 
       // reached endpoint?
-      if ((value - origin).norm2() > maxLength) {
+      if ((value - origin).norm () > maxLength) {
         done = true;
         break;
       }
@@ -408,22 +504,19 @@ namespace octomap {
 
 
   template <class NODE>
-  void OcTreeBase<NODE>::getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth) const{
+  void OcTreeBase<NODE>::getLeafNodes(point3d_list& node_centers) const{
     assert(itsRoot);
-    if (tree_size <= 1) return; // A tree with only the root is an empty tree (by definition)
+    if (tree_size <= 1) return; // A tree with only the root node is an empty tree (by definition)
 
-    if (max_depth == 0)
-      max_depth = tree_depth;
-
-    getLeafNodesRecurs(nodes, max_depth, itsRoot, 0, tree_center);
+    getLeafNodesRecurs(node_centers, tree_depth, itsRoot, 0, tree_center);
   }
 
 
   template <class NODE>
-  void OcTreeBase<NODE>::getLeafNodesRecurs(std::list<OcTreeVolume>& nodes,
+  void OcTreeBase<NODE>::getLeafNodesRecurs(point3d_list& node_centers,
                                             unsigned int max_depth,
                                             NODE* node, unsigned int depth,
-                                            const point3d& parent_center) const{
+                                            const point3d& parent_center) const {
 
     if ((depth <= max_depth) && (node != NULL) ) {
 
@@ -435,27 +528,17 @@ namespace octomap {
         for (unsigned int i=0; i<8; i++) {
           if (node->childExists(i)) {
 
-            // x-axis
-            if (i & 1)	search_center(0) = parent_center(0) + center_offset;
-            else  	search_center(0) = parent_center(0) - center_offset;
-
-            // y-axis
-            if (i & 2)	search_center(1) = parent_center(1) + center_offset;
-            else	search_center(1) = parent_center(1) - center_offset;
-            // z-axis
-            if (i & 4)	search_center(2) = parent_center(2) + center_offset;
-            else	search_center(2) = parent_center(2) - center_offset;
-
+            computeChildCenter(i, center_offset, parent_center, search_center);
             // cast needed: (nodes need to ensure it's the right pointer)
             NODE* childNode = static_cast<NODE*>(node->getChild(i));
-            getLeafNodesRecurs(nodes,max_depth,childNode, depth+1, search_center);
+            getLeafNodesRecurs(node_centers, max_depth, childNode, depth+1, search_center);
 
           } // GetChild
         }
       }
       else {    // node is a leaf node or max depth reached
-        double voxelSize = resolution * pow(2., double(tree_depth - depth));
-        nodes.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+//         double voxelSize = resolution * pow(2., double(tree_depth - depth));
+        node_centers.push_back(parent_center - tree_center);
       }
     }
 
@@ -489,23 +572,7 @@ namespace octomap {
         for (unsigned int i = 0; i < 8; i++) {
           if (node->childExists(i)) {
 
-            // x-axis
-            if (i & 1)
-              search_center(0) = parent_center(0) + center_offset;
-            else
-              search_center(0) = parent_center(0) - center_offset;
-
-            // y-axis
-            if (i & 2)
-              search_center(1) = parent_center(1) + center_offset;
-            else
-              search_center(1) = parent_center(1) - center_offset;
-            // z-axis
-            if (i & 4)
-              search_center(2) = parent_center(2) + center_offset;
-            else
-              search_center(2) = parent_center(2) - center_offset;
-
+            computeChildCenter(i, center_offset, parent_center, search_center);
             getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center);
 
           } else{ // GetChild
@@ -540,6 +607,7 @@ namespace octomap {
       }
     }
   }
+
 
   template <class NODE>
   void OcTreeBase<NODE>::expandRecurs(NODE* node, unsigned int depth,
@@ -614,14 +682,14 @@ namespace octomap {
       minValue[i] = std::numeric_limits<double>::max();
     }
 
-    std::list<OcTreeVolume> leafs;
+    point3d_list leafs;
     this->getLeafNodes(leafs);
 
-    for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
-      double x = it->first(0);
-      double y = it->first(1);
-      double z = it->first(2);
-      double halfSize = it->second/2.0;
+    for (point3d_list::iterator it = leafs.begin(); it != leafs.end(); ++it){
+      double x = (*it)(0);
+      double y = (*it)(1);
+      double z = (*it)(2);
+      double halfSize = this->resolution/2.; //it->second/2.0;  // TODO: check this (KMW)
 
       if (x-halfSize < minValue[0]) minValue[0] = x-halfSize;
       if (y-halfSize < minValue[1]) minValue[1] = y-halfSize;
@@ -642,9 +710,9 @@ namespace octomap {
     getMetricSize(size_x, size_y,size_z);
     
     // assuming best case (one big array and efficient addressing)
-    return (unsigned int) (ceil(1./resolution * (double) size_x) * //sizeof (unsigned int*) *
-                           ceil(1./resolution * (double) size_y) * //sizeof (unsigned int*) *
-                           ceil(1./resolution * (double) size_z)) *
+    return (unsigned int) (ceil(resolution_factor * (double) size_x) * //sizeof (unsigned int*) *
+                           ceil(resolution_factor * (double) size_y) * //sizeof (unsigned int*) *
+                           ceil(resolution_factor * (double) size_z)) *
       sizeof(itsRoot->getValue());
 
   }
@@ -677,13 +745,13 @@ namespace octomap {
   void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
     mx = my = mz = std::numeric_limits<double>::max();
     if (sizeChanged) {
-      std::list<OcTreeVolume> leafs;
+      point3d_list leafs;
       this->getLeafNodes(leafs);
-      for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
-        double x = it->first(0);
-        double y = it->first(1);
-        double z = it->first(2);
-        double halfSize = it->second/2.0;
+      for (point3d_list::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
+        double x = it->x();
+        double y = it->y();
+        double z = it->z();
+        double halfSize = this->resolution/2.0;
         if (x-halfSize < mx) mx = x-halfSize;
         if (y-halfSize < my) my = y-halfSize;
         if (z-halfSize < mz) mz = z-halfSize;
@@ -708,13 +776,13 @@ namespace octomap {
   void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
     mx = my = mz = -std::numeric_limits<double>::max();
     if (sizeChanged) {
-      std::list<OcTreeVolume> leafs;
+      point3d_list leafs;
       this->getLeafNodes(leafs);
-      for (std::list<OcTreeVolume>::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
-        double x = it->first(0);
-        double y = it->first(1);
-        double z = it->first(2);
-        double halfSize = it->second/2.0;
+      for (point3d_list::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
+        double x = it->x();
+        double y = it->y();
+        double z = it->z();
+        double halfSize = this->resolution/2.0;
         if (x+halfSize > mx) mx = x+halfSize;
         if (y+halfSize > my) my = y+halfSize;
         if (z+halfSize > mz) mz = z+halfSize;
@@ -747,6 +815,50 @@ namespace octomap {
       }
     }
   }
+
+
+  template <class NODE>
+  unsigned int OcTreeBase<NODE>::memoryUsage() const{
+    unsigned int node_size = sizeof(NODE);
+    point3d_list leafs;
+    this->getLeafNodes(leafs);
+    unsigned int inner_nodes = tree_size - leafs.size();
+    return (sizeof(OcTreeBase<NODE>) + node_size * tree_size + inner_nodes * sizeof(NODE*[8]));
+  }
+
+
+
+  template <class NODE>
+  void OcTreeBase<NODE>::getUnknownLeafCenters(point3d_list& node_centers, point3d min, point3d max) const {
+
+    float diff[3];
+    unsigned int steps[3];
+    for (int i=0;i<3;++i) {
+      diff[i] = max(i) - min(i);
+      steps[i] = floor(diff[i] / this->resolution);
+      //      std::cout << "bbx " << i << " size: " << diff[i] << " " << steps[i] << " steps\n";
+    }
+    
+    point3d p = min;
+    NODE* res;
+    for (unsigned int x=0; x<steps[0]; ++x) {
+      p.x() += this->resolution;
+      for (unsigned int y=0; y<steps[1]; ++y) {
+        p.y() += this->resolution;
+        for (unsigned int z=0; z<steps[2]; ++z) {
+          //          std::cout << "querying p=" << p << std::endl;
+          p.z() += this->resolution;
+          res = this->search(p);
+          if (res == NULL) {
+            node_centers.push_back(p);
+          }
+        }
+        p.z() = min.z();
+      }
+      p.y() = min.y();
+    }
+  }
+
 
 
 }

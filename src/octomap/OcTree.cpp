@@ -77,7 +77,7 @@ namespace octomap {
       for (octomap::Pointcloud::const_iterator point_it = pc.begin();
           point_it != pc.end(); point_it++)
       {
-        p = originPose.transform(**point_it);
+        p = originPose.transform(*point_it);
         this->insertRay(originPose.trans(), p, maxrange);
       } // end for all points
     }
@@ -115,7 +115,7 @@ namespace octomap {
 
   unsigned int OcTree::memoryUsage() const{
     unsigned int node_size = sizeof(OcTreeNode);
-    std::list<OcTreeVolume> leafs;
+    point3d_list leafs;
     this->getLeafNodes(leafs);
     unsigned int inner_nodes = tree_size - leafs.size();
     return (sizeof(OcTree) + node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]));
@@ -218,7 +218,7 @@ namespace octomap {
 
     // format:    treetype | resolution | num nodes | [binary nodes]
 
-    this->toMaxLikelihood();
+    //    this->toMaxLikelihood();  (disabled, not necessary, KMW)
     this->prune();
 
     return writeBinaryConst(s);
@@ -235,12 +235,12 @@ namespace octomap {
     s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
     unsigned int tree_write_size = this->size(); 
-    std::cout << "Writing "<< tree_write_size<<" nodes to output stream..." << std::flush;
+    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
     s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
     itsRoot->writeBinary(s);
 
-    std::cout << " done.\n";
+    fprintf(stderr, " done.\n");
 
     return s;
   }
@@ -263,7 +263,7 @@ namespace octomap {
 
     for (octomap::Pointcloud::const_iterator point_it = pc.begin(); point_it != pc.end(); point_it++) {
 
-      p = scan_pose.transform(**point_it);
+      p = scan_pose.transform(*point_it);
 
       bool is_maxrange = false;
       if ( (maxrange > 0.0) && ((p - origin).norm() > maxrange) ) is_maxrange = true;
@@ -292,16 +292,16 @@ namespace octomap {
 
     } // end for all points
 
-    std::list<OcTreeVolume> free_cells;
+    point3d_list free_cells;
     free_tree.getLeafNodes(free_cells);
 
-    std::list<OcTreeVolume> occupied_cells;
+    point3d_list occupied_cells;
     occupied_tree.getLeafNodes(occupied_cells);
 
 
     // delete free cells if cell is also measured occupied
-    for (std::list<OcTreeVolume>::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
-      if ( occupied_tree.search(cellit->first) ) {
+    for (point3d_list::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
+      if ( occupied_tree.search(*cellit) ) {
         cellit = free_cells.erase(cellit);
       }
       else {
@@ -311,11 +311,11 @@ namespace octomap {
 
 
     // insert data into tree  -----------------------
-    for (std::list<OcTreeVolume>::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
-      updateNode(it->first, false);
+    for (point3d_list::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
+      updateNode(*it, false);
     }
-    for (std::list<OcTreeVolume>::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
-      updateNode(it->first, true);
+    for (point3d_list::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
+      updateNode(*it, true);
     }
 
 //    unsigned int num_thres = 0;

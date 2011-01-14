@@ -63,9 +63,15 @@ namespace octomap {
     unsigned int size() const {  return points.size(); }
     void clear();
 
-    void push_back(double x, double y, double z); ///< adds the endpoint of a beam to the Pointcloud
-    void push_back(point3d& p); ///< adds the endpoint of a beam to the Pointcloud
-    void push_back(point3d* p); ///< adds the endpoint of a beam to the Pointcloud
+    inline void push_back(float x, float y, float z) {
+      points.push_back(point3d(x,y,z));
+    }
+    inline void push_back(point3d& p) {
+      points.push_back(p);
+    }
+    inline void push_back(point3d* p) {
+       points.push_back(*p);
+    }
 
     /// Add points from other Pointcloud
     void push_back(const Pointcloud& other);
@@ -100,8 +106,8 @@ namespace octomap {
     iterator end()   { return points.end(); }
     const_iterator begin() const { return points.begin(); }
     const_iterator end() const  { return points.end(); }
-    point3d* back()  { return points.back(); }
-    point3d* getPoint(unsigned int i);   // may return NULL
+    point3d back()  { return points.back(); }
+    point3d getPoint(unsigned int i);   // may return NULL
 
     // I/O methods
 
@@ -110,8 +116,8 @@ namespace octomap {
     std::ostream& writeBinary(std::ostream &s) const;
 
   protected:
+    pose6d               current_inv_transform;
     point3d_collection   points;
-    pose6d     current_inv_transform;
   };
 
 }
