@@ -9,7 +9,7 @@ Note: The viewer "octovis" and all related libraries are licensed under
       the GPL (see LICENSE.txt in "src/octovis").
   
 
-Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

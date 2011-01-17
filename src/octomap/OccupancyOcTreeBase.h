@@ -70,6 +70,30 @@ namespace octomap {
     OccupancyOcTreeBase(double _resolution);
     virtual ~OccupancyOcTreeBase();
 
+     /**
+     * Integrate a Pointcloud (in global reference frame)
+     *
+     * @param pc Pointcloud (measurement endpoints), in global reference frame
+     * @param measurement origin in global reference frame
+     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+     */
+    void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
+                    double maxrange=-1., bool pruning=true);
+
+
+     /**
+     * Integrate a 3d scan, transform scan before tree update
+     *
+     * @param pc Pointcloud (measurement endpoints) relative to frame origin
+     * @param sensor_origin origin of sensor relative to frame origin
+     * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
+     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+     */
+    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
+                    double maxrange=-1., bool pruning = true);
+
     /**
      * Integrate occupancy measurement.
      *
@@ -96,7 +120,7 @@ namespace octomap {
      * maxrange can be used to specify a maximum sensor range that is considered
      */
     virtual bool insertRay(const point3d& origin, const point3d& end, double maxrange=-1.);
-
+    
     /**
      * Performs raycasting in 3d, similar to computeRay().
      *
@@ -114,14 +138,6 @@ namespace octomap {
     bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
-    void insertScanUniform(const Pointcloud& scan, const octomap::point3d& pc_origin, 
-                           double maxrange=-1., bool pruning=true);
-
-    /// Helper for insertScanUniform (internal use)
-    void computeUpdate(const Pointcloud& scan, const octomap::point3d& origin, 
-                       point3d_list& free_cells, 
-                       point3d_list& occupied_cells,
-                       double maxrange);
    
     /**
      * Convenience function to return all occupied nodes in the OcTree.
@@ -189,6 +205,13 @@ namespace octomap {
     point3d getBBXCenter () const;
     bool inBBX(const point3d& p) const;
     bool inBBX(const OcTreeKey& key) const;
+
+
+    /// Helper for insertScanUniform (internal use)
+    void computeUpdate(const Pointcloud& scan, const octomap::point3d& origin, 
+                       point3d_list& free_cells, 
+                       point3d_list& occupied_cells,
+                       double maxrange);
 
   protected:
 

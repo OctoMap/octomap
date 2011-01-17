@@ -1,12 +1,12 @@
 // $Id$
 
 /**
-* OctoMap:
-* A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
+ * OctoMap:
+ * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+ * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+ * @see http://octomap.sourceforge.net/
+ * License: New BSD License
+ */
 
 /*
  * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
@@ -53,6 +53,122 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::~OccupancyOcTreeBase(){
+  }
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
+                                             double maxrange, bool pruning) {
+
+    point3d_list free_cells;
+    point3d_list occupied_cells;
+    computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
+
+    // insert data into tree  -----------------------
+    for (point3d_list::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
+      updateNode(*it, false);
+    }
+    for (point3d_list::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
+      updateNode(*it, true);
+    }
+
+    if (pruning) this->prune();
+  } 
+
+
+  // performs transformation to data and sensor origin first
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
+                                             double maxrange, bool pruning) {
+    Pointcloud transformed_scan (pc);
+    transformed_scan.transform(frame_origin);
+    point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
+    insertScan(transformed_scan, transformed_sensor_origin, maxrange, pruning); 
+  }
+
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin, 
+                                                point3d_list& free_cells, 
+                                                point3d_list& occupied_cells,
+                                                double maxrange) {
+
+    CountingOcTree free_tree     (this->getResolution());
+    CountingOcTree occupied_tree (this->getResolution());
+
+    for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
+      const point3d& p = *point_it;
+
+
+      if (!use_bbx_limit) {
+
+        // -------------- no BBX specified ---------------
+
+        if ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) { // is not maxrange meas.
+          // free cells
+          if (this->computeRayKeys(origin, p, this->keyray)){
+            for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+              free_tree.updateNode(*it);
+            }
+          }
+          // occupied cells
+          occupied_tree.updateNode(p);
+        } // end if NOT maxrange
+
+        else { // user set a maxrange and this is reached
+          point3d direction = (p - origin).normalized ();
+          point3d new_end = origin + direction * maxrange;
+          if (this->computeRayKeys(origin, new_end, this->keyray)){
+            for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+              
+              free_tree.updateNode(*it);
+            }
+          }
+        } // end if maxrange      
+      }
+
+      else {
+
+        // --- update limited by user specified BBX  -----
+
+        // endpoint in bbx and not maxrange?
+        if ( inBBX(p) && ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) )  {
+
+          // update endpoint
+          occupied_tree.updateNode(p);
+         
+          // update freespace, break as soon as bbx limit is reached
+          if (this->computeRayKeys(origin, p, this->keyray)){
+            for(KeyRay::reverse_iterator rit=this->keyray.rbegin(); rit != this->keyray.rend(); rit++) {
+              if (inBBX(*rit)) {
+                free_tree.updateNode(*rit);
+              }
+              else break;
+            }
+          }
+
+        } } // end bbx case
+          
+    } // end for all points
+    
+    
+    free_cells.clear();
+    free_tree.getLeafNodes(free_cells);
+
+    occupied_cells.clear();
+    occupied_tree.getLeafNodes(occupied_cells);
+
+    if(occupied_tree.size() > 1)  // Occupied tree has more than just root node (ie not empty)
+      {
+        // delete free cells if cell is also measured occupied
+        for (point3d_list::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
+          if ( occupied_tree.search(*cellit) ) {
+            cellit = free_cells.erase(cellit);
+          }
+          else {
+            cellit++;
+          }
+        } // end for
+      }
   }
 
 
@@ -540,93 +656,6 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin, 
-                                                point3d_list& free_cells, 
-                                                point3d_list& occupied_cells,
-                                                double maxrange) {
-
-    CountingOcTree free_tree     (this->getResolution());
-    CountingOcTree occupied_tree (this->getResolution());
-
-    for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
-      const point3d& p = *point_it;
-
-
-      if (!use_bbx_limit) {
-
-        // -------------- no BBX specified ---------------
-
-        if ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) { // is not maxrange meas.
-          // free cells
-          if (this->computeRayKeys(origin, p, this->keyray)){
-            for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-              free_tree.updateNode(*it);
-            }
-          }
-          // occupied cells
-          occupied_tree.updateNode(p);
-        } // end if NOT maxrange
-
-        else { // user set a maxrange and this is reached
-          point3d direction = (p - origin).normalized ();
-          point3d new_end = origin + direction * maxrange;
-          if (this->computeRayKeys(origin, new_end, this->keyray)){
-            for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-              
-              free_tree.updateNode(*it);
-            }
-          }
-        } // end if maxrange      
-      }
-
-      else {
-
-        // --- update limited by user specified BBX  -----
-
-        // endpoint in bbx and not maxrange?
-        if ( inBBX(p) && ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) )  {
-
-          // update endpoint
-          occupied_tree.updateNode(p);
-         
-          // update freespace, break as soon as bbx limit is reached
-          if (this->computeRayKeys(origin, p, this->keyray)){
-            for(KeyRay::reverse_iterator rit=this->keyray.rbegin(); rit != this->keyray.rend(); rit++) {
-              if (inBBX(*rit)) {
-                free_tree.updateNode(*rit);
-              }
-              else break;
-            }
-          }
-
-        } } // end bbx case
-          
-    } // end for all points
-    
-    
-    free_cells.clear();
-    free_tree.getLeafNodes(free_cells);
-
-    occupied_cells.clear();
-    occupied_tree.getLeafNodes(occupied_cells);
-
-    if(occupied_tree.size() > 1)  // Occupied tree has more than just root node (ie not empty)
-      {
-        // delete free cells if cell is also measured occupied
-        for (point3d_list::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
-          if ( occupied_tree.search(*cellit) ) {
-            cellit = free_cells.erase(cellit);
-          }
-          else {
-            cellit++;
-          }
-        } // end for
-      }
-
-  }
-
-
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getOccupiedLeafsBBX(point3d_list& node_centers, point3d min, point3d max) const {
@@ -679,24 +708,6 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScanUniform(const Pointcloud& scan, const octomap::point3d& pc_origin, 
-                                                    double maxrange, bool pruning) {
-
-    point3d_list free_cells;
-    point3d_list occupied_cells;
-    computeUpdate(scan, pc_origin, free_cells, occupied_cells, maxrange);    
-
-    // insert data into tree  -----------------------
-    for (point3d_list::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
-      updateNode(*it, false);
-    }
-    for (point3d_list::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
-      updateNode(*it, true);
-    }
-
-    if (pruning) this->prune();
-  } 
 
 } // namespace
 

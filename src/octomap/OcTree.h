@@ -72,36 +72,30 @@ namespace octomap {
      */
     OcTree(std::string _filename);
 
-    /**
-     *
-     *
-     *
-     * @param scan
-     * @param maxrange
-     * @param pruning
-     */
 
-    /**
-     * Integrate a 3d scan (given as a Pointcloud relative to the measurement origin) into the tree.
-     *
-     * @param pc Pointcloud (measurement endpoints), relative to originPose
-     * @param originPose origin of pc as 6D transform
-     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
-     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
-     */
-    void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true);
+    // Note: To insert 3d scans into the OcTree, use these methods from OccupancyOcTreeBase:
+
+    //    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, 
+    //                    double maxrange=-1., bool pruning = true);
+    //    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
+    //                    double maxrange=-1., bool pruning = true);
+
+
 
     /**
      * Insert a 3d scan (given as a ScanNode) into the tree.
-     * By default, the tree is pruned after insertion
-     * (small run-time overhead, but decreases size). Preferably,
-     * you should use inserScan on a Pointcloud with origin instead.
      *
-     * @param scan endpoints of a 3D scan as Pointcloud with an origin
+     * @param scan ScanNode contains Pointcloud data and frame/sensor origin
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
      */
     void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true);
+
+
+    /// deprecated, use above method instead
+    void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) __attribute__ ((deprecated));
+    /// for testing only
+    void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);
 
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
@@ -146,7 +140,6 @@ namespace octomap {
     /// Writes OcTree to a binary file using writeBinaryConst().
     /// The OcTree is not changed, in particular not pruned first.
     void writeBinaryConst(const std::string& filename) const;
-
 
 
   protected:

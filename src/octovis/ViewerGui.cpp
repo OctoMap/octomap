@@ -37,7 +37,7 @@ namespace octomap{
     : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
       m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
       m_octreeDrawer(NULL), m_cameraFollowMode(NULL),
-      m_octreeResolution(0.1), m_laserMaxRange(0.0), m_occupancyThresh(0.5),
+      m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
 
       m_cameraStored(false), m_filename("") {
