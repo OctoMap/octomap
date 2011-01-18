@@ -1,28 +1,28 @@
 // $Id$
 
 /**
-* Octomap:
-* A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
-* @see http://octomap.sourceforge.net/
-* License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
-*/
+ * Octomap:
+ * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
+ * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
+ * @see http://octomap.sourceforge.net/
+ * License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+ */
 
 /*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-* for more details.
-*
-* You should have received a copy of the GNU General Public License along
-* with this program; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 
 #include <iostream>
 #include <fstream>
@@ -34,9 +34,9 @@
 namespace octomap{
 
   ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
-    : QMainWindow(parent), m_scanGraph(NULL), m_ocTree(NULL), 
+    : QMainWindow(parent), m_scanGraph(NULL), 
       m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL), 
-      m_octreeDrawer(NULL), m_cameraFollowMode(NULL),
+      m_cameraFollowMode(NULL),
       m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
 
@@ -45,9 +45,6 @@ namespace octomap{
     ui.setupUi(this);
     m_glwidget = new ViewerWidget(this);
     this->setCentralWidget(m_glwidget);
-
-    m_octreeDrawer = new OcTreeDrawer();
-    m_glwidget->addSceneObject(m_octreeDrawer);
 
     // Settings panel at the right side
     ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
@@ -98,15 +95,15 @@ namespace octomap{
 
     connect(m_cameraFollowMode, SIGNAL(deleteCameraPath(int)), m_glwidget, SLOT(deleteCameraPath(int)));
     connect(m_cameraFollowMode, SIGNAL(removeFromCameraPath(int,int)), m_glwidget, SLOT(removeFromCameraPath(int,int)));
-	connect(m_cameraFollowMode, SIGNAL(appendToCameraPath(int, const octomath::Pose6D&)), m_glwidget, SLOT(appendToCameraPath(int, const octomath::Pose6D&)));
-	connect(m_cameraFollowMode, SIGNAL(appendCurrentToCameraPath(int)), m_glwidget, SLOT(appendCurrentToCameraPath(int)));
-	connect(m_cameraFollowMode, SIGNAL(addCurrentToCameraPath(int,int)), m_glwidget, SLOT(addCurrentToCameraPath(int,int)));
-	connect(m_cameraFollowMode, SIGNAL(updateCameraPath(int,int)), m_glwidget, SLOT(updateCameraPath(int,int)));
-	connect(m_cameraFollowMode, SIGNAL(playCameraPath(int,int)), m_glwidget, SLOT(playCameraPath(int,int)));
-	connect(m_cameraFollowMode, SIGNAL(stopCameraPath(int)), m_glwidget, SLOT(stopCameraPath(int)));
-	connect(m_cameraFollowMode, SIGNAL(jumpToCamFrame(int, int)), m_glwidget, SLOT(jumpToCamFrame(int, int)));
-	connect(m_glwidget, SIGNAL(cameraPathStopped(int)), m_cameraFollowMode, SLOT(cameraPathStopped(int)));
-	connect(m_glwidget, SIGNAL(cameraPathFrameChanged(int, int)), m_cameraFollowMode, SLOT(cameraPathFrameChanged(int, int)));
+    connect(m_cameraFollowMode, SIGNAL(appendToCameraPath(int, const octomath::Pose6D&)), m_glwidget, SLOT(appendToCameraPath(int, const octomath::Pose6D&)));
+    connect(m_cameraFollowMode, SIGNAL(appendCurrentToCameraPath(int)), m_glwidget, SLOT(appendCurrentToCameraPath(int)));
+    connect(m_cameraFollowMode, SIGNAL(addCurrentToCameraPath(int,int)), m_glwidget, SLOT(addCurrentToCameraPath(int,int)));
+    connect(m_cameraFollowMode, SIGNAL(updateCameraPath(int,int)), m_glwidget, SLOT(updateCameraPath(int,int)));
+    connect(m_cameraFollowMode, SIGNAL(playCameraPath(int,int)), m_glwidget, SLOT(playCameraPath(int,int)));
+    connect(m_cameraFollowMode, SIGNAL(stopCameraPath(int)), m_glwidget, SLOT(stopCameraPath(int)));
+    connect(m_cameraFollowMode, SIGNAL(jumpToCamFrame(int, int)), m_glwidget, SLOT(jumpToCamFrame(int, int)));
+    connect(m_glwidget, SIGNAL(cameraPathStopped(int)), m_cameraFollowMode, SLOT(cameraPathStopped(int)));
+    connect(m_glwidget, SIGNAL(cameraPathFrameChanged(int, int)), m_cameraFollowMode, SLOT(cameraPathFrameChanged(int, int)));
 
     connect(this, SIGNAL(changeNumberOfScans(unsigned)), settingsPanel, SLOT(setNumberOfScans(unsigned)));
     connect(this, SIGNAL(changeCurrentScan(unsigned)), settingsPanel, SLOT(setCurrentScan(unsigned)));
@@ -138,17 +135,23 @@ namespace octomap{
       m_pointcloudDrawer = NULL;
     }
 
-    if (m_octreeDrawer){
-      m_glwidget->removeSceneObject(m_octreeDrawer);
-      delete m_octreeDrawer;
-      m_octreeDrawer = NULL;
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      m_glwidget->removeSceneObject(it->second.octree_drawer);
+      delete (it->second.octree_drawer);
+      delete (it->second.octree);
     }
+    m_octrees.clear();
 
     if(m_cameraFollowMode) {
-    	delete m_cameraFollowMode;
-    	m_cameraFollowMode = NULL;
+      delete m_cameraFollowMode;
+      m_cameraFollowMode = NULL;
     }
   }
+
+  bool ViewerGui::isShown() {
+    return  m_glwidget->isVisible();
+  }
+
 
   void ViewerGui::showInfo(QString string, bool newline) {
 
@@ -162,229 +165,333 @@ namespace octomap{
   }
 
 
-void ViewerGui::generateOctree() {
+  bool ViewerGui::getOctreeRecord(int id, OcTreeRecord*& otr) {
 
-  if (m_scanGraph) {
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    showInfo("Generating OcTree... ");
-
-    if (m_ocTree) delete m_ocTree;
-    m_ocTree = new octomap::OcTree(m_octreeResolution);
-
-    octomap::ScanGraph::iterator it;
-    unsigned numScans = m_scanGraph->size();
-    unsigned currentScan = 1;
-    for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
-      m_ocTree->insertScan(**it, m_laserMaxRange);
-      std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
-      currentScan++;
-    }
-
-    showOcTree();
-
-    showInfo("Done.", true);
-    QApplication::restoreOverrideCursor();
-  }
-  else {
-    std::cerr << "generateOctree called but no ScanGraph present!\n";
-  }
-
-}
-
-void ViewerGui::addNextScans(unsigned scans){
-  for (unsigned i = 0; i < scans; ++i){
-    addNextScan();
-  }
-}
-
-void ViewerGui::gotoFirstScan(){
-  if (m_scanGraph){
-    showInfo("Inserting first scan node into tree... ", true);
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    m_nextScanToAdd = m_scanGraph->begin();
-    
-    if (m_ocTree) delete m_ocTree;
-    m_ocTree = new octomap::OcTree(m_octreeResolution);
-    addNextScan();
-
-    QApplication::restoreOverrideCursor();
-    showOcTree();
-  }
-
-}
-
-void ViewerGui::addNextScan(){
-  if (m_scanGraph){
-    showInfo("Inserting next scan node into tree... ", true);
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    if (m_nextScanToAdd != m_scanGraph->end()){
-      m_ocTree->insertScan(**m_nextScanToAdd, m_laserMaxRange);
-      m_nextScanToAdd++;
-    }
-
-    QApplication::restoreOverrideCursor();
-    showOcTree();
-
-  }
-}
-
-
-void ViewerGui::showOcTree() {
-
-  if (m_ocTree) {
-    if (!m_octreeDrawer){
-      m_octreeDrawer = new OcTreeDrawer();
-      m_glwidget->addSceneObject(m_octreeDrawer);
-    }
-    m_octreeDrawer->setMax_tree_depth(m_max_tree_depth);
-    m_octreeDrawer->setOcTree(*m_ocTree);
-
-    double minX, minY, minZ, maxX, maxY, maxZ;
-    m_ocTree->getMetricMin(minX, minY, minZ);
-    m_ocTree->getMetricMax(maxX, maxY, maxZ);
-
-    m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
-
-    double sizeX, sizeY, sizeZ;
-    m_ocTree->getMetricSize(sizeX, sizeY, sizeZ);
-
-    QString size = QString("%L1m x %L2m x %L3m").arg(sizeX).arg(sizeY).arg(sizeZ);
-    unsigned memoryUsage = m_ocTree->memoryUsage();
-    QString memory = QString("%L1 nodes; ").arg(m_ocTree->size())
-      + QString ("%L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
-    m_mapMemoryStatus->setText(memory);
-    m_mapSizeStatus->setText(size);
-    m_glwidget->updateGL();
-  }
-  else {
-    QMessageBox::warning(this, "Tree not present",
-			 "Trying to show OcTree but no tree present. This should not happen.",
-			 QMessageBox::Ok);
-  }
-}
-
-
-
-void ViewerGui::openFile(){
-  
-  if (m_filename != ""){
-
-    m_glwidget->clearAll();
-
-    QFileInfo fileinfo(QString::fromStdString(m_filename));
-    if (fileinfo.suffix() == "graph"){
-      openGraph();
-    }
-    else if (fileinfo.suffix() == "bt"){
-      openTree();
-    }
-    else if (fileinfo.suffix() == "ot"){
-      openOcTree();
-    }
-    else if (fileinfo.suffix() == "dat"){
-      openPointcloud();
+    std::map<int, OcTreeRecord>::iterator it = m_octrees.find(id);
+    if( it != m_octrees.end() ) {
+      otr = &(it->second);
+      return true;
     }
     else {
-      QMessageBox::warning(this, "Unknown file", "Cannot open file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
+      return false;
+    } 
+  }
+
+
+  void ViewerGui::addOctree(octomap::OcTree* tree, int id, octomap::pose6d origin) {
+
+    // is id in use?
+    OcTreeRecord* r;
+    if (getOctreeRecord(id, r)) {
+      delete r->octree;
+      r->octree = tree;
+      r->origin = origin;
+      // we reuse the old octree_drawer
+    }
+
+    // else add entries
+    else {
+      OcTreeRecord otr;
+      otr.id = id;
+      otr.octree_drawer = new OcTreeDrawer();
+      otr.octree = tree;
+      otr.origin = origin;
+      m_octrees[id] = otr;
+      m_glwidget->addSceneObject(otr.octree_drawer);
     }
 
   }
 
-}
-
-void ViewerGui::openGraph(bool completeGraph){
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  showInfo("Loading scan graph from file "+QString::fromStdString(m_filename)+"...");
-
-  if (m_scanGraph) delete m_scanGraph;
-  m_scanGraph = new octomap::ScanGraph();
-  m_scanGraph->readBinary(m_filename);
-
-  loadGraph(completeGraph);
-}
+  void ViewerGui::addOctree(octomap::OcTree* tree, int id) {
+    octomap::pose6d o;
+    addOctree(tree, id, o);
+  }
 
 
-void ViewerGui::openPointcloud(){
+  void ViewerGui::showOcTree() {
+
+    // update viewer stat
+
+    if (m_octrees.size()) {
+      double minX, minY, minZ, maxX, maxY, maxZ;
+      minX = minY = minZ = 1e6;
+      maxX = maxY = maxZ = -1e6;
+      double sizeX, sizeY, sizeZ;
+      sizeX = sizeY = sizeZ = 0.;
+      unsigned memoryUsage = 0;
+      unsigned int num_nodes = 0;
+    
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+        // get map bbx
+        double lminX, lminY, lminZ, lmaxX, lmaxY, lmaxZ;
+        it->second.octree->getMetricMin(lminX, lminY, lminZ);
+        it->second.octree->getMetricMax(lmaxX, lmaxY, lmaxZ);
+        // transform to world coords using map origin
+        octomap::point3d min(lminX, lminY, lminZ);
+        octomap::point3d max(lmaxX, lmaxY, lmaxZ);
+        min = it->second.origin.transform(min);
+        max = it->second.origin.transform(max);
+        lminX = min.x(); lminY = min.y(); lminZ = min.z();
+        lmaxX = max.x(); lmaxY = max.y(); lmaxZ = max.z();
+        // update global bbx
+        if (lminX < minX) minX = lminX;
+        if (lminY < minY) minY = lminY;
+        if (lminZ < minZ) minZ = lminZ;
+        if (lmaxX > maxX) maxX = lmaxX;
+        if (lmaxY > maxY) maxY = lmaxY;
+        if (lmaxZ > maxZ) maxZ = lmaxZ;
+        double lsizeX, lsizeY, lsizeZ;
+        // update map stats
+        it->second.octree->getMetricSize(lsizeX, lsizeY, lsizeZ);
+        if (lsizeX > sizeX) sizeX = lsizeX;
+        if (lsizeY > sizeY) sizeY = lsizeY;
+        if (lsizeZ > sizeZ) sizeZ = lsizeZ;
+        memoryUsage += it->second.octree->memoryUsage();
+        num_nodes += it->second.octree->size();
+      }
+
+      m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
+
+      QString size = QString("%L1m x %L2m x %L3m").arg(sizeX).arg(sizeY).arg(sizeZ);
+      QString memory = QString("%L1 nodes; ").arg(num_nodes)
+        + QString ("%L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
+      m_mapMemoryStatus->setText(memory);
+      m_mapSizeStatus->setText(size);
+      m_glwidget->updateGL();
+    }
+    else {
+      QMessageBox::warning(this, "Tree not present",
+       "Trying to show OcTree but no tree present. This should not happen.",
+       QMessageBox::Ok);
+    }
+
+    // generate cubes -> display
+
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      it->second.octree_drawer->setOrigin(it->second.origin);
+      it->second.octree_drawer->setMax_tree_depth(m_max_tree_depth);
+      it->second.octree_drawer->setOcTree(*(it->second.octree), it->second.origin);
+    }
+
+  }
+
+
+  void ViewerGui::generateOctree() {
+
+    if (m_scanGraph) {
+
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      showInfo("Generating OcTree... ");
+      std::cerr << std::endl;
+
+      //if (m_ocTree) delete m_ocTree;
+      OcTree* tree = new octomap::OcTree(m_octreeResolution);
+
+      octomap::ScanGraph::iterator it;
+      unsigned numScans = m_scanGraph->size();
+      unsigned currentScan = 1;
+      for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
+        tree->insertScan(**it, m_laserMaxRange);
+        fprintf(stderr, "generateOctree:: inserting scan node with %d points, origin: %.2f  ,%.2f , %.2f.\n",
+                (*it)->scan->size(), (*it)->pose.x(), (*it)->pose.y(), (*it)->pose.z()  );
+
+        std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
+        currentScan++;
+      }
+
+      this->addOctree(tree, DEFAULT_OCTREE_ID);
+      this->showOcTree();
+
+      showInfo("Done.", true);
+      QApplication::restoreOverrideCursor();
+    }
+    else {
+      std::cerr << "generateOctree called but no ScanGraph present!\n";
+    }
+
+  }
+
+
+  // void ViewerGui::handleOctomapBinaryMsg(const octomap2::OctomapBinary::ConstPtr& msg) {
+
+  //   printf("received octomap, tree id=%d, origin: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
+  //          msg->id, msg->origin.position.x, msg->origin.position.y, msg->origin.position.z,
+  //          msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z,
+  //          msg->origin.orientation.w
+  //          );
+
+  //   OcTree* tree = new octomap::OcTree(0.05);
+  //   octomap::octomapMsgToMap(*msg, *tree);
+
+  //   octomath::Vector3 trans (msg->origin.position.x, msg->origin.position.y, msg->origin.position.z);
+  //   octomath::Quaternion rot (msg->origin.orientation.w, msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z);
+  //   std::cout << rot << std::endl;
+  //   octomap::pose6d origin (trans, rot);
+
+  //   this->addOctree(tree, msg->id, origin);
+
+  //   m_octreeResolution = tree->getResolution();
+  //   emit changeResolution(m_octreeResolution);
+
+  //   ui.actionPointcloud->setChecked(false);
+  //   ui.actionPointcloud->setEnabled(false);
+  //   ui.actionOctree_cells->setChecked(true);
+  //   ui.actionOctree_cells->setEnabled(true);
+  //   ui.actionFree->setChecked(false);
+  //   ui.actionFree->setEnabled(true);
+  //   ui.actionOctree_structure->setEnabled(true);
+  //   ui.actionOctree_structure->setChecked(false);
+  //   ui.actionTrajectory->setEnabled(false);
+  //   ui.actionConvert_ml_tree->setEnabled(false);
+  //   ui.actionReload_Octree->setEnabled(false);
+  //   ui.actionSettings->setEnabled(false);
+
+  //   showOcTree();
+  //   //    m_glwidget->resetView();
+  // }
+
+
+
+  // ==  incremental graph generation   =======================
+
+  void ViewerGui::gotoFirstScan(){
+    if (m_scanGraph){
+      showInfo("Inserting first scan node into tree... ", true);
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      m_nextScanToAdd = m_scanGraph->begin();
+    
+      // if (m_ocTree) delete m_ocTree;
+      // m_ocTree = new octomap::OcTree(m_octreeResolution);
+      OcTree* tree = new octomap::OcTree(m_octreeResolution);
+      this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+      addNextScan();
+
+      QApplication::restoreOverrideCursor();
+      showOcTree();
+    }
+  }
+
+  void ViewerGui::addNextScan(){
+
+    if (m_scanGraph){
+      showInfo("Inserting next scan node into tree... ", true);
+
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      if (m_nextScanToAdd != m_scanGraph->end()){
+        OcTreeRecord* r;
+        if (!getOctreeRecord(DEFAULT_OCTREE_ID, r)) {
+          fprintf(stderr, "ERROR: OctreeRecord for id %d not found!\n", DEFAULT_OCTREE_ID);
+          return;
+        }
+        r->octree->insertScan(**m_nextScanToAdd, m_laserMaxRange);
+        m_nextScanToAdd++;
+      }
+
+      QApplication::restoreOverrideCursor();
+      showOcTree();
+
+    }
+  }
+
+
+  void ViewerGui::addNextScans(unsigned scans){
+    for (unsigned i = 0; i < scans; ++i){
+      addNextScan();
+    }
+  }
+
+
+
+  // ==  file I/O   ===========================================
+
+  void ViewerGui::openFile(){
   
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  showInfo("Loading ASCII pointcloud from file "+QString::fromStdString(m_filename)+"...");
+    if (m_filename != ""){
 
-  if (m_scanGraph) delete m_scanGraph;
-  m_scanGraph = new octomap::ScanGraph();
+      m_glwidget->clearAll();
 
+      QFileInfo fileinfo(QString::fromStdString(m_filename));
+      if (fileinfo.suffix() == "graph"){
+        openGraph();
+      }
+      else if (fileinfo.suffix() == "bt"){
+        openTree();
+      }
+      else if (fileinfo.suffix() == "ot"){
+        openOcTree();
+      }
+      else if (fileinfo.suffix() == "dat"){
+        openPointcloud();
+      }
+      else {
+        QMessageBox::warning(this, "Unknown file", "Cannot open file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
+      }
 
-  // read pointcloud from file
-  std::ifstream s(m_filename.c_str());
-  Pointcloud pc;
+    }
 
-  if (!s) {
-    std::cout <<"ERROR: could not read " << m_filename << std::endl;
-    return;
   }
 
-  pc.read(s);
 
-//  point3d p;
-//  while (!s.eof()) {
-//    for (unsigned int i=0; i<3; i++){
-//      s >> p(i);
-//    }
-//    pc.push_back(p);
-//  }
+  void ViewerGui::openGraph(bool completeGraph){
 
-  pose6d laser_pose(0,0,0,0,0,0);
-  m_scanGraph->addNode(&pc, laser_pose);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    showInfo("Loading scan graph from file "+QString::fromStdString(m_filename)+"...");
 
-  loadGraph(true);
-  showInfo("Done.", true);
-}
+    if (m_scanGraph) delete m_scanGraph;
+    m_scanGraph = new octomap::ScanGraph();
+    m_scanGraph->readBinary(m_filename);
 
-
-void ViewerGui::openTree(){
-  if (m_ocTree)
-    delete m_ocTree;
-
-  m_ocTree = new octomap::OcTree(m_filename);
-  m_octreeResolution = m_ocTree->getResolution();
-  emit changeResolution(m_octreeResolution);
-
-  ui.actionPointcloud->setChecked(false);
-  ui.actionPointcloud->setEnabled(false);
-  ui.actionOctree_cells->setChecked(true);
-  ui.actionOctree_cells->setEnabled(true);
-  ui.actionFree->setChecked(false);
-  ui.actionFree->setEnabled(true);
-  ui.actionOctree_structure->setEnabled(true);
-  ui.actionOctree_structure->setChecked(false);
-  ui.actionTrajectory->setEnabled(false);
-  ui.actionConvert_ml_tree->setEnabled(false);
-  ui.actionReload_Octree->setEnabled(false);
-  ui.actionSettings->setEnabled(false);
-
-  showOcTree();
-  m_glwidget->resetView();
-
-}
-
-void ViewerGui::openOcTree(){
-  if (m_ocTree){
-    delete m_ocTree;
-    m_ocTree = NULL;
-  }
-  //
-  //m_ocTree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
-  octomap::OcTreeBase<octomap::OcTreeNode>* tree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
-  if (tree){
-    m_ocTree = dynamic_cast<OcTree*>(tree);
+    loadGraph(completeGraph);
   }
 
-  if (m_ocTree){
-    m_octreeResolution = m_ocTree->getResolution();
+
+  void ViewerGui::openPointcloud(){
+  
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    showInfo("Loading ASCII pointcloud from file "+QString::fromStdString(m_filename)+"...");
+
+    if (m_scanGraph) delete m_scanGraph;
+    m_scanGraph = new octomap::ScanGraph();
+
+
+    // read pointcloud from file
+    std::ifstream s(m_filename.c_str());
+    Pointcloud pc;
+
+    if (!s) {
+      std::cout <<"ERROR: could not read " << m_filename << std::endl;
+      return;
+    }
+
+    pc.read(s);
+
+    //  point3d p;
+    //  while (!s.eof()) {
+    //    for (unsigned int i=0; i<3; i++){
+    //      s >> p(i);
+    //    }
+    //    pc.push_back(p);
+    //  }
+
+    pose6d laser_pose(0,0,0,0,0,0);
+    m_scanGraph->addNode(&pc, laser_pose);
+
+    loadGraph(true);
+    showInfo("Done.", true);
+  }
+
+
+  void ViewerGui::openTree(){
+    // if (m_ocTree)
+    //   delete m_ocTree;
+
+    OcTree* tree = new octomap::OcTree(m_filename);
+    this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+    m_octreeResolution = tree->getResolution();
     emit changeResolution(m_octreeResolution);
 
     ui.actionPointcloud->setChecked(false);
@@ -396,347 +503,416 @@ void ViewerGui::openOcTree(){
     ui.actionOctree_structure->setEnabled(true);
     ui.actionOctree_structure->setChecked(false);
     ui.actionTrajectory->setEnabled(false);
-    ui.actionConvert_ml_tree->setEnabled(true);
+    ui.actionConvert_ml_tree->setEnabled(false);
     ui.actionReload_Octree->setEnabled(false);
     ui.actionSettings->setEnabled(false);
 
     showOcTree();
     m_glwidget->resetView();
-  } else {
-    QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
+
   }
 
-}
+  void ViewerGui::openOcTree(){
+    // if (m_ocTree){
+    //   delete m_ocTree;
+    //   m_ocTree = NULL;
+    // }
+    //
+    //m_ocTree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
+    OcTree* tree(NULL);
+    octomap::OcTreeBase<octomap::OcTreeNode>* tree_in = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
+    if (tree_in){
+      tree = dynamic_cast<OcTree*>(tree_in);
+    }
 
-
-void ViewerGui::loadGraph(bool completeGraph) {
-  
-  ui.actionSettings->setEnabled(true);
-  ui.actionPointcloud->setEnabled(true);
-  ui.actionPointcloud->setChecked(false);
-  ui.actionTrajectory->setEnabled(true);
-  ui.actionOctree_cells->setEnabled(true);
-  ui.actionOctree_cells->setChecked(true);
-  ui.actionOctree_structure->setEnabled(true);
-  ui.actionOctree_structure->setChecked(false);
-  ui.actionFree->setChecked(false);
-  ui.actionFree->setEnabled(true);
-  ui.actionReload_Octree->setEnabled(true);
-  ui.actionConvert_ml_tree->setEnabled(true);
-
-  unsigned graphSize = m_scanGraph->size();
-  unsigned currentScan;
-  
-  if (completeGraph){
-    m_nextScanToAdd = m_scanGraph->end();
-    generateOctree();
-    currentScan = graphSize;
-  } 
-  else{
-    m_nextScanToAdd = m_scanGraph->begin();
-    if (m_ocTree) delete m_ocTree;
-    m_ocTree = new octomap::OcTree(m_octreeResolution);
-    addNextScan();
-
-    currentScan = 1;
-  }
-
-  m_glwidget->resetView();
-  QApplication::restoreOverrideCursor();
-
-  emit changeNumberOfScans(graphSize);
-  emit changeCurrentScan(currentScan);
-  showInfo("Done (" +QString::number(currentScan)+ " of "+ QString::number(graphSize)+" nodes)", true);
-
-  if (!m_trajectoryDrawer){
-    m_trajectoryDrawer = new TrajectoryDrawer();
-  }
-  m_trajectoryDrawer->setScanGraph(*m_scanGraph);
-
-  if (!m_pointcloudDrawer){
-    m_pointcloudDrawer = new PointcloudDrawer();
-  }
-  m_pointcloudDrawer->setScanGraph(*m_scanGraph);
-
-  m_cameraFollowMode->setScanGraph(m_scanGraph);
-
-  if (ui.actionTrajectory->isChecked())
-    m_glwidget->addSceneObject(m_trajectoryDrawer);
-
-  if (ui.actionPointcloud->isChecked())
-    m_glwidget->addSceneObject(m_pointcloudDrawer);
-}
-
-void ViewerGui::changeTreeDepth(int depth){
-  // range check:
-  if (depth < 1 || depth > 16)
-    return;
-
-  m_max_tree_depth = unsigned(depth);
-
-  if (m_ocTree)
-    showOcTree();
-}
-
-
-void ViewerGui::on_actionExit_triggered(){
-  this->close();
-}
-
-void ViewerGui::on_actionHelp_triggered(){
-  m_glwidget->help();
-}
-
-void ViewerGui::on_actionSettings_triggered(){
-
-  ViewerSettings dialog(this);
-  dialog.setResolution(m_octreeResolution);
-  dialog.setLaserType(m_laserType);
-  dialog.setMaxRange(m_laserMaxRange);
-
-
-  if (dialog.exec()){
-
-    double oldResolution = m_octreeResolution;
-    //double oldLaserMaxRange = m_laserMaxRange;
-    // TODO: detect change in maxRange => rebuild tree?
-    double oldType = m_laserType;
-
-    m_octreeResolution = dialog.getResolution();
-    m_laserType = dialog.getLaserType();
-    m_laserMaxRange = dialog.getMaxRange();
-  
-    // apply new settings
-    bool resolutionChanged = (fabs(oldResolution - m_octreeResolution) > 1e-5);
-
-    if (resolutionChanged)
+    if (tree){
+      this->addOctree(tree, DEFAULT_OCTREE_ID);
+      m_octreeResolution = tree->getResolution();
       emit changeResolution(m_octreeResolution);
 
-    if (oldType != m_laserType){ // parameters changed, reload file:
-      openFile();
-    } else if (resolutionChanged){
-      generateOctree();
+      ui.actionPointcloud->setChecked(false);
+      ui.actionPointcloud->setEnabled(false);
+      ui.actionOctree_cells->setChecked(true);
+      ui.actionOctree_cells->setEnabled(true);
+      ui.actionFree->setChecked(false);
+      ui.actionFree->setEnabled(true);
+      ui.actionOctree_structure->setEnabled(true);
+      ui.actionOctree_structure->setChecked(false);
+      ui.actionTrajectory->setEnabled(false);
+      ui.actionConvert_ml_tree->setEnabled(true);
+      ui.actionReload_Octree->setEnabled(false);
+      ui.actionSettings->setEnabled(false);
+
+      showOcTree();
+      m_glwidget->resetView();
+    } else {
+      QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
     }
 
   }
-}
 
-void ViewerGui::on_actionOpen_file_triggered(){
-  QString filename = QFileDialog::getOpenFileName(this,
-	      tr("Open data file"), "",
-	  "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
-  if (filename != ""){
-    m_filename = filename.toStdString();
-    openFile();
+
+  void ViewerGui::loadGraph(bool completeGraph) {
+  
+    ui.actionSettings->setEnabled(true);
+    ui.actionPointcloud->setEnabled(true);
+    ui.actionPointcloud->setChecked(false);
+    ui.actionTrajectory->setEnabled(true);
+    ui.actionOctree_cells->setEnabled(true);
+    ui.actionOctree_cells->setChecked(true);
+    ui.actionOctree_structure->setEnabled(true);
+    ui.actionOctree_structure->setChecked(false);
+    ui.actionFree->setChecked(false);
+    ui.actionFree->setEnabled(true);
+    ui.actionReload_Octree->setEnabled(true);
+    ui.actionConvert_ml_tree->setEnabled(true);
+
+    unsigned graphSize = m_scanGraph->size();
+    unsigned currentScan;
+  
+    if (completeGraph){
+      fprintf(stderr, "loadGraph:: generating octree from complete graph.\n" );
+      m_nextScanToAdd = m_scanGraph->end();
+      generateOctree();
+      currentScan = graphSize;
+    } 
+    else{
+      m_nextScanToAdd = m_scanGraph->begin();
+    
+      //if (m_ocTree) delete m_ocTree;
+      //m_ocTree = new octomap::OcTree(m_octreeResolution);
+      OcTree* tree = new octomap::OcTree(m_octreeResolution);
+      this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+      addNextScan();
+
+      currentScan = 1;
+    }
+
+    m_glwidget->resetView();
+    QApplication::restoreOverrideCursor();
+
+    emit changeNumberOfScans(graphSize);
+    emit changeCurrentScan(currentScan);
+    showInfo("Done (" +QString::number(currentScan)+ " of "+ QString::number(graphSize)+" nodes)", true);
+
+    if (!m_trajectoryDrawer){
+      m_trajectoryDrawer = new TrajectoryDrawer();
+    }
+    m_trajectoryDrawer->setScanGraph(*m_scanGraph);
+
+    if (!m_pointcloudDrawer){
+      m_pointcloudDrawer = new PointcloudDrawer();
+    }
+    m_pointcloudDrawer->setScanGraph(*m_scanGraph);
+
+    m_cameraFollowMode->setScanGraph(m_scanGraph);
+
+    if (ui.actionTrajectory->isChecked())
+      m_glwidget->addSceneObject(m_trajectoryDrawer);
+
+    if (ui.actionPointcloud->isChecked())
+      m_glwidget->addSceneObject(m_pointcloudDrawer);
   }
-}
 
+  void ViewerGui::changeTreeDepth(int depth){
+    // range check:
+    if (depth < 1 || depth > 16)
+      return;
 
-void ViewerGui::on_actionOpen_graph_incremental_triggered(){
-  QString filename = QFileDialog::getOpenFileName(this,
-	      tr("Open graph file incrementally (at start)"), "",
-	  "binary scan graph (*.graph)");
-  if (filename != ""){
-    m_glwidget->clearAll();
+    m_max_tree_depth = unsigned(depth);
 
-    m_filename = filename.toStdString();
-    openGraph(false);
+    //if (m_ocTree)
+    showOcTree();
   }
-}
 
-void ViewerGui::on_actionSave_file_triggered(){
 
-  if (m_ocTree) {
+  void ViewerGui::on_actionExit_triggered(){
+    this->close();
+  }
+
+  void ViewerGui::on_actionHelp_triggered(){
+    m_glwidget->help();
+  }
+
+  void ViewerGui::on_actionSettings_triggered(){
+
+    ViewerSettings dialog(this);
+    dialog.setResolution(m_octreeResolution);
+    dialog.setLaserType(m_laserType);
+    dialog.setMaxRange(m_laserMaxRange);
+
+
+    if (dialog.exec()){
+
+      double oldResolution = m_octreeResolution;
+      //double oldLaserMaxRange = m_laserMaxRange;
+      // TODO: detect change in maxRange => rebuild tree?
+      double oldType = m_laserType;
+
+      m_octreeResolution = dialog.getResolution();
+      m_laserType = dialog.getLaserType();
+      m_laserMaxRange = dialog.getMaxRange();
+  
+      // apply new settings
+      bool resolutionChanged = (fabs(oldResolution - m_octreeResolution) > 1e-5);
+
+      if (resolutionChanged)
+        emit changeResolution(m_octreeResolution);
+
+      if (oldType != m_laserType){ // parameters changed, reload file:
+        openFile();
+      } else if (resolutionChanged){
+        generateOctree();
+      }
+
+    }
+  }
+
+  void ViewerGui::on_actionOpen_file_triggered(){
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Open data file"), "",
+                                                    "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
+    if (filename != ""){
+      m_filename = filename.toStdString();
+      openFile();
+    }
+  }
+
+
+  void ViewerGui::on_actionOpen_graph_incremental_triggered(){
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Open graph file incrementally (at start)"), "",
+                                                    "binary scan graph (*.graph)");
+    if (filename != ""){
+      m_glwidget->clearAll();
+
+      m_filename = filename.toStdString();
+      openGraph(false);
+    }
+  }
+
+  void ViewerGui::on_actionSave_file_triggered(){
+
+    OcTreeRecord* r;
+    if (!getOctreeRecord(DEFAULT_OCTREE_ID, r)) {
+      fprintf(stderr, "ERROR: OctreeRecord for id %d not found!\n", DEFAULT_OCTREE_ID);
+      QMessageBox::warning(this, tr("3D Mapping Viewer"),
+                           "Error: No OcTree present.",
+                           QMessageBox::Ok);
+      return;
+    }
+
     QString filename = QFileDialog::getSaveFileName(this, tr("Save octree file"),
-						    "", tr("Bonsai Tree file (*.bt);;Full OcTree (*.ot)"));
+                                                    "", tr("Bonsai Tree file (*.bt);;Full OcTree (*.ot)"));
 
     if (filename != ""){
       QApplication::setOverrideCursor(Qt::WaitCursor);
       showInfo("Writing file... ", false);
-
+    
       QFileInfo fileinfo(filename);
       if (fileinfo.suffix() == "bt")
-        m_ocTree->writeBinaryConst(filename.toStdString());
+        r->octree->writeBinaryConst(filename.toStdString());
       else if (fileinfo.suffix() == "ot"){
-        OcTreeFileIO::write( m_ocTree, filename.toStdString());
+        OcTreeFileIO::write( r->octree, filename.toStdString());
         //writer.write((OcTreeBase<octomap::OcTreeDataNode<float> >*) m_ocTree, filename.toStdString());
         //m_ocTree->write(filename.toStdString());
       }
       else{
         QMessageBox::warning(this, "Unknown file", "Cannot write file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
       }
-
+    
       QApplication::restoreOverrideCursor();
       showInfo("Done.", true);
     }
-
-  } else{
-    QMessageBox::warning(this, tr("3D Mapping Viewer"),
-                         "Error: No OcTree present.",
-                         QMessageBox::Ok);
-
   }
 
-
-}
-
-void ViewerGui::on_actionExport_view_triggered(){
-  m_glwidget->openSnapshotFormatDialog();
-  m_glwidget->saveSnapshot(false);
-}
-
-void ViewerGui::on_actionExport_sequence_triggered(bool checked){
-  if(checked) {
-	  if(m_glwidget->openSnapshotFormatDialog()) {
-		  m_glwidget->saveSnapshot(false);
-		  m_glwidget->setSnapshotCounter(0);
-		  connect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
-	  } else {
-		  ui.actionExport_sequence->setChecked(false);
-	  }
-  } else {
-	  disconnect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
+  void ViewerGui::on_actionExport_view_triggered(){
+    m_glwidget->openSnapshotFormatDialog();
+    m_glwidget->saveSnapshot(false);
   }
-}
 
-void ViewerGui::on_actionPrintout_mode_toggled(bool checked){
-  if (checked)
-    ui.actionHeight_map->setChecked(false);
-  m_glwidget->enablePrintoutMode(checked);
-}
-
-void ViewerGui::on_actionHeight_map_toggled(bool checked){
-  if (checked)
-    ui.actionPrintout_mode->setChecked(false);
-
-  m_glwidget->enableHeightColorMode(checked);
-}
-
-void ViewerGui::on_actionStore_camera_triggered(){
-  m_glwidget->camera()->deletePath(0);
-  m_glwidget->camera()->addKeyFrameToPath(0);
-  m_cameraStored = true;
-  ui.actionRestore_camera->setEnabled(true);
-}
-
-void ViewerGui::on_actionRestore_camera_triggered(){
-  if (m_cameraStored){
-    m_glwidget->camera()->playPath(0);
+  void ViewerGui::on_actionExport_sequence_triggered(bool checked){
+    if(checked) {
+      if(m_glwidget->openSnapshotFormatDialog()) {
+        m_glwidget->saveSnapshot(false);
+        m_glwidget->setSnapshotCounter(0);
+        connect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
+      } else {
+        ui.actionExport_sequence->setChecked(false);
+      }
+    } else {
+      disconnect(m_glwidget, SIGNAL(drawFinished(bool)), m_glwidget, SLOT(saveSnapshot(bool)));
+    }
   }
-}
 
-void ViewerGui::on_actionPointcloud_toggled(bool checked){
-  if (m_pointcloudDrawer){
+  void ViewerGui::on_actionPrintout_mode_toggled(bool checked){
     if (checked)
-      m_glwidget->addSceneObject(m_pointcloudDrawer);
-    else
-      m_glwidget->removeSceneObject(m_pointcloudDrawer);
+      ui.actionHeight_map->setChecked(false);
+    m_glwidget->enablePrintoutMode(checked);
   }
-}
 
-void ViewerGui::on_actionTrajectory_toggled(bool checked){
-  if (m_trajectoryDrawer){
+  void ViewerGui::on_actionHeight_map_toggled(bool checked){
     if (checked)
-      m_glwidget->addSceneObject(m_trajectoryDrawer);
-    else
-      m_glwidget->removeSceneObject(m_trajectoryDrawer);
-  }
-}
+      ui.actionPrintout_mode->setChecked(false);
 
-void ViewerGui::on_actionTest_triggered(){
-
-}
-
-void ViewerGui::on_actionReload_Octree_triggered(){
-  generateOctree();
-}
-
-void ViewerGui::on_actionConvert_ml_tree_triggered(){
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if (m_ocTree) {
-    showInfo("Converting OcTree to maximum Likelihood map... ");
-    m_ocTree->toMaxLikelihood();
-
-    showOcTree();
-
-    showInfo("Done.", true);
+    m_glwidget->enableHeightColorMode(checked);
   }
 
-  QApplication::restoreOverrideCursor();
-
-}
-
-void ViewerGui::on_actionPrune_tree_triggered(){
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if (m_ocTree) {
-    showInfo("Pruning OcTree... ");
-    m_ocTree->prune();
-
-    showOcTree();
-
-    showInfo("Done.", true);
+  void ViewerGui::on_actionStore_camera_triggered(){
+    m_glwidget->camera()->deletePath(0);
+    m_glwidget->camera()->addKeyFrameToPath(0);
+    m_cameraStored = true;
+    ui.actionRestore_camera->setEnabled(true);
   }
 
-  QApplication::restoreOverrideCursor();
-}
+  void ViewerGui::on_actionRestore_camera_triggered(){
+    if (m_cameraStored){
+      m_glwidget->camera()->playPath(0);
+    }
+  }
 
-void ViewerGui::on_actionExpand_tree_triggered(){
+  void ViewerGui::on_actionPointcloud_toggled(bool checked){
+    if (m_pointcloudDrawer){
+      if (checked)
+        m_glwidget->addSceneObject(m_pointcloudDrawer);
+      else
+        m_glwidget->removeSceneObject(m_pointcloudDrawer);
+    }
+  }
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+  void ViewerGui::on_actionTrajectory_toggled(bool checked){
+    if (m_trajectoryDrawer){
+      if (checked)
+        m_glwidget->addSceneObject(m_trajectoryDrawer);
+      else
+        m_glwidget->removeSceneObject(m_trajectoryDrawer);
+    }
+  }
 
-    if (m_ocTree) {
-      showInfo("Expanding OcTree... ");
-      m_ocTree->expand();
+  void ViewerGui::on_actionAxes_toggled(bool checked){
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      it->second.octree_drawer->enableAxes(checked);
+    }
+    m_glwidget->updateGL();
+  }
 
+  void ViewerGui::on_actionHideBackground_toggled(bool checked) {
+    OcTreeRecord* r;
+    if (getOctreeRecord(DEFAULT_OCTREE_ID, r)) {
+      if (checked) m_glwidget->removeSceneObject(r->octree_drawer);
+      else         m_glwidget->addSceneObject(r->octree_drawer);
+      m_glwidget->updateGL();
+    }
+  }
+
+  void ViewerGui::on_actionClear_triggered() {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      m_glwidget->removeSceneObject(it->second.octree_drawer);
+      delete (it->second.octree_drawer);
+      delete (it->second.octree);
+    }
+    m_octrees.clear();
+  }
+
+  void ViewerGui::on_actionTest_triggered(){
+
+  }
+
+  void ViewerGui::on_actionReload_Octree_triggered(){
+    generateOctree();
+  }
+
+  void ViewerGui::on_actionConvert_ml_tree_triggered(){
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    //if (m_ocTree) {
+    if (m_octrees.size()) {
+      showInfo("Converting OcTree to maximum Likelihood map... ");
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+        it->second.octree->toMaxLikelihood();
+      }
+      showInfo("Done.", true);
       showOcTree();
 
+      QApplication::restoreOverrideCursor();
+    }
+  }
+
+
+  void ViewerGui::on_actionPrune_tree_triggered(){
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    if (m_octrees.size()) {
+      showInfo("Pruning OcTree... ");
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+        it->second.octree->prune();
+      }
+      showOcTree();
       showInfo("Done.", true);
     }
-
     QApplication::restoreOverrideCursor();
-}
-
-void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
-  if(m_octreeDrawer) {
-    m_octreeDrawer->enableOcTreeCells(enabled);
-    m_glwidget->updateGL();
   }
-}
 
-void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
-  if(m_octreeDrawer) {
-    m_octreeDrawer->enableOcTree(enabled);
-    m_glwidget->updateGL();
+
+  void ViewerGui::on_actionExpand_tree_triggered(){
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // if (m_ocTree) {
+    if (m_octrees.size()) {
+      showInfo("Expanding OcTree... ");
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+        it->second.octree->expand();
+      }
+      showOcTree();
+      
+      showInfo("Done.", true);
+    }    
+    QApplication::restoreOverrideCursor();
   }
-}
 
-void ViewerGui::on_actionFree_toggled(bool enabled) {
-  if(m_octreeDrawer) {
-    m_octreeDrawer->enableFreespace(enabled);
-    m_glwidget->updateGL();
-  }
-}
 
-void ViewerGui::on_actionSelected_toggled(bool enabled) {
-  if(m_octreeDrawer) {
-    m_octreeDrawer->enableSelection(enabled);
-
-    // just for testing, you should set the selection somewhere else and only enable it here:
-    if (enabled){
-      std::list<OcTreeVolume> selection;
-      std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
-      selection.push_back(volume);
-      m_octreeDrawer->setOcTreeSelection(selection);
-
-    } else{
-      m_octreeDrawer->clearOcTreeSelection();
+  void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      it->second.octree_drawer->enableOcTreeCells(enabled);
     }
     m_glwidget->updateGL();
   }
+
+  void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      it->second.octree_drawer->enableOcTree(enabled);
+    }
+    m_glwidget->updateGL();
+  }
+
+  void ViewerGui::on_actionFree_toggled(bool enabled) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      it->second.octree_drawer->enableFreespace(enabled);
+    }
+    m_glwidget->updateGL();
+  
+  }
+
+void ViewerGui::on_actionSelected_toggled(bool enabled) {
+  // if(m_octreeDrawer) {
+  //   m_octreeDrawer->enableSelection(enabled);
+
+  //   // just for testing, you should set the selection somewhere else and only enable it here:
+  //   if (enabled){
+  //     std::list<OcTreeVolume> selection;
+  //     std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
+  //     selection.push_back(volume);
+  //     m_octreeDrawer->setOcTreeSelection(selection);
+
+  //   } else{
+  //     m_octreeDrawer->clearOcTreeSelection();
+  //   }
+  //   m_glwidget->updateGL();
+  // }
 }
 
 

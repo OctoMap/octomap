@@ -3,7 +3,7 @@
 /**
 * Octomap:
 * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
 * @see http://octomap.sourceforge.net/
 * License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 */
@@ -61,9 +61,9 @@ namespace octomap {
       scan->transformAbsolute((*graph_it)->pose);
 
       for (Pointcloud::iterator pc_it = scan->begin(); pc_it != scan->end(); ++pc_it){
-        m_pointsArray[3*i] = (pc_it)->x();
-        m_pointsArray[3*i +1] = (pc_it)->y();
-        m_pointsArray[3*i +2] = (pc_it)->z();
+        m_pointsArray[3*i] = pc_it->x();
+        m_pointsArray[3*i +1] = pc_it->y();
+        m_pointsArray[3*i +2] = pc_it->z();
 
         i++;
       }

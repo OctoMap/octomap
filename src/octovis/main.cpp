@@ -3,7 +3,7 @@
 /**
 * Octomap:
 * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
 * @see http://octomap.sourceforge.net/
 * License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 */
@@ -28,15 +28,16 @@
 #include <QApplication>
 #include "ViewerGui.h"
 
-int main(int argc, char *argv[])
-{
-	std::string filename = "";
-	if (argc == 2) {
-		filename = std::string(argv[1]);
-	}
+int main(int argc, char *argv[]) {
 
-	QApplication app(argc, argv);
-	octomap::ViewerGui gui(filename);
-	gui.show();
-	return app.exec();
+  std::string filename = "";
+  if (argc == 2) {
+    filename = std::string(argv[1]);
+  }
+
+  QApplication app(argc, argv);
+
+  octomap::ViewerGui gui(filename);
+  gui.show(); 
+  return app.exec();
 }

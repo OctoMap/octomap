@@ -66,6 +66,9 @@
     <addaction name="actionSelected"/>
     <addaction name="actionOctree_structure"/>
     <addaction name="actionTrajectory"/>
+    <addaction name="actionAxes"/>
+    <addaction name="actionHideBackground"/>
+    <addaction name="actionClear"/>
     <addaction name="separator"/>
     <addaction name="actionReset_view"/>
     <addaction name="actionStore_camera"/>
@@ -158,6 +161,36 @@
    </property>
    <property name="shortcut">
     <string>T</string>
+   </property>
+  </action>
+  <action name="actionAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Submap axes</string>
+   </property>
+   <property name="shortcut">
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionHideBackground">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide background map</string>
+   </property>
+   <property name="shortcut">
+    <string>0</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Remove all objects</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
    </property>
   </action>
   <action name="actionFree">
@@ -274,6 +307,9 @@
    </property>
    <property name="text">
     <string>Height map (color coded)</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
    </property>
   </action>
   <action name="actionChanged_free_only">

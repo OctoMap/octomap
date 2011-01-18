@@ -3,7 +3,7 @@
 /**
 * Octomap:
 * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
 * @see http://octomap.sourceforge.net/
 * License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 */
@@ -51,6 +51,19 @@ namespace octomap {
     */
     virtual void clear(){};
 
+    
+    void setOrigin(octomath::Pose6D& origin_) { origin = origin_; }
+
+
+  public:
+    void enablePrintoutMode(bool enabled = true) { m_printoutMode = enabled; };
+    void enableHeightColorMode(bool enabled = true) { m_heightColorMode = enabled; };
+    void enableAxes(bool enabled = true) { m_display_axes = enabled; };
+
+  protected:
+
+    void drawAxes() const;
+
   protected:
     /// writes rgb values which correspond to a rel. height in the map.
     /// (glArrayPos needs to have at least size 3!)
@@ -59,11 +72,15 @@ namespace octomap {
     double m_zMax;
     bool m_printoutMode;
     bool m_heightColorMode;
+    bool m_display_axes;
 
-  public:
-    void enablePrintoutMode(bool enabled = true) {m_printoutMode = enabled; };
-    void enableHeightColorMode(bool enabled = true) {m_heightColorMode = enabled; };
+    // used to draw axes
+    octomath::Pose6D origin;
+
   };
+
+
+
 
   /**
   * Abstract base class for all objects visualizing ScanGraphs.

@@ -31,17 +31,10 @@ using namespace std;
 namespace octomap{
 
 ViewerWidget::ViewerWidget(QWidget* parent) :
-  QGLViewer(parent),
-  m_zMin(0.0),m_zMax(1.0)
-{
-	m_printoutMode = false;
-	m_heightColorMode = false;
-
-	//connect(this, SIGNAL(cameraIsEditedChanged(bool)), this, SLOT(cameraEdited(bool)));
-
-
-	// TODO: have colors in named arrays
-
+  QGLViewer(parent), m_zMin(0.0),m_zMax(1.0) {
+	
+  m_printoutMode = false;
+  m_heightColorMode = false;      
 }
 
 void ViewerWidget::init() {
@@ -61,7 +54,8 @@ void ViewerWidget::resetView(){
   this->showEntireScene();
   updateGL();
 
-}
+} 
+
 
 QString ViewerWidget::helpString() const{
   QString help = "<h2>Octomap 3D viewer</h2>";
