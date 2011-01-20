@@ -38,7 +38,6 @@ MESSAGE ("\n")
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/src  # for hxx files
 )
 
 
