@@ -43,9 +43,8 @@ TARGET_LINK_LIBRARIES(test_raycasting octomap)
 
 # installation:
 # store all header files to install:
-file(GLOB octomap_HDRS *.h *.hxx *.hpp)
-
-install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
+file(GLOB octomap_impl_HDRS *.h *.hxx *.hpp)
+install(FILES ${octomap_impl_HDRS} DESTINATION include/octomap)
 
 install(TARGETS octomap 
 	graph2tree

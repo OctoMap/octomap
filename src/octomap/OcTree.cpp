@@ -41,8 +41,8 @@
 #include <fstream>
 #include <stdlib.h>
 
-#include "OcTree.h"
-#include "CountingOcTree.h"
+#include <octomap/OcTree.h>
+#include <octomap/CountingOcTree.h>
 
 
 namespace octomap {

@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "octomap.h"
+#include <octomap/octomap.h>
 #include <fstream>
 #include <iostream>
 #include <string.h>

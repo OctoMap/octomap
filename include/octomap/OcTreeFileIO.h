@@ -103,6 +103,6 @@ namespace octomap {
   };
 }
 
-#include "OcTreeFileIO.hxx"
+#include "octomap/OcTreeFileIO.hxx"
 
 #endif

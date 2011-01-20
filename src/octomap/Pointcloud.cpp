@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Pointcloud.h"
+#include <octomap/Pointcloud.h>
 #include <ext/algorithm>
 #include <list>
 #include <fstream>

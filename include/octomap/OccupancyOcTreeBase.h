@@ -275,6 +275,6 @@ namespace octomap {
 
 }
 
-#include "OccupancyOcTreeBase.hxx"
+#include "octomap/OccupancyOcTreeBase.hxx"
 
 #endif

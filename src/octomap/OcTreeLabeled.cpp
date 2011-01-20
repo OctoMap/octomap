@@ -39,8 +39,8 @@
 
 #include <fstream>
 
-#include "OcTree.h"
-#include "OcTreeLabeled.h"
+#include <octomap/OcTree.h>
+#include <octomap/OcTreeLabeled.h>
 
 
 namespace octomap {

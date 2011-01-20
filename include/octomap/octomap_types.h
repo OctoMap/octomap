@@ -44,8 +44,8 @@
 #include <list>
 
 
-#include <octomath/Vector3.h>
-#include <octomath/Pose6D.h>
+#include <octomap/math/Vector3.h>
+#include <octomap/math/Pose6D.h>
 
 namespace octomap {
 

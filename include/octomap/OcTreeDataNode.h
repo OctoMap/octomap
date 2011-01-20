@@ -145,6 +145,6 @@ namespace octomap {
 
 } // end namespace
 
-#include "OcTreeDataNode.hxx"
+#include "octomap/OcTreeDataNode.hxx"
 
 #endif

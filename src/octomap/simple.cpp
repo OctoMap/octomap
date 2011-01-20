@@ -37,8 +37,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "octomap.h"
-#include "OcTreeLabeled.h"
+#include <octomap/octomap.h>
+#include <octomap/OcTreeLabeled.h>
 
 using namespace std;
 using namespace octomap;

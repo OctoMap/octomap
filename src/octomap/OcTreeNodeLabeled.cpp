@@ -41,7 +41,7 @@
 #include <cassert>
 #include <fstream> // REMOVE
 
-#include "OcTreeNodeLabeled.h"
+#include <octomap/OcTreeNodeLabeled.h>
 
 namespace octomap {
 

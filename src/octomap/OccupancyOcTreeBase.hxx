@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CountingOcTree.h"
+#include <octomap/CountingOcTree.h>
 
 
 namespace octomap {

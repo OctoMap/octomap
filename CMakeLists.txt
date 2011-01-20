@@ -3,7 +3,7 @@ PROJECT( octomap )
 
 # version (e.g. for packaging)
 set(V_MAJOR 0)
-set(V_MINOR 8)
+set(V_MINOR 9)
 set(V_PATCH 0)
 
 # get rid of a useless warning:
@@ -25,7 +25,7 @@ SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG -O3 -msse3 -mssse3")
 SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
 # Set output directories for libraries and executables
-SET( BASE_DIR ${CMAKE_SOURCE_DIR}/.. )
+SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
@@ -36,9 +36,9 @@ MESSAGE ("\n")
 MESSAGE (STATUS "Building as ${CMAKE_BUILD_TYPE}")
 MESSAGE ("\n")
 
-# Main include dir is the "src" dir
 INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/src  # for hxx files
 )
 
 
@@ -55,14 +55,19 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 	ARCHIVE DESTINATION lib
 )
 
-ADD_SUBDIRECTORY( octomath )
-ADD_SUBDIRECTORY( octomap )
+ADD_SUBDIRECTORY( src/octomap/math )
+ADD_SUBDIRECTORY( src/octomap )
 
 # installation for external targets:
-install(PROGRAMS "extern/binvox/binvox" DESTINATION bin)
-install(PROGRAMS "extern/binvox/binvox64" DESTINATION bin)
-install(PROGRAMS "extern/binvox/viewvox" DESTINATION bin)
-install(PROGRAMS "extern/binvox/viewvox64" DESTINATION bin)
+install(PROGRAMS "src/extern/binvox/binvox" DESTINATION bin)
+install(PROGRAMS "src/extern/binvox/binvox64" DESTINATION bin)
+install(PROGRAMS "src/extern/binvox/viewvox" DESTINATION bin)
+install(PROGRAMS "src/extern/binvox/viewvox64" DESTINATION bin)
+
+file(GLOB octomap_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/*.h)
+install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
+file(GLOB octomap_math_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/math/*.h)
+install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
 
 
 # Documentation 
@@ -102,7 +107,7 @@ ENDIF()
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
   MESSAGE(STATUS "viewer octovis will be build")
-  ADD_SUBDIRECTORY( octovis ) 
+  ADD_SUBDIRECTORY( src/octovis ) 
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be build.")
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")

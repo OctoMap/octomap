@@ -301,6 +301,6 @@ namespace octomap {
 
 }
 
-#include "OcTreeBase.hxx"
+#include <octomap/OcTreeBase.hxx>
 
 #endif

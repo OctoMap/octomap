@@ -37,12 +37,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Quaternion.h"
-#include "Vector3.h"
+#include <octomap/math/Vector3.h>
+#include <octomap/math/Quaternion.h>
+#include <octomap/math/Utils.h>
 
 #include <cassert>
 #include <math.h>
-#include "Utils.h"
 
 
 // used from Vector: norm2, unit, *

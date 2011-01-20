@@ -37,8 +37,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "octomap.h"
-#include "OcTreeFileIO.h"
+#include <octomap/octomap.h>
+#include <octomap/OcTreeFileIO.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>

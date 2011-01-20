@@ -42,8 +42,8 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include <octomath/Pose6D.h>
-#include "ScanGraph.h"
+#include <octomap/math/Pose6D.h>
+#include <octomap/ScanGraph.h>
 
 namespace octomap {
 

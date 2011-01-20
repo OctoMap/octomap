@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Pose6D.h"
+#include <octomap/math/Pose6D.h>
 #include <math.h>
 
 namespace octomath {

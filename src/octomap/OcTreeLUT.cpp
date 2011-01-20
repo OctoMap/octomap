@@ -40,7 +40,7 @@
 
 #include <list>
 #include <queue>
-#include "OcTreeLUT.h"
+#include <octomap/OcTreeLUT.h>
 
 namespace octomap {
 

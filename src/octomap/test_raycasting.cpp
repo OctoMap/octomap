@@ -1,7 +1,7 @@
 
 #include <stdio.h>
-#include "octomap.h"
-#include <octomath/Utils.h>
+#include <octomap/octomap.h>
+#include <octomap/math/Utils.h>
 
 using namespace std;
 using namespace octomap;

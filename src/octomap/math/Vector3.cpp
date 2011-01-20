@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Vector3.h"
+#include <octomap/math/Vector3.h>
 #include <cassert>
 #include <math.h>
 #include <string.h>
