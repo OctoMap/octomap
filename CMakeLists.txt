@@ -63,7 +63,7 @@ install(PROGRAMS "src/extern/binvox/binvox64" DESTINATION bin)
 install(PROGRAMS "src/extern/binvox/viewvox" DESTINATION bin)
 install(PROGRAMS "src/extern/binvox/viewvox64" DESTINATION bin)
 
-file(GLOB octomap_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/*.h)
+file(GLOB octomap_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/*.h ${CMAKE_SOURCE_DIR}/include/octomap/*.hxx)
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
 file(GLOB octomap_math_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
