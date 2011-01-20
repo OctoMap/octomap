@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_OCTREE_BASE_SE_H
 #define OCTOMAP_OCTREE_BASE_SE_H
 
-// $Id:  $
+// $Id$
 
 /**
 * OctoMap:
