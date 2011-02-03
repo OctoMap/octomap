@@ -60,8 +60,9 @@ namespace octomap {
     Pointcloud(const Pointcloud& other);
     Pointcloud(Pointcloud* other);
 
-    unsigned int size() const {  return points.size(); }
+    size_t size() const {  return points.size(); }
     void clear();
+    inline void reserve(size_t size) {points.reserve(size); }
 
     inline void push_back(float x, float y, float z) {
       points.push_back(point3d(x,y,z));
