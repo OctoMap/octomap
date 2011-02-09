@@ -361,7 +361,7 @@ namespace octomap {
       current_key[dim] += step[dim];
       tMax[dim] += tDelta[dim];
 
-      assert ((current_key[dim] >= 0) && (current_key[dim] < 2*this->tree_max_val));
+      assert (current_key[dim] < 2*this->tree_max_val);
 
       // reached endpoint, key equv?
       if (current_key == key_end) {
