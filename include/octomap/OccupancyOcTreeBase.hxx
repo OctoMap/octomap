@@ -378,7 +378,7 @@ namespace octomap {
       current_key[dim] += step[dim];
       tMax[dim] += tDelta[dim];
 
-      assert ((current_key[dim] >= 0) && (current_key[dim] < 2*this->tree_max_val));
+      assert (current_key[dim] < 2*this->tree_max_val);
 
       // generate world coords from key
       point3d current_endpoint;
