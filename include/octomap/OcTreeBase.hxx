@@ -227,9 +227,7 @@ namespace octomap {
 
   template <class NODE>
   NODE* OcTreeBase<NODE>::search(float x, float y, float z) const {
-
-    point3d p (x,y,z);
-    return this->search(p);
+    return this->search(point3d(x,y,z));
   }
 
 

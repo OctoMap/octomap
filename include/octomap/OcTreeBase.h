@@ -217,6 +217,8 @@ namespace octomap {
     /// Write complete state of tree to stream, no pruning (const version)
     std::ostream& writeConst(std::ostream &s) const;
 
+    /// Make the templated NODE type available from the outside
+    typedef NODE NodeType;
 
  protected:
 
