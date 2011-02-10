@@ -105,10 +105,10 @@ ENDIF()
 
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
-  MESSAGE(STATUS "viewer octovis will be build")
+  MESSAGE(STATUS "viewer octovis will be built")
   ADD_SUBDIRECTORY( src/octovis ) 
 ELSE()
-    MESSAGE ( "Unfortunately, the viewer (octovis) can not be build.")
+    MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
 ENDIF()
 

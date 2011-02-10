@@ -15,6 +15,7 @@ SET( QGLViewer_HOME / CACHE PATH "Where to find QGLViewer" )
 FIND_PATH( QGLViewer_INCLUDE_DIR qglviewer.h
     /usr/include/qglviewer-qt4
     /usr/include/QGLViewer
+    /opt/local/include/QGLViewer
     ${QGLViewer_HOME}
 )
 

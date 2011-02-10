@@ -5,6 +5,13 @@ set(QT_USE_QTXML TRUE)
 # include the files enabled above
 include(${QT_USE_FILE})
 
+# Mac OS X seems to require special linker flags:
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework OpenGL")
+  SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework OpenGL")
+  SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -framework OpenGL")
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
 # sources for octovis library
 set(viewerlib_SRCS
 	SceneObject.cpp
@@ -77,6 +84,15 @@ target_link_libraries(octovis
 	octomap 
 	octovis_library
 )
+
+# special handling of MacOS X:
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  add_custom_command(TARGET octovis POST_BUILD 
+  	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${BASE_DIR}/bin/octovis
+  )
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+
 
 
 # #installation:
