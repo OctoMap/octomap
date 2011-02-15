@@ -100,10 +100,11 @@ and more code is available in Freiburg's ROS repository at:
 
 http://code.google.com/p/alufr-ros-pkg/
 
-The "octomap" package there will provide ROS integration by 
-downloading and compiling the latest release. If you
-plan to use octomap mainly in ROS, just install the octomap_mapping
-stack from there.
+The "octomap_mapping" stack (see http://www.ros.org/wiki/octomap_mapping
+for details) contains the "octomap" package which provides the 
+actual ROS integration by downloading and compiling the latest release. 
+If you plan to use octomap mainly in ROS, just install the 
+octomap_mapping stack.
 
 
 ECLIPSE PROJECT FILES
