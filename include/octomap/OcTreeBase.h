@@ -119,10 +119,12 @@ namespace octomap {
     /// \return The number of nodes in the tree
     inline unsigned int size() const { return tree_size; }
 
-    unsigned int memoryUsage() const;
+    unsigned long int memoryUsage() const;
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
     unsigned int memoryFullGrid();
+
+    double volume();
 
     /// Size of OcTree in meters for x, y and z dimension
     void getMetricSize(double& x, double& y, double& z);
@@ -135,6 +137,9 @@ namespace octomap {
 
     /// Traverses the tree to calculate the total number of nodes
     unsigned int calcNumNodes() const;
+
+    /// Traverses the tree to calculate the total number of leaf nodes
+    unsigned int getNumLeafNodes() const;
 
 
     // -- access tree nodes  ------------------
@@ -278,6 +283,12 @@ namespace octomap {
     /// Recursive call for getVoxels()
     void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
                          NODE* node, unsigned int depth, const point3d& parent_center) const;
+
+
+    unsigned int getNumLeafNodesRecurs(const NODE* parent) const;
+
+    void calcMinMaxRecurs(NODE* node, unsigned int depth, const point3d& parent_center);
+
     
   protected:
 

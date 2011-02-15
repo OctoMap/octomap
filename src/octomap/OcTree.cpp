@@ -113,14 +113,6 @@ namespace octomap {
   
   // -- Information  ---------------------------------  
 
-  unsigned int OcTree::memoryUsage() const{
-    unsigned int node_size = sizeof(OcTreeNode);
-    point3d_list leafs;
-    this->getLeafNodes(leafs);
-    unsigned int inner_nodes = tree_size - leafs.size();
-    return (sizeof(OcTree) + node_size * tree_size + inner_nodes * sizeof(OcTreeNode*[8]));
-  }
-
   
   void OcTree::calcNumThresholdedNodes(unsigned int& num_thresholded, 
                                        unsigned int& num_other) const {

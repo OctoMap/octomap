@@ -294,7 +294,7 @@ namespace octomap{
       for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
         tree->insertScan(**it, m_laserMaxRange);
         fprintf(stderr, "generateOctree:: inserting scan node with %d points, origin: %.2f  ,%.2f , %.2f.\n",
-                (*it)->scan->size(), (*it)->pose.x(), (*it)->pose.y(), (*it)->pose.z()  );
+                (unsigned int) (*it)->scan->size(), (*it)->pose.x(), (*it)->pose.y(), (*it)->pose.z()  );
 
         std::cout << " S ("<<currentScan<<"/"<<numScans<<") " << std::flush;
         currentScan++;

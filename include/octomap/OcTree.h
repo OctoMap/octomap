@@ -105,9 +105,6 @@ namespace octomap {
 
     // -- Information  ---------------------------------
 
-    /// \return Memory usage of the OcTree in bytes.
-    unsigned int memoryUsage() const;
-
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const; 
 
 
