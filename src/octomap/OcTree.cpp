@@ -62,43 +62,6 @@ namespace octomap {
   }
 
   
-  
-  // performs transformation to data and sensor origin first
-  void OcTree::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
-    Pointcloud& cloud = *(scan.scan);
-    pose6d frame_origin = scan.pose;
-    point3d sensor_origin = frame_origin.inv().transform(scan.pose.trans());    
-    OccupancyOcTreeBase<OcTreeNode>::insertScan(cloud, sensor_origin, frame_origin, maxrange, pruning);
-  }
-
-
-  // deprecated: use above method instead
-  void OcTree::insertScan(const Pointcloud& pc, const pose6d& originPose, 
-                          double maxrange, bool pruning) {
-    point3d sensor_origin = originPose.trans();
-    pose6d frame_origin = originPose;
-    OccupancyOcTreeBase<OcTreeNode>::insertScan(pc, sensor_origin, frame_origin, maxrange, pruning);
-  }
-
-
-  void OcTree::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning) {
-    if (pc.size() < 1)
-      return;
-
-    // integrate each single beam
-    octomap::point3d p;
-    for (octomap::Pointcloud::const_iterator point_it = pc.begin();
-         point_it != pc.end(); point_it++) {
-      this->insertRay(origin, *point_it, maxrange);
-    }
-
-    if (pruning)
-      this->prune();
-  }
-
-
-
-
   void OcTree::toMaxLikelihood() {
 
     // convert bottom up

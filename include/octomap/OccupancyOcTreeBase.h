@@ -78,7 +78,7 @@ namespace octomap {
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
      */
-    void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
+    virtual void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin,
                     double maxrange=-1., bool pruning=true);
 
 
@@ -91,8 +91,25 @@ namespace octomap {
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
      */
-    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
+    virtual void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
                     double maxrange=-1., bool pruning = true);
+
+
+    /**
+     * Insert a 3d scan (given as a ScanNode) into the tree.
+     *
+     * @param scan ScanNode contains Pointcloud data and frame/sensor origin
+     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+     */
+    virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true);
+
+
+    /// deprecated, use above method instead
+    virtual void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) __attribute__ ((deprecated));
+
+    /// for testing only
+    virtual void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);
 
     /**
      * Integrate occupancy measurement.
@@ -110,7 +127,7 @@ namespace octomap {
      * @param log_odds_update value to be added (+) to log_odds value of node
      * @return pointer to the updated NODE
      */
-    NODE* updateNode(const point3d& value, float log_odds_update);
+    virtual NODE* updateNode(const point3d& value, float log_odds_update);
 
 
     /**
@@ -135,7 +152,7 @@ namespace octomap {
      * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */
-    bool castRay(const point3d& origin, const point3d& direction, point3d& end,
+    virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
    

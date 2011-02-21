@@ -41,6 +41,9 @@ TARGET_LINK_LIBRARIES(labeled_demo octomap)
 ADD_EXECUTABLE(test_raycasting test_raycasting.cpp)
 TARGET_LINK_LIBRARIES(test_raycasting octomap)
 
+ADD_EXECUTABLE(test_scans test_scans.cpp)
+TARGET_LINK_LIBRARIES(test_scans octomap)
+
 # installation:
 # store all header files to install:
 # file(GLOB octomap_impl_HDRS *.h *.hxx *.hpp)

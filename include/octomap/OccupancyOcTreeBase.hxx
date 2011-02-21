@@ -55,6 +55,28 @@ namespace octomap {
   OccupancyOcTreeBase<NODE>::~OccupancyOcTreeBase(){
   }
 
+
+
+  // performs transformation to data and sensor origin first
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScan(const ScanNode& scan, double maxrange, bool pruning) {
+    Pointcloud& cloud = *(scan.scan);
+    pose6d frame_origin = scan.pose;
+    point3d sensor_origin = frame_origin.inv().transform(scan.pose.trans());
+    insertScan(cloud, sensor_origin, frame_origin, maxrange, pruning);
+  }
+
+
+  // deprecated: use above method instead, or the new interface below
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& pc, const pose6d& originPose,
+                          double maxrange, bool pruning) {
+    point3d sensor_origin = originPose.trans();
+    pose6d frame_origin = originPose;
+    insertScan(pc, sensor_origin, frame_origin, maxrange, pruning);
+  }
+
+
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
                                              double maxrange, bool pruning) {
@@ -83,6 +105,23 @@ namespace octomap {
     transformed_scan.transform(frame_origin);
     point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
     insertScan(transformed_scan, transformed_sensor_origin, maxrange, pruning); 
+  }
+
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning) {
+    if (pc.size() < 1)
+      return;
+
+    // integrate each single beam
+    octomap::point3d p;
+    for (octomap::Pointcloud::const_iterator point_it = pc.begin();
+         point_it != pc.end(); point_it++) {
+      this->insertRay(origin, *point_it, maxrange);
+    }
+
+    if (pruning)
+      this->prune();
   }
 
 

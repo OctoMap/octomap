@@ -72,31 +72,7 @@ namespace octomap {
      */
     OcTree(std::string _filename);
 
-
-    // Note: To insert 3d scans into the OcTree, use these methods from OccupancyOcTreeBase:
-
-    //    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, 
-    //                    double maxrange=-1., bool pruning = true);
-    //    void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
-    //                    double maxrange=-1., bool pruning = true);
-
-
-
-    /**
-     * Insert a 3d scan (given as a ScanNode) into the tree.
-     *
-     * @param scan ScanNode contains Pointcloud data and frame/sensor origin
-     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
-     * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
-     */
-    void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true);
-
-
-    /// deprecated, use above method instead
-    void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) __attribute__ ((deprecated));
-    /// for testing only
-    void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);
-
+    virtual ~OcTree(){};
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
     /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
