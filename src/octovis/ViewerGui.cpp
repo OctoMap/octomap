@@ -268,9 +268,8 @@ namespace octomap{
     // generate cubes -> display
 
     for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-      it->second.octree_drawer->setOrigin(it->second.origin);
       it->second.octree_drawer->setMax_tree_depth(m_max_tree_depth);
-      it->second.octree_drawer->setOcTree(*(it->second.octree), it->second.origin);
+      it->second.octree_drawer->setOcTree(*(it->second.octree), it->second.origin, it->second.id);
     }
 
   }
@@ -349,6 +348,51 @@ namespace octomap{
 
   //   showOcTree();
   //   //    m_glwidget->resetView();
+  // }
+
+
+  // void ViewerGui::handleMoveMapMsg(const octomap2::MoveMap::ConstPtr& msg) {
+
+  //   octomath::Vector3 trans (msg->transform.position.x, msg->transform.position.y, msg->transform.position.z);
+  //   octomath::Quaternion rot (msg->transform.orientation.w, msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z);
+  //   octomap::pose6d transform (trans, rot);
+  //   std::cout << transform << std::endl;
+    
+  //   OcTreeRecord* r;
+  //   if (getOctreeRecord(msg->id, r)) {
+
+  //     if (msg->absolute) {  // absolute movement -> set origin
+
+  //       r->origin = transform;
+  //       r->octree_drawer->setOrigin(transform);
+
+  //       fprintf(stderr, "received new origin for map id=%d: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
+  //               msg->id, msg->transform.position.x, msg->transform.position.y, msg->transform.position.z,
+  //               msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z,
+  //               msg->transform.orientation.w
+  //               );
+  //     }
+
+  //     else { // relative movement -> transform pose
+
+  //       octomap::pose6d T = r->origin;
+  //       octomath::Quaternion rot_new = T.rot() * transform.rot();
+  //       octomap::point3d trans_new = T.trans() + transform.trans();
+
+  //       r->origin = octomap::pose6d(trans_new, rot_new);
+  //       r->octree_drawer->setOrigin(r->origin);
+
+  //       fprintf(stderr, "received relative transform for map id=%d: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
+  //               msg->id, msg->transform.position.x, msg->transform.position.y, msg->transform.position.z,
+  //               msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z,
+  //               msg->transform.orientation.w
+  //               );
+  //     }
+  //     m_glwidget->updateGL();
+  //   }
+  //   else {
+  //     fprintf(stderr, "ERROR: map %d does not exist\n", msg->id);
+  //   }
   // }
 
 
@@ -747,17 +791,32 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionPrintout_mode_toggled(bool checked){
-    if (checked)
+    if (checked) {
       ui.actionHeight_map->setChecked(false);
+      ui.actionSemanticColoring->setChecked(false);
+    }
+
     m_glwidget->enablePrintoutMode(checked);
   }
 
   void ViewerGui::on_actionHeight_map_toggled(bool checked){
-    if (checked)
+    if (checked) {
       ui.actionPrintout_mode->setChecked(false);
+      ui.actionSemanticColoring->setChecked(false);
+    }
 
     m_glwidget->enableHeightColorMode(checked);
   }
+
+  void ViewerGui::on_actionSemanticColoring_toggled(bool checked) {
+    if (checked) {
+      ui.actionHeight_map->setChecked(false);
+      ui.actionPrintout_mode->setChecked(false);
+    }
+
+    m_glwidget->enableSemanticColoring(checked);
+  }
+
 
   void ViewerGui::on_actionStore_camera_triggered(){
     m_glwidget->camera()->deletePath(0);

@@ -33,8 +33,13 @@
 namespace octomap {
 
   SceneObject::SceneObject() :
-    m_zMin(0.0), m_zMax(1.0), m_printoutMode(false), m_heightColorMode(false), m_display_axes(false) {
+    m_zMin(0.0), m_zMax(1.0), m_printoutMode(false), m_heightColorMode(false), m_semantic_coloring(false) {
+  }
 
+  void SceneObject::enableSemanticColoring(bool enabled) { 
+    m_semantic_coloring = enabled;
+    // if (m_semantic_coloring) printf("enabled semantic colors\n");
+    // else                     printf("disabled semantic colors\n");
   }
 
   void SceneObject::heightMapColor(double h, GLfloat* glArrayPos) const {
@@ -93,54 +98,5 @@ namespace octomap {
 
 
   
-  void SceneObject::drawAxes() const {
-
-    glPushMatrix();
-
-    float length = .15; 
-
-    GLboolean lighting, colorMaterial;
-    glGetBooleanv(GL_LIGHTING, &lighting);
-    glGetBooleanv(GL_COLOR_MATERIAL, &colorMaterial);
-
-    glDisable(GL_COLOR_MATERIAL);
-
-    glTranslatef(origin.trans().x(), origin.trans().y(), origin.trans().z());
-
-    double angle= 2 * acos(origin.rot().u());
-    double scale = sqrt (origin.rot().x()*origin.rot().x() + origin.rot().y()*origin.rot().y() + origin.rot().z()*origin.rot().z());
-    double ax= origin.rot().x() / scale;
-    double ay= origin.rot().y() / scale;
-    double az= origin.rot().z() / scale;
-
-    if (angle > 0) glRotatef(RAD2DEG(angle), ax, ay, az);
-
-    float color[4];
-    color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-    QGLViewer::drawArrow(length, 0.01*length);
-
-    color[0] = 1.0f;  color[1] = 0.7f;  color[2] = 0.7f;  color[3] = 1.0f;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-    glPushMatrix();
-    glRotatef(90.0, 0.0, 1.0, 0.0);
-    QGLViewer::drawArrow(length, 0.01*length);
-    glPopMatrix();
-
-    color[0] = 0.7f;  color[1] = 1.0f;  color[2] = 0.7f;  color[3] = 1.0f;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-    glPushMatrix();
-    glRotatef(-90.0, 1.0, 0.0, 0.0);
-    QGLViewer::drawArrow(length, 0.01*length);
-    glPopMatrix();
-
-    if (colorMaterial)
-      glEnable(GL_COLOR_MATERIAL);
-    if (!lighting)
-      glDisable(GL_LIGHTING);
-
-    glPopMatrix();
-
-  }
 
 }

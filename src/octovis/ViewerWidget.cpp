@@ -35,6 +35,7 @@ ViewerWidget::ViewerWidget(QWidget* parent) :
 	
   m_printoutMode = false;
   m_heightColorMode = false;      
+  m_semantic_coloring = false;      
 }
 
 void ViewerWidget::init() {
@@ -89,6 +90,15 @@ void ViewerWidget::enablePrintoutMode(bool enabled) {
   }
   updateGL();
 }
+
+void ViewerWidget::enableSemanticColoring (bool enabled) {
+  m_semantic_coloring = enabled;
+  for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); it++) {
+      (*it)->enableSemanticColoring(enabled);
+  }
+  updateGL();
+}
+
 
 qglviewer::Quaternion ViewerWidget::poseToQGLQuaternion(const octomath::Pose6D& pose) {
 	// copying octomap::Quaternion parameters to qglviewer::Quaternion does not work (reason unknown)

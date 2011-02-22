@@ -31,8 +31,11 @@
      </item>
      <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="resolution">
+       <property name="decimals">
+         <number>3</number>
+       </property>
        <property name="singleStep">
-        <double>0.010000000000000</double>
+        <double>0.001000000000000</double>
        </property>
        <property name="value">
         <double>0.100000000000000</double>
@@ -71,7 +74,20 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="maxRange"/>
+       <widget class="QDoubleSpinBox" name="maxRange">
+         <property name="minimum">
+           <double>-1.0</double>           
+         </property>
+         <property name="maximum">
+           <double>1000.0</double>           
+         </property>
+         <property name="singleStep">
+           <double>0.1</double>
+         </property>
+         <property name="value">
+           <double>-1.0</double>
+         </property>
+       </widget>
      </item>
     </layout>
    </item>

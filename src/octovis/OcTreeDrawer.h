@@ -37,13 +37,18 @@ namespace octomap {
     virtual ~OcTreeDrawer();
     void clear();
 
+    void draw() const;
+
+    // initialization of drawer --------------------------
+
     /// sets a new OcTree that should be drawn by this drawer
     void setOcTree(const octomap::OcTree &octree);
 
     // same as setOcTree but takes an additional origin transformation
-    void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin);
+    void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin, int map_id_);
 
-    void draw() const;
+
+    // modification of running drawer -------------------
 
     /// sets a new selection of the current OcTree to be drawn
     void setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedPoints);
@@ -60,6 +65,12 @@ namespace octomap {
     void enableSelection(bool enabled = true) {m_drawSelection = enabled; };
     void setMax_tree_depth(unsigned int max_tree_depth) {m_max_tree_depth = max_tree_depth;};
 
+    // set new origin (move object)
+    void setOrigin(octomap::pose6d t);
+    void enableAxes(bool enabled = true) { m_display_axes = enabled; };
+
+
+
   protected:
     //void clearOcTree();
     void clearOcTreeStructure();
@@ -70,6 +81,8 @@ namespace octomap {
     void drawSelection() const;
     void drawCubes(GLfloat** cubeArray, unsigned int cubeArraySize,
         GLfloat* cubeColorArray = NULL) const;
+
+    void drawAxes() const;
 
     //! Initializes the OpenGL visualization for a list of OcTreeVolumes
     //! The array is cleared first, if needed
@@ -118,9 +131,15 @@ namespace octomap {
     bool m_drawFree;
     bool m_drawSelection;
     bool m_octree_grid_vis_initialized;
+    bool m_display_axes;
 
     unsigned int m_max_tree_depth;
     double m_alphaOccupied;
+
+    octomap::pose6d origin;
+    octomap::pose6d initial_origin;
+
+    int map_id;
 
   };
 }

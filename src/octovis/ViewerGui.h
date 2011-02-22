@@ -77,7 +77,8 @@ namespace octomap {
     void addNextScans(unsigned scans);
     void gotoFirstScan();
 
-    //    void handleOctomapBinaryMsg(const octomap2::OctomapBinary::ConstPtr& msg);
+    /* void handleOctomapBinaryMsg(const octomap2::OctomapBinary::ConstPtr& msg); */
+    /* void handleMoveMapMsg(const octomap2::MoveMap::ConstPtr& msg); */
 
     bool isShown();
 
@@ -99,6 +100,7 @@ namespace octomap {
     void on_actionReload_Octree_triggered();
     void on_actionPrintout_mode_toggled(bool checked);
     void on_actionHeight_map_toggled(bool checked);
+    void on_actionSemanticColoring_toggled(bool checked);
     void on_actionStore_camera_triggered();
     void on_actionRestore_camera_triggered();
     void on_actionPointcloud_toggled(bool checked);

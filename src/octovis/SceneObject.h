@@ -51,18 +51,10 @@ namespace octomap {
     */
     virtual void clear(){};
 
-    
-    void setOrigin(octomath::Pose6D& origin_) { origin = origin_; }
-
-
   public:
-    void enablePrintoutMode(bool enabled = true) { m_printoutMode = enabled; };
-    void enableHeightColorMode(bool enabled = true) { m_heightColorMode = enabled; };
-    void enableAxes(bool enabled = true) { m_display_axes = enabled; };
-
-  protected:
-
-    void drawAxes() const;
+    inline void enablePrintoutMode(bool enabled = true) { m_printoutMode = enabled; };
+    inline void enableHeightColorMode(bool enabled = true) { m_heightColorMode = enabled; };
+    void enableSemanticColoring(bool enabled = true);
 
   protected:
     /// writes rgb values which correspond to a rel. height in the map.
@@ -72,11 +64,7 @@ namespace octomap {
     double m_zMax;
     bool m_printoutMode;
     bool m_heightColorMode;
-    bool m_display_axes;
-
-    // used to draw axes
-    octomath::Pose6D origin;
-
+    bool m_semantic_coloring;
   };
 
 

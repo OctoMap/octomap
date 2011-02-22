@@ -26,18 +26,21 @@
 
 #include "OcTreeDrawer.h"
 
+#define OTD_RAD2DEG 57.2957795
+
 namespace octomap {
 
   OcTreeDrawer::OcTreeDrawer() : SceneObject(),
                                  m_occupiedThresSize(0), m_freeThresSize(0),
                                  m_occupiedSize(0), m_freeSize(0), m_selectionSize(0),
-                                 octree_grid_vertex_size(0), m_alphaOccupied(0.8)
+                                 octree_grid_vertex_size(0), m_alphaOccupied(0.8), map_id(0)
   {
     m_octree_grid_vis_initialized = false;
     m_drawOccupied = true;
     m_drawOcTreeGrid = false;
     m_drawFree = false;
     m_drawSelection = true;
+    m_display_axes = false;
 
     m_occupiedArray = NULL;
     m_freeArray = NULL;
@@ -46,23 +49,34 @@ namespace octomap {
     m_occupiedColorArray = NULL;
     m_occupiedThresColorArray = NULL;
     m_selectionArray = NULL;
+
+    // origin and movement
+    initial_origin = octomap::pose6d(0,0,0,0,0,0);
+    origin = initial_origin;
   }
 
   OcTreeDrawer::~OcTreeDrawer() {
     clear();
   }
 
-
-
   void OcTreeDrawer::draw() const {
 
     // push current status
     glPushMatrix();
+    octomap::pose6d relative_transform = origin * initial_origin.inv();
 
-    // use current movement matrix
-    // to trans / rot 
-    //    glTranslatef(origin.trans().x(), origin.trans().y(), origin.trans().z());
-    //    glRotatef(-90.0, 1.0, 0.0, 0.0);
+    // apply relative transform
+    const octomath::Quaternion& q = relative_transform.rot();
+    glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
+    
+    // convert quaternion to angle/axis notation
+    float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+    float axis_x = q.x() / scale;
+    float axis_y = q.y() / scale;
+    float axis_z = q.z() / scale;
+    float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
+
+    glRotatef(angle, axis_x, axis_y, axis_z);
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -85,7 +99,6 @@ namespace octomap {
     glPopMatrix();
 
   }
-
 
 
   void OcTreeDrawer::setAlphaOccupied(double alpha){
@@ -124,9 +137,17 @@ namespace octomap {
 
     generateCubes(occupiedVoxels, &m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
     generateCubes(freeVoxels, &m_freeArray, m_freeSize);
+
+    this->map_id = 0;
   }
 
-  void OcTreeDrawer::setOcTree(const octomap::OcTree &octree, octomap::pose6d origin) {
+  void OcTreeDrawer::setOcTree(const octomap::OcTree &octree, octomap::pose6d origin_, int map_id_) {
+
+    this->map_id = map_id_;
+
+    // origin is in global coords
+    this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), origin_.rot()); // save origin used during cube generation
+    this->origin = origin_;
 
     std::list<octomap::OcTreeVolume> occupiedVoxels;
     std::list<octomap::OcTreeVolume> occupiedThresVoxels;
@@ -142,19 +163,19 @@ namespace octomap {
 
     // transform voxel origins
     for (std::list<octomap::OcTreeVolume>::iterator it = occupiedVoxels.begin(); it != occupiedVoxels.end(); it++) {
-      it->first = origin.transform(it->first);
+      it->first = origin.rot().rotate(it->first);
     }
     for (std::list<octomap::OcTreeVolume>::iterator it = occupiedThresVoxels.begin(); it != occupiedThresVoxels.end(); it++) {
-      it->first = origin.transform(it->first);
+      it->first = origin.rot().rotate(it->first);
     }
     for (std::list<octomap::OcTreeVolume>::iterator it = freeVoxels.begin(); it != freeVoxels.end(); it++) {
-      it->first = origin.transform(it->first);
+      it->first = origin.rot().rotate(it->first);
     }
     for (std::list<octomap::OcTreeVolume>::iterator it = freeThresVoxels.begin(); it != freeThresVoxels.end(); it++) {
-      it->first = origin.transform(it->first);
+      it->first = origin.rot().rotate(it->first);
     }
     for (std::list<octomap::OcTreeVolume>::iterator it = m_grid_voxels.begin(); it != m_grid_voxels.end(); it++) {
-      it->first = origin.transform(it->first);
+      it->first = origin.rot().rotate(it->first);
     }
     
 
@@ -727,26 +748,43 @@ namespace octomap {
   void OcTreeDrawer::drawOccupiedVoxels() const {
 
 
-    // colors for printout mode:
-    if (m_printoutMode) {
-      if (!m_drawFree) { // gray on white background
-        glColor3f(0.5f, 0.5f, 0.5f);
+    if (m_semantic_coloring) {
+      // hardcoded mapping id -> colors
+      if (this->map_id == 0) {  // background
+        glColor3f(0.784f, 0.66f, 0); // gold
       }
-      else {
-        glColor3f(0.1f, 0.1f, 0.1f);
+      else if (this->map_id == 1) {  // table
+        glColor3f(0.68f, 0., 0.62f); // purple
       }
-    }
-
-    // draw binary occupied cells
-    if (m_occupiedThresSize != 0) {
-      if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
+      else { // object
+        glColor3f(0., 0.784f, 0.725f); // cyan
+      }
       drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
     }
+    
+    else {
+      
+      // colors for printout mode:
+      if (m_printoutMode) {
+        if (!m_drawFree) { // gray on white background
+          glColor3f(0.6f, 0.6f, 0.6f);
+        }
+        else {
+          glColor3f(0.1f, 0.1f, 0.1f);
+        }  
+      }
+      
+      // draw binary occupied cells
+      if (m_occupiedThresSize != 0) {
+        if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
+        drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
+      }
 
-    // draw delta occupied cells
-    if (m_occupiedSize != 0) {
-      if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
-      drawCubes(m_occupiedArray, m_occupiedSize, m_occupiedColorArray);
+      // draw delta occupied cells
+      if (m_occupiedSize != 0) {
+        if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
+        drawCubes(m_occupiedArray, m_occupiedSize, m_occupiedColorArray);
+      }
     }
 
   }
@@ -898,6 +936,73 @@ namespace octomap {
     if(m_drawOcTreeGrid && !m_octree_grid_vis_initialized) {
       initOctreeGridVis();
     }
+  }
+
+
+  void OcTreeDrawer::setOrigin(octomap::pose6d t){
+    origin = t;  
+    std::cout << "OcTreeDrawer: setting new global origin: " << t << std::endl;
+
+
+    octomap::pose6d relative_transform = origin * initial_origin.inv();
+
+    std::cout << "origin        : " << origin << std::endl;
+    std::cout << "inv init orig : " << initial_origin.inv() << std::endl;
+    std::cout << "relative trans: " << relative_transform << std::endl;
+  }
+
+  void OcTreeDrawer::drawAxes() const {
+
+    octomap::pose6d relative_transform = origin * initial_origin.inv();
+
+    glPushMatrix();
+
+    float length = .15; 
+
+    GLboolean lighting, colorMaterial;
+    glGetBooleanv(GL_LIGHTING, &lighting);
+    glGetBooleanv(GL_COLOR_MATERIAL, &colorMaterial);
+
+    glDisable(GL_COLOR_MATERIAL);
+
+    double angle= 2 * acos(initial_origin.rot().u());
+    double scale = sqrt (initial_origin.rot().x()*initial_origin.rot().x() 
+                         + initial_origin.rot().y()*initial_origin.rot().y() 
+                         + initial_origin.rot().z()*initial_origin.rot().z());
+    double ax= initial_origin.rot().x() / scale;
+    double ay= initial_origin.rot().y() / scale;
+    double az= initial_origin.rot().z() / scale;
+
+    if (angle > 0) glRotatef(OTD_RAD2DEG*angle, ax, ay, az);
+
+    float color[4];
+    color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+    QGLViewer::drawArrow(length, 0.01*length);
+
+    color[0] = 1.0f;  color[1] = 0.7f;  color[2] = 0.7f;  color[3] = 1.0f;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+    glPushMatrix();
+    glRotatef(90.0, 0.0, 1.0, 0.0);
+    QGLViewer::drawArrow(length, 0.01*length);
+    glPopMatrix();
+
+    color[0] = 0.7f;  color[1] = 1.0f;  color[2] = 0.7f;  color[3] = 1.0f;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+    glPushMatrix();
+    glRotatef(-90.0, 1.0, 0.0, 0.0);
+    QGLViewer::drawArrow(length, 0.01*length);
+    glPopMatrix();
+
+    glTranslatef(relative_transform.trans().x(), relative_transform.trans().y(), relative_transform.trans().z());
+
+    if (colorMaterial)
+      glEnable(GL_COLOR_MATERIAL);
+    if (!lighting)
+      glDisable(GL_LIGHTING);
+
+    glPopMatrix();
+
   }
 
 }

@@ -59,6 +59,7 @@ class ViewerWidget : public QGLViewer {
  public slots:
   void enablePrintoutMode (bool enabled = true);
   void enableHeightColorMode (bool enabled = true);
+  void enableSemanticColoring (bool enabled = true);
   void setCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
   void setCamPose(const octomath::Pose6D& pose);
   virtual void setSceneBoundingBox(const qglviewer::Vec& min, const qglviewer::Vec& max);
@@ -101,6 +102,7 @@ signals:
 
   bool m_printoutMode;
   bool m_heightColorMode;
+  bool m_semantic_coloring;
 
   bool m_drawAxis; // actual state of axis (original overwritten)
   bool m_drawGrid; // actual state of grid (original overwritten)
