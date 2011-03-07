@@ -60,28 +60,28 @@ IF(BUILD_LIB_FROM_SOURCE)
 
   MESSAGE(STATUS "\t generating Makefile using qmake")
   EXECUTE_PROCESS(
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/extern/QGLViewer
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer
     COMMAND qmake
     OUTPUT_QUIET
   )
 
   MESSAGE(STATUS "\t building library")
   EXECUTE_PROCESS(
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/extern/QGLViewer
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer
     COMMAND make
     OUTPUT_QUIET
   )
 
   FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLViewer_HOME})
-  FIND_PATH(QGLLIB libQGLViewer.so  ${CMAKE_SOURCE_DIR}/extern/QGLViewer)
+  FIND_PATH(QGLLIB libQGLViewer.so  ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer)
 
   IF (NOT QGLLIB)
     MESSAGE(STATUS "\nfailed to build libQGLViewer")
     SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" FORCE )
   ELSE()
     MESSAGE(STATUS "Successfully built ${QGLLIB}")
-    SET( QGLViewer_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/extern/QGLViewer CACHE PATH "QGLViewer Include directory" FORCE)
-    SET( QGLViewer_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/extern/QGLViewer CACHE PATH "QGLViewer Library directory" FORCE)
+    SET( QGLViewer_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer CACHE PATH "QGLViewer Include directory" FORCE)
+    SET( QGLViewer_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer CACHE PATH "QGLViewer Library directory" FORCE)
     #  TODO: also include "m pthread  QGLViewerGen QGLViewerUtility"?
     SET( QGLViewer_LIBRARIES QGLViewer)
     SET( QGLViewer_FOUND 1 CACHE BOOL "Do we have QGLViewer?" FORCE )
