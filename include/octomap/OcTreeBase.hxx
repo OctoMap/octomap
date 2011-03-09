@@ -587,11 +587,8 @@ namespace octomap {
             computeChildCenter(i, center_offset, parent_center, search_center);
             getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center);
 
-          } else{ // GetChild
-            double voxelSize = resolution * pow(2., double(tree_depth - depth));
-            voxels.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
           }
-        } // depth
+        }
       }
       double voxelSize = resolution * pow(2., double(tree_depth - depth));
       voxels.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
