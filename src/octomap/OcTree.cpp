@@ -125,7 +125,7 @@ namespace octomap {
 
       unsigned int tree_read_size = 0;
       s.read((char*)&tree_read_size, sizeof(tree_read_size));
-      std::cerr << "Reading "
+      std::cout << "Reading "
           << tree_read_size
           << " nodes from bonsai tree file..." <<std::flush;
 
@@ -133,7 +133,7 @@ namespace octomap {
 
       tree_size = calcNumNodes();  // compute number of nodes
 
-      std::cerr << " done.\n";
+      std::cout << " done.\n";
     } else if (tree_type == OcTree::TREETYPE+1){
       this->read(s);
     } else{
@@ -190,12 +190,13 @@ namespace octomap {
     s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
     unsigned int tree_write_size = this->size(); 
-    fprintf(stderr, "writing %d nodes to output stream...", tree_write_size); fflush(stderr);
+    std::cout << "Writing " << tree_write_size 
+	      << " nodes to output stream..." << std::flush;
     s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
     itsRoot->writeBinary(s);
 
-    fprintf(stderr, " done.\n");
+    std::cout <<  " done.\n";
 
     return s;
   }
