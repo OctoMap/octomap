@@ -682,7 +682,7 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::memoryFullGrid() {
+  size_t OcTreeBase<NODE>::memoryFullGrid() {
     double size_x, size_y, size_z;
     getMetricSize(size_x, size_y,size_z);
     
@@ -690,7 +690,7 @@ namespace octomap {
     return (unsigned int) (ceil(resolution_factor * (double) size_x) * //sizeof (unsigned int*) *
                            ceil(resolution_factor * (double) size_y) * //sizeof (unsigned int*) *
                            ceil(resolution_factor * (double) size_z)) *
-      sizeof(itsRoot->getValue());
+			  sizeof(itsRoot->getValue());
 
   }
 
@@ -857,11 +857,11 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned long int OcTreeBase<NODE>::memoryUsage() const{
+  size_t OcTreeBase<NODE>::memoryUsage() const{
 
-    unsigned int node_size = sizeof(NODE);
+    size_t node_size = sizeof(NODE);
     unsigned int num_leaf_nodes = this->getNumLeafNodes();
-    unsigned long int num_inner_nodes = tree_size - num_leaf_nodes;
+    unsigned int num_inner_nodes = tree_size - num_leaf_nodes;
 
     return (sizeof(OcTreeBase<NODE>) + node_size * tree_size + num_inner_nodes * sizeof(NODE*[8]));
   }

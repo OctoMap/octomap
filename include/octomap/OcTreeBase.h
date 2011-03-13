@@ -119,10 +119,10 @@ namespace octomap {
     /// \return The number of nodes in the tree
     inline unsigned int size() const { return tree_size; }
 
-    unsigned long int memoryUsage() const;
+    size_t memoryUsage() const;
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
-    unsigned int memoryFullGrid();
+    size_t memoryFullGrid();
 
     double volume();
 
