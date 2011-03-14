@@ -272,6 +272,7 @@ namespace octomap{
       it->second.octree_drawer->setOcTree(*(it->second.octree), it->second.origin, it->second.id);
     }
 
+    m_glwidget->updateGL();
   }
 
 
@@ -503,14 +504,14 @@ namespace octomap{
 
     // read pointcloud from file
     std::ifstream s(m_filename.c_str());
-    Pointcloud pc;
+    Pointcloud* pc = new Pointcloud();
 
     if (!s) {
       std::cout <<"ERROR: could not read " << m_filename << std::endl;
       return;
     }
 
-    pc.read(s);
+    pc->read(s);
 
     //  point3d p;
     //  while (!s.eof()) {
@@ -521,7 +522,7 @@ namespace octomap{
     //  }
 
     pose6d laser_pose(0,0,0,0,0,0);
-    m_scanGraph->addNode(&pc, laser_pose);
+    m_scanGraph->addNode(pc, laser_pose);
 
     loadGraph(true);
     showInfo("Done.", true);
@@ -666,8 +667,8 @@ namespace octomap{
 
     m_max_tree_depth = unsigned(depth);
 
-    //if (m_ocTree)
-    showOcTree();
+    if (m_octrees.size() > 0)
+      showOcTree();
   }
 
 
@@ -690,8 +691,7 @@ namespace octomap{
     if (dialog.exec()){
 
       double oldResolution = m_octreeResolution;
-      //double oldLaserMaxRange = m_laserMaxRange;
-      // TODO: detect change in maxRange => rebuild tree?
+      double oldLaserMaxRange = m_laserMaxRange;
       double oldType = m_laserType;
 
       m_octreeResolution = dialog.getResolution();
@@ -699,14 +699,15 @@ namespace octomap{
       m_laserMaxRange = dialog.getMaxRange();
   
       // apply new settings
-      bool resolutionChanged = (fabs(oldResolution - m_octreeResolution) > 1e-5);
+      bool resolutionChanged = (std::abs(oldResolution - m_octreeResolution) > 1e-5);
+      bool maxRangeChanged = (std::abs(oldLaserMaxRange - m_laserMaxRange) > 1e-5);
 
       if (resolutionChanged)
         emit changeResolution(m_octreeResolution);
 
       if (oldType != m_laserType){ // parameters changed, reload file:
         openFile();
-      } else if (resolutionChanged){
+      } else if (resolutionChanged || maxRangeChanged){
         generateOctree();
       }
 

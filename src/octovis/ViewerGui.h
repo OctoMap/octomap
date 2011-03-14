@@ -32,6 +32,7 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <string>
+#include <cmath>
 #include "TrajectoryDrawer.h"
 #include "PointcloudDrawer.h"
 #include "OcTreeDrawer.h"
