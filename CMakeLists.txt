@@ -2,8 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT( octomap )
 
 # version (e.g. for packaging)
-set(V_MAJOR 0)
-set(V_MINOR 9)
+set(V_MAJOR 1)
+set(V_MINOR 0)
 set(V_PATCH 0)
 
 # get rid of a useless warning:

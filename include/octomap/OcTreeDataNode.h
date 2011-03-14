@@ -112,8 +112,6 @@ namespace octomap {
      * Read node from binary stream (incl. float value),
      * recursively continue with all children.
      *
-     * @note This is an experimental feature!
-     *
      * @param s
      * @return
      */
@@ -124,15 +122,13 @@ namespace octomap {
      * recursively continue with all children.
      * This preserves the complete state of the node.
      *
-     * @note This is an experimental feature!
-     *
      * @param s
      * @return
      */
     std::ostream& writeValue(std::ostream &s) const;
 
 
-    /// Make the templated data type available from the outside
+    /// Make the templated data type available to the outside
     typedef T DataType;
 
 

@@ -20,7 +20,7 @@ REQUIREMENTS
 ############################
 
  * cmake
- * regular build environment
+ * regular build environment (gcc)
  
  viewer: 
  * Qt4
@@ -116,5 +116,7 @@ http://www.vtk.org/Wiki/Eclipse_CDT4_Generator) by running:
 	cmake -G"Eclipse CDT4 - Unix Makefiles" ..
 	
 Import the project (existing project, root is the build folder, 
-do not copy contents) into Eclipse afterwards.
+do not copy contents) into Eclipse afterwards. For full Eclipse
+compatibility, it might be necessary to build in the main source
+directory.
 

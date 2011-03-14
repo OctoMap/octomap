@@ -208,21 +208,18 @@ namespace octomap {
     bool genKey(const point3d& point, OcTreeKey& key) const;
 
 
-    // -- experimental section  -----------------------
     // file IO
 
     /// Read complete state of tree from stream
-    /// EXPERIMENTAL!
     std::istream& read(std::istream &s);
 
     /// Write complete state of tree to stream, prune tree first (lossless compression)
-    /// EXPERIMENTAL!
     std::ostream& write(std::ostream &s);
 
     /// Write complete state of tree to stream, no pruning (const version)
     std::ostream& writeConst(std::ostream &s) const;
 
-    /// Make the templated NODE type available from the outside
+    /// Make the templated NODE type available to the outside
     typedef NODE NodeType;
 
  protected:
@@ -295,8 +292,8 @@ namespace octomap {
     NODE* itsRoot;
 
     // constants of the tree
-    unsigned int tree_depth;
-    unsigned int tree_max_val;
+    const unsigned int tree_depth;
+    const unsigned int tree_max_val;
     double resolution;  ///< in meters
     double resolution_factor; ///< = 1. / resolution
   
