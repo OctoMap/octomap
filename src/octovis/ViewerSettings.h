@@ -41,7 +41,7 @@ public:
     void setResolution(double resolution){ui.resolution->setValue(resolution);};
     unsigned int getLaserType(){return ui.laserType->currentIndex(); };
     void setLaserType(int type){ui.laserType->setCurrentIndex(type); };
-    unsigned int getMaxRange(){return ui.maxRange->value(); };
+    double getMaxRange(){return ui.maxRange->value(); };
     void setMaxRange(double range){ui.maxRange->setValue(range); };
 
 private:
