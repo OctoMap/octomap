@@ -549,7 +549,7 @@ namespace octomap{
     ui.actionOctree_structure->setChecked(false);
     ui.actionTrajectory->setEnabled(false);
     ui.actionConvert_ml_tree->setEnabled(false);
-    ui.actionReload_Octree->setEnabled(false);
+    ui.actionReload_Octree->setEnabled(true);
     ui.actionSettings->setEnabled(false);
 
     showOcTree();
@@ -585,7 +585,7 @@ namespace octomap{
       ui.actionOctree_structure->setChecked(false);
       ui.actionTrajectory->setEnabled(false);
       ui.actionConvert_ml_tree->setEnabled(true);
-      ui.actionReload_Octree->setEnabled(false);
+      ui.actionReload_Octree->setEnabled(true);
       ui.actionSettings->setEnabled(false);
 
       showOcTree();
@@ -880,7 +880,11 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionReload_Octree_triggered(){
-    generateOctree();
+    if (m_scanGraph) {
+      generateOctree();
+    } else {
+      openFile();
+    }
   }
 
   void ViewerGui::on_actionConvert_ml_tree_triggered(){

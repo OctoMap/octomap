@@ -355,6 +355,9 @@
    <property name="toolTip">
     <string>Reload the current progress of the Octree</string>
    </property>
+   <property name="shortcut">
+    <string>R</string>
+   </property>
   </action>
   <action name="actionFollow_Mode">
    <property name="checkable">
