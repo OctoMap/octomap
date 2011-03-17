@@ -38,6 +38,15 @@ namespace octomap {
   */
   class SceneObject {
   public:
+    enum ColorMode {
+      CM_FLAT,
+      CM_PRINTOUT,
+      CM_COLOR_HEIGHT,
+      CM_GRAY_HEIGHT,
+      CM_SEMANTIC
+    };
+
+  public:
     SceneObject();
     virtual ~SceneObject(){};
 
@@ -52,19 +61,21 @@ namespace octomap {
     virtual void clear(){};
 
   public:
-    inline void enablePrintoutMode(bool enabled = true) { m_printoutMode = enabled; };
-    inline void enableHeightColorMode(bool enabled = true) { m_heightColorMode = enabled; };
-    void enableSemanticColoring(bool enabled = true);
+    //! the color mode has to be set before calling OcTreDrawer::setMap()
+    //! because the cubes are generated in OcTreDrawer::setMap() using the color information
+    inline void setColorMode(ColorMode mode) { m_colorMode = mode; }
+    inline void enablePrintoutMode(bool enabled = true) { if (enabled) m_colorMode = CM_PRINTOUT; else m_colorMode = CM_FLAT; }
+    inline void enableHeightColorMode(bool enabled = true) { if (enabled) m_colorMode = CM_COLOR_HEIGHT; else m_colorMode = CM_FLAT; }
+    inline void enableSemanticColoring(bool enabled = true) { if (enabled) m_colorMode = CM_SEMANTIC; else m_colorMode = CM_FLAT; }
 
   protected:
     /// writes rgb values which correspond to a rel. height in the map.
     /// (glArrayPos needs to have at least size 3!)
     void heightMapColor(double h, GLfloat* glArrayPos) const;
+    void heightMapGray(double h, GLfloat* glArrayPos) const;
     double m_zMin;
     double m_zMax;
-    bool m_printoutMode;
-    bool m_heightColorMode;
-    bool m_semantic_coloring;
+    ColorMode m_colorMode;
   };
 
 

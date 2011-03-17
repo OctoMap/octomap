@@ -355,7 +355,10 @@ namespace octomap {
       if (glColorArray != NULL) {
         // color for 4 vertices (same height)
         for (int k = 0; k < 4; ++k) {
-          SceneObject::heightMapColor(z, *glColorArray + colorIdx);
+          if (m_colorMode == CM_GRAY_HEIGHT)
+            SceneObject::heightMapGray(z, *glColorArray + colorIdx);
+          else
+            SceneObject::heightMapColor(z, *glColorArray + colorIdx);
           // set Alpha value:
           (*glColorArray)[colorIdx + 3] = m_alphaOccupied;
           colorIdx += 4;
@@ -566,7 +569,10 @@ namespace octomap {
       if (glColorArray != NULL) {
         // color for 4 vertices (same height)
         for (int k = 0; k < 4; ++k) {
-          SceneObject::heightMapColor(it->first.z(), *glColorArray + colorIdx);
+          if (m_colorMode == CM_GRAY_HEIGHT)
+            SceneObject::heightMapGray(it->first.z(), *glColorArray + colorIdx);
+          else
+            SceneObject::heightMapColor(it->first.z(), *glColorArray + colorIdx);
           // set Alpha value:
           (*glColorArray)[colorIdx + 3] = m_alphaOccupied;
           colorIdx += 4;
@@ -748,7 +754,7 @@ namespace octomap {
   void OcTreeDrawer::drawOccupiedVoxels() const {
 
 
-    if (m_semantic_coloring) {
+    if (m_colorMode == CM_SEMANTIC) {
       // hardcoded mapping id -> colors
       if (this->map_id == 0) {  // background
         glColor3f(0.784f, 0.66f, 0); // gold
@@ -765,7 +771,7 @@ namespace octomap {
     else {
       
       // colors for printout mode:
-      if (m_printoutMode) {
+      if (m_colorMode == CM_PRINTOUT) {
         if (!m_drawFree) { // gray on white background
           glColor3f(0.6f, 0.6f, 0.6f);
         }
@@ -776,13 +782,13 @@ namespace octomap {
       
       // draw binary occupied cells
       if (m_occupiedThresSize != 0) {
-        if (!m_printoutMode) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
+        if (m_colorMode != CM_PRINTOUT) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
         drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
       }
 
       // draw delta occupied cells
       if (m_occupiedSize != 0) {
-        if (!m_printoutMode) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
+        if (m_colorMode != CM_PRINTOUT) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
         drawCubes(m_occupiedArray, m_occupiedSize, m_occupiedColorArray);
       }
     }
@@ -792,7 +798,7 @@ namespace octomap {
 
   void OcTreeDrawer::drawFreeVoxels() const {
 
-    if (m_printoutMode) {
+    if (m_colorMode == CM_PRINTOUT) {
       if (!m_drawOccupied) { // gray on white background
         glColor3f(0.5f, 0.5f, 0.5f);
       }
@@ -803,14 +809,14 @@ namespace octomap {
 
     // draw binary freespace cells
     if (m_freeThresSize != 0) {
-      if (!m_printoutMode) glColor4f(0.0, 1.0, 0., 0.3);
+      if (m_colorMode != CM_PRINTOUT) glColor4f(0.0, 1.0, 0., 0.3);
       drawCubes(m_freeThresArray, m_freeThresSize);
     }
 
 
     // draw delta freespace cells
     if (m_freeSize != 0) {
-      if (!m_printoutMode) glColor4f(0.5, 1.0, 0.1, 0.3);
+      if (m_colorMode != CM_PRINTOUT) glColor4f(0.5, 1.0, 0.1, 0.3);
       drawCubes(m_freeArray, m_freeSize);
     }
   }
@@ -837,7 +843,7 @@ namespace octomap {
 
     // enable color pointer when heightColorMode is enabled:
 
-    if (m_heightColorMode && cubeColorArray != NULL){
+    if ((m_colorMode == CM_COLOR_HEIGHT || m_colorMode == CM_GRAY_HEIGHT) && (cubeColorArray != NULL)){
       glEnableClientState(GL_COLOR_ARRAY);
       glColorPointer(4, GL_FLOAT, 0, cubeColorArray);
     }
@@ -867,12 +873,12 @@ namespace octomap {
     glVertexPointer(3, GL_FLOAT, 0, cubeArray[5]);
     glDrawArrays(GL_QUADS, 0, cubeArraySize / 3);
 
-    if (m_heightColorMode && cubeColorArray != NULL){
+    if ((m_colorMode == CM_COLOR_HEIGHT || m_colorMode == CM_GRAY_HEIGHT) && (cubeColorArray != NULL)){
       glDisableClientState(GL_COLOR_ARRAY);
     }
 
     // draw bounding linies of cubes in printout:
-    if (m_printoutMode && ! m_heightColorMode){
+    if (m_colorMode == CM_PRINTOUT){
       glDisable(GL_LIGHTING);
       glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
       glEnable (GL_LINE_SMOOTH);

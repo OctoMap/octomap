@@ -33,13 +33,7 @@
 namespace octomap {
 
   SceneObject::SceneObject() :
-    m_zMin(0.0), m_zMax(1.0), m_printoutMode(false), m_heightColorMode(false), m_semantic_coloring(false) {
-  }
-
-  void SceneObject::enableSemanticColoring(bool enabled) { 
-    m_semantic_coloring = enabled;
-    // if (m_semantic_coloring) printf("enabled semantic colors\n");
-    // else                     printf("disabled semantic colors\n");
+    m_zMin(0.0), m_zMax(1.0), m_colorMode(CM_FLAT) {
   }
 
   void SceneObject::heightMapColor(double h, GLfloat* glArrayPos) const {
@@ -96,7 +90,17 @@ namespace octomap {
     glArrayPos[2] = b;
   }
 
+  void SceneObject::heightMapGray(double h, GLfloat* glArrayPos) const {
+    if (m_zMin >= m_zMax)
+      h = 0.5;
+    else{
+      h = std::min(std::max((h-m_zMin)/ (m_zMax - m_zMin), 0.0), 1.0) * 0.4 + 0.3; // h \in [0.3, 0.7]
+    }
 
+    glArrayPos[0] = h;
+    glArrayPos[1] = h;
+    glArrayPos[2] = h;
+  }
   
 
 }
