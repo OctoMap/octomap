@@ -226,9 +226,9 @@ namespace octomap {
     outfile << "      coord Coordinate {" << std::endl;
     outfile << "          point [" << std::endl;
 
-    std::cout << "PointCloud::writeVrml writing " 
+    OCTOMAP_DEBUG_STR("PointCloud::writeVrml writing "
 	      << points.size() << " points to " 
-	      << filename <<  ".\n";
+	      << filename <<  ".");
 
     for (unsigned int i = 0; i < (points.size()); i++){
       outfile << "\t\t" << (points[i])(0) 

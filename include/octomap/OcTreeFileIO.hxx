@@ -127,7 +127,7 @@ namespace octomap {
       else if (token == "size")
         s >> size;
       else{
-        std::cout << "Unknown keyword in OcTree header, skipping: "<<token << std::endl;
+        OCTOMAP_WARNING_STR("Unknown keyword in OcTree header, skipping: "<<token);
         char c;
         do {
           c = s.get();

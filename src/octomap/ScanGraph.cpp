@@ -487,7 +487,7 @@ namespace octomap {
           if (currentNode){
             this->nodes.push_back(currentNode);
             this->connectPrevious();
-            std::cout << "ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size() << std::endl;
+            OCTOMAP_DEBUG_STR("ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size());
           }
 
           currentNode = new ScanNode();
@@ -515,7 +515,7 @@ namespace octomap {
         if (currentNode){
           this->nodes.push_back(currentNode);
           this->connectPrevious();
-          std::cout << "Final ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size() << std::endl;
+          OCTOMAP_DEBUG_STR("Final ScanNode "<< currentNode->pose << " done, size: "<< currentNode->scan->size());
         }
         break;
       }
@@ -528,7 +528,7 @@ namespace octomap {
 
     // file structure:    n | edge_1 | ... | edge_n
 
-    std::cout << "Writing " << this->edges.size() << " edges to ASCII file...\n";
+    OCTOMAP_DEBUG_STR("Writing " << this->edges.size() << " edges to ASCII file...");
 
     s <<  " " << this->edges.size();
     s << std::endl;
@@ -537,7 +537,7 @@ namespace octomap {
       (*it)->writeASCII(s);
     }
     s << std::endl;
-    std::cout << "Done.\n";
+    OCTOMAP_DEBUG_STR("Done.");
 
     return s;
   }
