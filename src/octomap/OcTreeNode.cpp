@@ -254,9 +254,9 @@ namespace octomap {
 
   void OcTreeNode::updateLogOdds(double p) {
 
-//     printf("logodds before: %f\n", log_odds_occupancy);
+//     OCTOMAP_DEBUG("logodds before: %f\n", log_odds_occupancy);
     value += logodds(p);
-//     printf("logodds after : %f\n\n", log_odds_occupancy);
+//     OCTOMAP_DEBUG("logodds after : %f\n\n", log_odds_occupancy);
 
     if (!hasChildren() &&
         ((value > CLAMPING_THRES_MAX) ||

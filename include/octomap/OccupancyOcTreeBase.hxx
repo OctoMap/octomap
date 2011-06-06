@@ -654,7 +654,7 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::setBBXMin (point3d& min) { 
     bbx_min = min; 
     if (!this->genKey(bbx_min, bbx_min_key)) {
-      fprintf(stderr, "ERROR while generating bbx min key.\n");
+      OCTOMAP_ERROR("ERROR while generating bbx min key.\n");
     }
   }
 
@@ -662,7 +662,7 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::setBBXMax (point3d& max) {
     bbx_max = max; 
     if (!this->genKey(bbx_max, bbx_max_key)) {
-      fprintf(stderr, "ERROR while generating bbx max key.\n");
+      OCTOMAP_ERROR("ERROR while generating bbx max key.\n");
     }
   }
 

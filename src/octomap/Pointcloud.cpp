@@ -85,7 +85,7 @@ namespace octomap {
   point3d Pointcloud::getPoint(unsigned int i) {
     if (i<points.size()) return points[i];
     else {
-      fprintf(stderr, "\nWARNING: Pointcloud::getPoint index out of range!\n\n");
+      OCTOMAP_WARNING("Pointcloud::getPoint index out of range!\n");
       return points.back();
     }
   }
@@ -279,7 +279,7 @@ namespace octomap {
 
     unsigned int pc_size = 0;
     s.read((char*)&pc_size, sizeof(pc_size));
-    fprintf(stderr, "reading %d points from binary file...", pc_size); fflush(stderr);
+    OCTOMAP_DEBUG("Reading %d points from binary file...", pc_size);
 
     if (pc_size > 0) {
       this->points.reserve(pc_size);
@@ -290,12 +290,12 @@ namespace octomap {
           this->push_back(p);
         }
         else {
-          printf("Pointcloud::readBinary: ERROR.\n" );
+          OCTOMAP_ERROR("Pointcloud::readBinary: ERROR.\n" );
           break;
         }
       }
     }
-    fprintf(stderr, "done.\n");
+    OCTOMAP_DEBUG("done.\n");
 
     return s;
   }
@@ -304,13 +304,13 @@ namespace octomap {
   std::ostream& Pointcloud::writeBinary(std::ostream &s) const {
 
     unsigned int pc_size = this->size();
-    fprintf(stderr, "writing %d points to binary file...", pc_size); fflush(stderr);
+    OCTOMAP_DEBUG("Writing %d points to binary file...", pc_size);
     s.write((char*)&pc_size, sizeof(pc_size));
 
     for (Pointcloud::const_iterator it = this->begin(); it != this->end(); it++) {
       it->writeBinary(s);
     }
-    fprintf(stderr, "done.\n");
+    OCTOMAP_DEBUG("done.\n");
 
     return s;
   }

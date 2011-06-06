@@ -60,6 +60,22 @@ namespace octomap {
   /// A voxel defined by its center point3d and its side length
   typedef std::pair<point3d, double> OcTreeVolume;
 
+
+  //Macros for compiling with an without ROS (for output logging)
+  #ifdef OCTOMAP_ROS
+    #include <ros/ros.h>
+
+    #define OCTOMAP_DEBUG         ROS_DEBUG
+    #define OCTOMAP_WARNING       ROS_WARN
+    #define OCTOMAP_ERROR         ROS_ERROR
+
+
+  #else
+    #define OCTOMAP_DEBUG(...)    fprintf(stdout, __VA_ARGS__), fflush(stdout)
+    #define OCTOMAP_WARNING(...)  fprintf(stderr, "WARNING: "), fprintf(stderr, __VA_ARGS__), fflush(stderr)
+    #define OCTOMAP_ERROR(...)    fprintf(stderr, "ERROR: "), fprintf(stderr, __VA_ARGS__), fflush(stderr)
+  #endif
+
 }
 
 #endif

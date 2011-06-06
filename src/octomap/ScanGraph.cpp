@@ -93,7 +93,8 @@ namespace octomap {
 
     unsigned int read_id;
     s >> read_id;
-    if (read_id != this->id) printf("ERROR while reading ScanNode pose from ASCII. id %d does not match real id %d.\n", read_id, this->id);
+    if (read_id != this->id)
+      OCTOMAP_ERROR("ERROR while reading ScanNode pose from ASCII. id %d does not match real id %d.\n", read_id, this->id);
 
     this->pose.trans().read(s);
 
@@ -125,9 +126,9 @@ namespace octomap {
     s.read((char*)&second_id, sizeof(second_id));
 
     this->first = graph.getNodeByID(first_id);
-    if (this->first == NULL) printf("ERROR while reading ScanEdge. first node not found.\n");
+    if (this->first == NULL) OCTOMAP_ERROR("ERROR while reading ScanEdge. first node not found.\n");
     this->second = graph.getNodeByID(second_id);
-    if (this->second == NULL) printf("ERROR while reading ScanEdge. second node not found.\n");
+    if (this->second == NULL) OCTOMAP_ERROR("ERROR while reading ScanEdge. second node not found.\n");
 
     this->constraint.readBinary(s);
     s.read((char*)&weight, sizeof(weight));
@@ -155,9 +156,9 @@ namespace octomap {
     s >> second_id;
 
     this->first = graph.getNodeByID(first_id);
-    if (this->first == NULL) printf("ERROR while reading ScanEdge. first node %d not found.\n", first_id);
+    if (this->first == NULL) OCTOMAP_ERROR("ERROR while reading ScanEdge. first node %d not found.\n", first_id);
     this->second = graph.getNodeByID(second_id);
-    if (this->second == NULL) printf("ERROR while reading ScanEdge. second node %d not found.\n", second_id);
+    if (this->second == NULL) OCTOMAP_ERROR("ERROR while reading ScanEdge. second node %d not found.\n", second_id);
 
     this->constraint.read(s);
     s >> weight;
@@ -191,7 +192,7 @@ namespace octomap {
       return nodes.back();
     }
     else {
-      printf("\nERROR: scan is invalid.\n");
+      OCTOMAP_ERROR("scan is invalid.\n");
       return NULL;
     }
   }
@@ -201,11 +202,11 @@ namespace octomap {
 
     if ((first != 0) && (second != 0)) {
       edges.push_back(new ScanEdge(first, second, constraint));
-      //      printf("ScanGraph::AddEdge %d --> %d\n", first->id, second->id);
+      //      OCTOMAP_DEBUG("ScanGraph::AddEdge %d --> %d\n", first->id, second->id);
       return edges.back();
     }
     else {
-      printf("\nERROR: addEdge:: one or both nodes invalid.\n");
+      OCTOMAP_ERROR("addEdge:: one or both nodes invalid.\n");
       return NULL;
     }
   }
@@ -214,7 +215,7 @@ namespace octomap {
   ScanEdge* ScanGraph::addEdge(unsigned int first_id, unsigned int second_id) {
 
     if ( this->edgeExists(first_id, second_id)) {
-      printf("\nERROR: addEdge:: Edge exists!\n");
+      OCTOMAP_ERROR("addEdge:: Edge exists!\n");
       return NULL;
     }
 
@@ -226,7 +227,7 @@ namespace octomap {
       return this->addEdge(first, second, constr);
     }
     else {
-      printf("\nERROR: addEdge:: one or both scans invalid.\n");
+      OCTOMAP_ERROR("addEdge:: one or both scans invalid.\n");
       return NULL;
     }
   }
@@ -359,25 +360,25 @@ namespace octomap {
 
     // write nodes  ---------------------------------
     unsigned int graph_size = this->size();
-    if (graph_size) fprintf(stderr, "writing %d nodes to binary file...\n", graph_size);
+    if (graph_size) OCTOMAP_DEBUG("writing %d nodes to binary file...\n", graph_size);
     s.write((char*)&graph_size, sizeof(graph_size));
 
     for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
       (*it)->writeBinary(s);
     }
 
-    if (graph_size) fprintf(stderr, "done.\n");
+    if (graph_size) OCTOMAP_DEBUG("done.\n");
 
     // write edges  ---------------------------------
     unsigned int num_edges = this->edges.size();
-    if (num_edges) fprintf(stderr, "writing %d edges to binary file...\n", num_edges);
+    if (num_edges) OCTOMAP_DEBUG("writing %d edges to binary file...\n", num_edges);
     s.write((char*)&num_edges, sizeof(num_edges));
 
     for (ScanGraph::const_edge_iterator it = this->edges_begin(); it != this->edges_end(); it++) {
       (*it)->writeBinary(s);
     }
 
-    if (num_edges) printf(" done.\n");
+    if (num_edges) OCTOMAP_DEBUG(" done.\n");
 
     return s;
   }
@@ -409,49 +410,49 @@ namespace octomap {
 
     unsigned int graph_size = 0;
     s.read((char*)&graph_size, sizeof(graph_size));
-    if (graph_size) fprintf(stderr, "reading %d nodes from binary file...\n", graph_size);
+    if (graph_size) OCTOMAP_DEBUG("reading %d nodes from binary file...\n", graph_size);
 
     if (graph_size > 0) {
       this->nodes.reserve(graph_size);
 
       for (unsigned int i=0; i<graph_size; i++) {
 
-	ScanNode* node = new ScanNode();
-	node->readBinary(s);
-	if (!s.fail()) {
-	  this->nodes.push_back(node);
-	}
-	else {
-	  printf("ScanGraph::readBinary: ERROR.\n" );
-	  break;
-	}
+        ScanNode* node = new ScanNode();
+        node->readBinary(s);
+        if (!s.fail()) {
+          this->nodes.push_back(node);
+        }
+        else {
+          OCTOMAP_ERROR("ScanGraph::readBinary: ERROR.\n" );
+          break;
+        }
       }
     }
-    if (graph_size)     fprintf(stderr, "done.\n");
+    if (graph_size) OCTOMAP_DEBUG("done.\n");
 
     // read edges  ---------------------------------
     unsigned int num_edges = 0;
     s.read((char*)&num_edges, sizeof(num_edges));
-    if (num_edges) fprintf(stderr, "reading %d edges from binary file...\n", num_edges);
+    if (num_edges) OCTOMAP_DEBUG("reading %d edges from binary file...\n", num_edges);
 
     if (num_edges > 0) {
       this->edges.reserve(num_edges);
 
       for (unsigned int i=0; i<num_edges; i++) {
 
-	ScanEdge* edge = new ScanEdge();
-	edge->readBinary(s, *this);
-	if (!s.fail()) {
-	  this->edges.push_back(edge);
-	}
-	else {
-	  printf("ScanGraph::readBinary: ERROR.\n" );
-	  break;
-	}
+        ScanEdge* edge = new ScanEdge();
+        edge->readBinary(s, *this);
+        if (!s.fail()) {
+          this->edges.push_back(edge);
+        }
+        else {
+          OCTOMAP_ERROR("ScanGraph::readBinary: ERROR.\n" );
+          break;
+        }
       }
     }
 
-    if (num_edges) fprintf(stderr, "done.\n");
+    if (num_edges) OCTOMAP_DEBUG("done.\n");
 
 
     return s;
@@ -546,7 +547,7 @@ namespace octomap {
 
     unsigned int num_edges = 0;
     s >> num_edges;
-    fprintf(stderr, "reading %d edges from ASCII file...\n", num_edges);
+    OCTOMAP_DEBUG("Reading %d edges from ASCII file...\n", num_edges);
 
     if (num_edges > 0) {
 
@@ -557,19 +558,19 @@ namespace octomap {
 
       for (unsigned int i=0; i<num_edges; i++) {
 
-	ScanEdge* edge = new ScanEdge();
-	edge->readASCII(s, *this);
-	if (!s.fail()) {
-	  this->edges.push_back(edge);
-	}
-	else {
-	  printf("ScanGraph::readBinary: ERROR.\n" );
-	  break;
-	}
+        ScanEdge* edge = new ScanEdge();
+        edge->readASCII(s, *this);
+        if (!s.fail()) {
+          this->edges.push_back(edge);
+        }
+        else {
+          OCTOMAP_ERROR("ScanGraph::readBinary: ERROR.\n" );
+          break;
+        }
       }
     }
 
-    fprintf(stderr, "done.\n");
+    OCTOMAP_DEBUG("done.\n");
 
     return s;
   }
@@ -577,13 +578,13 @@ namespace octomap {
 
   std::ostream& ScanGraph::writeNodePosesASCII(std::ostream &s) const {
 
-    fprintf(stderr, "writing %d node poses to ASCII file...\n", this->size());
+    OCTOMAP_DEBUG("Writing %d node poses to ASCII file...\n", this->size());
 
     for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
       (*it)->writePoseASCII(s);
     }
     s << std::endl;
-    fprintf(stderr, "done.\n");
+    OCTOMAP_DEBUG("done.\n");
 
     return s;
   }
