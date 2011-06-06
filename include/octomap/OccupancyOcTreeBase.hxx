@@ -346,7 +346,7 @@ namespace octomap {
     // Initialization phase -------------------------------------------------------
     OcTreeKey current_key;
     if ( !OcTreeBase<NODE>::genKey(origin, current_key) ) {
-      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
+      OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
 
@@ -358,7 +358,7 @@ namespace octomap {
         return true;
       }
     } else if(!ignoreUnknown){
-      std::cerr << "ERROR: Origin node at " << origin << " for raycasting not found, does the node exist?\n";
+      OCTOMAP_ERROR_STR("Origin node at " << origin << " for raycasting not found, does the node exist?");
       return false;
     }
 
@@ -445,7 +445,7 @@ namespace octomap {
       } 
       
       else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
-        std::cerr << "Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end << std::endl;
+        OCTOMAP_WARNING_STR("Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end);
         return false;
       }
     } // end while

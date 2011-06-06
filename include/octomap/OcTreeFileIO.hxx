@@ -45,7 +45,7 @@ namespace octomap {
     std::ofstream file(filename.c_str(), std::ios_base::out | std::ios_base::binary);
 
     if (!file.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
       return false;
     } else {
       // TODO: check is_good of finished stream, return
@@ -74,7 +74,7 @@ namespace octomap {
     std::ifstream file(filename.c_str(), std::ios_base::in |std::ios_base::binary);
 
     if (!file.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
       return NULL;
     } else {
       // TODO: check is_good of finished stream, warn?
@@ -96,8 +96,8 @@ namespace octomap {
     std::string line;
     std::getline(s, line);
     if (line.compare(0,9, "# Octomap OcTree file", 0, 9) !=0){
-      std::cerr << "Error: First line of OcTree file header should start with \"# Octomap\", but reads:"<< std::endl;
-      std::cerr << line << "\n\n";
+      OCTOMAP_ERROR_STR("First line of OcTree file header should start with \"# Octomap\", but reads:");
+      OCTOMAP_ERROR_STR(line << "\n");
       return s;
     }
 
@@ -138,22 +138,22 @@ namespace octomap {
     }
 
     if (!headerRead) {
-      std::cerr << "Error reading OcTree header\n";
+      OCTOMAP_ERROR_STR("Error reading OcTree header");
       return s;
     }
 
     if (id == 0) {
-      std::cerr << "Error reading OcTree header, ID 0\n";
+      OCTOMAP_ERROR_STR("Error reading OcTree header, ID 0");
       return s;
     }
 
     if (res <= 0.0) {
-      std::cerr << "Error reading OcTree header, res <= 0.0\n";
+      OCTOMAP_ERROR_STR("Error reading OcTree header, res <= 0.0");
       return s;
     }
 
     // otherwise: values are valid, stream is now at binary data!
-    std::cout << "Reading OcTree type "<< id << std::endl;
+    OCTOMAP_DEBUG_STR("Reading OcTree type "<< id);
 
     tree = createTree<NODE>(id, res);
 
@@ -161,7 +161,7 @@ namespace octomap {
       tree->read(s);
     }
 
-    std::cout << "Done ("<< tree->size() << " nodes)\n";
+    OCTOMAP_DEBUG_STR("Done ("<< tree->size() << " nodes)");
 
     return s;
   }
@@ -175,7 +175,7 @@ namespace octomap {
       // needs to be fixed (only works on OcTreeNodes right now)
       //case 2: tree = new OcTreeBase<OcTreeDataNode<float> >(res); break;
       // ...
-      default: std::cerr << __PRETTY_FUNCTION__ << ": Unknown Octree id "<< id<<".\n"; break;
+      default: OCTOMAP_ERROR_STR( __PRETTY_FUNCTION__ << ": Unknown Octree id "<< id<<"."); break;
     }
 
     return tree;
@@ -189,7 +189,7 @@ namespace octomap {
     } else if (dynamic_cast<const OcTreeBase<OcTreeDataNode<float> >*>(tree)){
       return 2;
     } else {
-      std::cerr << __PRETTY_FUNCTION__ << ": Unknown Octree type "<< typeid(tree).name()<<".\n";
+      OCTOMAP_ERROR_STR( __PRETTY_FUNCTION__ << ": Unknown Octree type "<< typeid(tree).name()<<".");
     }
     return 0;
   }

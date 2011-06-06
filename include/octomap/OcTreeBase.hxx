@@ -216,7 +216,7 @@ namespace octomap {
 
     OcTreeKey key;
     if (!genKey(value, key)){
-      std::cerr << "Error in search: ["<< value <<"] is out of OcTree bounds!\n";
+      OCTOMAP_ERROR_STR("Error in search: ["<< value <<"] is out of OcTree bounds!");
       return NULL;
     }
     else {
@@ -292,8 +292,8 @@ namespace octomap {
     OcTreeKey key_origin, key_end;
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
-      std::cerr << "WARNING: coordinates ( "
-                << origin << " -> " << end << ") out of bounds during ray casting" << std::endl;
+      OCTOMAP_WARNING_STR("coordinates ( "
+                << origin << " -> " << end << ") out of bounds during ray casting");
       return false;
     }
 
@@ -420,11 +420,11 @@ namespace octomap {
 
     for(unsigned int i=0; i < 3; ++i) {
       if (!genKeyValue(origin(i), voxelIdx[i])) {
-        std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i)<<"\n";
+        OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i));
         return false;
       }
       if (!genKeyValue(end(i), endIdx[i])) {
-        std::cerr << "Error in OcTree::computeRay(): Coordinate "<<i<<" of endpoint out of OcTree bounds"<< end(i)<<"\n";
+        OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): Coordinate "<<i<<" of endpoint out of OcTree bounds"<< end(i));
         return false;
       }
 
@@ -474,7 +474,7 @@ namespace octomap {
         tMax[i] += tDelta[i];
       }
       else {
-        std::cerr << "WARNING: Ray casting in OcTreeBaseNODE>::getCellsOnRay hit the boundary in dim. "<< i << std::endl;
+        OCTOMAP_WARNING_STR("Ray casting in OcTreeBaseNODE>::getCellsOnRay hit the boundary in dim. "<< i);
         return false;
       }
 
@@ -482,7 +482,7 @@ namespace octomap {
       double val[3];
       for (unsigned int j = 0; j < 3; j++) {
         if(!genCoordFromKey( voxelIdx[j], val[j] )){
-          std::cerr << "Error in OcTree::computeRay(): genCoordFromKey failed!\n";
+          OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): genCoordFromKey failed!");
           return false;
           val[j] += this->resolution * 0.5;  // center of voxel          
         }
@@ -659,7 +659,7 @@ namespace octomap {
   std::istream& OcTreeBase<NODE>::read(std::istream &s) {
 
     if (!s.good()){
-      std::cerr << __PRETTY_FUNCTION__ << "Warning: Input filestream not \"good\"\n";
+      OCTOMAP_WARNING_STR(__PRETTY_FUNCTION__ << "Warning: Input filestream not \"good\"");
     }
 
     this->tree_size = 0;
@@ -667,7 +667,7 @@ namespace octomap {
 
     // tree needs to be newly created or cleared externally!
     if (itsRoot->hasChildren()) {
-      std::cerr << "Error: Trying to read into a tree that is already constructed!\n";
+      OCTOMAP_ERROR_STR("Trying to read into a tree that is already constructed!");
       return s;
     }
 

@@ -74,7 +74,7 @@ namespace octomap {
     OcTreeKey key_origin, key_end;
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
-      std::cerr << "WARNING: coordinates out of bounds during ray casting" << std::endl;
+      OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
 
@@ -185,7 +185,7 @@ namespace octomap {
     OcTreeKey start_key;
 
     if (! OcTreeBase<NODE>::genKey(node_coord, start_key)) {
-      std::cerr << "Error in search: ["<< node_coord <<"] is out of OcTree bounds!\n";
+      OCTOMAP_ERROR_STR("Error in search: ["<< node_coord <<"] is out of OcTree bounds!");
       return NULL;
     }
 

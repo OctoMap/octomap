@@ -387,7 +387,7 @@ namespace octomap {
 
     std::ifstream binary_infile(filename.c_str(), std::ios_base::binary);
     if (!binary_infile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
       return;
     }
 
@@ -398,10 +398,10 @@ namespace octomap {
 
   std::istream& ScanGraph::readBinary(std::ifstream &s) {
     if (!s.is_open()){
-      std::cerr << "ERROR: Could not read from input filestream in ScanGraph::readBinary, exiting!\n";
+      OCTOMAP_ERROR_STR("Could not read from input filestream in ScanGraph::readBinary, exiting!");
       exit(0);
     } else if (!s.good()){
-      std::cerr << "Warning: Input filestream not \"good\" in ScanGraph::readBinary\n";
+      OCTOMAP_WARNING_STR("Input filestream not \"good\" in ScanGraph::readBinary");
     }
 
     this->clear();
@@ -461,7 +461,7 @@ namespace octomap {
   void ScanGraph::readPlainASCII(const std::string& filename){
       std::ifstream infile(filename.c_str());
       if (!infile.is_open()){
-        std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+        OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
         return;
       }
 
@@ -502,7 +502,7 @@ namespace octomap {
         } else{
           if (currentNode == NULL){
             // TODO: allow "simple" pc files by setting initial Scan Pose to (0,0,0)
-            std::cerr << "Error parsing log file, no Scan to add point to!\n";
+            OCTOMAP_ERROR_STR("Error parsing log file, no Scan to add point to!");
             break;
           }
           double x, y, z;
