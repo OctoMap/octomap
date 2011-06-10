@@ -43,6 +43,7 @@
 #include <list>
 
 #include "octomap_types.h"
+#include "octomap_utils.h"
 #include "OcTreeBase.h"
 
 

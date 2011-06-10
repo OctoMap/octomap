@@ -67,7 +67,7 @@ namespace octomap {
     inline void push_back(float x, float y, float z) {
       points.push_back(point3d(x,y,z));
     }
-    inline void push_back(point3d& p) {
+    inline void push_back(const point3d& p) {
       points.push_back(p);
     }
     inline void push_back(point3d* p) {

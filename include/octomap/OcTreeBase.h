@@ -70,6 +70,8 @@ namespace octomap {
   class OcTreeBase {
 
   public:
+    /// Make the templated NODE type available from the outside
+    typedef NODE NodeType;
     
     OcTreeBase(double _resolution);
     virtual ~OcTreeBase();
@@ -114,10 +116,11 @@ namespace octomap {
     void expand();
 
 
+
     // -- statistics  ----------------------
 
     /// \return The number of nodes in the tree
-    inline unsigned int size() const { return tree_size; }
+    inline size_t size() const { return tree_size; }
 
     size_t memoryUsage() const;
 
@@ -136,10 +139,10 @@ namespace octomap {
     void getMetricMax(double& x, double& y, double& z) const;
 
     /// Traverses the tree to calculate the total number of nodes
-    unsigned int calcNumNodes() const;
+    size_t calcNumNodes() const;
 
     /// Traverses the tree to calculate the total number of leaf nodes
-    unsigned int getNumLeafNodes() const;
+    size_t getNumLeafNodes() const;
 
 
     // -- access tree nodes  ------------------
@@ -164,7 +167,7 @@ namespace octomap {
     void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
 
 
-    /// return centers of leafs that to NOT exist (but could) in a given bounding box
+    /// return centers of leafs that do NOT exist (but could) in a given bounding box
     void getUnknownLeafCenters(point3d_list& node_centers, point3d min, point3d max) const;
 
 
@@ -219,11 +222,6 @@ namespace octomap {
     /// Write complete state of tree to stream, no pruning (const version)
     std::ostream& writeConst(std::ostream &s) const;
 
-    /// Make the templated NODE type available to the outside
-    typedef NODE NodeType;
-
- protected:
-
     /**
      * Generates a 16-bit key from/for given value when it is within
      * the octree bounds, returns false otherwise
@@ -242,7 +240,12 @@ namespace octomap {
     bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
+    /// This checks if the key is valid and returns the success.
     bool genCoordFromKey(const unsigned short int& key, float& coord) const;
+
+    /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
+    /// returns the coordinate without checking for validity.
+    double genCoordFromKey(const unsigned short int& key) const;
 
     /// generates the center coordinate of a cell for a given key at the last level
     bool genLastCoordFromKey(const unsigned short int& key, float& coord) const;
@@ -253,18 +256,16 @@ namespace octomap {
     /// generate child index (between 0 and 7) from key at given tree depth
     void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const;
 
+ protected:
     /// compute center point of child voxel cell, for internal use
     void computeChildCenter (const unsigned int& pos, const double& center_offset, 
                              const point3d& parent_center, point3d& child_center) const;
-    /// compute OcTreeKey of child voxel cell, for internal use
-    void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key, 
-                          const OcTreeKey& parent_key, OcTreeKey& child_key) const;
 
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
 
-    void calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const;
+    void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
 
 
     /// recursive call of prune()
@@ -282,7 +283,7 @@ namespace octomap {
                          NODE* node, unsigned int depth, const point3d& parent_center) const;
 
 
-    unsigned int getNumLeafNodesRecurs(const NODE* parent) const;
+    size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
     void calcMinMaxRecurs(NODE* node, unsigned int depth, const point3d& parent_center);
 
@@ -297,7 +298,7 @@ namespace octomap {
     double resolution;  ///< in meters
     double resolution_factor; ///< = 1. / resolution
   
-    unsigned int tree_size; ///< number of nodes in tree
+    size_t tree_size; ///< number of nodes in tree
     bool sizeChanged;
 
     point3d tree_center;  // coordinate offset of tree

@@ -128,9 +128,15 @@ namespace octomap {
     if (key >= 2*tree_max_val)
       return false;
 
-    coord = (double) ( (int) key - (int) this->tree_max_val ) * this->resolution;
+    coord = float(genCoordFromKey(key));
 
     return true;
+  }
+
+  template <class NODE>
+  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
+
+    return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
   }
 
   template <class NODE>
@@ -190,22 +196,6 @@ namespace octomap {
     if (pos & 4) child_center(2) = parent_center(2) + center_offset;
     else	 child_center(2) = parent_center(2) - center_offset;
   }
-
-
-  template <class NODE> 
-  void OcTreeBase<NODE>::computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key, 
-                                          const OcTreeKey& parent_key, OcTreeKey& child_key) const {
-
-    if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
-    else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
-    // y-axis
-    if (pos & 2) child_key[1] = parent_key[1] + center_offset_key;
-    else         child_key[1] = parent_key[1] - center_offset_key - (center_offset_key ? 0 : 1);
-    // z-axis
-    if (pos & 4) child_key[2] = parent_key[2] + center_offset_key;
-    else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
-  }
-
 
 
   template <class NODE>
@@ -588,7 +578,7 @@ namespace octomap {
             getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center);
 
           }
-        }
+        } // depth
       }
       double voxelSize = resolution * pow(2., double(tree_depth - depth));
       voxels.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
@@ -687,10 +677,10 @@ namespace octomap {
     getMetricSize(size_x, size_y,size_z);
     
     // assuming best case (one big array and efficient addressing)
-    return (unsigned int) (ceil(resolution_factor * (double) size_x) * //sizeof (unsigned int*) *
+    return (size_t) (ceil(resolution_factor * (double) size_x) * //sizeof (unsigned int*) *
                            ceil(resolution_factor * (double) size_y) * //sizeof (unsigned int*) *
                            ceil(resolution_factor * (double) size_z)) *
-			  sizeof(itsRoot->getValue());
+                           sizeof(itsRoot->getValue());
 
   }
 
@@ -834,14 +824,14 @@ namespace octomap {
  }
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::calcNumNodes() const {
-    unsigned int retval = 1; // root node
+  size_t OcTreeBase<NODE>::calcNumNodes() const {
+    size_t retval = 1; // root node
     calcNumNodesRecurs(itsRoot, retval);
     return retval;
   }
 
   template <class NODE>
-  void OcTreeBase<NODE>::calcNumNodesRecurs(NODE* node, unsigned int& num_nodes) const {
+  void OcTreeBase<NODE>::calcNumNodesRecurs(NODE* node, size_t& num_nodes) const {
 
     assert (node != NULL);
 
@@ -860,8 +850,8 @@ namespace octomap {
   size_t OcTreeBase<NODE>::memoryUsage() const{
 
     size_t node_size = sizeof(NODE);
-    unsigned int num_leaf_nodes = this->getNumLeafNodes();
-    unsigned int num_inner_nodes = tree_size - num_leaf_nodes;
+    size_t num_leaf_nodes = this->getNumLeafNodes();
+    size_t num_inner_nodes = tree_size - num_leaf_nodes;
 
     return (sizeof(OcTreeBase<NODE>) + node_size * tree_size + num_inner_nodes * sizeof(NODE*[8]));
   }
@@ -901,17 +891,17 @@ namespace octomap {
 
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::getNumLeafNodes() const {
+  size_t OcTreeBase<NODE>::getNumLeafNodes() const {
     return getNumLeafNodesRecurs(itsRoot);
   }
 
 
   template <class NODE>
-  unsigned int OcTreeBase<NODE>::getNumLeafNodesRecurs(const NODE* parent) const {
+  size_t OcTreeBase<NODE>::getNumLeafNodesRecurs(const NODE* parent) const {
 
     if (!parent->hasChildren()) return 1;  // this is a leaf -> terminate
     
-    unsigned int sum_leafs_children = 0;
+    size_t sum_leafs_children = 0;
     for (unsigned int i=0; i<8; ++i) {
       if (parent->childExists(i)) {
         sum_leafs_children += getNumLeafNodesRecurs(parent->getChild(i));

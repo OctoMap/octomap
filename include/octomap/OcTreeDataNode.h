@@ -128,7 +128,7 @@ namespace octomap {
     std::ostream& writeValue(std::ostream &s) const;
 
 
-    /// Make the templated data type available to the outside
+    /// Make the templated data type available from the outside
     typedef T DataType;
 
 

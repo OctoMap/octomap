@@ -140,7 +140,7 @@ namespace octomap {
 
       for (unsigned int i=0; i<8; ++i) {
         if (node->childExists(i)) {
-          OcTreeBase<CountingOcTreeNode>::computeChildKey(i, center_offset_key, parent_key, search_key);
+          computeChildKey(i, center_offset_key, parent_key, search_key);
           getCentersMinHitsRecurs(node_centers, min_hits, max_depth, node->getChild(i), depth+1, search_key);
         }
       }

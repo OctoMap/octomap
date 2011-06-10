@@ -41,7 +41,9 @@
  */
 
 #include "octomap_types.h"
+#include "octomap_utils.h"
 #include "OcTreeDataNode.h"
+#include <limits>
 
 namespace octomap {
 
@@ -70,7 +72,6 @@ namespace octomap {
   class OcTreeNode : public OcTreeDataNode<float> {
 
   public:
-
     OcTreeNode();
     ~OcTreeNode();
 
@@ -89,13 +90,13 @@ namespace octomap {
     // -- node occupancy  ----------------------------
 
     /// integrate a measurement (beam ENDED in cell)
-    inline void integrateHit() {  updateLogOdds(PROB_HIT); }
+    inline void integrateHit() {  updateProbability(PROB_HIT); }
     /// integrate a measurement (beam PASSED in cell)
-    inline void integrateMiss() { updateLogOdds(PROB_MISS); }
+    inline void integrateMiss() { updateProbability(PROB_MISS); }
 
 
     /// \return occupancy probability of node
-    inline double getOccupancy() const { return 1. - ( 1. / (1. + exp(value)) ); }
+    inline double getOccupancy() const { return probability(value); }
 
     /// \return log odds representation of occupancy probability of node
     inline float getLogOdds() const{ return value; }
@@ -126,7 +127,7 @@ namespace octomap {
     /**
      * @return maximum of children's occupancy probabilities, in log odds
      */
-    double getMaxChildLogOdds() const;
+    float getMaxChildLogOdds() const;
 
     /// update this node's occupancy according to its children's maximum occupancy
     inline void updateOccupancyChildren() {
@@ -163,10 +164,14 @@ namespace octomap {
      */
     std::ostream& writeBinary(std::ostream &s) const;
 
+    /// update the probability of a node, p will first be converted to logodds
+    void updateProbability(double p);
+
+    /// adds p to the node's logOdds value (with no boundary / threshold checking!)
+    void addValue(float p);
+
   protected:
 
-    double logodds(double p) const;
-    void updateLogOdds(double p);
 
  // "value" stores log odds occupancy probability
 

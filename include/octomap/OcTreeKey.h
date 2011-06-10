@@ -55,10 +55,20 @@ namespace octomap {
     OcTreeKey () {}
     OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c)
       { k[0] = a; k[1] = b; k[2] = c; }
-
+    OcTreeKey(const OcTreeKey& other){
+      k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
+    }
     bool operator== (const OcTreeKey &other) const { 
-      if ( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) ) return false;
-      return true;
+      return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
+    }
+
+    bool operator!= (const OcTreeKey &other) const {
+      return( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) );
+    }
+
+    OcTreeKey& operator=(const OcTreeKey& other){
+      k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
+      return *this;
     }
 
     const unsigned short int& operator[] (unsigned int i) const { 
@@ -70,6 +80,15 @@ namespace octomap {
     }
 
     unsigned short int k[3];
+
+    /// Provides a hash function on Keys
+    struct KeyHash{
+      size_t operator()(const OcTreeKey& key) const{
+        // a very simple hashing function for now:
+        return key.k[0] + 1337*key.k[1] + 345637*key.k[2];
+      }
+
+    };
   };
 
   
@@ -114,6 +133,21 @@ namespace octomap {
     std::vector<OcTreeKey>::iterator end_of_ray;
 
   };
+
+
+
+  inline void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key,
+                                          const OcTreeKey& parent_key, OcTreeKey& child_key){
+
+    if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
+    else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
+    // y-axis
+    if (pos & 2) child_key[1] = parent_key[1] + center_offset_key;
+    else         child_key[1] = parent_key[1] - center_offset_key - (center_offset_key ? 0 : 1);
+    // z-axis
+    if (pos & 4) child_key[2] = parent_key[2] + center_offset_key;
+    else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
+  }
 
 }
 

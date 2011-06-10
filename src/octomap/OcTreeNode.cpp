@@ -94,11 +94,11 @@ namespace octomap {
     return log(mean/(1-mean));
   }
 
-  double OcTreeNode::getMaxChildLogOdds() const{
-    double max = -1e6;
+  float OcTreeNode::getMaxChildLogOdds() const{
+    float max = -std::numeric_limits<float>::max();
     for (unsigned int i=0; i<8; i++) {
       if (childExists(i)) {
-        double l = getChild(i)->getLogOdds();
+        float l = getChild(i)->getLogOdds();
         if (l > max) max = l;
       }
     }
@@ -246,13 +246,7 @@ namespace octomap {
   // =  private methodes  =======================================
   // ============================================================
 
-
-  double OcTreeNode::logodds(double p) const {
-    return log(p/(1-p));
-  }
-
-
-  void OcTreeNode::updateLogOdds(double p) {
+  void OcTreeNode::updateProbability(double p) {
 
 //     OCTOMAP_DEBUG("logodds before: %f\n", log_odds_occupancy);
     value += logodds(p);
@@ -265,6 +259,9 @@ namespace octomap {
     }
   }
 
+  void OcTreeNode::addValue(float logOdds) {
+    value += logOdds;
+  }
 
 
 } // end namespace

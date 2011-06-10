@@ -570,7 +570,7 @@ namespace octomap {
 
       for (unsigned int i=0; i<8; ++i) {
         if (node->childExists(i)) {
-          OcTreeBase<NODE>::computeChildKey(i, center_offset_key, parent_key, search_key);
+          computeChildKey(i, center_offset_key, parent_key, search_key);
           getOccupiedRecurs(binary_nodes, delta_nodes, max_depth, node->getChild(i), depth+1, search_key);
         }
       }
