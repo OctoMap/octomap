@@ -74,45 +74,10 @@ namespace octomap {
 
     virtual ~OcTree(){};
 
-    /// Creates the maximum likelihood map by calling toMaxLikelihood on all
-    /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
-    void toMaxLikelihood();
-
 
     // -- Information  ---------------------------------
 
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const; 
-
-
-    // -- I/O  -----------------------------------------
-
-    /// binary file format: treetype | resolution | num nodes | [binary nodes]
-
-    /// Reads an OcTree from an input stream.
-    /// Existing nodes of the tree are deleted before the tree is read.
-    std::istream& readBinary(std::istream &s);
-
-    /// Writes OcTree to a binary stream.
-    /// The OcTree is first converted to the maximum likelihood estimate and pruned
-    /// for maximum compression.
-    std::ostream& writeBinary(std::ostream &s);
-
-    /// Writes the maximum likelihood OcTree to a binary stream (const variant).
-    /// Files will be smaller when the tree is pruned first.
-    std::ostream& writeBinaryConst(std::ostream &s) const;
-
-
-    /// Reads OcTree from a binary file.
-    /// Existing nodes of the tree are deleted before the tree is read.
-    void readBinary(const std::string& filename);
-
-    /// Writes OcTree to a binary file using writeBinary().
-    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
-    void writeBinary(const std::string& filename);
-
-    /// Writes OcTree to a binary file using writeBinaryConst().
-    /// The OcTree is not changed, in particular not pruned first.
-    void writeBinaryConst(const std::string& filename) const;
 
 
   protected:
@@ -120,8 +85,6 @@ namespace octomap {
     /// Helper for insertScan (internal use)
     void insertScanUniform(const Pointcloud& pc, const pose6d& scan_pose, double maxrange=-1.);
 
-    ///recursive call of toMaxLikelihood()
-    void toMaxLikelihoodRecurs(OcTreeNode* node, unsigned int depth, unsigned int max_depth);
 
     void calcNumThresholdedNodesRecurs (OcTreeNode* node,
                                         unsigned int& num_thresholded, 

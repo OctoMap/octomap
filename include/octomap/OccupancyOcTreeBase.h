@@ -41,6 +41,8 @@
  */
 
 #include <list>
+#include <fstream>
+#include <stdlib.h>
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
@@ -130,6 +132,9 @@ namespace octomap {
      */
     virtual NODE* updateNode(const point3d& value, float log_odds_update);
 
+    /// Creates the maximum likelihood map by calling toMaxLikelihood on all
+    /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
+    virtual void toMaxLikelihood();
 
     /**
      * Insert one ray between origin and end into the tree.
@@ -231,6 +236,39 @@ namespace octomap {
                        point3d_list& occupied_cells,
                        double maxrange);
 
+    // -- I/O  -----------------------------------------
+
+    /// binary file format: treetype | resolution | num nodes | [binary nodes]
+
+    /// Reads an OcTree from an input stream.
+    /// Existing nodes of the tree are deleted before the tree is read.
+    std::istream& readBinary(std::istream &s);
+
+    /// Writes OcTree to a binary stream.
+    /// The OcTree is first converted to the maximum likelihood estimate and pruned
+    /// for maximum compression.
+    std::ostream& writeBinary(std::ostream &s);
+
+    /// Writes the maximum likelihood OcTree to a binary stream (const variant).
+    /// Files will be smaller when the tree is pruned first.
+    std::ostream& writeBinaryConst(std::ostream &s) const;
+
+
+    /// Reads OcTree from a binary file.
+    /// Existing nodes of the tree are deleted before the tree is read.
+    void readBinary(const std::string& filename);
+
+    /// Writes OcTree to a binary file using writeBinary().
+    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
+    void writeBinary(const std::string& filename);
+
+    /// Writes OcTree to a binary file using writeBinaryConst().
+    /// The OcTree is not changed, in particular not pruned first.
+    void writeBinaryConst(const std::string& filename) const;
+
+    // Ported from exp. branch to make merging easier (to be replaced)
+    virtual void nodeToMaxLikelihood(NODE* occupancyNode) const {occupancyNode->toMaxLikelihood(); }
+
   protected:
 
     /**
@@ -251,7 +289,8 @@ namespace octomap {
      */
     NODE* updateNode(const OcTreeKey& key, float log_odds_update);
 
-    /** Traces a ray from origin to end and updates all voxels on the
+    /**
+     * Traces a ray from origin to end and updates all voxels on the
      *  way as free.  The volume containing "end" is not updated.
      */
     inline bool integrateMissOnRay(const point3d& origin, const point3d& end);
@@ -276,6 +315,8 @@ namespace octomap {
     void getOccupiedLeafsBBXRecurs( point3d_list& node_centers, unsigned int max_depth, NODE* node, 
                                     unsigned int depth, const OcTreeKey& parent_key, 
                                     const OcTreeKey& min, const OcTreeKey& max) const;
+    
+    void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
 
     void getFreespaceRecurs(std::list<OcTreeVolume>& binary_nodes,
                             std::list<OcTreeVolume>& delta_nodes, unsigned int max_depth,

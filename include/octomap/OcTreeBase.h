@@ -309,7 +309,6 @@ namespace octomap {
     KeyRay keyray;  // data structure for ray casting
   };
 
-
 }
 
 #include <octomap/OcTreeBase.hxx>
