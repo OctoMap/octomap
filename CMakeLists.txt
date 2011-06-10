@@ -122,6 +122,15 @@ SET(CPACK_PACKAGE_VENDOR "University of Freiburg")
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SOURCE_GENERATOR "TGZ")
 
+
+include(CMakeModules/InstallPkgConfigFile.cmake)
+install_pkg_config_file(octomap
+    CFLAGS
+    LIBS -loctomap -loctomath
+    REQUIRES
+    VERSION ${V_MAJOR}.${V_MINOR}.${V_PATCH})
+
+
 INCLUDE(CPack)
 
 
