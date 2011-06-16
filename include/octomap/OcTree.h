@@ -75,21 +75,6 @@ namespace octomap {
     virtual ~OcTree(){};
 
 
-    // -- Information  ---------------------------------
-
-    void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const; 
-
-
-  protected:
-
-    /// Helper for insertScan (internal use)
-    void insertScanUniform(const Pointcloud& pc, const pose6d& scan_pose, double maxrange=-1.);
-
-
-    void calcNumThresholdedNodesRecurs (OcTreeNode* node,
-                                        unsigned int& num_thresholded, 
-                                        unsigned int& num_other) const; 
-
 
   };
 

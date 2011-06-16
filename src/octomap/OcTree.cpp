@@ -37,10 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-
 #include <octomap/OcTree.h>
-#include <octomap/CountingOcTree.h>
 
 
 namespace octomap {
@@ -60,112 +57,6 @@ namespace octomap {
   }
 
   
-  
-  // -- Information  ---------------------------------  
 
-  
-  void OcTree::calcNumThresholdedNodes(unsigned int& num_thresholded, 
-                                       unsigned int& num_other) const {
-    num_thresholded = 0;
-    num_other = 0;
-    calcNumThresholdedNodesRecurs(itsRoot, num_thresholded, num_other);
-  }
-
-
-
-//   // --  protected  --------------------------------------------
-
-//   void OcTree::insertScanUniform(const Pointcloud& pc, const pose6d& scan_pose, double maxrange) {
-    
-//     octomap::point3d origin (scan_pose.trans());
-
-
-//     // preprocess data  --------------------------
-
-//     octomap::point3d p;
-
-//     CountingOcTree free_tree    (this->getResolution());
-//     CountingOcTree occupied_tree(this->getResolution());
-
-//     for (octomap::Pointcloud::const_iterator point_it = pc.begin(); point_it != pc.end(); point_it++) {
-
-//       p = scan_pose.transform(*point_it);
-
-//       bool is_maxrange = false;
-//       if ( (maxrange > 0.0) && ((p - origin).norm() > maxrange) ) is_maxrange = true;
-
-//       if (!is_maxrange) {
-//         // free cells
-//         if (this->computeRayKeys(origin, p, this->keyray)){
-//           for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-//             free_tree.updateNode(*it);
-//           }
-//         }
-//         // occupied cells
-//         occupied_tree.updateNode(p);
-//       } // end if NOT maxrange
-
-//       else { // used set a maxrange and this is reached
-//         point3d direction = (p - origin).normalized();
-//         point3d new_end = origin + direction * maxrange;
-//         if (this->computeRayKeys(origin, new_end, this->keyray)){
-//           for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-//             free_tree.updateNode(*it);
-//           }
-//         }
-//       } // end if maxrange
-
-
-//     } // end for all points
-
-//     point3d_list free_cells;
-//     free_tree.getLeafNodes(free_cells);
-
-//     point3d_list occupied_cells;
-//     occupied_tree.getLeafNodes(occupied_cells);
-
-
-//     // delete free cells if cell is also measured occupied
-//     for (point3d_list::iterator cellit = free_cells.begin(); cellit != free_cells.end();){
-//       if ( occupied_tree.search(*cellit) ) {
-//         cellit = free_cells.erase(cellit);
-//       }
-//       else {
-//         cellit++;
-//       }
-//     } // end for
-
-
-//     // insert data into tree  -----------------------
-//     for (point3d_list::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
-//       updateNode(*it, false);
-//     }
-//     for (point3d_list::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
-//       updateNode(*it, true);
-//     }
-
-// //    unsigned int num_thres = 0;
-// //    unsigned int num_other = 0;
-// //    calcNumThresholdedNodes(num_thres, num_other);
-// //    std::cout << "Inserted scan, total num of thresholded nodes: "<< num_thres << ", num of other nodes: "<< num_other << std::endl;
-
-//   }
-
-
-
-  void OcTree::calcNumThresholdedNodesRecurs (OcTreeNode* node,
-                                              unsigned int& num_thresholded, 
-                                              unsigned int& num_other) const { 
-    assert(node != NULL);
-
-    for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        OcTreeNode* child_node = node->getChild(i);
-        if (child_node->atThreshold()) num_thresholded++;
-        else num_other++;
-        calcNumThresholdedNodesRecurs(child_node, num_thresholded, num_other);
-      } // end if child
-    } // end for children
-  }
 
 } // namespace

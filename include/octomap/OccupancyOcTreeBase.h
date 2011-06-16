@@ -41,6 +41,8 @@
  */
 
 #include <list>
+// you need to include boost/unordered_set instead if your compiler does not
+// yet support tr1
 #include <tr1/unordered_set>
 #include <fstream>
 #include <stdlib.h>
@@ -70,6 +72,10 @@ namespace octomap {
   class OccupancyOcTreeBase : public OcTreeBase<NODE> {
 
   public:
+    /// Data structure to efficiently compute the nodes to update from a scan
+    /// insertion using a hash set
+    // you need to use boost::unordered_set instead if your compiler does not
+    // yet support tr1
     typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> UpdateList;
 
     OccupancyOcTreeBase(double _resolution);
@@ -233,24 +239,37 @@ namespace octomap {
     ///  use or ignore BBX limit (default: ignore)
     void useBBXLimit(bool limit) { use_bbx_limit = limit; }
     bool bbxSet() const { return use_bbx_limit; }
+    /// sets the minimum for a query bounding box to use
     void setBBXMin (point3d& min);
+    /// sets the maximum for a query bounding box to use
     void setBBXMax (point3d& max);
+    /// @return the currently set minimum for bounding box queries, if set
     point3d getBBXMin () const { return bbx_min; }
+    /// @return the currently set maximum for bounding box queries, if set
     point3d getBBXMax () const { return bbx_max; }
     point3d getBBXBounds () const;
     point3d getBBXCenter () const;
+    /// @return true if point is in the currently set bounding box
     bool inBBX(const point3d& p) const;
+    /// @return true if key is in the currently set bounding box
     bool inBBX(const OcTreeKey& key) const;
 
-    // set parameters for occupancy and sensor model:
-    void setOccupancyThres(double prob){occProbThresLog = logodds(prob); }
-    void setProbHit(double prob){probHitLog = logodds(prob); assert(probHitLog >= 0.0);}
-    void setProbMiss(double prob){probMissLog = logodds(prob); assert(probMissLog <= 0.0);}
+    //-- parameters for occupancy and sensor model:
 
+    /// sets the threshold for occupancy (sensor model)
+    void setOccupancyThres(double prob){occProbThresLog = logodds(prob); }
+    /// sets the probablility for a "hit" (will be converted to logodds) - sensor model
+    void setProbHit(double prob){probHitLog = logodds(prob); assert(probHitLog >= 0.0);}
+    /// sets the probablility for a "miss" (will be converted to logodds) - sensor model
+    void setProbMiss(double prob){probMissLog = logodds(prob); assert(probMissLog <= 0.0);}
+    /// sets the minimum threshold for occupancy clamping (sensor model)
     void setClampingThresMin(double thresProb){clampingThresMin = logodds(thresProb); }
+    /// sets the maximum threshold for occupancy clamping (sensor model)
     void setClampingThresMax(double thresProb){clampingThresMax = logodds(thresProb); }
 
-    /// Helper for insertScanUniform (internal use)
+    /// Helper for insertScanUniform (internal use). Computes all free and occupied nodes
+    /// required for the update at once. Here, occupied nodes have a preference over free
+    /// ones.
     void computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
                         UpdateList& free_cells,
                         UpdateList& occupied_cells,
@@ -286,9 +305,11 @@ namespace octomap {
     /// The OcTree is not changed, in particular not pruned first.
     void writeBinaryConst(const std::string& filename) const;
 
-    /*
-     * Experimental stuff:
-     */
+
+    void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const;
+
+
+
 
     /**
      * Updates the occupancy of all inner nodes to reflect their children's occupancy.
@@ -298,11 +319,17 @@ namespace octomap {
      **/
     void updateInnerOccupancy();
 
+    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
     virtual bool isNodeOccupied(NODE* occupancyNode) const;
+    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
     virtual bool isNodeOccupied(const NODE& occupancyNode) const;
+    /// queries whether a node is at the clamping threshold according to the tree's parameter
     virtual bool isNodeAtThreshold(NODE* occupancyNode) const;
+    /// integrate a "hit" measurement according to the tree's sensor model
     virtual void integrateHit(NODE* occupancyNode) const;
+    /// integrate a "miss" measurement according to the tree's sensor model
     virtual void integrateMiss(NODE* occupancyNode) const;
+    /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
     virtual void nodeToMaxLikelihood(NODE* occupancyNode) const;
 
   protected:
@@ -351,10 +378,14 @@ namespace octomap {
     
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
 
+    void calcNumThresholdedNodesRecurs (NODE* node,
+                                        unsigned int& num_thresholded,
+                                        unsigned int& num_other) const;
+
 
   protected:
 
-    bool use_bbx_limit;  // use BBX limits?
+    bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
     point3d bbx_max;
     OcTreeKey bbx_min_key;

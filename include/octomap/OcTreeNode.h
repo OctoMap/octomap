@@ -76,8 +76,15 @@ namespace octomap {
 
     // -- node occupancy  ----------------------------
 
+    /// This function is deprecated and will be removed,
+    /// instead use octree->integrateHit(node) in OccupancyOcTreeBase
+    ///
     /// integrate a measurement (beam ENDED in cell)
     inline void integrateHit()  __attribute__ ((deprecated)) {  updateProbability(probHit); }
+
+    /// This function is deprecated and will be removed,
+    /// instead use octree->integrateMiss(node) in OccupancyOcTreeBase
+    ///
     /// integrate a measurement (beam PASSED in cell)
     inline void integrateMiss()  __attribute__ ((deprecated)) { updateProbability(probMiss); }
 
@@ -90,18 +97,27 @@ namespace octomap {
     /// sets log odds occupancy of node
     inline void setLogOdds(float l) { value = l; }
 
+    /// This function is deprecated and will be removed,
+    /// instead use octree->isNodeOccupied(node) in OccupancyOcTreeBase
+    ///
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
     /// For efficiency, values are compared in log-space (no need for exp-computation)
     inline bool isOccupied() const  __attribute__ ((deprecated)) {
       return (this->getLogOdds() >= occProbThresLog);
     }
 
+    /// This function is deprecated and will be removed,
+    /// instead use octree->isNodeAtThreshold(node) in OccupancyOcTreeBase
+    ///
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
     inline bool atThreshold() const  __attribute__ ((deprecated)) {
       return ((value <= clampingThresMin) ||
               (value >= clampingThresMax));
     }
-    
+
+    /// This function is deprecated and will be removed,
+    /// instead use octree->nodeToMaxLikelihood(node) in OccupancyOcTreeBase
+    ///
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
     void toMaxLikelihood()  __attribute__ ((deprecated));
@@ -157,16 +173,17 @@ namespace octomap {
     /// adds p to the node's logOdds value (with no boundary / threshold checking!)
     void addValue(float p);
 
-    // definition of "Occupancy" => these really need to be moved to parameters!
-    // If changing OCC_PROB_THRES, also change OCC_PROB_THRES_LOG in log-Odds!
+
+  protected:
+    // definition of "Occupancy"
+    // These values are deprecated and should no longer be used.
+    // Use the parameters of the tree instead (and e.g. tree->isNodeOccupied(node))
     const static double probHit = 0.7;
     const static double probMiss = 0.4;
     const static float occProbThres = 0.5;
     const static float occProbThresLog = 0.0;
     const static float clampingThresMin = -2;
     const static float clampingThresMax = 3.5;
-
-  protected:
 
 
  // "value" stores log odds occupancy probability
