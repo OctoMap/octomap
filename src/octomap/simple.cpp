@@ -38,7 +38,7 @@
  */
 
 #include <octomap/octomap.h>
-#include <octomap/OcTreeLabeled.h>
+#include <octomap/OcTree.h>
 
 using namespace std;
 using namespace octomap;
