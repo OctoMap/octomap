@@ -67,18 +67,25 @@ namespace octomap {
     #include <ros/ros.h>
 
     #define OCTOMAP_DEBUG         ROS_DEBUG
-    #define OCTOMAP_WARNING       ROS_WARN
-    #define OCTOMAP_ERROR         ROS_ERROR
     #define OCTOMAP_DEBUG_STR     ROS_DEBUG_STREAM
+    #define OCTOMAP_WARNING       ROS_WARN
     #define OCTOMAP_WARNING_STR   ROS_WARN_STREAM
+    #define OCTOMAP_ERROR         ROS_ERROR
     #define OCTOMAP_ERROR_STR     ROS_ERROR_STREAM
 
   #else
-    #define OCTOMAP_DEBUG(...)        fprintf(stdout, __VA_ARGS__), fflush(stdout)
+    // no debug output if not in debug mode:
+    #ifdef NDEBUG
+      #define OCTOMAP_DEBUG(...)       (void)0
+      #define OCTOMAP_DEBUG_STR(...)   (void)0
+    #else
+      #define OCTOMAP_DEBUG(...)        fprintf(stderr, __VA_ARGS__), fflush(stderr)
+      #define OCTOMAP_DEBUG_STR(args)   std::cerr << args << std::endl
+    #endif
+
     #define OCTOMAP_WARNING(...)      fprintf(stderr, "WARNING: "), fprintf(stderr, __VA_ARGS__), fflush(stderr)
-    #define OCTOMAP_ERROR(...)        fprintf(stderr, "ERROR: "), fprintf(stderr, __VA_ARGS__), fflush(stderr)
-    #define OCTOMAP_DEBUG_STR(args)   std::cout << args << std::endl
     #define OCTOMAP_WARNING_STR(args) std::cerr << "WARNING: " << args << std::endl
+    #define OCTOMAP_ERROR(...)        fprintf(stderr, "ERROR: "), fprintf(stderr, __VA_ARGS__), fflush(stderr)
     #define OCTOMAP_ERROR_STR(args)   std::cerr << "ERROR: " << args << std::endl
   #endif
 

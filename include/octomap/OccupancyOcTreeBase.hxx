@@ -780,7 +780,7 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::readBinary(const std::string& filename){
     std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
     if (!binary_infile.is_open()){
-      std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing read.\n";
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
       return;
     } else {
       readBinary(binary_infile);
@@ -792,7 +792,7 @@ namespace octomap {
   std::istream& OccupancyOcTreeBase<NODE>::readBinary(std::istream &s) {
 
 	  if (!s.good()){
-		  std::cerr << "Warning: Input filestream not \"good\" in OcTree::readBinary\n";
+	    OCTOMAP_WARNING_STR("Input filestream not \"good\" in OcTree::readBinary");
 	  }
 
 	  int tree_type = -1;
@@ -816,9 +816,7 @@ namespace octomap {
 
 		  unsigned int tree_read_size = 0;
 		  s.read((char*)&tree_read_size, sizeof(tree_read_size));
-		  std::cout << "Reading "
-				  << tree_read_size
-				  << " nodes from bonsai tree file..." <<std::flush;
+		  OCTOMAP_DEBUG_STR("Reading " << tree_read_size << " nodes from bonsai tree file...");
 
 		  this->itsRoot->readBinary(s);
 		  // TODO workaround: do this to ensure all nodes have the tree's occupancy thres
@@ -827,9 +825,9 @@ namespace octomap {
 	    this->sizeChanged = true;
 		  this->tree_size = OcTreeBase<NODE>::calcNumNodes();  // compute number of nodes
 
-		  std::cout << " done.\n";
+		  OCTOMAP_DEBUG_STR("done.");
 	  } else{
-		  std::cerr << "Binary file does not contain an OcTree!\n";
+	    OCTOMAP_ERROR_STR("Binary file does not contain an OcTree!");
 	  }
 
 
@@ -841,7 +839,7 @@ namespace octomap {
 	  std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
 	  if (!binary_outfile.is_open()){
-		  std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+	    OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
 		  return;
 	  } else {
 		  writeBinary(binary_outfile);
@@ -854,7 +852,7 @@ namespace octomap {
 	  std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
 	  if (!binary_outfile.is_open()){
-		  std::cerr << "ERROR: Filestream to "<< filename << " not open, nothing written.\n";
+	    OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
 		  return;
 	  }
 	  else {
@@ -887,12 +885,11 @@ namespace octomap {
 	  s.write((char*)&tree_resolution, sizeof(tree_resolution));
 
 	  unsigned int tree_write_size = this->size();
-	  std::cout << "Writing " << tree_write_size << " nodes to output stream..." << std::flush;
+	  OCTOMAP_DEBUG_STR("Writing " << tree_write_size << " nodes to output stream...");
 	  s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
 	  this->itsRoot->writeBinary(s);
-	  std::cout <<" done.\n";
-
+	  OCTOMAP_DEBUG_STR(" done.");
 	  return s;
   }
 
