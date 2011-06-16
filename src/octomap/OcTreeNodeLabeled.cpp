@@ -187,13 +187,13 @@ namespace octomap {
         // child is free leaf
         createChild(i);
         getChild(i)->setLabel(FREE);
-        getChild(i)->setLogOdds(CLAMPING_THRES_MIN);
+        getChild(i)->setLogOdds(clampingThresMin);
       }
       else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i);
         getChild(i)->setLabel(OCCUPIED);
-        getChild(i)->setLogOdds(CLAMPING_THRES_MAX);
+        getChild(i)->setLogOdds(clampingThresMax);
       }
       else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
         // child has children
@@ -207,13 +207,13 @@ namespace octomap {
         // child is free leaf
         createChild(i+4);
         getChild(i+4)->setLabel(FREE);
-        getChild(i+4)->setLogOdds(CLAMPING_THRES_MIN);
+        getChild(i+4)->setLogOdds(clampingThresMin);
       }
       else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i+4);
         getChild(i+4)->setLabel(OCCUPIED);
-        getChild(i+4)->setLogOdds(CLAMPING_THRES_MAX);
+        getChild(i+4)->setLogOdds(clampingThresMax);
       }
       else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
         // child has children

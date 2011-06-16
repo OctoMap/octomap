@@ -48,19 +48,6 @@
 namespace octomap {
 
 
-#define PROB_HIT  0.7
-#define PROB_MISS 0.4
-
-// definition of "Occupancy" => these really need to be moved to parameters!
-// If changing OCC_PROB_THRES, also change OCC_PROB_THRES_LOG in log-Odds!
-#define OCC_PROB_THRES 0.5
-#define OCC_PROB_THRES_LOG 0.0
-#define CLAMPING_THRES_MIN -2
-#define CLAMPING_THRES_MAX 3.5
-#define UNKOWN_AS_OBSTACLE false
-
-  // TODO : params of tree (const params pointer?)
-
 
   /**
    * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
@@ -90,9 +77,9 @@ namespace octomap {
     // -- node occupancy  ----------------------------
 
     /// integrate a measurement (beam ENDED in cell)
-    inline void integrateHit() {  updateProbability(PROB_HIT); }
+    inline void integrateHit()  __attribute__ ((deprecated)) {  updateProbability(probHit); }
     /// integrate a measurement (beam PASSED in cell)
-    inline void integrateMiss() { updateProbability(PROB_MISS); }
+    inline void integrateMiss()  __attribute__ ((deprecated)) { updateProbability(probMiss); }
 
 
     /// \return occupancy probability of node
@@ -105,19 +92,19 @@ namespace octomap {
 
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
     /// For efficiency, values are compared in log-space (no need for exp-computation)
-    inline bool isOccupied() const {
-      return (this->getLogOdds() >= OCC_PROB_THRES_LOG);
+    inline bool isOccupied() const  __attribute__ ((deprecated)) {
+      return (this->getLogOdds() >= occProbThresLog);
     }
 
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
-    inline bool atThreshold() const {
-      return ((value <= CLAMPING_THRES_MIN) ||
-              (value >= CLAMPING_THRES_MAX));
+    inline bool atThreshold() const  __attribute__ ((deprecated)) {
+      return ((value <= clampingThresMin) ||
+              (value >= clampingThresMax));
     }
     
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
-    void toMaxLikelihood();
+    void toMaxLikelihood()  __attribute__ ((deprecated));
  
     /**
      * @return mean of all children's occupancy probabilities, in log odds
@@ -170,12 +157,23 @@ namespace octomap {
     /// adds p to the node's logOdds value (with no boundary / threshold checking!)
     void addValue(float p);
 
+    // definition of "Occupancy" => these really need to be moved to parameters!
+    // If changing OCC_PROB_THRES, also change OCC_PROB_THRES_LOG in log-Odds!
+    const static double probHit = 0.7;
+    const static double probMiss = 0.4;
+    const static float occProbThres = 0.5;
+    const static float occProbThresLog = 0.0;
+    const static float clampingThresMin = -2;
+    const static float clampingThresMax = 3.5;
+
   protected:
 
 
  // "value" stores log odds occupancy probability
 
   };
+
+
 
 
 } // end namespace

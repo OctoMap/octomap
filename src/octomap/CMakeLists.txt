@@ -4,8 +4,8 @@ SET (octomap_SRCS
   CountingOcTree.cpp
   OcTree.cpp
   OcTreeNode.cpp
-  OcTreeNodeLabeled.cpp
-  OcTreeLabeled.cpp
+  OcTreeStamped.cpp
+  OcTreeNodeStamped.cpp
   OcTreeLUT.cpp
   )
 
@@ -35,11 +35,11 @@ TARGET_LINK_LIBRARIES(edit_octree octomap)
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
-ADD_EXECUTABLE(labeled_demo labeled_demo.cpp)
-TARGET_LINK_LIBRARIES(labeled_demo octomap)
-
 ADD_EXECUTABLE(test_raycasting test_raycasting.cpp)
 TARGET_LINK_LIBRARIES(test_raycasting octomap)
+
+ADD_EXECUTABLE(test_iterators test_iterators.cpp)
+TARGET_LINK_LIBRARIES(test_iterators octomap)
 
 ADD_EXECUTABLE(test_scans test_scans.cpp)
 TARGET_LINK_LIBRARIES(test_scans octomap)

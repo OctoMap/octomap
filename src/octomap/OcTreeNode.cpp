@@ -75,9 +75,9 @@ namespace octomap {
   // ============================================================
 
 
-  void OcTreeNode::toMaxLikelihood() {
-      if (isOccupied()) setLogOdds(CLAMPING_THRES_MAX);
-      else              setLogOdds(CLAMPING_THRES_MIN);
+  void OcTreeNode::toMaxLikelihood(){
+      if (isOccupied()) setLogOdds(clampingThresMax);
+      else              setLogOdds(clampingThresMin);
   }
 
 
@@ -126,18 +126,18 @@ namespace octomap {
 
 
     // inner nodes default to occupied
-    this->setLogOdds(CLAMPING_THRES_MAX);
+    this->setLogOdds(clampingThresMax);
 
     for (unsigned int i=0; i<4; i++) {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
         // child is free leaf
         createChild(i);
-        getChild(i)->setLogOdds(CLAMPING_THRES_MIN);
+        getChild(i)->setLogOdds(clampingThresMin);
       }
       else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i);
-        getChild(i)->setLogOdds(CLAMPING_THRES_MAX);
+        getChild(i)->setLogOdds(clampingThresMax);
       }
       else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
         // child has children
@@ -149,12 +149,12 @@ namespace octomap {
       if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 0)) {
         // child is free leaf
         createChild(i+4);
-        getChild(i+4)->setLogOdds(CLAMPING_THRES_MIN);
+        getChild(i+4)->setLogOdds(clampingThresMin);
       }
       else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
         // child is occupied leaf
         createChild(i+4);
-        getChild(i+4)->setLogOdds(CLAMPING_THRES_MAX);
+        getChild(i+4)->setLogOdds(clampingThresMax);
       }
       else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
         // child has children
@@ -253,8 +253,8 @@ namespace octomap {
 //     OCTOMAP_DEBUG("logodds after : %f\n\n", log_odds_occupancy);
 
     if (!hasChildren() &&
-        ((value > CLAMPING_THRES_MAX) ||
-            (value < CLAMPING_THRES_MIN))) {
+        ((value > clampingThresMax) ||
+            (value < clampingThresMin))) {
       this->toMaxLikelihood();
     }
   }

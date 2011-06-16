@@ -41,6 +41,7 @@
  */
 
 #include "octomap_types.h"
+#include "assert.h"
 #include <bitset>
 
 namespace octomap {

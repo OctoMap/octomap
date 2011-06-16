@@ -41,6 +41,9 @@
 namespace octomap {
 
 
+  /*template <class NODE>
+  const OcTreeBase<NODE>::leaf_iterator OcTreeBase<NODE>::leaf_iterator_end = OcTreeBase<NODE>::leaf_iterator();*/
+
   template <class NODE>
   OcTreeBase<NODE>::OcTreeBase(double _resolution) :
     itsRoot(NULL), tree_depth(16), tree_max_val(32768), 

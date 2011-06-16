@@ -6,7 +6,7 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2010.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2011.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
@@ -43,6 +43,8 @@
 #include <list>
 #include <limits>
 #include <math.h>
+#include <iterator>
+#include <stack>
 #include <cassert>
 
 #include "octomap_types.h"
@@ -222,6 +224,356 @@ namespace octomap {
     /// Write complete state of tree to stream, no pruning (const version)
     std::ostream& writeConst(std::ostream &s) const;
 
+    // -- experimental section  -----------------------
+    /**
+     * Base class for OcTree iterators. So far, all iterator's are
+     * const with respect to the tree
+     */
+    class iterator_base : std::iterator<std::forward_iterator_tag, NodeType>{
+    public:
+      struct StackElement;
+      /// Default ctor, only used for the end-iterator
+      iterator_base() : tree(NULL), maxDepth(0){}
+
+      /**
+       * Constructor of the iterator.
+       * 
+       * @param tree OcTreeBase on which the iterator is used on
+       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
+       */
+      iterator_base(OcTreeBase<NodeType> const* tree, unsigned char depth=0)
+        : tree(tree), maxDepth(depth)
+      {
+        if (maxDepth == 0)
+          maxDepth = tree->getTreeDepth();
+
+        StackElement s;
+        s.node = tree->itsRoot;
+        s.depth = 0;
+        s.key[0] = s.key[1] = s.key[2] = tree->tree_max_val;
+        stack.push(s);
+      }
+
+      /// Copy constructor of the iterator
+      iterator_base(const iterator_base& other)
+      : tree(other.tree), maxDepth(other.maxDepth), stack(other.stack) {}
+
+      /// Comparison between interators. First compares the tree, then stack size and top element of stack.
+      bool operator==(const iterator_base& other) const {
+        return (tree ==other.tree && stack.size() == other.stack.size()
+            && stack.size() > 0 && (stack.top().node == other.stack.top().node
+                && stack.top().depth == other.stack.top().depth
+                && stack.top().key == other.stack.top().key ));
+      }
+
+      /// Comparison between interators. First compares the tree, then stack size and top element of stack.
+      bool operator!=(const iterator_base& other) const {
+        return (tree !=other.tree || stack.size() != other.stack.size()
+            || (stack.size() > 0 && ((stack.top().node != other.stack.top().node
+                || stack.top().depth != other.stack.top().depth
+                || stack.top().key != other.stack.top().key ))));
+      }
+
+      iterator_base& operator=(const iterator_base& other){
+        tree = other.tree;
+        maxDepth = other.maxDepth;
+        stack = other.stack;
+        return *this;
+      };
+
+      /// Ptr operator will return the current node in the octree which the
+      /// iterator is referring to
+      NodeType const* operator->() const { return stack.top().node;}
+      
+      /// Ptr operator will return the current node in the octree which the
+      /// iterator is referring to
+      NodeType* operator->() { return stack.top().node;}
+      
+      /// Return the current node in the octree which the
+      /// iterator is referring to
+      const NodeType& operator*() const { return *(stack.top().node);}
+      
+      /// Return the current node in the octree which the
+      /// iterator is referring to
+      NodeType& operator*() { return *(stack.top().node);}
+
+      /// return the center coordinate of the current node
+      point3d getCoordinate() const {
+        point3d coord;
+        tree->genCoords(stack.top().key, stack.top().depth, coord);
+        return coord;
+      }
+
+      /// @return single coordinate of the current node
+      float getX() const{
+        return tree->genCoordFromKey(stack.top().key[0]);
+      }
+      /// @return single coordinate of the current node
+      float getY() const{
+        return tree->genCoordFromKey(stack.top().key[1]);
+      }
+      /// @return single coordinate of the current node
+      float getZ() const{
+        return tree->genCoordFromKey(stack.top().key[2]);
+      }
+
+      // TODO possible speedup: lookup table instead of exp.shift
+      /// @return the side if the volume occupied by the current node
+      double getSize() const {return (tree->resolution * double(1 << (tree->tree_depth - stack.top().depth))); }
+      
+      /// return depth of the current node
+      unsigned char getDepth() const {return stack.top().depth; }
+      
+      /// @return the OcTreeKey of the current node
+      OcTreeKey getKey() const {return stack.top().key;}
+
+      /// Element on the internal recursion stack of the iterator
+      struct StackElement{
+        NodeType* node;
+        OcTreeKey key;
+        unsigned char depth;
+      };
+
+
+    protected:
+      /// One step of depth-first tree traversal. 
+      /// How this is used depends on the actual iterator.
+      void singleIncrement(){
+        StackElement top = stack.top();
+        stack.pop();
+
+        iterator_base::StackElement s;
+        s.depth = top.depth +1;
+        unsigned short int center_offset_key = tree->tree_max_val >> (top.depth +1);
+        // push on stack in reverse order
+        for (int i=7; i>=0; --i) {
+          if (top.node->childExists(i)) {
+            computeChildKey(i, center_offset_key, top.key, s.key);
+            s.node = top.node->getChild(i);
+            stack.push(s);
+          }
+        }
+      }
+
+      OcTreeBase<NodeType> const* tree; ///< Octree this iterator is working on
+      unsigned char maxDepth; ///< Maximum depth for depth-limited queries
+
+      /// Internal recursion stack. Apparently a stack of vector works fastest here.
+      std::stack<StackElement,std::vector<StackElement> > stack;
+
+    };
+
+    /**
+     * Iterator over the complete tree (inner nodes and leafs)
+     */
+    class tree_iterator : public iterator_base {
+    public:
+      tree_iterator() : iterator_base(){}
+      /**
+       * Constructor of the iterator.
+       * 
+       * @param tree OcTreeBase on which the iterator is used on
+       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
+       */
+      tree_iterator(OcTreeBase<NodeType> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {};
+
+      /// postfix increment operator of iterator (it++)
+      tree_iterator operator++(int){
+        tree_iterator result = *this;
+        ++(*this);
+        return result;
+      }
+
+      /// Prefix increment operator to advance the iterator
+      tree_iterator& operator++(){
+        if (!this->stack.empty()){
+          this->singleIncrement();
+        }
+
+        if (this->stack.empty()){
+          this->tree = NULL;
+        }
+
+        return *this;
+      }
+    };
+
+    /**
+     * Iterator to iterate over all leafs of the tree. 
+     * Inner nodes are skipped.
+     *
+     */
+    class leaf_iterator : public iterator_base {
+      public:
+          leaf_iterator() : iterator_base(){}
+          
+          /**
+          * Constructor of the iterator.
+          * 
+          * @param tree OcTreeBase on which the iterator is used on
+          * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
+          */
+          leaf_iterator(OcTreeBase<NodeType> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {
+            // skip forward to next valid leaf node:
+            // add root another time (one will be removed) and ++
+            this->stack.push(this->stack.top());
+            operator ++();
+          }
+
+          leaf_iterator(const leaf_iterator& other) : iterator_base(other) {};
+
+          /// postfix increment operator of iterator (it++)
+          leaf_iterator operator++(int){
+            leaf_iterator result = *this;
+            ++(*this);
+            return result;
+          }
+
+          /// prefix increment operator of iterator (++it)
+          leaf_iterator& operator++(){
+            if (this->stack.empty()){
+              this->tree = NULL; // TODO check?
+
+            } else {
+              this->stack.pop();
+
+              // skip forward to next leaf
+              while(!this->stack.empty()  && this->stack.top().depth < this->maxDepth
+                  && this->stack.top().node->hasChildren())
+              {
+                this->singleIncrement();
+              }
+              // done: either stack is empty (== end iterator) or a next leaf node is reached!
+              if (this->stack.empty())
+                this->tree = NULL;
+            }
+
+
+            return *this;
+          }
+
+    };
+
+    /**
+     * Bounding-box leaf iterator. This iterator will traverse all leaf nodes
+     * within a given bounding box (axis-aligned)
+     */
+    class leaf_bbx_iterator : public iterator_base {
+    public:
+      leaf_bbx_iterator() : iterator_base() {};
+      /**
+      * Constructor of the iterator.
+      * 
+      * @param tree OcTreeBase on which the iterator is used on
+      * @param min Minimum point3d of the axis-aligned boundingbox
+      * @param max Maximum point3d of the axis-aligned boundingbox
+      * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
+      */      
+      leaf_bbx_iterator(OcTreeBase<NodeType> const* tree, const point3d& min, const point3d& max, unsigned char depth=0)
+        : iterator_base(tree, depth)
+      {
+
+        if (!this->tree->genKey(min, minKey) || !this->tree->genKey(max, maxKey)){
+          // coordinates invalid, set to end iterator
+          tree = NULL;
+          this->maxDepth = 0;
+        } else{  // else: keys are generated and stored
+
+          // advance from root to next valid leaf in bbx:
+          this->stack.push(this->stack.top());
+          this->operator ++();
+        }
+
+      }
+
+      leaf_bbx_iterator(const leaf_bbx_iterator& other) : iterator_base(other) {
+        minKey = other.minKey;
+        maxKey = other.maxKey;
+      }
+
+
+
+      /// postfix increment operator of iterator (it++)
+      leaf_bbx_iterator operator++(int){
+        leaf_bbx_iterator result = *this;
+        ++(*this);
+        return result;
+      }
+
+      /// prefix increment operator of iterator (++it)
+      leaf_bbx_iterator& operator++(){
+        if (this->stack.empty()){
+          this->tree = NULL; // TODO check?
+
+        } else {
+          this->stack.pop();
+
+          // skip forward to next leaf
+          while(!this->stack.empty()  && this->stack.top().depth < this->maxDepth
+              && this->stack.top().node->hasChildren())
+          {
+            this->singleIncrement();
+          }
+          // done: either stack is empty (== end iterator) or a next leaf node is reached!
+          if (this->stack.empty())
+            this->tree = NULL;
+        }
+
+
+        return *this;
+      };
+
+    protected:
+
+      void singleIncrement(){
+        typename iterator_base::StackElement top = this->stack.top();
+        this->stack.pop();
+
+        typename iterator_base::StackElement s;
+        s.depth = top.depth +1;
+        unsigned short int center_offset_key = this->tree->tree_max_val >> (top.depth +1);
+        // push on stack in reverse order
+        for (int i=7; i>=0; --i) {
+          if (top.node->childExists(i)) {
+            computeChildKey(i, center_offset_key, top.key, s.key);
+
+            // overlap of query bbx and child bbx?
+            if ((minKey[0] <= (s.key[0] + center_offset_key)) && (maxKey[0] >= (s.key[0] - center_offset_key))
+                && (minKey[1] <= (s.key[1] + center_offset_key)) && (maxKey[1] >= (s.key[1] - center_offset_key))
+                && (minKey[2] <= (s.key[2] + center_offset_key)) && (maxKey[2] >= (s.key[2] - center_offset_key)))
+            {
+              s.node = top.node->getChild(i);
+              this->stack.push(s);
+            }
+          }
+        }
+      }
+
+
+      OcTreeKey minKey;
+      OcTreeKey maxKey;
+    };
+
+    // default iterator is leaf_iterator
+    typedef leaf_iterator iterator;
+
+    iterator begin(unsigned char maxDepth=0) const {return iterator(this, maxDepth);};
+    const iterator end() const {return leaf_iterator_end;}; // TODO: RVE?
+
+    leaf_iterator begin_leafs(unsigned char maxDepth=0) const {return leaf_iterator(this, maxDepth);};
+    const leaf_iterator end_leafs() const {return leaf_iterator_end;}
+
+    leaf_bbx_iterator begin_leafs_bbx(const point3d& min, const point3d& max, unsigned char maxDepth=0) const {
+      return leaf_bbx_iterator(this, min, max, maxDepth);
+    }
+    const leaf_bbx_iterator end_leafs_bbx() const {return leaf_iterator_bbx_end;}
+
+    tree_iterator begin_tree(unsigned char maxDepth=0) const {return tree_iterator(this, maxDepth);}
+    const tree_iterator end_tree() const {return tree_iterator_end;}
+
+
+
+
     /**
      * Generates a 16-bit key from/for given value when it is within
      * the octree bounds, returns false otherwise
@@ -293,7 +645,7 @@ namespace octomap {
     NODE* itsRoot;
 
     // constants of the tree
-    const unsigned int tree_depth;
+    const unsigned int tree_depth; ///< Maximum tree depth is fixed to 16 currently
     const unsigned int tree_max_val;
     double resolution;  ///< in meters
     double resolution_factor; ///< = 1. / resolution
@@ -307,6 +659,10 @@ namespace octomap {
     double minValue[3]; ///< min in x, y, z
 
     KeyRay keyray;  // data structure for ray casting
+
+    const leaf_iterator leaf_iterator_end;
+    const leaf_bbx_iterator leaf_iterator_bbx_end;
+    const tree_iterator tree_iterator_end;
   };
 
 }
