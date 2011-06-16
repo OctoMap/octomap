@@ -89,14 +89,15 @@ namespace octomap {
     OcTreeLUT(unsigned int _max_depth);
     ~OcTreeLUT();
     
-    bool genNeighborKey(OcTreeKey node_key, signed char& dir, OcTreeKey neighbor_key) const;
+    bool genNeighborKey(const OcTreeKey& node_key, const signed char& dir,
+                        OcTreeKey& neighbor_key) const;
 
   protected:
 
     void initLUT();
 
-    unsigned int genPos(OcTreeKey key, int i) const;
-    void changeKey(int val, OcTreeKey key, unsigned short int i) const;
+    unsigned int genPos(const OcTreeKey& key, const int& i) const;
+    void changeKey(const int& val, OcTreeKey& key, const unsigned short int& i) const;
 
   protected:
 
