@@ -44,6 +44,9 @@ TARGET_LINK_LIBRARIES(test_iterators octomap)
 ADD_EXECUTABLE(test_scans test_scans.cpp)
 TARGET_LINK_LIBRARIES(test_scans octomap)
 
+ADD_EXECUTABLE(test_lut test_lut.cpp)
+TARGET_LINK_LIBRARIES(test_lut octomap)
+
 # installation:
 # store all header files to install:
 # file(GLOB octomap_impl_HDRS *.h *.hxx *.hpp)

@@ -72,24 +72,25 @@ int main(int argc, char** argv) {
   cout << "writing sampled_surface.bt" << endl;
   sampled_surface.writeBinary("sampled_surface.bt");
 
-	// -----------------------------------------------
-	cout << "generating single rays..." << endl;
-	OcTree single_beams(0.03333);
-	int num_beams = 17;
-	double beamLength = 10.0;
-	point3d single_origin (1.0, 0.45, 0.45);
-	point3d single_endpoint(beamLength, 0.0, 0.0);
+  // -----------------------------------------------
+
+  cout << "generating single rays..." << endl;
+  OcTree single_beams(0.03333);
+  int num_beams = 17;
+  double beamLength = 10.0;
+  point3d single_origin (1.0, 0.45, 0.45);
+  point3d single_endpoint(beamLength, 0.0, 0.0);
 	
 	
-	for (int i=0; i<num_beams; i++) {    
-			if (!single_beams.insertRay(single_origin, single_origin+single_endpoint)) {
-				cout << "ERROR while inserting ray from " << single_origin << " to " << single_endpoint << endl;
-			}
-			single_endpoint.rotate_IP (0,0,DEG2RAD(360.0/num_beams));
-		}
+  for (int i=0; i<num_beams; i++) {    
+    if (!single_beams.insertRay(single_origin, single_origin+single_endpoint)) {
+      cout << "ERROR while inserting ray from " << single_origin << " to " << single_endpoint << endl;
+    }
+    single_endpoint.rotate_IP (0,0,DEG2RAD(360.0/num_beams));
+  }
 	
-	  cout << "done." << endl;
-		cout << "writing to beams.bt..." << endl;
-		single_beams.writeBinary("beams.bt");
+  cout << "done." << endl;
+  cout << "writing to beams.bt..." << endl;
+  single_beams.writeBinary("beams.bt");
 
 }
