@@ -76,8 +76,10 @@ namespace octomap {
 
 
   void OcTreeNode::toMaxLikelihood(){
-      if (isOccupied()) setLogOdds(clampingThresMax);
-      else              setLogOdds(clampingThresMin);
+    if (this->getLogOdds() >= occProbThresLog)
+      setLogOdds(clampingThresMax);
+    else
+      setLogOdds(clampingThresMin);
   }
 
 
@@ -120,7 +122,10 @@ namespace octomap {
     if (!hasChildren() &&
         ((value > clampingThresMax) ||
             (value < clampingThresMin))) {
-      this->toMaxLikelihood();
+      if (this->getLogOdds() >= occProbThresLog)
+        setLogOdds(clampingThresMax);
+      else
+        setLogOdds(clampingThresMin);
     }
   }
 

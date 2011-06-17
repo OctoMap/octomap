@@ -137,14 +137,15 @@ namespace octomap {
       this->setLogOdds(this->getMaxChildLogOdds());  // conservative
     }
 
-    /// update the probability of a node, p will first be converted to logodds
-    void updateProbability(double p);
-
     /// adds p to the node's logOdds value (with no boundary / threshold checking!)
     void addValue(float p);
 
 
   protected:
+    /// update the probability of a node, p will first be converted to logodds
+    /// this will eventually be removed (see deprecations above)
+    void updateProbability(double p);
+
     // definition of "Occupancy"
     // These values are deprecated and should no longer be used.
     // Use the parameters of the tree instead (and e.g. tree->isNodeOccupied(node))
