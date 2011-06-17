@@ -277,7 +277,7 @@ namespace octomap {
 
     // -- I/O  -----------------------------------------
 
-    /// binary file format: treetype | resolution | num nodes | [binary nodes]
+    // binary file format: treetype | resolution | num nodes | [binary nodes]
 
     /// Reads an OcTree from an input stream.
     /// Existing nodes of the tree are deleted before the tree is read.
@@ -305,6 +305,33 @@ namespace octomap {
     /// The OcTree is not changed, in particular not pruned first.
     void writeBinaryConst(const std::string& filename) const;
 
+    // -- I/O  ---------------------------------------
+
+    /**
+     * Read node from binary stream (max-likelihood value), recursively
+     * continue with all children.
+     *
+     * This will set the log_odds_occupancy value of
+     * all leaves to either free or occupied.
+     *
+     * @param s
+     * @return
+     */
+    std::istream& readBinaryNode(std::istream &s, NODE* node) const;
+
+    /**
+     * Write node to binary stream (max-likelihood value),
+     * recursively continue with all children.
+     *
+     * This will discard the log_odds_occupancy value, writing
+     * all leaves as either free or occupied.
+     *
+     * @param s
+     * @param node OcTreeNode to write out, will recurse to all children
+     * @return
+     */
+    std::ostream& writeBinaryNode(std::ostream &s, const NODE* node) const;
+
 
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const;
 
@@ -320,17 +347,24 @@ namespace octomap {
     void updateInnerOccupancy();
 
     /// queries whether a node is occupied according to the tree's parameter for "occupancy"
-    virtual bool isNodeOccupied(NODE* occupancyNode) const;
+    virtual bool isNodeOccupied(const NODE* occupancyNode) const;
     /// queries whether a node is occupied according to the tree's parameter for "occupancy"
     virtual bool isNodeOccupied(const NODE& occupancyNode) const;
+
     /// queries whether a node is at the clamping threshold according to the tree's parameter
-    virtual bool isNodeAtThreshold(NODE* occupancyNode) const;
+    virtual bool isNodeAtThreshold(const NODE* occupancyNode) const;
+    /// queries whether a node is at the clamping threshold according to the tree's parameter
+    virtual bool isNodeAtThreshold(const NODE& occupancyNode) const;
+
     /// integrate a "hit" measurement according to the tree's sensor model
     virtual void integrateHit(NODE* occupancyNode) const;
     /// integrate a "miss" measurement according to the tree's sensor model
     virtual void integrateMiss(NODE* occupancyNode) const;
+
     /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
     virtual void nodeToMaxLikelihood(NODE* occupancyNode) const;
+    /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
+    virtual void nodeToMaxLikelihood(NODE& occupancyNode) const;
 
   protected:
 

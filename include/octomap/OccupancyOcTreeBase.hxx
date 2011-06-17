@@ -568,7 +568,9 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getOccupied(point3d_list& node_centers, unsigned int max_depth) const {
 
-    if (max_depth == 0)  max_depth = this->tree_depth;
+    if (max_depth == 0)
+      max_depth = this->tree_depth;
+
     for(typename OccupancyOcTreeBase<NODE>::leaf_iterator it = this->begin(max_depth),
         end=this->end(); it!= end; ++it)
     {
@@ -581,7 +583,8 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getOccupied(std::list<OcTreeVolume>& occupied_nodes, unsigned int max_depth) const{
 
-    if (max_depth == 0)  max_depth = this->tree_depth;
+    if (max_depth == 0)
+      max_depth = this->tree_depth;
 
     for(typename OccupancyOcTreeBase<NODE>::leaf_iterator it = this->begin(max_depth),
             end=this->end(); it!= end; ++it)
@@ -598,7 +601,8 @@ namespace octomap {
                                               std::list<OcTreeVolume>& delta_nodes,
                                               unsigned int max_depth) const{
     
-    if (max_depth == 0)  max_depth = this->tree_depth;
+    if (max_depth == 0)
+      max_depth = this->tree_depth;
 
     for(typename OccupancyOcTreeBase<NODE>::leaf_iterator it = this->begin(max_depth),
             end=this->end(); it!= end; ++it)
@@ -615,7 +619,8 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::getFreespace(std::list<OcTreeVolume>& free_nodes, unsigned int max_depth) const{
 
-    if (max_depth == 0)  max_depth = this->tree_depth;
+    if (max_depth == 0)
+      max_depth = this->tree_depth;
 
     for(typename OccupancyOcTreeBase<NODE>::leaf_iterator it = this->begin(max_depth),
             end=this->end(); it!= end; ++it)
@@ -631,7 +636,8 @@ namespace octomap {
                                                std::list<OcTreeVolume>& delta_nodes,
                                                unsigned int max_depth) const{
 
-    if (max_depth == 0)  max_depth = this->tree_depth;
+    if (max_depth == 0)
+      max_depth = this->tree_depth;
 
     for(typename OccupancyOcTreeBase<NODE>::leaf_iterator it = this->begin(max_depth),
             end=this->end(); it!= end; ++it)
@@ -786,7 +792,7 @@ namespace octomap {
 		  s.read((char*)&tree_read_size, sizeof(tree_read_size));
 		  OCTOMAP_DEBUG_STR("Reading " << tree_read_size << " nodes from bonsai tree file...");
 
-		  this->itsRoot->readBinary(s);
+		  readBinaryNode(s, this->itsRoot);
 		  // TODO workaround: do this to ensure all nodes have the tree's occupancy thres
 		  // instead of their fixed ones
 		  toMaxLikelihood();
@@ -856,16 +862,146 @@ namespace octomap {
 	  OCTOMAP_DEBUG_STR("Writing " << tree_write_size << " nodes to output stream...");
 	  s.write((char*)&tree_write_size, sizeof(tree_write_size));
 
-	  this->itsRoot->writeBinary(s);
+	  this->writeBinaryNode(s, this->itsRoot);
 	  OCTOMAP_DEBUG_STR(" done.");
 	  return s;
   }
 
-  /*
-   * Experimental stuff:
-   */
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeOccupied(NODE* occupancyNode) const{
+  std::istream& OccupancyOcTreeBase<NODE>::readBinaryNode(std::istream &s, NODE* node) const {
+
+    char child1to4_char;
+    char child5to8_char;
+    s.read((char*)&child1to4_char, sizeof(char));
+    s.read((char*)&child5to8_char, sizeof(char));
+
+    std::bitset<8> child1to4 ((unsigned long) child1to4_char);
+    std::bitset<8> child5to8 ((unsigned long) child5to8_char);
+
+    //     std::cout << "read:  "
+    //        << child1to4.to_string<char,std::char_traits<char>,std::allocator<char> >() << " "
+    //        << child5to8.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+
+
+    // inner nodes default to occupied
+    node->setLogOdds(clampingThresMax);
+
+    for (unsigned int i=0; i<4; i++) {
+      if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
+        // child is free leaf
+        node->createChild(i);
+        node->getChild(i)->setLogOdds(clampingThresMin);
+      }
+      else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
+        // child is occupied leaf
+        node->createChild(i);
+        node->getChild(i)->setLogOdds(clampingThresMax);
+      }
+      else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
+        // child has children
+        node->createChild(i);
+        node->getChild(i)->setLogOdds(-200.); // child is unkown, we leave it uninitialized
+      }
+    }
+    for (unsigned int i=0; i<4; i++) {
+      if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 0)) {
+        // child is free leaf
+        node->createChild(i+4);
+        node->getChild(i+4)->setLogOdds(clampingThresMin);
+      }
+      else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
+        // child is occupied leaf
+        node->createChild(i+4);
+        node->getChild(i+4)->setLogOdds(clampingThresMax);
+      }
+      else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
+        // child has children
+        node->createChild(i+4);
+        node->getChild(i+4)->setLogOdds(-200.); // set occupancy when all children have been read
+      }
+      // child is unkown, we leave it uninitialized
+    }
+
+    // read children's children and set the label
+    for (unsigned int i=0; i<8; i++) {
+      if (node->childExists(i)) {
+        NODE* child = node->getChild(i);
+        if (fabs(child->getLogOdds() + 200.)<1e-3) {
+          readBinaryNode(s, child);
+          child->setLogOdds(child->getMaxChildLogOdds());
+        }
+      } // end if child exists
+    } // end for children
+
+    return s;
+  }
+
+  template <class NODE>
+  std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryNode(std::ostream &s, const NODE* node) const{
+
+    // 2 bits for each children, 8 children per node -> 16 bits
+    std::bitset<8> child1to4;
+    std::bitset<8> child5to8;
+
+    // 10 : child is free node
+    // 01 : child is occupied node
+    // 00 : child is unkown node
+    // 11 : child has children
+
+
+    // speedup: only set bits to 1, rest is init with 0 anyway,
+    //          can be one logic expression per bit
+
+    for (unsigned int i=0; i<4; i++) {
+      if (node->childExists(i)) {
+        const NODE* child = node->getChild(i);
+        if      (child->hasChildren())  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
+        else if (isNodeOccupied(child)) { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
+        else                            { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
+      }
+      else {
+        child1to4[i*2] = 0; child1to4[i*2+1] = 0;
+      }
+    }
+
+    for (unsigned int i=0; i<4; i++) {
+      if (node->childExists(i+4)) {
+        const NODE* child = node->getChild(i+4);
+        if      (child->hasChildren())  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
+        else if (isNodeOccupied(child)) { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
+        else                            { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
+      }
+      else {
+        child5to8[i*2] = 0; child5to8[i*2+1] = 0;
+      }
+    }
+    //     std::cout << "wrote: "
+    //        << child1to4.to_string<char,std::char_traits<char>,std::allocator<char> >() << " "
+    //        << child5to8.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+
+    char child1to4_char = (char) child1to4.to_ulong();
+    char child5to8_char = (char) child5to8.to_ulong();
+
+    s.write((char*)&child1to4_char, sizeof(char));
+    s.write((char*)&child5to8_char, sizeof(char));
+
+    // write children's children
+    for (unsigned int i=0; i<8; i++) {
+      if (node->childExists(i)) {
+        const NODE* child = node->getChild(i);
+        if (child->hasChildren()) {
+          writeBinaryNode(s, child);
+        }
+      }
+    }
+
+    return s;
+  }
+
+  //-- Occupancy queries on nodes:
+
+  template <class NODE>
+  bool OccupancyOcTreeBase<NODE>::isNodeOccupied(const NODE* occupancyNode) const{
     return (occupancyNode->getLogOdds() >= occProbThresLog);
   }
   template <class NODE>
@@ -874,9 +1010,15 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(NODE* occupancyNode) const{
+  bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE* occupancyNode) const{
 	  return (occupancyNode->getLogOdds() >= clampingThresMax
 	      || occupancyNode->getLogOdds() <= clampingThresMin);
+  }
+
+  template <class NODE>
+  bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE& occupancyNode) const{
+	  return (occupancyNode.getLogOdds() >= clampingThresMax
+	      || occupancyNode.getLogOdds() <= clampingThresMin);
   }
 
   template <class NODE>
@@ -903,6 +1045,15 @@ namespace octomap {
       occupancyNode->setLogOdds(clampingThresMax);
     else
       occupancyNode->setLogOdds(clampingThresMin);
+
+  }
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE& occupancyNode) const{
+    if (isNodeOccupied(occupancyNode))
+      occupancyNode.setLogOdds(clampingThresMax);
+    else
+      occupancyNode.setLogOdds(clampingThresMin);
 
   }
 

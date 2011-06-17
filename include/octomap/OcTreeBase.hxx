@@ -139,7 +139,7 @@ namespace octomap {
   template <class NODE>
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
 
-    return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
+    return (double( (int) key - (int) this->tree_max_val ) ) * this->resolution;
   }
 
   template <class NODE>
@@ -148,7 +148,7 @@ namespace octomap {
     if (key >= 2*tree_max_val)
       return false;
 
-    coord = ((double) ( (int) key - (int) this->tree_max_val ) + 0.5) * this->resolution;
+    coord = ((double) ( (int) key - (int) this->tree_max_val ) ) * this->resolution;
 
     return true;
   }
@@ -786,17 +786,19 @@ namespace octomap {
   void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
     mx = my = mz = std::numeric_limits<double>::max();
     if (sizeChanged) {
-      point3d_list leafs;
-      this->getLeafNodes(leafs);
-      for (point3d_list::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
-        double x = it->x();
-        double y = it->y();
-        double z = it->z();
-        double halfSize = this->resolution/2.0;
-        if (x-halfSize < mx) mx = x-halfSize;
-        if (y-halfSize < my) my = y-halfSize;
-        if (z-halfSize < mz) mz = z-halfSize;
+      for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+              end=this->end(); it!= end; ++it)
+      {
+        double halfSize = it.getSize()/2.0;
+        double x = it.getX() - halfSize;
+        double y = it.getY() - halfSize;
+        double z = it.getZ() - halfSize;
+        if (x < mx) mx = x;
+        if (y < my) my = y;
+        if (z < mz) mz = z;
+
       }
+
     } else {
       mx = minValue[0];
       my = minValue[1];
@@ -808,17 +810,18 @@ namespace octomap {
   void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
     mx = my = mz = -std::numeric_limits<double>::max();
     if (sizeChanged) {
-      point3d_list leafs;
-      this->getLeafNodes(leafs);
-      for (point3d_list::const_iterator it = leafs.begin(); it != leafs.end(); ++it){
-        double x = it->x();
-        double y = it->y();
-        double z = it->z();
-        double halfSize = this->resolution/2.0;
-        if (x+halfSize > mx) mx = x+halfSize;
-        if (y+halfSize > my) my = y+halfSize;
-        if (z+halfSize > mz) mz = z+halfSize;
+      for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+          end=this->end(); it!= end; ++it)
+      {
+        double halfSize = it.getSize()/2.0;
+        double x = it.getX() + halfSize;
+        double y = it.getY() + halfSize;
+        double z = it.getZ() + halfSize;
+        if (x > mx) mx = x;
+        if (y > my) my = y;
+        if (z > mz) mz = z;
       }
+
     } else {
       mx = maxValue[0];
       my = maxValue[1];
