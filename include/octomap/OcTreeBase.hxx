@@ -70,6 +70,12 @@ namespace octomap {
     resolution_factor = 1. / resolution;
 
     tree_center(0) = tree_center(1) = tree_center(2) = ((double) tree_max_val) / resolution_factor;
+
+    // init node size lookup table:
+    sizeLookupTable.resize(tree_depth+1);
+    for(unsigned i = 0; i <= tree_depth; ++i){
+      sizeLookupTable[i] = resolution * double(1 << (tree_depth - i));
+    }
   }
 
 
@@ -137,41 +143,42 @@ namespace octomap {
   }
 
   template <class NODE>
-  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
-
-    return (double( (int) key - (int) this->tree_max_val ) ) * this->resolution;
-  }
-
-  template <class NODE>
-  bool OcTreeBase<NODE>::genLastCoordFromKey(const unsigned short int& key, float& coord) const {
+  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const {
 
     if (key >= 2*tree_max_val)
       return false;
 
-    coord = ((double) ( (int) key - (int) this->tree_max_val ) ) * this->resolution;
+    coord = float(genCoordFromKey(key, depth));
 
     return true;
   }
 
+  // TODO: clean up genXXXs, check where used
+  template <class NODE>
+  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
+
+    return (double( (int) key - (int) this->tree_max_val ) +0.5 ) * this->resolution;
+  }
+
+  template <class NODE>
+  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
+    assert(depth <= tree_depth);
+
+    // TODO: instead of division, cast and floor: modulo, subtract, then divide.
+    return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  +0.5 ) * this->getNodeSize(depth);
+  }
+
+
   template <class NODE>
   bool OcTreeBase<NODE>::genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const {
+    assert (depth <= tree_depth);
 
-    if(depth < this->tree_depth)
-    {
-      for (unsigned int i=0; i<3; ++i) {
-        if ( !genCoordFromKey(key[i], point(i)) ) {
-          return false;
-        }
+    for (unsigned int i=0; i<3; ++i) {
+      if ( !genCoordFromKey(key[i], depth, point(i)) ) {
+        return false;
       }
     }
-    else
-    {
-      for (unsigned int i=0; i<3; ++i) {
-        if ( !genLastCoordFromKey(key[i], point(i)) ) {
-          return false;
-        }
-      }
-    }
+
 
     return true;
   }

@@ -153,12 +153,37 @@ namespace octomap {
     std::list<octomap::OcTreeVolume> occupiedThresVoxels;
     std::list<octomap::OcTreeVolume> freeVoxels;
     std::list<octomap::OcTreeVolume> freeThresVoxels;
+    m_grid_voxels.clear();
 
-    octree.getOccupied(occupiedThresVoxels, occupiedVoxels, m_max_tree_depth);
+    // maximum size to prevent crashes on large maps: (should be checked in a better way than a constant)
+    bool showAll = (octree.size() < 5 * 1e6);
 
-    if (octree.size() < 5 * 1e6) {
-      octree.getFreespace (freeThresVoxels, freeVoxels, m_max_tree_depth);
-      octree.getVoxels(m_grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
+    // new iterators, first port (still using the lists, these should be gone as well!)
+    for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
+        end=octree.end_tree(); it!= end; ++it)
+    {
+      // voxels for leaf nodes
+      if (it.isLeaf()){
+
+        if(octree.isNodeOccupied(*it)){
+          if (octree.isNodeAtThreshold(*it)){
+            occupiedThresVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+          }
+          else{
+            occupiedVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+          }
+        } else if (showAll){
+          if (octree.isNodeAtThreshold(*it)){
+            freeThresVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+          }
+          else{
+            freeVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+          }
+        }
+      }
+
+      if (showAll)
+        m_grid_voxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
     }
 
     // transform voxel origins
@@ -193,6 +218,7 @@ namespace octomap {
 
 
     // generate openGL representation of octree
+    // TODO: get rid of lists, directly use values from the iterators to build the GL arrays
     generateCubes(occupiedThresVoxels, &m_occupiedThresArray, m_occupiedThresSize, origin, &m_occupiedThresColorArray);
     generateCubes(freeThresVoxels, &m_freeThresArray, m_freeThresSize, origin);
 

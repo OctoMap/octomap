@@ -157,7 +157,7 @@ namespace octomap {
     const static float clampingThresMax = 3.5;
 
 
- // "value" stores log odds occupancy probability
+    // "value" stores log odds occupancy probability
 
   };
 

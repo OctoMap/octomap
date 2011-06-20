@@ -84,6 +84,8 @@ namespace octomap {
 
     inline unsigned int getTreeDepth () const { return tree_depth; }
 
+    inline double getNodeSize(unsigned depth) const {assert(depth <= tree_depth); return sizeLookupTable[depth];}
+
     /**
      * \return Pointer to the root node of the tree. This pointer
      * should not be modified or deleted externally, the OcTree
@@ -305,24 +307,23 @@ namespace octomap {
       }
 
       /// @return single coordinate of the current node
-      float getX() const{
-        return tree->genCoordFromKey(stack.top().key[0]);
+      double getX() const{
+        return tree->genCoordFromKey(stack.top().key[0], stack.top().depth);
       }
       /// @return single coordinate of the current node
-      float getY() const{
-        return tree->genCoordFromKey(stack.top().key[1]);
+      double getY() const{
+        return tree->genCoordFromKey(stack.top().key[1], stack.top().depth);
       }
       /// @return single coordinate of the current node
-      float getZ() const{
-        return tree->genCoordFromKey(stack.top().key[2]);
+      double getZ() const{
+        return tree->genCoordFromKey(stack.top().key[2], stack.top().depth);
       }
 
-      // TODO possible speedup: lookup table instead of exp.shift
       /// @return the side if the volume occupied by the current node
-      double getSize() const {return (tree->resolution * double(1 << (tree->tree_depth - stack.top().depth))); }
+      double getSize() const {return  tree->getNodeSize(stack.top().depth); }
       
       /// return depth of the current node
-      unsigned char getDepth() const {return stack.top().depth; }
+      unsigned getDepth() const {return unsigned(stack.top().depth); }
       
       /// @return the OcTreeKey of the current node
       OcTreeKey getKey() const {return stack.top().key;}
@@ -341,16 +342,21 @@ namespace octomap {
       void singleIncrement(){
         StackElement top = stack.top();
         stack.pop();
+        if (top.depth == maxDepth)
+          return;
 
         iterator_base::StackElement s;
         s.depth = top.depth +1;
+
         unsigned short int center_offset_key = tree->tree_max_val >> (top.depth +1);
         // push on stack in reverse order
         for (int i=7; i>=0; --i) {
           if (top.node->childExists(i)) {
             computeChildKey(i, center_offset_key, top.key, s.key);
             s.node = top.node->getChild(i);
+            //OCTOMAP_DEBUG_STR("Current depth: " << int(top.depth) << " new: "<< int(s.depth) << " child#" << i <<" ptr: "<<s.node);
             stack.push(s);
+            assert(s.depth <= maxDepth);
           }
         }
       }
@@ -386,6 +392,7 @@ namespace octomap {
 
       /// Prefix increment operator to advance the iterator
       tree_iterator& operator++(){
+
         if (!this->stack.empty()){
           this->singleIncrement();
         }
@@ -396,6 +403,9 @@ namespace octomap {
 
         return *this;
       }
+
+      /// @return whether the current node is a leaf, i.e. has no children or is at max level
+      bool isLeaf() const{ return (!this->stack.top().node->hasChildren() || this->stack.top().depth == this->maxDepth); }
     };
 
     /**
@@ -544,6 +554,7 @@ namespace octomap {
             {
               s.node = top.node->getChild(i);
               this->stack.push(s);
+              assert(s.depth <= this->maxDepth);
             }
           }
         }
@@ -594,13 +605,12 @@ namespace octomap {
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// This checks if the key is valid and returns the success.
     bool genCoordFromKey(const unsigned short int& key, float& coord) const;
+    bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const;
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// returns the coordinate without checking for validity.
     double genCoordFromKey(const unsigned short int& key) const;
-
-    /// generates the center coordinate of a cell for a given key at the last level
-    bool genLastCoordFromKey(const unsigned short int& key, float& coord) const;
+    double genCoordFromKey(const unsigned short int& key, unsigned depth) const;
 
     // generates 3d coordinates from a key at a given depth
     bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const;
@@ -657,6 +667,8 @@ namespace octomap {
 
     double maxValue[3]; ///< max in x, y, z
     double minValue[3]; ///< min in x, y, z
+    /// contains the size of a voxel at level i (0: root node). tree_depth+1 levels (incl. 0)
+    std::vector<double> sizeLookupTable;
 
     KeyRay keyray;  // data structure for ray casting
 

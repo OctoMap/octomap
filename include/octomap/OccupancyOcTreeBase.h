@@ -72,10 +72,12 @@ namespace octomap {
   class OccupancyOcTreeBase : public OcTreeBase<NODE> {
 
   public:
-    /// Data structure to efficiently compute the nodes to update from a scan
-    /// insertion using a hash set
-    // you need to use boost::unordered_set instead if your compiler does not
-    // yet support tr1
+    /**
+     * Data structure to efficiently compute the nodes to update from a scan
+     * insertion using a hash set.
+     * @note you need to use boost::unordered_set instead if your compiler does not
+     * yet support tr1
+     */
     typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> UpdateList;
 
     OccupancyOcTreeBase(double _resolution);
