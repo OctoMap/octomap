@@ -164,8 +164,11 @@ namespace octomap {
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
     assert(depth <= tree_depth);
 
-    // TODO: instead of division, cast and floor: modulo, subtract, then divide.
-    return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  +0.5 ) * this->getNodeSize(depth);
+    // workaround because root is directly centered on 0 = 0.0, all others are shifted by 0.5*res
+    if (depth == 0)
+      return 0.0;
+    else
+      return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
   }
 
 
