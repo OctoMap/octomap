@@ -70,7 +70,12 @@ is not necessary. Be sure to adjust CMAKE_INSTALL_PREFIX before.
 DOCUMENTATION
 ############################
 
-A HTML-Documentation can be built using Doxygen by running 
+The documentation for the latest stable release is available at:
+	
+	http://octomap.sourceforge.net/doxygen/
+
+You can build the most current HTML-Documentation for your current
+source with Doxygen by running 
 
        make docs
 
