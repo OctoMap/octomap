@@ -159,6 +159,8 @@ namespace octomap {
     bool showAll = (octree.size() < 5 * 1e6);
 
     // new iterators, first port (still using the lists, these should be gone as well!)
+    // TODO: can we get rid of origin.rot().rotate, e.g. move it to generateCubes?
+    // Should be at least checked against "0" origin to prevent unnecessary rotations
     for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
         end=octree.end_tree(); it!= end; ++it)
     {
@@ -167,41 +169,26 @@ namespace octomap {
 
         if(octree.isNodeOccupied(*it)){
           if (octree.isNodeAtThreshold(*it)){
-            occupiedThresVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+            occupiedThresVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
           }
           else{
-            occupiedVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+            occupiedVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
           }
         } else if (showAll){
           if (octree.isNodeAtThreshold(*it)){
-            freeThresVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+            freeThresVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
           }
           else{
-            freeVoxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+            freeVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
           }
         }
       }
 
       if (showAll)
-        m_grid_voxels.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
+        m_grid_voxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
     }
 
-    // transform voxel origins
-    for (std::list<octomap::OcTreeVolume>::iterator it = occupiedVoxels.begin(); it != occupiedVoxels.end(); it++) {
-      it->first = origin.rot().rotate(it->first);
-    }
-    for (std::list<octomap::OcTreeVolume>::iterator it = occupiedThresVoxels.begin(); it != occupiedThresVoxels.end(); it++) {
-      it->first = origin.rot().rotate(it->first);
-    }
-    for (std::list<octomap::OcTreeVolume>::iterator it = freeVoxels.begin(); it != freeVoxels.end(); it++) {
-      it->first = origin.rot().rotate(it->first);
-    }
-    for (std::list<octomap::OcTreeVolume>::iterator it = freeThresVoxels.begin(); it != freeThresVoxels.end(); it++) {
-      it->first = origin.rot().rotate(it->first);
-    }
-    for (std::list<octomap::OcTreeVolume>::iterator it = m_grid_voxels.begin(); it != m_grid_voxels.end(); it++) {
-      it->first = origin.rot().rotate(it->first);
-    }
+
     
 
     double minX, minY, minZ, maxX, maxY, maxZ;
