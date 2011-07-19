@@ -687,9 +687,6 @@ namespace octomap {
 
     size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
-    void calcMinMaxRecurs(NODE* node, unsigned int depth, const point3d& parent_center);
-
-    
   protected:
 
     NODE* itsRoot;

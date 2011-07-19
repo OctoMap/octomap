@@ -725,51 +725,28 @@ namespace octomap {
       minValue[i] = std::numeric_limits<double>::max();
     }
 
-    calcMinMaxRecurs(this->itsRoot,  0, tree_center);
+    for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+        end=this->end(); it!= end; ++it)
+    {
+      double size = it.getSize();
+      double halfSize = size/2.0;
+      double x = it.getX() - halfSize;
+      double y = it.getY() - halfSize;
+      double z = it.getZ() - halfSize;
+      if (x < minValue[0]) minValue[0] = x;
+      if (y < minValue[1]) minValue[1] = y;
+      if (z < minValue[2]) minValue[2] = z;
+
+      x += size;
+      y += size;
+      z += size;
+      if (x > maxValue[0]) maxValue[0] = x;
+      if (y > maxValue[1]) maxValue[1] = y;
+      if (z > maxValue[2]) maxValue[2] = z;
+
+    }
 
     sizeChanged = false;
-  }
-
-  template <class NODE>
-  void OcTreeBase<NODE>::calcMinMaxRecurs(NODE* node, unsigned int depth,
-                                          const point3d& parent_center) {
-
-    // terminate recursion
-    if (!node->hasChildren()) { // node is a leaf ...
-      float voxel_size = resolution;  // ... at lowest level
-      if (depth < tree_depth) // ... and a pruned node
-        voxel_size = resolution * pow(2., double(tree_depth - depth));
-
-      point3d node_center = parent_center - tree_center;
-      // update min/max
-      float& x = node_center.x();
-      float& y = node_center.y();
-      float& z = node_center.z();
-      float half_size = voxel_size/2.;
-
-      if (x-half_size < minValue[0]) minValue[0] = x-half_size;
-      if (y-half_size < minValue[1]) minValue[1] = y-half_size;
-      if (z-half_size < minValue[2]) minValue[2] = z-half_size;
-
-      if (x+half_size > maxValue[0]) maxValue[0] = x+half_size;
-      if (y+half_size > maxValue[1]) maxValue[1] = y+half_size;
-      if (z+half_size > maxValue[2]) maxValue[2] = z+half_size;
-
-      return;
-    }
-
-    // recursive call
-    double center_offset = tree_center(0) / pow( 2., (double) depth+1);
-    point3d search_center;
-    
-    for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        computeChildCenter(i, center_offset, parent_center, search_center);
-        NODE* childNode = static_cast<NODE*>(node->getChild(i));
-        calcMinMaxRecurs(childNode, depth+1, search_center);
-      }
-    }
-
   }
 
   template <class NODE>
