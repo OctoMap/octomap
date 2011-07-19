@@ -72,12 +72,18 @@ Hornung</a>. Feel free to contact us.</p>
   Jump right in and have a look at the main class octomap::OcTree and the examples in src/octomap/simple.cpp. 
   To integrate single measurements into the 3D map have a look at
   octomap::OcTree::insertRay(...), to insert full 3D scans (pointclouds) please have a look at
-  octomap::OcTree::insertScan(). Queries can be performed e.g. with octomap::OcTree::search(...) or
-  octomap::OcTree::castRay(...).
-</p>
+  octomap::OcTree::insertScan(...). Queries can be performed e.g. with octomap::OcTree::search(...) or
+  octomap::OcTree::castRay(...). The preferred way to batch-access or process nodes in an Octree is with the iterators
+  \ref octomap::OcTreeBase::leaf_iterator "leaf_iterator",  \ref octomap::OcTreeBase::tree_iterator "tree_iterator", or \ref octomap::OcTreeBase::leaf_bbx_iterator "leaf_bbx_iterator".</p>
+  <p>The \ref octomap::OcTree "OcTree" class is derived from \ref octomap::OccupancyOcTreeBase "OccupancyOcTreeBase", with most
+  functionality in the parent class. Also derive from OccupancyOcTreeBase if you you want to implement
+  your own Octree and node classes. You can have a look at the classes octomap::OcTreeStamped and octomap::OcTreNodeStamed as examples.
+  </p>
+
+
 
 <p>
-  Or start the 3D viewer<br>
+  Start the 3D visualization with:<br>
   bin/octovis 
 </p>
 

@@ -6,7 +6,7 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2011.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
@@ -370,7 +370,21 @@ namespace octomap {
     };
 
     /**
-     * Iterator over the complete tree (inner nodes and leafs)
+     * Iterator over the complete tree (inner nodes and leafs).
+     * See below for example usage.
+     * Note that the non-trivial call to tree->end_tree() is done only once
+     * for efficiency!
+     *
+     * @code
+     * for(OcTreeTYPE::tree_iterator it = tree->begin_tree(),
+     *        end=tree->end_tree(); it!= end; ++it)
+     * {
+     *   //manipulate node, e.g.:
+     *   std::cout << "Node center: " << it.getCoordinate() << std::endl;
+     *   std::cout << "Node size: " << it.getSize() << std::endl;
+     *   std::cout << "Node value: " << it->getValue() << std::endl;
+     * }
+     * @endcode
      */
     class tree_iterator : public iterator_base {
     public:
@@ -410,7 +424,20 @@ namespace octomap {
 
     /**
      * Iterator to iterate over all leafs of the tree. 
-     * Inner nodes are skipped.
+     * Inner nodes are skipped. See below for example usage.
+     * Note that the non-trivial call to tree->end_leafs() is done only once
+     * for efficiency!
+     *
+     * @code
+     * for(OcTreeTYPE::leaf_iterator it = tree->begin_leafs(),
+     *        end=tree->end_leafs(); it!= end; ++it)
+     * {
+     *   //manipulate node, e.g.:
+     *   std::cout << "Node center: " << it.getCoordinate() << std::endl;
+     *   std::cout << "Node size: " << it.getSize() << std::endl;
+     *   std::cout << "Node value: " << it->getValue() << std::endl;
+     * }
+     * @endcode
      *
      */
     class leaf_iterator : public iterator_base {
@@ -466,7 +493,20 @@ namespace octomap {
 
     /**
      * Bounding-box leaf iterator. This iterator will traverse all leaf nodes
-     * within a given bounding box (axis-aligned)
+     * within a given bounding box (axis-aligned). See below for example usage.
+     * Note that the non-trivial call to tree->end_leafs_bbx() is done only once
+     * for efficiency!
+     *
+     * @code
+     * for(OcTreeTYPE::leaf_bbx_iterator it = tree->begin_leafs_bbx(min,max),
+     *        end=tree->end_leafs_bbx(); it!= end; ++it)
+     * {
+     *   //manipulate node, e.g.:
+     *   std::cout << "Node center: " << it.getCoordinate() << std::endl;
+     *   std::cout << "Node size: " << it.getSize() << std::endl;
+     *   std::cout << "Node value: " << it->getValue() << std::endl;
+     * }
+     * @endcode
      */
     class leaf_bbx_iterator : public iterator_base {
     public:
