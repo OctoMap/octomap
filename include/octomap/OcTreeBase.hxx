@@ -594,7 +594,7 @@ namespace octomap {
         } // depth
       }
       double voxelSize = resolution * pow(2., double(tree_depth - depth));
-      voxels.push_back(std::make_pair<point3d, double>(parent_center - tree_center, voxelSize));
+      voxels.push_back(std::make_pair(parent_center - tree_center, voxelSize));
     }
   }
 
