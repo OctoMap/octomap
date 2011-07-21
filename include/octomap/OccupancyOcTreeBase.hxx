@@ -88,14 +88,14 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
                                              double maxrange, bool pruning, bool dirty) {
 
-    UpdateList free_cells, occupied_cells;
+    KeySet free_cells, occupied_cells;
     computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
 
     // insert data into tree  -----------------------
-    for (UpdateList::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
+    for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
       updateNode(*it, false, dirty);
     }
-    for (UpdateList::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
+    for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
       updateNode(*it, true, dirty);
     }
 
@@ -134,8 +134,8 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
-                                                UpdateList& free_cells,
-                                                UpdateList& occupied_cells,
+                                                KeySet& free_cells,
+                                                KeySet& occupied_cells,
                                                 double maxrange) {
 
     for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
@@ -192,7 +192,8 @@ namespace octomap {
 
     } // end for all points
 
-    for(UpdateList::iterator it = free_cells.begin(), end=free_cells.end(); it!= end; ){
+    // prefer occupied cells over free ones (and make sets disjunct)
+    for(KeySet::iterator it = free_cells.begin(), end=free_cells.end(); it!= end; ){
       if (occupied_cells.find(*it) != occupied_cells.end()){
         it = free_cells.erase(it);
       } else{
@@ -281,6 +282,7 @@ namespace octomap {
     else {
       if (occupied) integrateHit(node);
       else          integrateMiss(node);
+
       return node;
     }
   }
