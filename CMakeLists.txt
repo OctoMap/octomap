@@ -1,28 +1,18 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT( octomap )
+PROJECT( OctoMap )
 
 # version (e.g. for packaging)
-set(V_MAJOR 1)
-set(V_MINOR 0)
-set(V_PATCH 0)
+set(OCTOMAP_MAJOR_VERSION 1)
+set(OCTOMAP_MINOR_VERSION 1)
+set(OCTOMAP_PATCH_VERSION 0)
 
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-
-# COMPILER SETTINGS (default: Release)
-# use "-DCMAKE_BUILD_TYPE=Debug" in cmake for a Debug-build
-IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-   SET(CMAKE_BUILD_TYPE Release)
-ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-
-# COMPILER FLAGS
-SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-error ")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-error ")
-SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG -O3 -msse3 -mssse3")
-SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+# COMPILER SETTINGS (default: Release) and flags
+INCLUDE(CMakeModules/CompilerSettings.cmake)
 
 # Set output directories for libraries and executables
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
@@ -32,21 +22,12 @@ SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULES_PATH} ${BASE_DIR}/CMakeModules)
 
-MESSAGE ("\n")
-MESSAGE (STATUS "Building as ${CMAKE_BUILD_TYPE}")
-MESSAGE ("\n")
-
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
 )
 
 
 # Installation
-
-# test dir for install
-# IF(NOT CMAKE_INSTALL_PREFIX)
-# 	set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/install/) 
-# ENDIF(NOT CMAKE_INSTALL_PREFIX)
 
 set(INSTALL_TARGETS_DEFAULT_ARGS
 	RUNTIME DESTINATION bin
@@ -112,27 +93,10 @@ ELSE()
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
 ENDIF()
 
-# Package building stuff - Experimental!
-SET(CPACK_PACKAGE_VERSION_MAJOR "${V_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${V_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${V_PATCH}")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${V_MAJOR}.${V_MINOR}")
-SET(CPACK_PACKAGE_CONTACT "K.M. Wurm and A. Hornung")
-SET(CPACK_PACKAGE_VENDOR "University of Freiburg")
-SET(CPACK_GENERATOR "DEB")
-SET(CPACK_SOURCE_GENERATOR "TGZ")
+# Needs to be last statement:
+INCLUDE(CMakeModules/CPackSettings.cmake)
 
-
-include(CMakeModules/InstallPkgConfigFile.cmake)
-install_pkg_config_file(octomap
-    CFLAGS
-    LIBS -loctomap -loctomath
-    REQUIRES
-    VERSION ${V_MAJOR}.${V_MINOR}.${V_PATCH})
-
-
-INCLUDE(CPack)
-
+# Finished:
 
 MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")

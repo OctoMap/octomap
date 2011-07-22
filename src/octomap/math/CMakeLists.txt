@@ -6,12 +6,6 @@ SET (octomath_SRCS
 
 
 ADD_LIBRARY( octomath ${octomath_SRCS})
-set_target_properties(octomath PROPERTIES COMPILE_FLAGS "-fPIC")	
-
-# no more libs to link from here:
-#TARGET_LINK_LIBRARIES(
-#  octomath
-#)
 
 # store all header files to install:
 file(GLOB octomath_HDRS *.h *.hxx *.hpp)
