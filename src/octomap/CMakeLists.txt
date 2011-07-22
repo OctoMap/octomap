@@ -11,9 +11,12 @@ SET (octomap_SRCS
 
 ADD_LIBRARY( octomap ${octomap_SRCS})
 
-TARGET_LINK_LIBRARIES(
-  octomap octomath
-  )
+# Link in ROS libs e.g. for logging output if needed:
+if(WITH_ROS)
+  TARGET_LINK_LIBRARIES(octomap octomath ${${PROJECT_NAME}_LIBRARIES})
+else(WITH_ROS)
+  TARGET_LINK_LIBRARIES(octomap octomath)
+endif(WITH_ROS)
 
 
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
