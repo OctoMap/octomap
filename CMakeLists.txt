@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT( OctoMap )
+PROJECT( octomap )
 
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
@@ -13,6 +13,17 @@ endif(COMMAND cmake_policy)
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CMakeModules/CompilerSettings.cmake)
+
+#If we are compiling with ROS support, we need to get the appropriate includes and link flags and such
+if(WITH_ROS)
+       include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+       set(ROSBUILD_DONT_REDEFINE_PROJECT true)
+       set(PROJECT_SOURCE_DIR_BACKUP ${PROJECT_SOURCE_DIR})
+       set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../..")
+       rosbuild_init()
+       set(PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR_BACKUP})
+       add_definitions(-DOCTOMAP_ROS)
+endif(WITH_ROS)
 
 # Set output directories for libraries and executables
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
