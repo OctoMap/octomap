@@ -5,7 +5,7 @@ PROJECT( octomap )
 set(OCTOMAP_MAJOR_VERSION 1)
 set(OCTOMAP_MINOR_VERSION 1)
 set(OCTOMAP_PATCH_VERSION 0)
-
+set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -15,6 +15,7 @@ endif(COMMAND cmake_policy)
 INCLUDE(CMakeModules/CompilerSettings.cmake)
 
 #If we are compiling with ROS support, we need to get the appropriate includes and link flags and such
+# (thx to E.Perko for patch!)
 if(WITH_ROS)
        include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
        set(ROSBUILD_DONT_REDEFINE_PROJECT true)
@@ -60,6 +61,40 @@ install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
 file(GLOB octomap_math_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
 
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE octomap)
+ 
+# Create a octomap-config.cmake file for the use from the build tree
+set(OCTOMAP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/include")
+set(OCTOMAP_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+# not used right now (export depends?)
+#set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
+configure_file(octomap-config.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-config.cmake" @ONLY)
+configure_file(octomap-config-version.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-config-version.cmake" @ONLY)
+
+# Install the export set for use with the install-tree
+#install(EXPORT FooBarLibraryDepends DESTINATION
+#  "${INSTALL_DATA_DIR}/FooBar/CMake"
+#  COMPONENT dev)
+ 
+# Create a octomap-config.cmake file for the use from the install tree
+# and install it
+set(OCTOMAP_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+set(OCTOMAP_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+#set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
+configure_file(octomap-config.cmake.in
+  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake" @ONLY)
+configure_file(octomap-config-version.cmake.in
+  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" @ONLY)
+install(FILES
+  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake"
+  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" 
+  DESTINATION lib/cmake/octomap/)
+
+
 
 # Documentation 
 FIND_PACKAGE(Doxygen)
@@ -69,40 +104,8 @@ IF(DOXYGEN_FOUND)
     COMMENT "Generating documentation (Doxygen)...")
 ENDIF(DOXYGEN_FOUND)
 
-
-SET( BUILD_VIEWER 0)
-
-FIND_PACKAGE(OpenGL)
-IF(NOT OPENGL_FOUND)
-  MESSAGE ( "\n")
-  MESSAGE ( "OpenGL not found. \n")
-ELSE()
-  MESSAGE (STATUS "OpenGL found at ${OPENGL_LIBRARY}")
-
-  # Look for Qt4
-  FIND_PACKAGE(Qt4)
-  IF(QT4_FOUND)
-    FIND_PACKAGE(QGLViewer)
-    IF(QGLViewer_FOUND)
-      SET( BUILD_VIEWER 1)
-    ELSE()
-      MESSAGE ( "\n")
-      MESSAGE ( "libQGLViewer could not be found or generated.")
-    ENDIF()
-  ELSE()
-    MESSAGE ( "\n")
-    MESSAGE ( "Qt4 development environment could not be found.")
-  ENDIF()
-ENDIF()
-
-IF(BUILD_VIEWER)
-  MESSAGE(STATUS "\n")
-  MESSAGE(STATUS "viewer octovis will be built")
-  ADD_SUBDIRECTORY( src/octovis ) 
-ELSE()
-    MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
-    MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
-ENDIF()
+# Build viewer if available:
+INCLUDE(CMakeModules/BuildGLViewer.cmake)
 
 # Needs to be last statement:
 INCLUDE(CMakeModules/CPackSettings.cmake)
