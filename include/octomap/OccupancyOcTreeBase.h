@@ -430,7 +430,7 @@ namespace octomap {
 
 
   protected:
-
+    bool use_change_detection;
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
     point3d bbx_max;

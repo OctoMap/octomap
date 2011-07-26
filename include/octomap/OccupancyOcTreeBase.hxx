@@ -136,7 +136,7 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
                                                 KeySet& free_cells,
                                                 KeySet& occupied_cells,
-                                                double maxrange) {
+                                                double maxrange){
 
     for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
       const point3d& p = *point_it;
@@ -223,10 +223,9 @@ namespace octomap {
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, bool occupied, bool dirty) {
 
     NODE* leaf = this->search(key);
-    if (leaf) {
-      if ((isNodeAtThreshold(leaf)) && (isNodeOccupied(leaf) == occupied)) {
-        return leaf;
-      }
+    // no change: node already at threshold
+    if (leaf && (isNodeAtThreshold(leaf)) && (isNodeOccupied(leaf) == occupied)) {
+      return leaf;
     }
     return updateNodeRecurs(this->itsRoot, false, key, 0, occupied, dirty);
   }

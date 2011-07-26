@@ -5,11 +5,9 @@ SET (octomath_SRCS
  )
 
 
-ADD_LIBRARY( octomath ${octomath_SRCS})
+ADD_LIBRARY( octomath SHARED ${octomath_SRCS})
+ADD_LIBRARY( octomath-static STATIC ${octomath_SRCS})
+SET_TARGET_PROPERTIES(octomath-static PROPERTIES OUTPUT_NAME "octomath")
+SET_TARGET_PROPERTIES(octomath-static PROPERTIES PREFIX "lib")
 
-# store all header files to install:
-file(GLOB octomath_HDRS *.h *.hxx *.hpp)
-
-install(FILES ${octomath_HDRS}	DESTINATION include/octomath)
-	
-install(TARGETS octomath ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS octomath octomath-static ${INSTALL_TARGETS_DEFAULT_ARGS})

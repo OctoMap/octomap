@@ -8,14 +8,8 @@ SET(CPACK_PACKAGE_CONTACT "K.M. Wurm and A. Hornung")
 SET(CPACK_PACKAGE_VENDOR "University of Freiburg")
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SOURCE_GENERATOR "TGZ")
-
-
-include(CMakeModules/InstallPkgConfigFile.cmake)
-install_pkg_config_file(octomap
-    CFLAGS
-    LIBS -loctomap -loctomath
-    REQUIRES
-    VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME
+  "${PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
  # This must always be last statement!
 INCLUDE(CPack)

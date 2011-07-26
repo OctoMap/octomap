@@ -9,7 +9,12 @@ SET (octomap_SRCS
   OcTreeLUT.cpp
   )
 
-ADD_LIBRARY( octomap ${octomap_SRCS})
+# dynamic and static libs, see CMake FAQ:
+ADD_LIBRARY( octomap SHARED ${octomap_SRCS})
+ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
+SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap")
+SET_TARGET_PROPERTIES(octomap-static PROPERTIES PREFIX "lib")
+
 
 # Link in ROS libs e.g. for logging output if needed:
 if(WITH_ROS)
@@ -54,7 +59,9 @@ TARGET_LINK_LIBRARIES(test_lut octomap)
 # file(GLOB octomap_impl_HDRS *.h *.hxx *.hpp)
 # install(FILES ${octomap_impl_HDRS} DESTINATION include/octomap)
 
-install(TARGETS octomap 
+install(TARGETS 
+	octomap
+	octomap-static 
 	graph2tree
 	log2graph
 	binvox2bt

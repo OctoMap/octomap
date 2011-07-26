@@ -68,9 +68,15 @@ INCLUDE_DIRECTORIES(
 )
 
 # Library target 
-add_library(octovis_library ${viewerlib_SRCS})
-target_link_libraries(octovis_library)
-set_target_properties(octovis_library PROPERTIES OUTPUT_NAME octovis)
+add_library(octovis-static STATIC ${viewerlib_SRCS})
+target_link_libraries(octovis-static)
+set_target_properties(octovis-static PROPERTIES OUTPUT_NAME octovis)
+SET_TARGET_PROPERTIES(octovis-static PROPERTIES PREFIX "lib")
+
+add_library(octovis-shared SHARED ${viewerlib_SRCS})
+target_link_libraries(octovis-shared)
+set_target_properties(octovis-shared PROPERTIES OUTPUT_NAME octovis)
+
 
 # Now add these generated files to the ADD_EXECUTABLE step
 # If this is NOT done, then the ui_*.h files will not be generated
@@ -81,7 +87,7 @@ target_link_libraries(octovis
     ${QGLViewer_LIBRARIES}
 	${QT_LIBRARIES}
 	octomap 
-	octovis_library
+	octovis-shared
 )
 
 # special handling of MacOS X:
@@ -100,6 +106,7 @@ file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
 install(FILES ${octovis_HDRS} DESTINATION include/octovis)
 
 install(TARGETS octovis
-  octovis_library
+  octovis-static
+  octovis-shared
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
