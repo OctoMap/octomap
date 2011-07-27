@@ -262,7 +262,7 @@ namespace octomap {
     //-- set BBX limit (limits tree updates to this bounding box  
 
     ///  use or ignore BBX limit (default: ignore)
-    void useBBXLimit(bool limit) { use_bbx_limit = limit; }
+    void useBBXLimit(bool enable) { use_bbx_limit = enable; }
     bool bbxSet() const { return use_bbx_limit; }
     /// sets the minimum for a query bounding box to use
     void setBBXMin (point3d& min);
@@ -278,6 +278,15 @@ namespace octomap {
     bool inBBX(const point3d& p) const;
     /// @return true if key is in the currently set bounding box
     bool inBBX(const OcTreeKey& key) const;
+
+    //-- change detection on occupancy:
+    /// track or ignore changes while inserting scans (default: ignore)
+    void enableChangeDetection(bool enable) { use_change_detection = enable; }
+    /// Reset the set of changed keys. Call this after you obtained all changed nodes.
+    void resetChangeSet(){changedKeys.clear();}
+
+    KeySet::const_iterator changedKeysBegin() {return changedKeys.begin();}
+    KeySet::const_iterator changedKeysEnd() {return changedKeys.end();}
 
     //-- parameters for occupancy and sensor model:
 
@@ -430,13 +439,14 @@ namespace octomap {
 
 
   protected:
-    bool use_change_detection;
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
     point3d bbx_max;
     OcTreeKey bbx_min_key;
     OcTreeKey bbx_max_key;
 
+    bool use_change_detection;
+    KeySet changedKeys;
     // occupancy parameters of tree, stored in logodds:
     float clampingThresMin;
     float clampingThresMax;

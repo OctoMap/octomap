@@ -115,10 +115,22 @@ install_pkg_config_file(octomap
 # Documentation 
 FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
-  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/octomap.dox
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/octomap.dox.in ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox @ONLY)
+  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Generating documentation (Doxygen)...")
 ENDIF(DOXYGEN_FOUND)
+
+# make package release from source
+SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
+ADD_CUSTOM_TARGET(dist 
+	rm -rf "${CMAKE_BINARY_DIR}/dist" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
+	COMMAND mkdir "${CMAKE_BINARY_DIR}/dist"
+	COMMAND svn export --force -q "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/dist/${PROJECT_NAME}" 
+	COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${CMAKE_BINARY_DIR}/dist" --exclude=".hidden" "${PROJECT_NAME}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
+
 
 # Build viewer if available:
 INCLUDE(CMakeModules/BuildGLViewer.cmake)

@@ -45,7 +45,7 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double _resolution)
-    : OcTreeBase<NODE>(_resolution), use_bbx_limit(false)
+    : OcTreeBase<NODE>(_resolution), use_bbx_limit(false), use_change_detection(false)
   {
     // some sane default values:
     setOccupancyThres(0.5);   // = 0.0 in logodds
@@ -235,7 +235,7 @@ namespace octomap {
     return updateNodeRecurs(this->itsRoot, false, key, 0, log_odds_update, dirty);
   }
 
-
+  // TODO: use only one update function (log odds, change "occupied" flag into LO before update)
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created,
                                                     const OcTreeKey& key, unsigned int depth,
@@ -279,8 +279,30 @@ namespace octomap {
 
     // at last level, update node, end of recursion
     else {
-      if (occupied) integrateHit(node);
-      else          integrateMiss(node);
+      if (use_change_detection){
+        bool occBefore = isNodeOccupied(node);
+
+        if (occupied)
+          integrateHit(node);
+        else
+          integrateMiss(node);
+
+        if (occBefore != isNodeOccupied(node)){ // occupancy changed, track it
+          KeySet::iterator it = changedKeys.find(key);
+          if(it == changedKeys.end()){
+            changedKeys.insert(key);
+          } else{
+            changedKeys.erase(it);
+          }
+        }
+      } else{
+
+
+        if (occupied)
+          integrateHit(node);
+        else
+          integrateMiss(node);
+      }
 
       return node;
     }
