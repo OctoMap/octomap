@@ -4,7 +4,7 @@ PROJECT( octomap )
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
 set(OCTOMAP_MINOR_VERSION 1)
-set(OCTOMAP_PATCH_VERSION 0)
+set(OCTOMAP_PATCH_VERSION 1)
 set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
