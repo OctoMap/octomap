@@ -39,16 +39,13 @@ namespace octomap {
 
     void draw() const;
 
-    // initialization of drawer --------------------------
+    // initialization of drawer  -------------------------
 
     /// sets a new OcTree that should be drawn by this drawer
-    void setOcTree(const octomap::OcTree &octree);
-
-    // same as setOcTree but takes an additional origin transformation
+    /// origin specifies a global transformation that should be applied
     void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin, int map_id_);
 
-
-    // modification of running drawer -------------------
+    // modification of existing drawer  ------------------
 
     /// sets a new selection of the current OcTree to be drawn
     void setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedPoints);
@@ -68,8 +65,6 @@ namespace octomap {
     // set new origin (move object)
     void setOrigin(octomap::pose6d t);
     void enableAxes(bool enabled = true) { m_display_axes = enabled; };
-
-
 
   protected:
     //void clearOcTree();
@@ -100,7 +95,6 @@ namespace octomap {
     void clearCubes(GLfloat*** glArray, unsigned int& glArraySize, GLfloat** glColorArray = NULL);
 
     void initOctreeGridVis();
-
 
     //! OpenGL representation of Octree cells (cubes)
 
@@ -140,7 +134,6 @@ namespace octomap {
     octomap::pose6d initial_origin;
 
     int map_id;
-
   };
 }
 

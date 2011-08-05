@@ -152,9 +152,7 @@ namespace octomap{
     return  m_glwidget->isVisible();
   }
 
-
   void ViewerGui::showInfo(QString string, bool newline) {
-
     std::cerr << string.toStdString();
     if (newline) std::cerr << std::endl;
     else std::cerr << std::flush;
@@ -164,9 +162,7 @@ namespace octomap{
     emit updateStatusBar(string, duration);
   }
 
-
   bool ViewerGui::getOctreeRecord(int id, OcTreeRecord*& otr) {
-
     std::map<int, OcTreeRecord>::iterator it = m_octrees.find(id);
     if( it != m_octrees.end() ) {
       otr = &(it->second);
@@ -177,9 +173,7 @@ namespace octomap{
     } 
   }
 
-
   void ViewerGui::addOctree(octomap::OcTree* tree, int id, octomap::pose6d origin) {
-
     // is id in use?
     OcTreeRecord* r;
     if (getOctreeRecord(id, r)) {
@@ -188,8 +182,7 @@ namespace octomap{
       r->origin = origin;
       // we reuse the old octree_drawer
     }
-
-    // else add entries
+    // else add new OcTreeRecord
     else {
       OcTreeRecord otr;
       otr.id = id;
@@ -199,19 +192,16 @@ namespace octomap{
       m_octrees[id] = otr;
       m_glwidget->addSceneObject(otr.octree_drawer);
     }
-
   }
 
   void ViewerGui::addOctree(octomap::OcTree* tree, int id) {
-    octomap::pose6d o;
+    octomap::pose6d o; // initialized to (0,0,0) , (0,0,0,1) by default
     addOctree(tree, id, o);
   }
-
 
   void ViewerGui::showOcTree() {
 
     // update viewer stat
-
     if (m_octrees.size()) {
       double minX, minY, minZ, maxX, maxY, maxZ;
       minX = minY = minZ = 1e6;

@@ -100,45 +100,8 @@ namespace octomap {
 
   }
 
-
   void OcTreeDrawer::setAlphaOccupied(double alpha){
     m_alphaOccupied = alpha;
-  }
-
-  void OcTreeDrawer::setOcTree(const octomap::OcTree& octree) {
-
-    std::list<octomap::OcTreeVolume> occupiedThresVoxels;
-    std::list<octomap::OcTreeVolume> freeThresVoxels;
-    std::list<octomap::OcTreeVolume> occupiedVoxels;
-    std::list<octomap::OcTreeVolume> freeVoxels;
-
-    octree.getOccupied(occupiedThresVoxels, occupiedVoxels, m_max_tree_depth);
-
-    if (octree.size() < 5 * 1e6) {
-      octree.getFreespace (freeThresVoxels, freeVoxels, m_max_tree_depth);
-      octree.getVoxels(m_grid_voxels, m_max_tree_depth-1); // octree structure not drawn at lowest level
-    }
-
-    double minX, minY, minZ, maxX, maxY, maxZ;
-    octree.getMetricMin(minX, minY, minZ);
-    octree.getMetricMax(maxX, maxY, maxZ);
-
-    m_zMin = minZ;
-    m_zMax = maxZ;
-
-
-    m_octree_grid_vis_initialized = false;
-    if(m_drawOcTreeGrid)
-      initOctreeGridVis();
-
-    // initialize visualization:
-    generateCubes(occupiedThresVoxels, &m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
-    generateCubes(freeThresVoxels, &m_freeThresArray, m_freeThresSize);
-
-    generateCubes(occupiedVoxels, &m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
-    generateCubes(freeVoxels, &m_freeArray, m_freeSize);
-
-    this->map_id = 0;
   }
 
   void OcTreeDrawer::setOcTree(const octomap::OcTree &octree, octomap::pose6d origin_, int map_id_) {
@@ -157,39 +120,43 @@ namespace octomap {
 
     // maximum size to prevent crashes on large maps: (should be checked in a better way than a constant)
     bool showAll = (octree.size() < 5 * 1e6);
-
-    // new iterators, first port (still using the lists, these should be gone as well!)
-    // TODO: can we get rid of origin.rot().rotate, e.g. move it to generateCubes?
-    // Should be at least checked against "0" origin to prevent unnecessary rotations
-    for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
-        end=octree.end_tree(); it!= end; ++it)
-    {
-      // voxels for leaf nodes
-      if (it.isLeaf()){
-
-        if(octree.isNodeOccupied(*it)){
-          if (octree.isNodeAtThreshold(*it)){
-            occupiedThresVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
-          }
-          else{
-            occupiedVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
-          }
-        } else if (showAll){
-          if (octree.isNodeAtThreshold(*it)){
-            freeThresVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
-          }
-          else{
-            freeVoxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
-          }
-        }
-      }
-
-      if (showAll)
-        m_grid_voxels.push_back(OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize()));
-    }
-
-
+    bool uses_origin = ( (origin_.rot().x() != 0.) && (origin_.rot().y() != 0.)
+        && (origin_.rot().z() != 0.) && (origin_.rot().u() != 1.) );
     
+    // TODO: still using the lists, these should be gone as well
+    OcTreeVolume voxel;
+    for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
+            end=octree.end_tree(); it!= end; ++it) {
+
+      if (it.isLeaf()) { // voxels for leaf nodes
+        if (uses_origin) 
+          voxel = OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize());
+        else 
+          voxel = OcTreeVolume(it.getCoordinate(), it.getSize());
+        
+        if (octree.isNodeOccupied(*it)){ // occupied voxels
+          if (octree.isNodeAtThreshold(*it)) occupiedThresVoxels.push_back(voxel);
+          else                               occupiedVoxels.push_back(voxel);          
+        }
+        else if (showAll) { // freespace voxels
+          if (octree.isNodeAtThreshold(*it)) freeThresVoxels.push_back(voxel);
+          else                               freeVoxels.push_back(voxel);
+        }
+
+        // grid structure voxel
+        if (showAll) m_grid_voxels.push_back(voxel);        
+      }
+      
+      else { // inner node voxels (for grid structure only)
+        if (showAll) {
+          if (uses_origin) 
+            voxel = OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize());
+          else 
+            voxel = OcTreeVolume(it.getCoordinate(), it.getSize());          
+          m_grid_voxels.push_back(voxel);        
+        }
+      }      
+    } // end for all voxels
 
     double minX, minY, minZ, maxX, maxY, maxZ;
     octree.getMetricMin(minX, minY, minZ);
@@ -202,7 +169,6 @@ namespace octomap {
     m_octree_grid_vis_initialized = false;
     if(m_drawOcTreeGrid)
       initOctreeGridVis();
-
 
     // generate openGL representation of octree
     // TODO: get rid of lists, directly use values from the iterators to build the GL arrays
