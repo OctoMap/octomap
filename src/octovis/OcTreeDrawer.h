@@ -42,6 +42,12 @@ namespace octomap {
     // initialization of drawer  -------------------------
 
     /// sets a new OcTree that should be drawn by this drawer
+    void setOcTree(const octomap::OcTree &octree) __attribute__ ((deprecated)) {
+      octomap::pose6d o; // initialized to (0,0,0) , (0,0,0,1) by default
+      setOcTree(octree, o, 0);
+    }
+
+    /// sets a new OcTree that should be drawn by this drawer
     /// origin specifies a global transformation that should be applied
     void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin, int map_id_);
 
