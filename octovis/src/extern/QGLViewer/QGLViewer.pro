@@ -184,7 +184,7 @@ unix {
 #		--  L i n u x  --
 linux-g++ {
   # Patch for gcc 3.2.0 and 3.3.1-2
-  system( g++ --version | grep " 3\.2\.0 " > /dev/null )|system( g++ --version | grep " 3\.3\.1\-2" > /dev/null ) {
+  system( g++ --version | grep " 3\\.2\\.0 " > /dev/null )|system( g++ --version | grep " 3\\.3\\.1\\-2" > /dev/null ) {
       message( Patching gcc bug - using debug configuration )
       CONFIG -= release
       CONFIG *= debug

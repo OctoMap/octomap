@@ -6,7 +6,7 @@ IF(NOT OPENGL_FOUND)
   MESSAGE ( "\n")
   MESSAGE ( "OpenGL not found. \n")
 ELSE()
-  MESSAGE (STATUS "OpenGL found at ${OPENGL_LIBRARY}")
+  MESSAGE (STATUS "OpenGL found: ${OPENGL_LIBRARY}")
 
   # Look for Qt4
   FIND_PACKAGE(Qt4)

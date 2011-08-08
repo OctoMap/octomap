@@ -10,27 +10,26 @@
 # QGLViewer_FOUND            true if QGLViewer was found
 
 SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" )
-SET( QGLViewer_HOME / CACHE PATH "Where to find QGLViewer" )
+
+FIND_PATH( QGLVIEWER_BASE_DIR qglviewer.h
+  ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer
+  ${CMAKE_SOURCE_DIR}/octovis/src/extern/QGLViewer
+)
 
 FIND_PATH( QGLViewer_INCLUDE_DIR qglviewer.h
     /usr/include/qglviewer-qt4
     /usr/include/QGLViewer
     /opt/local/include/QGLViewer
-    ${QGLViewer_HOME}
+    ${QGLVIEWER_BASE_DIR}
 )
 
 FIND_LIBRARY( QGLViewer_LIBRARY_DIR_UBUNTU qglviewer-qt4 )
-FIND_LIBRARY( QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLViewer_HOME})
+FIND_LIBRARY( QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
 
 SET( BUILD_LIB_FROM_SOURCE 0)
 
 IF( QGLViewer_INCLUDE_DIR )
   MESSAGE(STATUS "QGLViewer includes found in ${QGLViewer_INCLUDE_DIR}")
-  #SET( QGLViewer_INCLUDE_DIR ${QGLViewer_INCLUDE_DIR_STRIP})
-
-#  SET( QGLViewer_FOUND 1 CACHE BOOL "Do we have QGLViewer?" FORCE )
-
-  #MESSAGE( STATUS "Setting QGLViewer_INCLUDE_DIR to ${QGLViewer_INCLUDE_DIR}" )
   IF (QGLViewer_LIBRARY_DIR_UBUNTU)
     MESSAGE(STATUS "qglviewer-qt4 found in ${QGLViewer_LIBRARY_DIR_UBUNTU}")
     # strip filename from path
@@ -56,37 +55,54 @@ ENDIF()
 IF(BUILD_LIB_FROM_SOURCE)
 
   # build own libQGLViewer
-  MESSAGE(STATUS "Trying to build libQGLViewer from source...")
+  IF(QGLVIEWER_BASE_DIR)
+    MESSAGE(STATUS "Trying to build libQGLViewer from source in ${QGLVIEWER_BASE_DIR}")
 
-  MESSAGE(STATUS "\t generating Makefile using qmake")
-  EXECUTE_PROCESS(
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer
-    COMMAND qmake
-    OUTPUT_QUIET
-  )
+    FIND_PROGRAM(QMAKE-QT4 qmake-qt4)
+    IF (QMAKE-QT4)
+      MESSAGE(STATUS "\t generating Makefile using qmake-qt4") 
+      EXECUTE_PROCESS(
+        WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
+        COMMAND qmake-qt4
+        OUTPUT_QUIET
+      )
+    ELSE(QMAKE-QT4)
+      MESSAGE(STATUS "\t generating Makefile using qmake") 
+      EXECUTE_PROCESS(
+        WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
+        COMMAND qmake-qt4
+        OUTPUT_QUIET
+      )
+    ENDIF(QMAKE-QT4)
 
-  MESSAGE(STATUS "\t building library")
-  EXECUTE_PROCESS(
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer
-    COMMAND make
-    OUTPUT_QUIET
-  )
+    MESSAGE(STATUS "\t building library")
+    EXECUTE_PROCESS(
+      WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
+      COMMAND make
+      OUTPUT_QUIET
+      )
+  ELSE()
+    MESSAGE(STATUS "QGLViewer sources NOT found. Exiting.")
+  ENDIF()
 
-  FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLViewer_HOME})
-  FIND_PATH(QGLLIB libQGLViewer.so  ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer)
+  FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
+  FIND_PATH(QGLLIB libQGLViewer.so  ${QGLVIEWER_BASE_DIR})
 
   IF (NOT QGLLIB)
     MESSAGE(STATUS "\nfailed to build libQGLViewer")
     SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" FORCE )
   ELSE()
     MESSAGE(STATUS "Successfully built ${QGLLIB}")
-    SET( QGLViewer_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer CACHE PATH "QGLViewer Include directory" FORCE)
-    SET( QGLViewer_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/src/extern/QGLViewer CACHE PATH "QGLViewer Library directory" FORCE)
+    SET( QGLViewer_INCLUDE_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Include directory" FORCE)
+    SET( QGLViewer_LIBRARY_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Library directory" FORCE)
     #  TODO: also include "m pthread  QGLViewerGen QGLViewerUtility"?
     SET( QGLViewer_LIBRARIES QGLViewer)
     SET( QGLViewer_FOUND 1 CACHE BOOL "Do we have QGLViewer?" FORCE )
   ENDIF()
+
 ENDIF()
 
-	
+# You need to use qmake of QT4. You are using QT3 if you get:
 
+#CMakeFiles/octovis.dir/ViewerWidget.cpp.o: In function `octomap::ViewerWidget::ViewerWidget(QWidget*)':
+#ViewerWidget.cpp:(.text+0x1715): undefined reference to `QGLViewer::QGLViewer(QWidget*, QGLWidget const*, QFlags<Qt::WindowType>)'

@@ -93,7 +93,7 @@ target_link_libraries(octovis
 # special handling of MacOS X:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   add_custom_command(TARGET octovis POST_BUILD 
-  	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${BASE_DIR}/bin/octovis
+  	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/octovis
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
