@@ -6,8 +6,8 @@
 #  OCTOMAP_LIBRARIES    - libraries to link against
  
 # Tell the user project where to find our headers and libraries
-set(OCTOMAP_INCLUDE_DIRS "@OCTOMAP_INCLUDE_DIRS@")
-set(OCTOMAP_LIBRARY_DIRS "@OCTOMAP_LIB_DIR@")
+set(OCTOMAP_INCLUDE_DIRS @OCTOMAP_INCLUDE_DIRS@)
+set(OCTOMAP_LIBRARY_DIRS @OCTOMAP_LIB_DIR@)
  
 # Our library dependencies (contains definitions for IMPORTED targets)
 # include("@FOOBAR_CMAKE_DIR@/FooBarLibraryDepends.cmake")

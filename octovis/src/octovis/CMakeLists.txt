@@ -110,7 +110,7 @@ install(TARGETS octovis
 )
 
 # Create a octomap-config.cmake file for the use from the build tree
-set(OCTOVIS_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(OCTOVIS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/src")
 set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 # not used right now (export depends?)
 #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
