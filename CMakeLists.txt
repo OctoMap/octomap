@@ -1,0 +1,9 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+PROJECT( octomap-distribution )
+
+ADD_SUBDIRECTORY( octomap )
+ADD_SUBDIRECTORY( octovis )
+
+
+
+

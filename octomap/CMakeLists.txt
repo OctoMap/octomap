@@ -4,15 +4,17 @@ PROJECT( octomap )
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
 set(OCTOMAP_MINOR_VERSION 1)
-set(OCTOMAP_PATCH_VERSION 1)
+set(OCTOMAP_PATCH_VERSION 0)
 set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
-# get rid of a useless warning:
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/../CMakeModules")
+MESSAGE (STATUS "Module path: ${CMAKE_MODULE_PATH}")
+
 # COMPILER SETTINGS (default: Release) and flags
-INCLUDE(CMakeModules/CompilerSettings.cmake)
+INCLUDE(CompilerSettings)
 
 #If we are compiling with ROS support, we need to get the appropriate includes and link flags and such
 # (thx to E.Perko for patch!)
@@ -32,12 +34,9 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULES_PATH} ${BASE_DIR}/CMakeModules)
-
 INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
 )
-
 
 # Installation
 
@@ -56,14 +55,14 @@ install(PROGRAMS "src/extern/binvox/binvox64" DESTINATION bin)
 install(PROGRAMS "src/extern/binvox/viewvox" DESTINATION bin)
 install(PROGRAMS "src/extern/binvox/viewvox64" DESTINATION bin)
 
-file(GLOB octomap_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/*.h ${CMAKE_SOURCE_DIR}/include/octomap/*.hxx)
+file(GLOB octomap_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/*.h ${PROJECT_SOURCE_DIR}/include/octomap/*.hxx)
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
-file(GLOB octomap_math_HDRS ${CMAKE_SOURCE_DIR}/include/octomap/math/*.h)
+file(GLOB octomap_math_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
 
 # uninstall target
 configure_file(
-    "CMakeModules/CMakeUninstall.cmake.in"
+    "../CMakeModules/CMakeUninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 
@@ -105,7 +104,7 @@ install(FILES
   DESTINATION lib/cmake/octomap/)
 
 # Write pkgconfig-file:
-include(CMakeModules/InstallPkgConfigFile.cmake)
+include(InstallPkgConfigFile)
 install_pkg_config_file(octomap
     CFLAGS
     LIBS -loctomap -loctomath
@@ -117,7 +116,7 @@ FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/octomap.dox.in ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox @ONLY)
   ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Generating documentation (Doxygen)...")
 ENDIF(DOXYGEN_FOUND)
 
@@ -126,27 +125,18 @@ SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
 ADD_CUSTOM_TARGET(dist 
 	rm -rf "${CMAKE_BINARY_DIR}/dist" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
 	COMMAND mkdir "${CMAKE_BINARY_DIR}/dist"
-	COMMAND svn export --force -q "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/dist/${PROJECT_NAME}" 
+	COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/dist/${PROJECT_NAME}" 
 	COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${CMAKE_BINARY_DIR}/dist" --exclude=".hidden" "${PROJECT_NAME}"
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 )
 
-
-# Build viewer if available:
-INCLUDE(CMakeModules/BuildGLViewer.cmake)
-
 # Needs to be last statement:
-INCLUDE(CMakeModules/CPackSettings.cmake)
+INCLUDE(CPackSettings)
 
 # Finished:
-
 MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")
 MESSAGE (STATUS "Install octomap using: make install")
 MESSAGE (    "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
 MESSAGE (STATUS "")
-
-
-
-
