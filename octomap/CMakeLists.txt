@@ -11,7 +11,6 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/../CMakeModules")
-MESSAGE (STATUS "Module path: ${CMAKE_MODULE_PATH}")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
@@ -34,9 +33,8 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-INCLUDE_DIRECTORIES(
-  ${PROJECT_SOURCE_DIR}/include
-)
+set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
 # Installation
 
@@ -75,7 +73,7 @@ add_custom_target(uninstall
 export(PACKAGE octomap)
  
 # Create a octomap-config.cmake file for the use from the build tree
-set(OCTOMAP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/include")
+set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
 set(OCTOMAP_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 # not used right now (export depends?)
 #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
