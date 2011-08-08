@@ -93,4 +93,5 @@ int main(int argc, char** argv) {
   cout << "writing to beams.bt..." << endl;
   single_beams.writeBinary("beams.bt");
 
+  return 0;
 }

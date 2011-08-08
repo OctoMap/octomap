@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT( octomap )
 
+ENABLE_TESTING()
+
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
 set(OCTOMAP_MINOR_VERSION 2)
@@ -137,4 +139,3 @@ MESSAGE (STATUS "Compile octomap using: make")
 MESSAGE (STATUS "Install octomap using: make install")
 MESSAGE (    "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
-MESSAGE (STATUS "")
