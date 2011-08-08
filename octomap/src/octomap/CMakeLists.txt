@@ -23,6 +23,7 @@ else(WITH_ROS)
   TARGET_LINK_LIBRARIES(octomap octomath)
 endif(WITH_ROS)
 
+ADD_SUBDIRECTORY( testing )
 
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap)
@@ -42,17 +43,6 @@ TARGET_LINK_LIBRARIES(edit_octree octomap)
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
-ADD_EXECUTABLE(test_raycasting test_raycasting.cpp)
-TARGET_LINK_LIBRARIES(test_raycasting octomap)
-
-ADD_EXECUTABLE(test_iterators test_iterators.cpp)
-TARGET_LINK_LIBRARIES(test_iterators octomap)
-
-ADD_EXECUTABLE(test_scans test_scans.cpp)
-TARGET_LINK_LIBRARIES(test_scans octomap)
-
-ADD_EXECUTABLE(test_lut test_lut.cpp)
-TARGET_LINK_LIBRARIES(test_lut octomap)
 
 # installation:
 # store all header files to install:
@@ -66,7 +56,6 @@ install(TARGETS
 	log2graph
 	binvox2bt
 	bt2vrml
-	test_raycasting
 	${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
