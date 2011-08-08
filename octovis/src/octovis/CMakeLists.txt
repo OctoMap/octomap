@@ -84,10 +84,10 @@ add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewe
 
 # link the target against the Qt libraries. which libraries exactly, is defined by the "include(${QT_USE_FILE})" line above, which sets up this variable.
 target_link_libraries(octovis 
-    ${QGLViewer_LIBRARIES}
-	${QT_LIBRARIES}
-	octomap 
-	octovis-shared
+  ${QGLViewer_LIBRARIES}
+  ${QT_LIBRARIES}
+  octomap 
+  octovis-shared
 )
 
 # special handling of MacOS X:
@@ -96,8 +96,6 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/octovis
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
-
 
 
 # #installation:
@@ -110,3 +108,11 @@ install(TARGETS octovis
   octovis-shared
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
+
+# Create a octomap-config.cmake file for the use from the build tree
+set(OCTOVIS_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+# not used right now (export depends?)
+#set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
+configure_file(octovis-config.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octovis-config.cmake" @ONLY)
