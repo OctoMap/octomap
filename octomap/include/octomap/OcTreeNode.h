@@ -47,8 +47,6 @@
 
 namespace octomap {
 
-
-
   /**
    * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
    *
@@ -62,7 +60,6 @@ namespace octomap {
     OcTreeNode();
     ~OcTreeNode();
 
-
     bool createChild(unsigned int i);
 
     // overloaded, so that the return type is correct:
@@ -73,21 +70,7 @@ namespace octomap {
       return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
     }
 
-
     // -- node occupancy  ----------------------------
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->integrateHit(node) in OccupancyOcTreeBase
-    ///
-    /// integrate a measurement (beam ENDED in cell)
-    inline void integrateHit()  __attribute__ ((deprecated)) {  updateProbability(probHit); }
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->integrateMiss(node) in OccupancyOcTreeBase
-    ///
-    /// integrate a measurement (beam PASSED in cell)
-    inline void integrateMiss()  __attribute__ ((deprecated)) { updateProbability(probMiss); }
-
 
     /// \return occupancy probability of node
     inline double getOccupancy() const { return probability(value); }
@@ -96,6 +79,27 @@ namespace octomap {
     inline float getLogOdds() const{ return value; }
     /// sets log odds occupancy of node
     inline void setLogOdds(float l) { value = l; }
+
+    /**
+     * @return mean of all children's occupancy probabilities, in log odds
+     */
+    double getMeanChildLogOdds() const;
+
+    /**
+     * @return maximum of children's occupancy probabilities, in log odds
+     */
+    float getMaxChildLogOdds() const;
+
+    /// update this node's occupancy according to its children's maximum occupancy
+    inline void updateOccupancyChildren() {
+      this->setLogOdds(this->getMaxChildLogOdds());  // conservative
+    }
+
+    /// adds p to the node's logOdds value (with no boundary / threshold checking!)
+    void addValue(const float& p);
+
+
+    // deprecated methods ################################################
 
     /// This function is deprecated and will be removed,
     /// instead use octree->isNodeOccupied(node) in OccupancyOcTreeBase
@@ -121,25 +125,19 @@ namespace octomap {
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
     void toMaxLikelihood()  __attribute__ ((deprecated));
- 
-    /**
-     * @return mean of all children's occupancy probabilities, in log odds
-     */
-    double getMeanChildLogOdds() const;
 
-    /**
-     * @return maximum of children's occupancy probabilities, in log odds
-     */
-    float getMaxChildLogOdds() const;
+    /// This function is deprecated and will be removed,
+    /// instead use octree->integrateHit(node) in OccupancyOcTreeBase
+    ///
+    /// integrate a measurement (beam ENDED in cell)
+    inline void integrateHit()  __attribute__ ((deprecated)) {  updateProbability(probHit); }
 
-    /// update this node's occupancy according to its children's maximum occupancy
-    inline void updateOccupancyChildren() {
-      this->setLogOdds(this->getMaxChildLogOdds());  // conservative
-    }
-
-    /// adds p to the node's logOdds value (with no boundary / threshold checking!)
-    void addValue(float p);
-
+    /// This function is deprecated and will be removed,
+    /// instead use octree->integrateMiss(node) in OccupancyOcTreeBase
+    ///
+    /// integrate a measurement (beam PASSED in cell)
+    inline void integrateMiss()  __attribute__ ((deprecated)) { updateProbability(probMiss); }
+    
 
   protected:
     /// update the probability of a node, p will first be converted to logodds
@@ -156,16 +154,9 @@ namespace octomap {
     const static float clampingThresMin = -2;
     const static float clampingThresMax = 3.5;
 
-
     // "value" stores log odds occupancy probability
-
   };
 
-
-
-
 } // end namespace
-
-
 
 #endif

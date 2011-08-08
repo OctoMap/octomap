@@ -47,16 +47,13 @@
 
 namespace octomap {
 
-
   OcTreeNode::OcTreeNode()
     : OcTreeDataNode<float>(0.0)
   {
   }
 
   OcTreeNode::~OcTreeNode(){
-
   }
-
 
   // TODO: Use Curiously Recurring Template Pattern instead of copying full function
   // (same for getChild)
@@ -69,11 +66,9 @@ namespace octomap {
     return true;
   }
 
-
   // ============================================================
   // =  occupancy probability  ==================================
   // ============================================================
-
 
   void OcTreeNode::toMaxLikelihood(){
     if (this->getLogOdds() >= occProbThresLog)
@@ -81,7 +76,6 @@ namespace octomap {
     else
       setLogOdds(clampingThresMin);
   }
-
 
   double OcTreeNode::getMeanChildLogOdds() const{
     double mean = 0;
@@ -107,7 +101,9 @@ namespace octomap {
     return max;
   }
 
-
+  void OcTreeNode::addValue(const float& logOdds) {
+    value += logOdds;
+  }
 
   // ============================================================
   // =  private methodes  =======================================
@@ -128,12 +124,7 @@ namespace octomap {
         setLogOdds(clampingThresMin);
     }
   }
-
-  void OcTreeNode::addValue(float logOdds) {
-    value += logOdds;
-  }
-
-
+  
 } // end namespace
 
 

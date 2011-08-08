@@ -41,9 +41,11 @@
  */
 
 #include <assert.h>
+// you need to include boost/unordered_set instead if your compiler does not
+// yet support tr1
+#include <tr1/unordered_set>
 
 namespace octomap {
-
 
   /**
    * OcTreeKey is a container class for internal key addressing
@@ -51,7 +53,6 @@ namespace octomap {
   class OcTreeKey {
     
   public:  
-
     OcTreeKey () {}
     OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c)
       { k[0] = a; k[1] = b; k[2] = c; }
@@ -61,20 +62,16 @@ namespace octomap {
     bool operator== (const OcTreeKey &other) const { 
       return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
     }
-
     bool operator!= (const OcTreeKey &other) const {
       return( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) );
     }
-
     OcTreeKey& operator=(const OcTreeKey& other){
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
       return *this;
     }
-
     const unsigned short int& operator[] (unsigned int i) const { 
       return k[i];
     }
-
     unsigned short int& operator[] (unsigned int i) { 
       return k[i];
     }
@@ -87,24 +84,29 @@ namespace octomap {
         // a very simple hashing function for now:
         return key.k[0] + 1337*key.k[1] + 345637*key.k[2];
       }
-
     };
+    
   };
+  
+  /**
+   * Data structure to efficiently compute the nodes to update from a scan
+   * insertion using a hash set.
+   * @note you need to use boost::unordered_set instead if your compiler does not
+   * yet support tr1
+   */
+  typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
 
   
   class KeyRay {
-
   public:
     
     KeyRay () {
       ray.resize(100000);
       reset();
     }
-
     void reset() {
       end_of_ray = begin();
     }
-
     void addKey(OcTreeKey& k) {
       assert(end_of_ray != ray.end());
       *end_of_ray = k;
@@ -125,20 +127,16 @@ namespace octomap {
 
     reverse_iterator rbegin() { return (reverse_iterator) end_of_ray; }
     reverse_iterator rend() { return ray.rend(); }
-   
 
   public:
 
     std::vector<OcTreeKey> ray;
     std::vector<OcTreeKey>::iterator end_of_ray;
-
   };
 
-
-
   inline void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key,
-                                          const OcTreeKey& parent_key, OcTreeKey& child_key){
-
+                                          const OcTreeKey& parent_key, OcTreeKey& child_key) {
+    
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
     else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
     // y-axis
@@ -148,7 +146,7 @@ namespace octomap {
     if (pos & 4) child_key[2] = parent_key[2] + center_offset_key;
     else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
   }
-
-}
+  
+} // namespace
 
 #endif

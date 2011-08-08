@@ -41,9 +41,6 @@
  */
 
 #include <list>
-// you need to include boost/unordered_set instead if your compiler does not
-// yet support tr1
-#include <tr1/unordered_set>
 #include <fstream>
 #include <stdlib.h>
 
@@ -53,7 +50,6 @@
 
 
 namespace octomap {
-
 
   /**
    * Base class for Occupancy Octrees (e.g. for mapping).
@@ -72,13 +68,6 @@ namespace octomap {
   class OccupancyOcTreeBase : public OcTreeBase<NODE> {
 
   public:
-    /**
-     * Data structure to efficiently compute the nodes to update from a scan
-     * insertion using a hash set.
-     * @note you need to use boost::unordered_set instead if your compiler does not
-     * yet support tr1
-     */
-    typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
 
     OccupancyOcTreeBase(double _resolution);
     virtual ~OccupancyOcTreeBase();
@@ -90,12 +79,11 @@ namespace octomap {
      * @param measurement origin in global reference frame
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      */
     virtual void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                    double maxrange=-1., bool pruning=true, bool dirty = false);
-
+                    double maxrange=-1., bool pruning=true, bool lazy_eval = false);
 
      /**
      * Integrate a 3d scan, transform scan before tree update
@@ -105,12 +93,11 @@ namespace octomap {
      * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      */
     virtual void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
-                    double maxrange=-1., bool pruning = true, bool dirty = false);
-
+                    double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /**
      * Insert a 3d scan (given as a ScanNode) into the tree.
@@ -121,8 +108,7 @@ namespace octomap {
      * @param dirty whether the tree is left 'dirty' after the update (default: false).
      *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
      */
-    virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool dirty = false);
-
+    virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /// deprecated, use insertScan with separate sensor and frame origin instead
     virtual void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) __attribute__ ((deprecated));
@@ -131,16 +117,15 @@ namespace octomap {
     virtual void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);
 
     /**
-     * Integrate occupancy measurement.
-     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+     * Manipulate log_odds value of voxel directly
      *
-     * @param value 3d coordinate of the NODE that is to be updated
-     * @param occupied true if the node was measured occupied, else false
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param OcTreeKey of the NODE that is to be updated
+     * @param log_odds_update value to be added (+) to log_odds value of node
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      * @return pointer to the updated NODE
      */
-    virtual NODE* updateNode(const point3d& value, bool occupied, bool dirty = false);
+    virtual NODE* updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval = false);
 
     /**
      * Manipulate log_odds value of voxel directly.
@@ -148,33 +133,35 @@ namespace octomap {
      *
      * @param value 3d coordinate of the NODE that is to be updated
      * @param log_odds_update value to be added (+) to log_odds value of node
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      * @return pointer to the updated NODE
      */
-    virtual NODE* updateNode(const point3d& value, float log_odds_update, bool dirty = false);
+    virtual NODE* updateNode(const point3d& value, float log_odds_update, bool lazy_eval = false);
 
     /**
      * Integrate occupancy measurement.
      *
      * @param OcTreeKey of the NODE that is to be updated
      * @param occupied true if the node was measured occupied, else false
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      * @return pointer to the updated NODE
      */
-    virtual NODE* updateNode(const OcTreeKey& key, bool occupied, bool dirty = false);
+    virtual NODE* updateNode(const OcTreeKey& key, bool occupied, bool lazy_eval = false);
 
     /**
-     * Manipulate log_odds value of voxel directly
+     * Integrate occupancy measurement.
+     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
      *
-     * @param OcTreeKey of the NODE that is to be updated
-     * @param log_odds_update value to be added (+) to log_odds value of node
-     * @param dirty whether the tree is left 'dirty' after the update (default: false).
-     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+     * @param value 3d coordinate of the NODE that is to be updated
+     * @param occupied true if the node was measured occupied, else false
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      * @return pointer to the updated NODE
      */
-    virtual NODE* updateNode(const OcTreeKey& key, float log_odds_update, bool dirty = false);
+    virtual NODE* updateNode(const point3d& value, bool occupied, bool lazy_eval = false);
+
 
     /// Creates the maximum likelihood map by calling toMaxLikelihood on all
     /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
@@ -204,7 +191,6 @@ namespace octomap {
      */
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
-
    
     /**
      * Convenience function to return all occupied nodes in the OcTree.
@@ -378,14 +364,10 @@ namespace octomap {
 
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const;
 
-
-
-
     /**
      * Updates the occupancy of all inner nodes to reflect their children's occupancy.
-     * If you performed batch-updates and left the tree 'dirty', you must call this
-     * before any queries to ensure correct multiresolution behavior.
-     *
+     * If you performed batch-updates with lazy evaluation enabled, you must call this
+     * before any queries to ensure correct multi-resolution behavior.
      **/
     void updateInnerOccupancy();
 
@@ -403,6 +385,8 @@ namespace octomap {
     virtual void integrateHit(NODE* occupancyNode) const;
     /// integrate a "miss" measurement according to the tree's sensor model
     virtual void integrateMiss(NODE* occupancyNode) const;
+    // update logodds value of node, given update is added to current value.
+    virtual void updateNodeLogOdds(NODE* occupancyNode, const float& update) const;
 
     /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
     virtual void nodeToMaxLikelihood(NODE* occupancyNode) const;
@@ -420,10 +404,10 @@ namespace octomap {
 
     // recursive calls ----------------------------
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
-                           unsigned int depth, bool occupied, bool dirty = false);
+                           unsigned int depth, bool occupied, bool lazy_eval = false);
 
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
-                           unsigned int depth, const float& log_odds_update, bool dirty = false);
+                           unsigned int depth, const float& log_odds_update, bool lazy_eval = false);
     
     void updateInnerOccupancyRecurs(NODE* node, unsigned int depth);
 
@@ -437,7 +421,6 @@ namespace octomap {
                                         unsigned int& num_thresholded,
                                         unsigned int& num_other) const;
 
-
   protected:
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
@@ -447,6 +430,7 @@ namespace octomap {
 
     bool use_change_detection;
     KeySet changedKeys;
+    
     // occupancy parameters of tree, stored in logodds:
     float clampingThresMin;
     float clampingThresMax;
@@ -455,7 +439,7 @@ namespace octomap {
     float occProbThresLog;
   };
 
-}
+} // namespace
 
 #include "octomap/OccupancyOcTreeBase.hxx"
 
