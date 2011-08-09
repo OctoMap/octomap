@@ -465,9 +465,10 @@ namespace octomap {
 
       // compute tMax, tDelta
       if (step[i] != 0) {
+        // corner point of voxel (in direction of ray)
         float voxelBorder(0);
-        this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
-        if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+        this->genCoordFromKey(current_key[i], voxelBorder); 
+        voxelBorder += step[i] * this->resolution * 0.5;
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );

@@ -201,8 +201,7 @@ namespace octomap {
     * @param ray KeyRay structure that holds the keys of all nodes traversed by the ray, excluding "end"
     * @return Success of operation. Returning false usually means that one of the coordinates is out of the OcTree's range
     */
-    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray) const;
-
+    bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray);
 
     /**
      * Generates key for all three dimensions of a given point

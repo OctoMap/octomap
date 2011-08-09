@@ -156,21 +156,19 @@ namespace octomap {
   // TODO: clean up genXXXs, check where used
   template <class NODE>
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
-
-    return (double( (int) key - (int) this->tree_max_val ) +0.5 ) * this->resolution;
+    return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
   }
 
   template <class NODE>
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
     assert(depth <= tree_depth);
-
-    // workaround because root is directly centered on 0 = 0.0, all others are shifted by 0.5*res
-    if (depth == 0)
-      return 0.0;
-    else
-      return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
+    
+    // root is centered on 0 = 0.0
+    if (depth == 0) return 0.0;
+    
+    // all other node centers are shifted by 0.5* node_size
+    return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
   }
-
 
   template <class NODE>
   bool OcTreeBase<NODE>::genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const {
@@ -325,9 +323,10 @@ namespace octomap {
 
       // compute tMax, tDelta
       if (step[i] != 0) {
+        // corner point of voxel (in direction of ray)
         float voxelBorder(0);
-        this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
-        if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+        this->genCoordFromKey(current_key[i], voxelBorder); 
+        voxelBorder += step[i] * this->resolution * 0.5;
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
@@ -398,110 +397,16 @@ namespace octomap {
     return true;
   }
 
-
-
   template <class NODE>
   bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
-                                    std::vector<point3d>& _ray) const {
-
+                                    std::vector<point3d>& _ray) {
     _ray.clear();
-
-    // Initialization phase -------------------------------------------------------
-
-    point3d direction = (end - origin).normalized ();
-    double maxLength = (end - origin).norm ();
-
-    // Voxel integer coordinates are the indices of the OcTree cells
-    // at the lowest level (they may exist or not).
-
-    unsigned short int voxelIdx[3];  // voxel integer coords
-    unsigned short int endIdx[3];    // end voxel integer coords
-    int step[3];                     // step direction
-
-    double tMax[3];
-    double tDelta[3];
-
-    for(unsigned int i=0; i < 3; ++i) {
-      if (!genKeyValue(origin(i), voxelIdx[i])) {
-        OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): Coordinate "<<i<<" of origin out of OcTree bounds: "<< origin(i));
-        return false;
-      }
-      if (!genKeyValue(end(i), endIdx[i])) {
-        OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): Coordinate "<<i<<" of endpoint out of OcTree bounds"<< end(i));
-        return false;
-      }
-
-
-      if (direction(i) > 0.0) step[i] =  1;
-      else if (direction(i) < 0.0)   step[i] = -1;
-      else step[i] = 0;
-
-      double voxelBorder = (double) ( (int) voxelIdx[i] - (int) tree_max_val ) * resolution;
-      if (step[i] > 0) voxelBorder += resolution;
-
-      if (direction(i) != 0.0) {
-        tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
-        tDelta[i] = resolution / fabs( direction(i) );
-      }
-      else {
-        tMax[i] = 1e6;
-        tDelta[i] = 1e6;
-      }
+    if (!computeRayKeys(origin, end, keyray)) return false;
+    for (KeyRay::const_iterator it = keyray.begin(); it != keyray.end(); ++it) {
+      point3d p;
+      if (!genCoords(*it, tree_depth, p)) return false;
+      _ray.push_back(p);
     }
-
-    // origin and end in same cell: done (ray empty)
-    if (voxelIdx[0] == endIdx[0] && voxelIdx[1] == endIdx[1] && voxelIdx[2] == endIdx[2]){
-      return true;
-    }
-
-    // Incremental phase  ---------------------------------------------------------
-
-    bool done = false;
-    while (!done) {
-      unsigned int i;
-
-      // find minimum tMax:
-      if (tMax[0] < tMax[1]){
-        if (tMax[0] < tMax[2]) i = 0;
-        else                   i = 2;
-      }
-      else {
-        if (tMax[1] < tMax[2]) i = 1;
-        else                   i = 2;
-      }
-
-      // advance in direction "i":
-      voxelIdx[i] += step[i];
-
-      if ((voxelIdx[i] >= 0) && (voxelIdx[i] < 2*tree_max_val)){
-        tMax[i] += tDelta[i];
-      }
-      else {
-        OCTOMAP_WARNING_STR("Ray casting in OcTreeBaseNODE>::getCellsOnRay hit the boundary in dim. "<< i);
-        return false;
-      }
-
-      // generate world coords from tree indices
-      double val[3];
-      for (unsigned int j = 0; j < 3; j++) {
-        if(!genCoordFromKey( voxelIdx[j], val[j] )){
-          OCTOMAP_ERROR_STR("Error in OcTree::computeRay(): genCoordFromKey failed!");
-          return false;
-          val[j] += this->resolution * 0.5;  // center of voxel          
-        }
-      }
-      point3d value(val[0], val[1], val[2]);
-
-      // reached endpoint?
-      if ((value - origin).norm () > maxLength) {
-        done = true;
-        break;
-      }
-      else {
-        _ray.push_back(value);
-      }
-    } // end while
-
     return true;
   }
 

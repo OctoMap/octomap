@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
   if (test_name == "ReadTree") {
     OcTree tree (0.05);  
     EXPECT_TRUE (tree.readBinary("sphere.bt"));
-    EXPECT_EQ ((int) tree.size(), 61183);    
+    EXPECT_EQ ((int) tree.size(), 59420);
   }
 
   if (test_name == "CastRay") {
