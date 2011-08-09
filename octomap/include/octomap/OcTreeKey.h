@@ -82,6 +82,7 @@ namespace octomap {
     struct KeyHash{
       size_t operator()(const OcTreeKey& key) const{
         // a very simple hashing function for now:
+        //    return key.k[2] + 1337*key.k[1] + 345637*key.k[0];
         return key.k[0] + 1337*key.k[1] + 345637*key.k[2];
       }
     };

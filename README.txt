@@ -15,7 +15,6 @@ License:
     (see LICENSE.txt in "src/octovis").
 
 
-
 REQUIREMENTS
 ############################
 
@@ -24,11 +23,11 @@ REQUIREMENTS
  
  viewer: 
  * Qt4
- * QGLViewer 
+ * OpenGL
+ * (QGLViewer)
 
  HTML documentation: 
  * doxygen
-
 
  Hint: you can install all dependencies on Ubuntu by running:
 
@@ -44,7 +43,7 @@ To install it:
 INSTALLATION:
 ############################
 
-*Note: skip to the end if you want to use OctoMap in ROS! *
+* Note: skip to the end if you want to use OctoMap in ROS! *
 
 Build the complete project by changing into the "build" directory 
 and running cmake:
@@ -61,7 +60,6 @@ A debug configuration can be created by running:
 	cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 in "build" or a different directory (e.g. "build-debug").
-
 
 You can install the library by running "make install", though it 
 is not necessary. Be sure to adjust CMAKE_INSTALL_PREFIX before.
@@ -94,6 +92,24 @@ bin/octovis
 
 You will find an example scan to load at
 src/examples/scan.dat.bz2     (please bunzip2 it first)
+
+
+USE IN OTHER PROJECTS
+############################
+
+A CMake-project config is generated for OctoMap which allows OctoMap
+to be used from other CMake-Projects easily.
+
+Point CMake to your octomap installation so that it finds:
+[octomap]/lib/cmake/octomap/octomap-config.cmake
+
+Then add the following to your CMakeLists.txt:
+
+find_package(octomap REQUIRED)
+include_directories(OCTOMAP_INCLUDE_DIRS)
+link_libraries(OCTOMAP_LIBRARIES)
+
+In addition to this cmake-module we also provide a pkgconfig-file.
 
 
 ROS-INTEGRATION
