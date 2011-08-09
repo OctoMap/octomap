@@ -759,15 +759,15 @@ namespace octomap {
   // -- I/O  -----------------------------------------
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::readBinary(const std::string& filename){
+  bool OccupancyOcTreeBase<NODE>::readBinary(const std::string& filename){
     std::ifstream binary_infile( filename.c_str(), std::ios_base::binary);
     if (!binary_infile.is_open()){
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
-      return;
-    } else {
-      readBinary(binary_infile);
-      binary_infile.close();
+      return false;
     }
+    readBinary(binary_infile);
+    binary_infile.close();     
+    return true;
   }
 
   template <class NODE>

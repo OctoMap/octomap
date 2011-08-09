@@ -11,23 +11,17 @@ TARGET_LINK_LIBRARIES(test_scans octomap)
 ADD_EXECUTABLE(test_lut test_lut.cpp)
 TARGET_LINK_LIBRARIES(test_lut octomap)
 
-ADD_EXECUTABLE(test_math test_math.cpp)
-TARGET_LINK_LIBRARIES(test_math octomap)
+# CTest tests below
 
-ADD_EXECUTABLE(test_octomap test_octomap.cpp)
-TARGET_LINK_LIBRARIES(test_octomap octomap)
+ADD_EXECUTABLE(unit_tests unit_tests.cpp)
+TARGET_LINK_LIBRARIES(unit_tests octomap)
 
-ADD_TEST(
-  NAME TestMath
-  COMMAND test_math
-)
+ADD_TEST (NAME MathVector COMMAND unit_tests MathVector )
+ADD_TEST (NAME MathPose   COMMAND unit_tests MathPose   )
+ADD_TEST (NAME InsertRay  COMMAND unit_tests InsertRay  )
+ADD_TEST (NAME ReadTree   COMMAND unit_tests ReadTree   )
+ADD_TEST (NAME CastRay    COMMAND unit_tests CastRay    )
+ADD_TEST (NAME InsertScan COMMAND unit_tests InsertScan )
+ADD_TEST (NAME ReadGraph  COMMAND unit_tests ReadGraph  )
 
-ADD_TEST(
-  NAME TestOctomap
-  COMMAND test_octomap
-)
 
-# ADD_TEST(
-#   NAME TestRayCast 
-#   COMMAND test_raycasting
-# )

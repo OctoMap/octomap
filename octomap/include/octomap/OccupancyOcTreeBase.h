@@ -324,7 +324,7 @@ namespace octomap {
 
     /// Reads OcTree from a binary file.
     /// Existing nodes of the tree are deleted before the tree is read.
-    void readBinary(const std::string& filename);
+    bool readBinary(const std::string& filename);
 
     /// Writes OcTree to a binary file using writeBinary().
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
