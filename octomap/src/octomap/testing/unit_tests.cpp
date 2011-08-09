@@ -85,19 +85,19 @@ int main(int argc, char** argv) {
       }
       point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
     }
-    tree.writeBinary("sphere.bt");
+    EXPECT_TRUE (tree.writeBinary("sphere.bt"));
   }
 
   // tree read file test
   if (test_name == "ReadTree") {
     OcTree tree (0.05);  
-    tree.readBinary("sphere.bt");
-    
+    EXPECT_TRUE (tree.readBinary("sphere.bt"));
+    EXPECT_EQ ((int) tree.size(), 61183);    
   }
 
   if (test_name == "CastRay") {
     OcTree tree (0.05);  
-    tree.readBinary("sphere.bt");
+    EXPECT_TRUE (tree.readBinary("sphere.bt"));
     OcTree sampled_surface (0.05);  
     point3d origin (0.01, 0.01, 0.02);
     point3d direction = point3d (1.0,0.0,0.0);
@@ -120,17 +120,13 @@ int main(int argc, char** argv) {
       }
       direction.rotate_IP (0,DEG2RAD(1.),0);
     }
+    EXPECT_TRUE (sampled_surface.writeBinary("sampled_surface.bt"));
   
     mean_dist /= (double) hits;
-    //   std::cout << " hits / misses: " << hits  << " / " << misses << std::endl;
-    //   std::cout << " mean obstacle dist: " << mean_dist << std::endl;
-  
-    //   cout << "writing sampled_surface.bt: " << flush;
-    sampled_surface.writeBinary("sampled_surface.bt");
+    EXPECT_NEAR(mean_dist, 2., 0.1);
   
     EXPECT_EQ ((int) hits, 129416);
     EXPECT_EQ ((int) misses,  184);
-    EXPECT_NEAR(mean_dist, 2., 0.1);
   }
 
   // insert scan test
@@ -158,16 +154,16 @@ int main(int argc, char** argv) {
     ScanGraph* graph = new ScanGraph();
     Pose6D node_pose (0.01, 0.01, 0.02, 0,0,0);
     graph->addNode(measurement, node_pose);
-    graph->writeBinary("test.graph");
+    EXPECT_TRUE (graph->writeBinary("test.graph"));
     delete graph;
   }
   
   // graph read file test
   if (test_name == "ReadGraph") {
     ScanGraph graph;
-    graph.readBinary("test.graph");
-    
+    EXPECT_TRUE (graph.readBinary("test.graph"));
   }
-  
+
+  fprintf(stderr, "test successful.\n");
   return 0;
 }

@@ -816,30 +816,29 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::writeBinary(const std::string& filename){
+  bool OccupancyOcTreeBase<NODE>::writeBinary(const std::string& filename){
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
     if (!binary_outfile.is_open()){
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
-      return;
-    } else {
-      writeBinary(binary_outfile);
-      binary_outfile.close();
-    }
+      return false;
+    }    
+    writeBinary(binary_outfile);
+    binary_outfile.close();
+    return true;
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::writeBinaryConst(const std::string& filename) const{
+  bool OccupancyOcTreeBase<NODE>::writeBinaryConst(const std::string& filename) const{
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
 
     if (!binary_outfile.is_open()){
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
-      return;
-    }
-    else {
-      writeBinaryConst(binary_outfile);
-      binary_outfile.close();
-    }
+      return false;
+    }    
+    writeBinaryConst(binary_outfile);
+    binary_outfile.close();
+    return true;
   }
 
   template <class NODE>
@@ -849,7 +848,6 @@ namespace octomap {
 
     //    this->toMaxLikelihood();  (disabled, not necessary, KMW)
     this->prune();
-
     return writeBinaryConst(s);
   }
 

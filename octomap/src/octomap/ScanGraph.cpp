@@ -1,12 +1,12 @@
 // $Id$
 
 /**
-* OctoMap:
-* A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
+ * OctoMap:
+ * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+ * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
+ * @see http://octomap.sourceforge.net/
+ * License: New BSD License
+ */
 
 /*
  * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
@@ -90,7 +90,6 @@ namespace octomap {
   }
 
   std::istream& ScanNode::readPoseASCII(std::istream &s) {
-
     unsigned int read_id;
     s >> read_id;
     if (read_id != this->id)
@@ -102,7 +101,6 @@ namespace octomap {
     point3d rot;
     rot.read(s);
     this->pose.rot() = octomath::Quaternion(rot);
-
     return s;
   }
 
@@ -115,12 +113,10 @@ namespace octomap {
     s.write((char*)&second->id, sizeof(second->id));
     constraint.writeBinary(s);
     s.write((char*)&weight, sizeof(weight));
-
     return s;
   }
 
   std::istream& ScanEdge::readBinary(std::istream &s, ScanGraph& graph) {
-
     unsigned int first_id, second_id;
     s.read((char*)&first_id, sizeof(first_id));
     s.read((char*)&second_id, sizeof(second_id));
@@ -162,7 +158,6 @@ namespace octomap {
 
     this->constraint.read(s);
     s >> weight;
-
     return s;
   }
 
@@ -172,12 +167,10 @@ namespace octomap {
   }
 
   void ScanGraph::clear() {
-
     for (unsigned int i=0; i<nodes.size(); i++) {
       delete nodes[i];
     }
     nodes.clear();
-
     for (unsigned int i=0; i<edges.size(); i++) {
       delete edges[i];
     }
@@ -186,7 +179,6 @@ namespace octomap {
 
 
   ScanNode* ScanGraph::addNode(Pointcloud* scan, pose6d pose) {
-
     if (scan != 0) {
       nodes.push_back(new ScanNode(scan, pose, nodes.size()));
       return nodes.back();
@@ -234,7 +226,6 @@ namespace octomap {
 
 
   void ScanGraph::connectPrevious() {
-
     if (nodes.size() >= 2) {
       ScanNode* first =  nodes[nodes.size()-2];
       ScanNode* second = nodes[nodes.size()-1];
@@ -245,9 +236,7 @@ namespace octomap {
 
 
   void ScanGraph::exportDot(std::string filename) {
-
     std::ofstream outfile (filename.c_str());
-
     outfile << "graph ScanGraph" << std::endl;
     outfile << "{" << std::endl;
     for (unsigned int i=0; i<edges.size(); i++) {
@@ -259,11 +248,8 @@ namespace octomap {
 	      << "]" << std::endl;
     }
     outfile << "}" << std::endl;
-
     outfile.close();
-
   }
-
 
   ScanNode* ScanGraph::getNodeByID(unsigned int id) {
     for (unsigned int i = 0; i < nodes.size(); i++) {
@@ -272,28 +258,23 @@ namespace octomap {
     return NULL;
   }
 
-
   bool ScanGraph::edgeExists(unsigned int first_id, unsigned int second_id) {
 
     for (unsigned int i=0; i<edges.size(); i++) {
       if (
-	  (((edges[i]->first)->id == first_id) && ((edges[i]->second)->id == second_id))
-	  ||
-	  (((edges[i]->first)->id == second_id) && ((edges[i]->second)->id == first_id))) {
+              (((edges[i]->first)->id == first_id) && ((edges[i]->second)->id == second_id))
+              ||
+              (((edges[i]->first)->id == second_id) && ((edges[i]->second)->id == first_id))) {
 	return true;
       }
     }
     return false;
   }
 
-
   std::vector<unsigned int> ScanGraph::getNeighborIDs(unsigned int id) {
-
     std::vector<unsigned int> res;
-
     ScanNode* node = getNodeByID(id);
     if (node) {
-
       // check all nodes
       for (unsigned int i = 0; i < nodes.size(); i++) {
 	if (node->id == nodes[i]->id) continue;
@@ -302,15 +283,11 @@ namespace octomap {
 	}
       }
     }
-
     return res;
   }
 
-
   std::vector<ScanEdge*> ScanGraph::getOutEdges(ScanNode* node) {
-
     std::vector<ScanEdge*> res;
-
     if (node) {
       for (std::vector<ScanEdge*>::iterator it = edges.begin(); it != edges.end(); it++) {
 	if ((*it)->first == node) {
@@ -318,15 +295,11 @@ namespace octomap {
 	}
       }
     }
-
     return res;
   }
 
-
   std::vector<ScanEdge*> ScanGraph::getInEdges(ScanNode* node) {
-
     std::vector<ScanEdge*> res;
-
     if (node) {
       for (std::vector<ScanEdge*>::iterator it = edges.begin(); it != edges.end(); it++) {
 	if ((*it)->second == node) {
@@ -334,24 +307,24 @@ namespace octomap {
 	}
       }
     }
-
     return res;
   }
 
-
   void ScanGraph::transformScans() {
-
     for(ScanGraph::iterator it=this->begin(); it != this->end(); it++) {
       ((*it)->scan)->transformAbsolute((*it)->pose);
     }
-
   }
 
-
-  void ScanGraph::writeBinary(const std::string& filename) const{
+  bool ScanGraph::writeBinary(const std::string& filename) const {
     std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
+    if (!binary_outfile.is_open()){
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
+      return false;
+    }    
     writeBinary(binary_outfile);
     binary_outfile.close();
+    return true;
   }
 
   std::ostream& ScanGraph::writeBinary(std::ostream &s) const {
@@ -383,18 +356,16 @@ namespace octomap {
     return s;
   }
 
-  void ScanGraph::readBinary(const std::string& filename){
-
+  bool ScanGraph::readBinary(const std::string& filename) {
     std::ifstream binary_infile(filename.c_str(), std::ios_base::binary);
     if (!binary_infile.is_open()){
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
-      return;
+      return false;
     }
-
     readBinary(binary_infile);
     binary_infile.close();
+    return true;
   }
-
 
   std::istream& ScanGraph::readBinary(std::ifstream &s) {
     if (!s.is_open()){
@@ -403,11 +374,9 @@ namespace octomap {
     } else if (!s.good()){
       OCTOMAP_WARNING_STR("Input filestream not \"good\" in ScanGraph::readBinary");
     }
-
     this->clear();
 
     // read nodes  ---------------------------------
-
     unsigned int graph_size = 0;
     s.read((char*)&graph_size, sizeof(graph_size));
     if (graph_size) OCTOMAP_DEBUG("reading %d nodes from binary file...\n", graph_size);
@@ -451,22 +420,18 @@ namespace octomap {
         }
       }
     }
-
     if (num_edges) OCTOMAP_DEBUG("done.\n");
-
-
     return s;
   }
 
   void ScanGraph::readPlainASCII(const std::string& filename){
-      std::ifstream infile(filename.c_str());
-      if (!infile.is_open()){
-        OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
-        return;
-      }
-
-      readPlainASCII(infile);
-      infile.close();
+    std::ifstream infile(filename.c_str());
+    if (!infile.is_open()){
+      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
+      return;
+    }
+    readPlainASCII(infile);
+    infile.close();
   }
 
   std::istream& ScanGraph::readPlainASCII(std::istream& s){

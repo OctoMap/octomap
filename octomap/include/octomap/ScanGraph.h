@@ -196,8 +196,8 @@ namespace octomap {
 
     std::ostream& writeBinary(std::ostream &s) const;
     std::istream& readBinary(std::ifstream &s);
-    void writeBinary(const std::string& filename) const;
-    void readBinary(const std::string& filename);
+    bool writeBinary(const std::string& filename) const;
+    bool readBinary(const std::string& filename);
 
 
     std::ostream& writeEdgesASCII(std::ostream &s) const;

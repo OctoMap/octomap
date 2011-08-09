@@ -328,11 +328,11 @@ namespace octomap {
 
     /// Writes OcTree to a binary file using writeBinary().
     /// The OcTree is first converted to the maximum likelihood estimate and pruned.
-    void writeBinary(const std::string& filename);
+    bool writeBinary(const std::string& filename);
 
     /// Writes OcTree to a binary file using writeBinaryConst().
     /// The OcTree is not changed, in particular not pruned first.
-    void writeBinaryConst(const std::string& filename) const;
+    bool writeBinaryConst(const std::string& filename) const;
 
     // -- I/O  ---------------------------------------
 
