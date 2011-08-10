@@ -5,7 +5,6 @@ SET (octomap_SRCS
   OcTree.cpp
   OcTreeNode.cpp
   OcTreeStamped.cpp
-  OcTreeNodeStamped.cpp
   OcTreeLUT.cpp
   )
 

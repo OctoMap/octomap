@@ -4,12 +4,12 @@
 // $Id$
 
 /**
-* OctoMap:
-* A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
+ * OctoMap:
+ * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+ * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
+ * @see http://octomap.sourceforge.net/
+ * License: New BSD License
+ */
 
 /*
  * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
@@ -40,18 +40,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <octomap/OcTreeNode.h>
 #include <octomap/OccupancyOcTreeBase.h>
-#include <octomap/OcTreeNodeStamped.h>
 
 namespace octomap {
+  
+  // node definition
+  class OcTreeNodeStamped : public OcTreeNode {    
 
-  class OcTreeStamped : public OccupancyOcTreeBase <OcTreeNodeStamped> {
+  public:
+    OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}
+    
+    // children
+    inline OcTreeNodeStamped* getChild(unsigned int i) {
+      return static_cast<OcTreeNodeStamped*> (OcTreeNode::getChild(i));
+    }
+    inline const OcTreeNodeStamped* getChild(unsigned int i) const {
+      return static_cast<const OcTreeNodeStamped*> (OcTreeNode::getChild(i));
+    }
+    bool createChild(unsigned int i) {
+      if (itsChildren == NULL) allocChildren();      
+      itsChildren[i] = new OcTreeNodeStamped();
+      return true;
+    }
+    
+    // timestamp
+    inline unsigned int getTimestamp() const { return timestamp; }
+    inline void updateTimestamp() { timestamp = time(NULL);}
+    inline void setTimestamp(unsigned int timestamp) {this->timestamp = timestamp; }
+
+    // update occupancy and timesteps of inner nodes 
+    inline void updateOccupancyChildren() {      
+      this->setLogOdds(this->getMaxChildLogOdds());  // conservative
+      updateTimestamp();
+    }
+
+  protected:
+    unsigned int timestamp;
+  };
+
+
+  // tree definition
+  class OcTreeStamped : public OccupancyOcTreeBase <OcTreeNodeStamped> {    
 
   public:
     static const int TREETYPE=5;
 
   public:
-
     OcTreeStamped(double _resolution);
 
     //! \return timestamp of last update
@@ -65,12 +100,10 @@ namespace octomap {
 
   protected:
 
-    void degradeOutdatedNodesRecurs(OcTreeNodeStamped* node, unsigned int& time_thres,
-                                    unsigned int& query_time);
-
-    
+    void degradeOutdatedNodesRecurs(OcTreeNodeStamped* node, 
+                                    unsigned int& time_thres,
+                                    unsigned int& query_time);    
   };
-
 
 } // end namespace
 
