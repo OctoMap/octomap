@@ -1028,24 +1028,6 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::integrateHit(NODE* occupancyNode) const{
-    occupancyNode->addValue(probHitLog);
-
-    // assuming a hit can only increase a node's value:
-    if (occupancyNode->getLogOdds() > clampingThresMax)
-      occupancyNode->setLogOdds(clampingThresMax);
-  }
-
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::integrateMiss(NODE* occupancyNode) const{
-    occupancyNode->addValue(probMissLog);
-
-    // assuming a miss can only decrease a node's value:
-    if (occupancyNode->getLogOdds() < clampingThresMin)
-      occupancyNode->setLogOdds(clampingThresMin);
-  }
-
-  template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateNodeLogOdds(NODE* occupancyNode, const float& update) const {
     occupancyNode->addValue(update);
     if (occupancyNode->getLogOdds() < clampingThresMin) {
@@ -1056,6 +1038,16 @@ namespace octomap {
       occupancyNode->setLogOdds(clampingThresMax);
     }
   }
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::integrateHit(NODE* occupancyNode) const {
+    updateNodeLogOdds(occupancyNode, probHitLog);
+  }
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::integrateMiss(NODE* occupancyNode) const {
+    updateNodeLogOdds(occupancyNode, probMissLog);
+  }
   
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE* occupancyNode) const{
@@ -1063,7 +1055,6 @@ namespace octomap {
       occupancyNode->setLogOdds(clampingThresMax);
     else
       occupancyNode->setLogOdds(clampingThresMin);
-
   }
 
   template <class NODE>

@@ -49,7 +49,7 @@ namespace octomap {
   class OcTreeNodeStamped : public OcTreeNode {    
 
   public:
-    OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}
+    OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}     
     
     // children
     inline OcTreeNodeStamped* getChild(unsigned int i) {
@@ -94,15 +94,11 @@ namespace octomap {
 
     void degradeOutdatedNodes(unsigned int time_thres);
     
-    virtual void integrateHit(OcTreeNodeStamped* occupancyNode) const;
-    virtual void integrateMiss(OcTreeNodeStamped* occupancyNode) const;
-    virtual void integrateMissNoTime(OcTreeNodeStamped* occupancyNode) const;
+    virtual void updateNodeLogOdds(OcTreeNodeStamped* node, const float& update) const;
+    void integrateMissNoTime(OcTreeNodeStamped* node) const;
 
   protected:
-
-    void degradeOutdatedNodesRecurs(OcTreeNodeStamped* node, 
-                                    unsigned int& time_thres,
-                                    unsigned int& query_time);    
+    
   };
 
 } // end namespace

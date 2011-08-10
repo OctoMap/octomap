@@ -2,6 +2,7 @@
 #include <string>
 
 #include <octomap/octomap.h>
+#include <octomap/OcTreeStamped.h>
 #include <octomap/math/Utils.h>
 #include "testing.h"
  
@@ -14,6 +15,8 @@ int main(int argc, char** argv) {
   if (argc < 2) return -1;
   std::string test_name (argv[1]);
 
+
+  // ------------------------------------------------------------
   if (test_name == "MathVector") {
     // test constructors
     Vector3* twos = new Vector3();        
@@ -42,6 +45,7 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (rotation.z(), 0.30116868);
   }
   
+  // ------------------------------------------------------------
   if (test_name == "MathPose") {
     // constructors  
     Pose6D a (1. ,0.1 ,0.1 , 0., 0.1, M_PI/4.);
@@ -70,6 +74,7 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (t2.z() , trans.z());
   }
   
+  // ------------------------------------------------------------
   if (test_name == "InsertRay") {
     OcTree tree (0.05);
     tree.setProbHit(0.7);
@@ -88,6 +93,7 @@ int main(int argc, char** argv) {
     EXPECT_TRUE (tree.writeBinary("sphere.bt"));
   }
 
+  // ------------------------------------------------------------
   // tree read file test
   if (test_name == "ReadTree") {
     OcTree tree (0.05);  
@@ -129,6 +135,7 @@ int main(int argc, char** argv) {
     EXPECT_EQ ((int) misses,  184);
   }
 
+  // ------------------------------------------------------------
   // insert scan test
   // insert graph node test
   // write graph test
@@ -158,10 +165,31 @@ int main(int argc, char** argv) {
     delete graph;
   }
   
+  // ------------------------------------------------------------
   // graph read file test
   if (test_name == "ReadGraph") {
     ScanGraph graph;
     EXPECT_TRUE (graph.readBinary("test.graph"));
+  }
+
+  // ------------------------------------------------------------
+  if (test_name == "StampedTree") { 
+    OcTreeStamped stamped_tree (0.05);
+    // fill tree
+    for (int x=-20; x<20; x++) 
+      for (int y=-20; y<20; y++) 
+        for (int z=-20; z<20; z++) {
+          point3d p ((double) x*0.05+0.01, (double) y*0.05+0.01, (double) z*0.05+0.01);
+          stamped_tree.updateNode(p, true); // integrate 'occupied' measurement 
+        }
+    // test if update times set
+    point3d query (0.1, 0.1, 0.1);
+    OcTreeNodeStamped* result = stamped_tree.search (query);
+    EXPECT_TRUE (result);
+    unsigned int tree_time = stamped_tree.getLastUpdateTime();
+    unsigned int node_time = result->getTimestamp();
+    EXPECT_TRUE (tree_time > 0);
+    EXPECT_EQ (node_time, tree_time);
   }
 
   fprintf(stderr, "test successful.\n");
