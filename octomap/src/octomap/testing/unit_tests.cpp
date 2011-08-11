@@ -200,6 +200,36 @@ int main(int argc, char** argv) {
     EXPECT_TRUE (result->getTimestamp() < result2->getTimestamp()); // result2 has been updated
   }
 
+  // ------------------------------------------------------------
+  if (test_name == "OcTreeKey") { 
+    OcTree tree (0.05);  
+    point3d p(0.0,0.0,0.0);
+    OcTreeKey key;
+    tree.genKey(p, key);
+    point3d p_inv;
+    tree.genCoords(key, tree.getTreeDepth(), p_inv);
+    EXPECT_FLOAT_EQ (0.025, p_inv.x());
+    EXPECT_FLOAT_EQ (0.025, p_inv.y());
+    EXPECT_FLOAT_EQ (0.025, p_inv.z());
+  }
+
+  // ------------------------------------------------------------
+  if (test_name == "OcTreeIterator") { 
+    OcTree tree (0.05);  
+    EXPECT_TRUE (tree.readBinary("sphere.bt"));
+    for( octomap::OcTree::leaf_iterator it = tree.begin(),
+	   end=tree.end(); it!= end; ++it){
+      point3d p = it.getCoordinate();
+      OcTreeKey key;
+      tree.genKey(p, key);
+      point3d p_inv;
+      tree.genCoords(key, it.getDepth(), p_inv);
+      EXPECT_FLOAT_EQ (p.x(), p_inv.x());
+      EXPECT_FLOAT_EQ (p.y(), p_inv.y());
+      EXPECT_FLOAT_EQ (p.z(), p_inv.z());
+    }
+  }
+
   fprintf(stderr, "test successful.\n");
   return 0;
 }
