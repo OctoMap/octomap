@@ -3,27 +3,23 @@
 
 // this is mimicing gtest expressions
 
-bool EXPECT_EQ (int a, int b) {
-  if (a == b) return true;
-  fprintf(stderr, "test failed: %d != %d\n", a, b);
-  exit(-1);
-}
+#define EXPECT_TRUE(args) {                                             \
+    if (!(args)) { fprintf(stderr, "test failed in %s, line %d\n", __FILE__, __LINE__); \
+      exit(-1);                                                         \
+    } }
 
-bool EXPECT_FLOAT_EQ (float a, float b) {
-  if (fabs(a-b) <= 1e-5) return true;
-  fprintf(stderr, "test failed: %f != %f\n", a, b);
-  exit(-1);
-}
+#define EXPECT_EQ(a,b) {                                                \
+    if (!(a == b)) { fprintf(stderr, "test failed: %d != %d in %s, line %d\n", a, b, __FILE__, __LINE__); \
+      exit(-1);                                                         \
+    } }
 
-bool EXPECT_TRUE (bool b) {
-  if (b) return true;
-  fprintf(stderr, "test failed\n");
-  exit(-1);
-}
+#define EXPECT_FLOAT_EQ(a,b) {                                          \
+    if (!(fabs(a-b) <= 1e-5)) { fprintf(stderr, "test failed: %f != %f in %s, line %d\n", a, b, __FILE__, __LINE__); \
+      exit(-1);                                                         \
+    } }
 
-bool EXPECT_NEAR (float a, float b, float prec) {
-  if (fabs(a-b) <= prec) return true;
-  fprintf(stderr, "test failed: |%f - %f| > %f\n", a, b, prec);
-  exit(-1);
-}
+#define EXPECT_NEAR(a,b,prec) {                                         \
+    if (!(fabs(a-b) <= prec)) { fprintf(stderr, "test failed: |%f - %f| > %f in %s, line %d\n", a, b, prec, __FILE__, __LINE__); \
+      exit(-1);                                                         \
+    } }
 

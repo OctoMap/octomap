@@ -190,6 +190,14 @@ int main(int argc, char** argv) {
     unsigned int node_time = result->getTimestamp();
     EXPECT_TRUE (tree_time > 0);
     EXPECT_EQ (node_time, tree_time);
+    sleep(1);
+    stamped_tree.integrateMissNoTime(result);  // reduce occupancy, no time update
+    EXPECT_EQ  (node_time, result->getTimestamp()); // node time updated?
+    query = point3d  (0.1, 0.1, 0.3);
+    stamped_tree.updateNode(query, true); // integrate 'occupied' measurement 
+    OcTreeNodeStamped* result2 = stamped_tree.search (query);
+    EXPECT_TRUE (result2);
+    EXPECT_TRUE (result->getTimestamp() < result2->getTimestamp()); // result2 has been updated
   }
 
   fprintf(stderr, "test successful.\n");

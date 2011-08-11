@@ -71,7 +71,7 @@ namespace octomap {
   }
 
   void OcTreeStamped::integrateMissNoTime(OcTreeNodeStamped* node) const{
-    OccupancyOcTreeBase<OcTreeNodeStamped>::integrateMiss(node);
+    OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, probMissLog);
   }
 
 } // end namespace
