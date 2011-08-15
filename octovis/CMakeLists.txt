@@ -80,7 +80,7 @@ IF(BUILD_VIEWER)
   INCLUDE( CMakeLists_src.txt )
   
   # Create an octovis-config.cmake file for the use from the build tree
-  set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
+  set(OCTOVIS_INCLUDE_DIR "${INCLUDE_DIRS}")
   set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
   # not used right now (export depends?)
   #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
