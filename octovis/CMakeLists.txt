@@ -34,40 +34,24 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-#TODO:
-#find_package(octomap REQUIRED)
+find_package(octomap REQUIRED 
+  HINTS ${CMAKE_SOURCE_DIR}/octomap
+    ${CMAKE_SOURCE_DIR}/../octomap
+  )
 
-FIND_PATH( OCTOMAP_BASE_DIR include/octomap/octomap.h
-  ${CMAKE_SOURCE_DIR}/octomap
-  ${CMAKE_SOURCE_DIR}/../octomap
-  /usr
+INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
+
+LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
+
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE octovis)
+
+set(INSTALL_TARGETS_DEFAULT_ARGS
+RUNTIME DESTINATION bin
+LIBRARY DESTINATION lib
+ARCHIVE DESTINATION lib
 )
 
-IF( OCTOMAP_BASE_DIR)
-  MESSAGE(STATUS "octomap library  found in ${OCTOMAP_BASE_DIR}")
-
-  INCLUDE_DIRECTORIES(
-    ${OCTOMAP_BASE_DIR}/include
-  )
-
-  LINK_DIRECTORIES(
-    ${OCTOMAP_BASE_DIR}/lib
-  )
-
-  # Export the package for use from the build-tree
-  # (this registers the build-tree with a global CMake-registry)
-  export(PACKAGE octovis)
-
-  set(INSTALL_TARGETS_DEFAULT_ARGS
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    )
-
   # Build viewer if available:
-  INCLUDE(BuildGLViewer)
-
-ELSE()
-  MESSAGE(STATUS "octomap library NOT found. Exiting.")
-
-ENDIF()
+INCLUDE(BuildGLViewer)

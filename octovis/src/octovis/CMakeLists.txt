@@ -86,7 +86,7 @@ add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewe
 target_link_libraries(octovis 
   ${QGLViewer_LIBRARIES}
   ${QT_LIBRARIES}
-  octomap 
+  ${OCTOMAP_LIBRARIES}
   octovis-shared
 )
 
