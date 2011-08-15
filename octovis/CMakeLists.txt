@@ -34,24 +34,49 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-find_package(octomap REQUIRED 
-  HINTS ${CMAKE_SOURCE_DIR}/octomap
-    ${CMAKE_SOURCE_DIR}/../octomap
-  )
+# TODO:
+# use generated octmap-config to find the package *additionally*
+# this will not work when compiling from the top directory
+# and octomap was not compiled before!
+#find_package(octomap REQUIRED
+#  HINTS ${CMAKE_SOURCE_DIR}/octomap
+#    ${CMAKE_SOURCE_DIR}/../octomap
+#)
 
-INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
-
-LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
-
-# Export the package for use from the build-tree
-# (this registers the build-tree with a global CMake-registry)
-export(PACKAGE octovis)
-
-set(INSTALL_TARGETS_DEFAULT_ARGS
-RUNTIME DESTINATION bin
-LIBRARY DESTINATION lib
-ARCHIVE DESTINATION lib
+FIND_PATH( OCTOMAP_BASE_DIR include/octomap/octomap.h
+  ${CMAKE_SOURCE_DIR}/octomap
+  ${CMAKE_SOURCE_DIR}/../octomap
+  /usr
 )
 
+IF( OCTOMAP_BASE_DIR)
+  MESSAGE(STATUS "octomap library  found in ${OCTOMAP_BASE_DIR}")
+  # set same dirs as in find_package, so we can swap later:
+  SET(OCTOMAP_INCLUDE_DIRS ${OCTOMAP_BASE_DIR}/include)
+  SET(OCTOMAP_LIBRARY_DIRS ${OCTOMAP_BASE_DIR}/lib)
+  SET(OCTOMAP_LIBRARIES octomap octomath)
+  
+  
+  # now include (same as with find_package)
+  INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
+  LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
+
+ 
+
+  # Export the package for use from the build-tree
+  # (this registers the build-tree with a global CMake-registry)
+  export(PACKAGE octovis)
+
+  set(INSTALL_TARGETS_DEFAULT_ARGS
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    )
+
   # Build viewer if available:
-INCLUDE(BuildGLViewer)
+  INCLUDE(BuildGLViewer)
+
+ELSE()
+  MESSAGE(STATUS "Required octomap library NOT found. Exiting.")
+
+ENDIF()
