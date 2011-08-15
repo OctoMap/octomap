@@ -269,7 +269,7 @@ namespace octomap {
     /// track or ignore changes while inserting scans (default: ignore)
     void enableChangeDetection(bool enable) { use_change_detection = enable; }
     /// Reset the set of changed keys. Call this after you obtained all changed nodes.
-    void resetChangeSet(){changedKeys.clear();}
+    void resetChangeDetection() { changedKeys.clear(); }
 
     KeySet::const_iterator changedKeysBegin() {return changedKeys.begin();}
     KeySet::const_iterator changedKeysEnd() {return changedKeys.end();}

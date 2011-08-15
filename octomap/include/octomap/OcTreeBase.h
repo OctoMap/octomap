@@ -654,13 +654,20 @@ namespace octomap {
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// This checks if the key is valid and returns the success.
-    bool genCoordFromKey(const unsigned short int& key, float& coord) const;
-    bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const;
+    bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const __attribute__ ((deprecated)){
+      return genCoordFromKey(key, coord, depth);
+    }
+    bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const;
+    bool genCoordFromKey(const unsigned short int& key, float& coord) const {
+      return genCoordFromKey(key, coord, tree_depth);
+    }
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// returns the coordinate without checking for validity.
-    double genCoordFromKey(const unsigned short int& key) const;
     double genCoordFromKey(const unsigned short int& key, unsigned depth) const;
+    double genCoordFromKey(const unsigned short int& key) const {
+      return genCoordFromKey(key, tree_depth);
+    }
 
     // generates 3d coordinates from a key at a given depth
     bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const;

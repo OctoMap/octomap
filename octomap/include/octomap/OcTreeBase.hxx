@@ -131,41 +131,38 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord) const {
+  // template <class NODE>
+  // bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord) const {
 
+  //   if (key >= 2*tree_max_val)
+  //     return false;
+  //   coord = float(genCoordFromKey(key));
+  //   return true;
+  // }
+
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const {
     if (key >= 2*tree_max_val)
       return false;
-
-    coord = float(genCoordFromKey(key));
-
-    return true;
-  }
-
-  template <class NODE>
-  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const {
-
-    if (key >= 2*tree_max_val)
-      return false;
-
     coord = float(genCoordFromKey(key, depth));
-
     return true;
   }
 
   // TODO: clean up genXXXs, check where used
-  template <class NODE>
-  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
-    return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
-  }
+  // template <class NODE>
+  // double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
+  //   return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
+  // }
 
   template <class NODE>
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
     assert(depth <= tree_depth);
-    
+   
     // root is centered on 0 = 0.0
-    if (depth == 0) return 0.0;
-    
+    if (depth == 0) 
+      return 0.0; 
+
     // all other node centers are shifted by 0.5* node_size
     return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
   }
@@ -175,12 +172,11 @@ namespace octomap {
     assert (depth <= tree_depth);
 
     for (unsigned int i=0; i<3; ++i) {
-      if ( !genCoordFromKey(key[i], depth, point(i)) ) {
+      if ( !genCoordFromKey(key[i], point(i), depth) ) {  
+        // TODO someday: move content of call here
         return false;
       }
     }
-
-
     return true;
   }
 
