@@ -35,7 +35,7 @@ SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
 find_package(octomap REQUIRED
-  HINTS ${CMAKE_SOURCE_DIR}/octomap/lib/cmake/octomap
+  HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
    ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 
