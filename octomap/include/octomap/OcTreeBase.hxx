@@ -109,37 +109,22 @@ namespace octomap {
       return false;
     
     unsigned int diff = tree_depth - depth;
-
-    if(!diff)
-    {
+    if(!diff) {
       out_keyval = keyval;
     }
-    else
-    {
+    else {
       out_keyval = (((keyval-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
     }
-
     return true;
   }
 
   template <class NODE>
   bool OcTreeBase<NODE>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
-
     for (unsigned int i=0;i<3;i++) {
       if (!genKeyValueAtDepth( key[i], depth, out_key[i])) return false;
     }
     return true;
   }
-
-  // template <class NODE>
-  // bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord) const {
-
-  //   if (key >= 2*tree_max_val)
-  //     return false;
-  //   coord = float(genCoordFromKey(key));
-  //   return true;
-  // }
-
 
   template <class NODE>
   bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const {
@@ -149,22 +134,20 @@ namespace octomap {
     return true;
   }
 
-  // TODO: clean up genXXXs, check where used
-  // template <class NODE>
-  // double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key) const {
-  //   return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
-  // }
-
   template <class NODE>
   double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
     assert(depth <= tree_depth);
    
     // root is centered on 0 = 0.0
-    if (depth == 0) 
+    if (depth == 0) {
       return 0.0; 
-
-    // all other node centers are shifted by 0.5* node_size
-    return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
+    }
+    else if (depth == tree_depth) {
+      return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
+    }
+    else {
+      return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
+    }
   }
 
   template <class NODE>
