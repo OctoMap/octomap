@@ -46,14 +46,14 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 	ARCHIVE DESTINATION lib
 )
 
-ADD_SUBDIRECTORY( src/octomap/math )
-ADD_SUBDIRECTORY( src/octomap )
+ADD_SUBDIRECTORY( src/math )
+ADD_SUBDIRECTORY( src )
 
 # installation for external targets:
-install(PROGRAMS "src/extern/binvox/binvox" DESTINATION bin)
-install(PROGRAMS "src/extern/binvox/binvox64" DESTINATION bin)
-install(PROGRAMS "src/extern/binvox/viewvox" DESTINATION bin)
-install(PROGRAMS "src/extern/binvox/viewvox64" DESTINATION bin)
+install(PROGRAMS "extern/binvox/binvox" DESTINATION bin)
+install(PROGRAMS "extern/binvox/binvox64" DESTINATION bin)
+install(PROGRAMS "extern/binvox/viewvox" DESTINATION bin)
+install(PROGRAMS "extern/binvox/viewvox64" DESTINATION bin)
 
 file(GLOB octomap_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/*.h ${PROJECT_SOURCE_DIR}/include/octomap/*.hxx)
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
