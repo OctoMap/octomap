@@ -26,7 +26,7 @@
 
 #include <QtGui>
 #include <QApplication>
-#include "ViewerGui.h"
+#include <octovis/ViewerGui.h>
 
 int main(int argc, char *argv[]) {
 

@@ -24,7 +24,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "ViewerSettingsPanelCamera.h"
+#include <octovis/ViewerSettingsPanelCamera.h>
 #include <iostream>
 
 ViewerSettingsPanelCamera::ViewerSettingsPanelCamera(QWidget *parent)

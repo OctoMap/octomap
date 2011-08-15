@@ -24,7 +24,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "CameraFollowMode.h"
+#include <octovis/CameraFollowMode.h>
 #include <iostream>
 
 #define CAMERA_PATH_ID 13

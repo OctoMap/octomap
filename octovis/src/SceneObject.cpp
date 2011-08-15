@@ -24,7 +24,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "SceneObject.h"
+#include <octovis/SceneObject.h>
 
 #ifndef RAD2DEG
 #define RAD2DEG(x) ((x) * 57.29577951308232087721)

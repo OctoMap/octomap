@@ -14,51 +14,25 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 # sources for octovis library
 set(viewerlib_SRCS
-	SceneObject.cpp
-	PointcloudDrawer.cpp
-	OcTreeDrawer.cpp
-	TrajectoryDrawer.cpp
+	src/SceneObject.cpp
+	src/PointcloudDrawer.cpp
+	src/OcTreeDrawer.cpp
+	src/TrajectoryDrawer.cpp
 )
 
 # sources for viewer binary
 set(viewer_SRCS
-	main.cpp	
-	ViewerGui.cpp
-	ViewerWidget.cpp
-	ViewerSettings.cpp
-	ViewerSettingsPanel.cpp
-	ViewerSettingsPanelCamera.cpp
-	CameraFollowMode.cpp
+	src/main.cpp	
+	src/ViewerGui.cpp
+	src/ViewerWidget.cpp
+	src/ViewerSettings.cpp
+	src/ViewerSettingsPanel.cpp
+	src/ViewerSettingsPanelCamera.cpp
+	src/CameraFollowMode.cpp
 )	
 
-#class headers which need MOCs:
-SET(viewer_MOC_HDRS
-	ViewerGui.h
-	ViewerWidget.h
-	ViewerSettings.h
-	ViewerSettingsPanel.h
-	ViewerSettingsPanelCamera.h
-	CameraFollowMode.h
-)
-
-# generate list of MOC srcs:
-QT4_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
-
-# let cmake generate ui*.h files from .ui files (Qt Designer):
-SET(viewer_UIS
-    ViewerGui.ui
-    ViewerSettings.ui
-    ViewerSettingsPanel.ui
-    ViewerSettingsPanelCamera.ui
-)
-QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
-
-# Don't forget to include output directory, otherwise
-# the UI file won't be wrapped!
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
-
 # Resource files (icons, ...)
-QT4_ADD_RESOURCES(viewer_RES icons.qrc)
+QT4_ADD_RESOURCES(viewer_RES src/icons.qrc)
 
 #found QGLViewer lib dir
 link_directories(${QGLViewer_LIBRARY_DIR})
@@ -66,6 +40,31 @@ link_directories(${QGLViewer_LIBRARY_DIR})
 INCLUDE_DIRECTORIES(
   ${QGLViewer_INCLUDE_DIR}
 )
+
+SET(viewer_MOC_HDRS
+  include/octovis/ViewerGui.h
+  include/octovis/ViewerWidget.h
+  include/octovis/ViewerSettings.h
+  include/octovis/ViewerSettingsPanel.h
+  include/octovis/ViewerSettingsPanelCamera.h
+  include/octovis/CameraFollowMode.h
+)
+
+# generate list of MOC srcs:
+QT4_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
+
+# let cmake generate ui*.h files from .ui files (Qt Designer):
+SET(viewer_UIS
+    include/octovis/ViewerGui.ui
+    include/octovis/ViewerSettings.ui
+    include/octovis/ViewerSettingsPanel.ui
+    include/octovis/ViewerSettingsPanelCamera.ui
+)
+QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
+
+# Don't forget to include output directory, otherwise
+# the UI file won't be wrapped!
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
 # Library target 
 add_library(octovis-static STATIC ${viewerlib_SRCS})
@@ -97,22 +96,10 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-
-# #installation:
-# # store all header files to install:
-file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
-install(FILES ${octovis_HDRS} DESTINATION include/octovis)
-
 install(TARGETS octovis
   octovis-static
   octovis-shared
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-# Create a octomap-config.cmake file for the use from the build tree
-set(OCTOVIS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/src")
-set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-# not used right now (export depends?)
-#set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
-configure_file(octovis-config.cmake.in
-  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octovis-config.cmake" @ONLY)
+

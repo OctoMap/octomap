@@ -27,7 +27,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "ViewerGui.h"
+#include <octovis/ViewerGui.h>
 #define _MAXRANGE_URG 5.1
 #define _MAXRANGE_SICK 50.0
 

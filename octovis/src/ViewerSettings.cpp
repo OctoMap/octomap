@@ -24,7 +24,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "ViewerSettings.h"
+#include <octovis/ViewerSettings.h>
 
 ViewerSettings::ViewerSettings(QWidget *parent)
     : QDialog(parent)

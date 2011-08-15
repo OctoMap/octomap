@@ -24,7 +24,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "ViewerSettingsPanel.h"
+#include <octovis/ViewerSettingsPanel.h>
 
 ViewerSettingsPanel::ViewerSettingsPanel(QWidget *parent)
     : QWidget(parent), m_currentScan(0), m_numberScans(0), m_treeDepth(_TREE_MAX_DEPTH), m_resolution(0.1)

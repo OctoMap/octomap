@@ -38,8 +38,6 @@ find_package(octomap REQUIRED
   HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
    ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
-
-# now include (same as with find_package)
 INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
 LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
 
@@ -75,7 +73,26 @@ ENDIF()
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
   MESSAGE(STATUS "viewer octovis will be built")
-  ADD_SUBDIRECTORY( src/octovis ) 
+  
+  set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+  INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+   
+  INCLUDE( CMakeLists_src.txt )
+  
+  # Create an octovis-config.cmake file for the use from the build tree
+  set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
+  set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+  # not used right now (export depends?)
+  #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
+  configure_file(octovis-config.cmake.in
+    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octovis-config.cmake" @ONLY)
+    
+  
+  # #installation:
+  # # store all header files to install:
+  file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
+  install(FILES ${octovis_HDRS} DESTINATION include/octovis)
+  
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
