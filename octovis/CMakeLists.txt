@@ -34,49 +34,50 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-# TODO:
-# use generated octmap-config to find the package *additionally*
-# this will not work when compiling from the top directory
-# and octomap was not compiled before!
-#find_package(octomap REQUIRED
-#  HINTS ${CMAKE_SOURCE_DIR}/octomap
-#    ${CMAKE_SOURCE_DIR}/../octomap
-#)
-
-FIND_PATH( OCTOMAP_BASE_DIR include/octomap/octomap.h
-  ${CMAKE_SOURCE_DIR}/octomap
-  ${CMAKE_SOURCE_DIR}/../octomap
-  /usr
+find_package(octomap REQUIRED
+  HINTS ${CMAKE_SOURCE_DIR}/octomap/lib/cmake/octomap
+   ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 
-IF( OCTOMAP_BASE_DIR)
-  MESSAGE(STATUS "octomap library  found in ${OCTOMAP_BASE_DIR}")
-  # set same dirs as in find_package, so we can swap later:
-  SET(OCTOMAP_INCLUDE_DIRS ${OCTOMAP_BASE_DIR}/include)
-  SET(OCTOMAP_LIBRARY_DIRS ${OCTOMAP_BASE_DIR}/lib)
-  SET(OCTOMAP_LIBRARIES octomap octomath)
-  
-  
-  # now include (same as with find_package)
-  INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
-  LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
+# now include (same as with find_package)
+INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
+LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
 
- 
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE octovis)
 
-  # Export the package for use from the build-tree
-  # (this registers the build-tree with a global CMake-registry)
-  export(PACKAGE octovis)
+set(INSTALL_TARGETS_DEFAULT_ARGS
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
 
-  set(INSTALL_TARGETS_DEFAULT_ARGS
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    )
+# Builds the "octovis" viewer based on OpenGL and 
+# libQGLViewer, if dependencies available
+SET( BUILD_VIEWER 0)
 
-  # Build viewer if available:
-  INCLUDE(BuildGLViewer)
+FIND_PACKAGE(OpenGL REQUIRED)
+MESSAGE (STATUS "OpenGL found: ${OPENGL_LIBRARY}")
 
+# Look for Qt4
+FIND_PACKAGE(Qt4 REQUIRED)
+
+# Look for QGLViewer
+FIND_PACKAGE(QGLViewer)
+IF(QGLViewer_FOUND)
+  SET( BUILD_VIEWER 1)
 ELSE()
-  MESSAGE(STATUS "Required octomap library NOT found. Exiting.")
-
+  MESSAGE ( "\n")
+  MESSAGE ( "libQGLViewer could not be found or generated.")
 ENDIF()
+
+IF(BUILD_VIEWER)
+  MESSAGE(STATUS "\n")
+  MESSAGE(STATUS "viewer octovis will be built")
+  ADD_SUBDIRECTORY( src/octovis ) 
+ELSE()
+    MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
+    MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
+ENDIF()
+
