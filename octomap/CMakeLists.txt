@@ -12,7 +12,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/../CMakeModules")
+SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
@@ -62,7 +62,7 @@ install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
 
 # uninstall target
 configure_file(
-    "../CMakeModules/CMakeUninstall.cmake.in"
+    "${PROJECT_SOURCE_DIR}/CMakeModules/CMakeUninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 

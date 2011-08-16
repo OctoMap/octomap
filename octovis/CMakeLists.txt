@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-SET (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_SOURCE_DIR}/../CMakeModules")
+SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
@@ -55,13 +55,9 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 # libQGLViewer, if dependencies available
 SET( BUILD_VIEWER 0)
 
+# Look for required libraries:
 FIND_PACKAGE(OpenGL REQUIRED)
-MESSAGE (STATUS "OpenGL found: ${OPENGL_LIBRARY}")
-
-# Look for Qt4
 FIND_PACKAGE(Qt4 REQUIRED)
-
-# Look for QGLViewer
 FIND_PACKAGE(QGLViewer)
 IF(QGLViewer_FOUND)
   SET( BUILD_VIEWER 1)

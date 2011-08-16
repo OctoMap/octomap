@@ -4,18 +4,19 @@ IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
    SET(CMAKE_BUILD_TYPE Release)
 ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 
-# COMPILER FLAGS
-SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-error ")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-error ")
-SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG -O3 -msse3 -mssse3")
-SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-
 MESSAGE ("\n")
 MESSAGE (STATUS "Building as ${CMAKE_BUILD_TYPE}")
 MESSAGE ("\n")
 
-# Shared object compilation under 64bit (vtable)
-ADD_DEFINITIONS(-fPIC)	
+# COMPILER FLAGS
+IF (CMAKE_COMPILER_IS_GNUCC)
+  SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-error ")
+  SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-error ")
+  SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG -O3 -msse3 -mssse3")
+  SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+  # Shared object compilation under 64bit (vtable)
+  ADD_DEFINITIONS(-fPIC)  
+ENDIF()
 
 # Set full rpath http://www.paraview.org/Wiki/CMake_RPATH_handling
 # (good to have and required with ROS)
