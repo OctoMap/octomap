@@ -1,4 +1,14 @@
-		    GNU GENERAL PUBLIC LICENSE
+OctoMap: 
+A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
+All rights reserved.
+
+License for the "octovis" visualization library: GPL v2.
+octovis requires (and link against libQGLViewer (www.libqglviewer.com)
+
+
+
+        GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.,

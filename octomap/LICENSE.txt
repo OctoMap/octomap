@@ -2,12 +2,7 @@
 OctoMap: 
 A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
-License: New BSD License. 
-
-
-Note: The viewer "octovis" and all related libraries are licensed under 
-      the GPL (see LICENSE.txt in "src/octovis").
-  
+License for the "octomap" library: New BSD License. 
 
 Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
 All rights reserved.

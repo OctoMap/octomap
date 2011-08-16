@@ -6,13 +6,14 @@ Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
 http://octomap.sourceforge.net/
 
 Further Contributors:
+S. Osswald, University of Freiburg
 R. Schmitt, University of Freiburg
 R. Bogdan Rusu, Willow Garage Inc.
 
 License: 
-  * New BSD License (see LICENSE.txt)
+  * New BSD License (see LICENSE.txt in octomap)
   * The viewer "octovis" and all related libraries are licensed under the GPL 
-    (see LICENSE.txt in "src/octovis").
+    (see LICENSE.txt in "octovis").
 
 
 REQUIREMENTS
