@@ -6,14 +6,15 @@ Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
 http://octomap.sourceforge.net/
 
 Further Contributors:
+J. Mueller, University of Freiburg
 S. Osswald, University of Freiburg
 R. Schmitt, University of Freiburg
 R. Bogdan Rusu, Willow Garage Inc.
 
 License: 
-  * New BSD License (see LICENSE.txt in octomap)
+  * New BSD License (see LICENSE.txt in /octomap)
   * The viewer "octovis" and all related libraries are licensed under the GPL 
-    (see LICENSE.txt in "octovis").
+    (see LICENSE.txt in /octovis).
 
 
 REQUIREMENTS
@@ -44,11 +45,12 @@ To install it:
 INSTALLATION:
 ############################
 
-* Note: skip to the end if you want to use OctoMap in ROS! *
+ * Note: skip to the end if you want to use OctoMap in ROS! *
 
 Build the complete project by changing into the "build" directory 
 and running cmake:
-	
+
+        cd build	
 	cmake ..
 	
 Type "make" to compile afterwards. This will create all CMake
@@ -58,7 +60,7 @@ Executables will end up in "bin", libraries in "lib".
 
 A debug configuration can be created by running:
 	
-	cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 in "build" or a different directory (e.g. "build-debug").
 
@@ -93,6 +95,8 @@ bin/octovis
 
 You will find an example scan to load at
 src/examples/scan.dat.bz2     (please bunzip2 it first)
+
+Further examples can be downloaded from the project website.
 
 
 USE IN OTHER PROJECTS

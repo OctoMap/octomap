@@ -658,14 +658,14 @@ namespace octomap {
       return genCoordFromKey(key, coord, depth);
     }
     bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const;
-    bool genCoordFromKey(const unsigned short int& key, float& coord) const {
+    inline bool genCoordFromKey(const unsigned short int& key, float& coord) const {
       return genCoordFromKey(key, coord, tree_depth);
     }
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// returns the coordinate without checking for validity.
     double genCoordFromKey(const unsigned short int& key, unsigned depth) const;
-    double genCoordFromKey(const unsigned short int& key) const {
+    inline double genCoordFromKey(const unsigned short int& key) const {
       return genCoordFromKey(key, tree_depth);
     }
 

@@ -1,4 +1,4 @@
-v1.2: 2011-08-XX
+v1.2: 2011-08-17
 ===================
  - divided code into a library (octomap) and visualization part (octvis) to 
 	remove dependencies on Qt / OpenGL from library. Both can be built 
@@ -7,20 +7,21 @@ v1.2: 2011-08-XX
 	 iterator) are the preferred way to traverse tree nodes now
  - improved speed of map update / scan insertion. A further speedup is possible
 	when using the "lazy evaluation" flag for batch insertion
- - unit tests ("make test")
+ - unit tests based on CTest ("make test")
  - CMake improvements: new targets "dist" (build package) and "uninstall",
 	dynamic and static libs are built. CMake package config to ease integration 
 	into other CMake-based systems (install octomap globally, or set the 
 	environment variable octomap_DIR to your OctoMap location
  - occupancy and sensor parameters are now a property of the tree and not the
 	nodes. Use e.g. tree->isNodeOccupied(node) instead of node->isOccupied()
- - cleanup of OcTree and OccupancyOcTree: the latter now holds most 
-	implementation to ease deriving own tree and node types. See OcTreeStamped
-	for an example.
+ - cleanup of OcTree and OccupancyOcTree: the latter now holds most of the 
+	implementation to ease deriving own tree and node types. 
+        See OcTreeStamped for an example.
  - debug output is now muted when not compiling as "Debug", ROS logging levels
 	are used when compiled in ROS
  - experimental change detection in occupancy octrees 
  - bugfixes and general compatibility improvements
+
 
 v1.0: 2011-03-15
 ===================
@@ -33,4 +34,4 @@ v0.8: 2010-11-16
 ===================
  - improved speed of map update / scan insertion 
  - improved speed of map queries (isOccupied / castRay)
- - key-based computations to fix numerical stability and speed issues
+ - key-based computations to improve numerical stability and efficiency 
