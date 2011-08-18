@@ -106,7 +106,7 @@ namespace octomap {
     ///
     /// \return true if occupancy probability of node is >= OCC_PROB_THRES
     /// For efficiency, values are compared in log-space (no need for exp-computation)
-    inline bool isOccupied() const  __attribute__ ((deprecated)) {
+    DEPRECATED( inline bool isOccupied() ) {
       return (this->getLogOdds() >= occProbThresLog);
     }
 
@@ -114,7 +114,7 @@ namespace octomap {
     /// instead use octree->isNodeAtThreshold(node) in OccupancyOcTreeBase
     ///
     /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
-    inline bool atThreshold() const  __attribute__ ((deprecated)) {
+    DEPRECATED( inline bool atThreshold() const ) {
       return ((value <= clampingThresMin) ||
               (value >= clampingThresMax));
     }
@@ -124,19 +124,19 @@ namespace octomap {
     ///
     /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
     /// effectively setting occupancy to the maximum likelihood value
-    void toMaxLikelihood()  __attribute__ ((deprecated));
+    DEPRECATED( void toMaxLikelihood() );
 
     /// This function is deprecated and will be removed,
     /// instead use octree->integrateHit(node) in OccupancyOcTreeBase
     ///
     /// integrate a measurement (beam ENDED in cell)
-    inline void integrateHit()  __attribute__ ((deprecated)) {  updateProbability(probHit); }
+    DEPRECATED( inline void integrateHit() ) {  updateProbability(probHit); }
 
     /// This function is deprecated and will be removed,
     /// instead use octree->integrateMiss(node) in OccupancyOcTreeBase
     ///
     /// integrate a measurement (beam PASSED in cell)
-    inline void integrateMiss()  __attribute__ ((deprecated)) { updateProbability(probMiss); }
+    DEPRECATED( inline void integrateMiss() ) { updateProbability(probMiss); }
     
 
   protected:

@@ -131,7 +131,7 @@ namespace octomath {
      * @return a copy of this pose inverted
      */
     Pose6D inv() const;
-    Pose6D invert() const __attribute__ ((deprecated)) { return inv(); } // for inversion with copy use inv()
+    DEPRECATED( Pose6D invert() const ) { return inv(); } // for inversion with copy use inv()
 
     /*!
      * \brief Inversion
@@ -140,7 +140,7 @@ namespace octomath {
      * @return a reference to this pose
      */
     Pose6D& inv_IP();
-    Pose6D& invert_IP() __attribute__ ((deprecated)) { return inv_IP(); } // for inversion in place use inv_IP()
+    DEPRECATED( Pose6D& invert_IP() ) { return inv_IP(); } // for inversion in place use inv_IP()
 
     /*!
      * \brief Concatenation
@@ -173,7 +173,7 @@ namespace octomath {
      * vector of this Pose6D
      */
     double transLength() const;
-    double TransLength() const __attribute__ ((deprecated)); // use 'transLength' instead
+    DEPRECATED( double TransLength() const ); // use 'transLength' instead
 
     /*!
      * \brief Output operator

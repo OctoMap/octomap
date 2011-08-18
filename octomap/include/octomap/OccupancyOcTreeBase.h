@@ -111,7 +111,7 @@ namespace octomap {
     virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /// deprecated, use insertScan with separate sensor and frame origin instead
-    virtual void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) __attribute__ ((deprecated));
+    DEPRECATED(virtual void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) );
 
     /// for testing only
     virtual void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);

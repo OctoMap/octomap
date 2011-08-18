@@ -160,7 +160,7 @@ namespace octomap {
     void getLeafNodes(point3d_list& node_centers) const;
 
     // replaced by getLeafNodes(point3d_list&)
-    void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const __attribute__ ((deprecated));
+    DEPRECATED( void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const );
 
     /**
      * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
@@ -654,7 +654,7 @@ namespace octomap {
 
     /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
     /// This checks if the key is valid and returns the success.
-    bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const __attribute__ ((deprecated)){
+    DEPRECATED( bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const ){
       return genCoordFromKey(key, coord, depth);
     }
     bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const;

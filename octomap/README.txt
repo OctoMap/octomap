@@ -50,7 +50,7 @@ INSTALLATION:
 Build the complete project by changing into the "build" directory 
 and running cmake:
 
-        cd build	
+  mkdir build && cd build	
 	cmake ..
 	
 Type "make" to compile afterwards. This will create all CMake
