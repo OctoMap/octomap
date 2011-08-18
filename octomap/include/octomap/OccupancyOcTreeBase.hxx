@@ -148,7 +148,7 @@ namespace octomap {
 
         else { // user set a maxrange and this is reached
           point3d direction = (p - origin).normalized ();
-          point3d new_end = origin + direction * maxrange;
+          point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, this->keyray)){
             free_cells.insert(this->keyray.begin(), this->keyray.end());
           }
@@ -396,7 +396,7 @@ namespace octomap {
         // corner point of voxel (in direction of ray)
         float voxelBorder(0);
         this->genCoordFromKey(current_key[i], voxelBorder); 
-        voxelBorder += step[i] * this->resolution * 0.5;
+        voxelBorder += float (step[i] * this->resolution * 0.5);
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
@@ -409,7 +409,7 @@ namespace octomap {
 
     // for speedup:
     point3d origin_scaled = origin;  
-    origin_scaled /= this->resolution;  
+    origin_scaled /= (float) this->resolution;  
     double maxrange_2 = maxRange / this->resolution;  // scale
     maxrange_2 = maxrange_2*maxrange_2; // squared dist
     double res_2 = this->resolution/2.;
@@ -442,7 +442,7 @@ namespace octomap {
       for (unsigned int j = 0; j < 3; j++) {
         double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
         dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
-        current_endpoint(j) = coord * this->resolution;
+        current_endpoint(j) = (float) (coord * this->resolution);
       }
 
       if (max_range_set && (dist_from_origin > maxrange_2) ) { // reached user specified maxrange
@@ -492,7 +492,7 @@ namespace octomap {
     if ((maxrange > 0) && ((end - origin).norm () > maxrange)) 
       {
         point3d direction = (end - origin).normalized ();
-        point3d new_end = origin + direction * maxrange;
+        point3d new_end = origin + direction * (float) maxrange;
         return integrateMissOnRay(origin, new_end);
       }
     // insert complete ray
@@ -809,8 +809,8 @@ namespace octomap {
     s.read((char*)&child1to4_char, sizeof(char));
     s.read((char*)&child5to8_char, sizeof(char));
 
-    std::bitset<8> child1to4 ((unsigned long) child1to4_char);
-    std::bitset<8> child5to8 ((unsigned long) child5to8_char);
+    std::bitset<8> child1to4 ((unsigned long long) child1to4_char);
+    std::bitset<8> child5to8 ((unsigned long long) child5to8_char);
 
     //     std::cout << "read:  "
     //        << child1to4.to_string<char,std::char_traits<char>,std::allocator<char> >() << " "

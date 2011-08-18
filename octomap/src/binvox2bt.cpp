@@ -132,11 +132,11 @@ int main(int argc, char **argv)
           continue;
         } else if (strcmp(argv[i], "--offset") == 0 && i < argc - 4) {
         	i++;
-        	offset(0) = atof(argv[i]);
+        	offset(0) = (float) atof(argv[i]);
         	i++;
-        	offset(1) = atof(argv[i]);
+        	offset(1) = (float) atof(argv[i]);
         	i++;
-        	offset(2) = atof(argv[i]);
+        	offset(2) = (float) atof(argv[i]);
 
         	applyOffset = true;
 
@@ -249,7 +249,9 @@ int main(int argc, char **argv)
                     int x = i / (width * height);
                     
                     // voxel coordinates --> world coordinates
-                    point3d endpoint((double) x*scale/depth + tx + 0.000001, (double) y*scale/depth + ty  + 0.000001, (double) z*scale/depth + tz  + 0.000001);
+                    point3d endpoint((float) ((double) x*scale/depth + tx + 0.000001), 
+                                     (float) ((double) y*scale/depth + ty + 0.000001),
+                                     (float) ((double) z*scale/depth + tz + 0.000001));
                     if(rotate) {
                       endpoint.rotate_IP(M_PI_2, 0.0, 0.0);
                     }

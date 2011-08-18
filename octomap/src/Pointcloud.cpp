@@ -37,11 +37,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <octomap/Pointcloud.h>
-#include <ext/algorithm>
-#include <list>
+#ifdef _MSC_VER
+  #include <algorithm>
+#else
+  #include <ext/algorithm>
+#endif
 #include <fstream>
 #include <math.h>
+
+#include <octomap/Pointcloud.h>
 
 namespace octomap {
 
@@ -123,12 +127,12 @@ namespace octomap {
 
 
   void Pointcloud::calcBBX(point3d& lowerBound, point3d& upperBound) const {
-    double min_x, min_y, min_z;
-    double max_x, max_y, max_z;
+    float min_x, min_y, min_z;
+    float max_x, max_y, max_z;
     min_x = min_y = min_z = 1e6;
     max_x = max_y = max_z = -1e6;
 
-    double x,y,z;
+    float x,y,z;
 
     for (Pointcloud::const_iterator it=begin(); it!=end(); it++) {
 
@@ -154,15 +158,14 @@ namespace octomap {
 
     Pointcloud result;
 
-    double min_x, min_y, min_z;
-    double max_x, max_y, max_z;
-    double x,y,z;
+    float min_x, min_y, min_z;
+    float max_x, max_y, max_z;
+    float x,y,z;
 
     min_x = lowerBound(0); min_y = lowerBound(1); min_z = lowerBound(2);
     max_x = upperBound(0); max_y = upperBound(1); max_z = upperBound(2);
 
     for (Pointcloud::const_iterator it=begin(); it!=end(); it++) {
-
       x = (*it)(0);
       y = (*it)(1);
       z = (*it)(2);
@@ -186,29 +189,33 @@ namespace octomap {
   void Pointcloud::minDist(double thres) {
     Pointcloud result;
 
-    double x,y,z;
+    float x,y,z;
     for (Pointcloud::const_iterator it=begin(); it!=end(); it++) {
-
       x = (*it)(0);
       y = (*it)(1);
       z = (*it)(2);
       double dist = sqrt(x*x+y*y+z*z);
-
       if ( dist > thres ) result.push_back (x,y,z);
     } // end for points
-
     this->clear();
     this->push_back(result);
   }
 
 
   void Pointcloud::subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud) {
-
     point3d_collection samples;
+    // visual studio does not support random_sample_n
+  #ifdef _MSC_VER
+    samples.reserve(this->size());
+    samples.insert(samples.end(), this->begin(), this->end());
+    std::random_shuffle(samples.begin(), samples.end());
+    samples.resize(num_samples);
+  #else
     random_sample_n(begin(), end(), std::back_insert_iterator<point3d_collection>(samples), num_samples);
     for (unsigned int i=0; i<samples.size(); i++) {
       sample_cloud.push_back(samples[i]);
     }
+  #endif
   }
 
 
@@ -228,7 +235,7 @@ namespace octomap {
 
     OCTOMAP_DEBUG_STR("PointCloud::writeVrml writing "
 	      << points.size() << " points to " 
-	      << filename <<  ".");
+	      << filename.c_str() <<  ".");
 
     for (unsigned int i = 0; i < (points.size()); i++){
       outfile << "\t\t" << (points[i])(0) 

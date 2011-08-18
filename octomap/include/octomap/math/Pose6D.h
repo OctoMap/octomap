@@ -72,7 +72,7 @@ namespace octomath {
      * its x, y, z-values and a rotation represented by its
      * Tait-Bryan angles roll, pitch, and yaw
      */
-    Pose6D(double x, double y, double z, double roll, double pitch, double yaw);
+	Pose6D(float x, float y, float z, double roll, double pitch, double yaw);
 
     Pose6D& operator= (const Pose6D& other);
     bool operator==(const Pose6D& other) const;

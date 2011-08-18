@@ -44,25 +44,23 @@
 
 namespace octomath {
 
-  Vector3& Vector3::rotate_IP (double roll, double pitch, double yaw) 
-  {
+  Vector3& Vector3::rotate_IP (double roll, double pitch, double yaw) {
     double x, y, z;
-
     // pitch (around y)
     x = (*this)(0); z = (*this)(2);
-    (*this)(0) = z * sin(pitch) + x * cos(pitch);
-    (*this)(2) = z * cos(pitch) - x * sin(pitch);
+    (*this)(0) = (float) (z * sin(pitch) + x * cos(pitch));
+    (*this)(2) = (float) (z * cos(pitch) - x * sin(pitch));
 
 
     // yaw (around z)
     x = (*this)(0); y = (*this)(1);
-    (*this)(0) = x * cos(yaw) - y * sin(yaw);
-    (*this)(1) = x * sin(yaw) + y * cos(yaw);
+    (*this)(0) = (float) (x * cos(yaw) - y * sin(yaw));
+    (*this)(1) = (float) (x * sin(yaw) + y * cos(yaw));
 
     // roll (around x)
     y = (*this)(1); z = (*this)(2);
-    (*this)(1) = y * cos(roll) - z * sin(roll);
-    (*this)(2) = y * sin(roll) + z * cos(roll);
+    (*this)(1) = (float) (y * cos(roll) - z * sin(roll));
+    (*this)(2) = (float) (y * sin(roll) + z * cos(roll));
 
     return *this;
   }
@@ -98,7 +96,7 @@ namespace octomath {
     double val = 0;
     for (unsigned int i=0; i<3; i++) {
       s.read((char*)&val, sizeof(val));
-      operator()(i) = val;
+      operator()(i) = (float) val;
     }
     return s;
   }

@@ -43,7 +43,12 @@
 #include <assert.h>
 // you need to include boost/unordered_set instead if your compiler does not
 // yet support tr1
-#include <tr1/unordered_set>
+//#include <tr1/unordered_set>
+#ifdef __GNUC__
+  #include <tr1/unordered_set>
+#else
+  #include <unordered_set>
+#endif
 
 namespace octomap {
 

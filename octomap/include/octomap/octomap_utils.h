@@ -44,7 +44,7 @@ namespace octomap{
 
   /// compute log-odds from probability:
   inline float logodds(double probability){
-    return log(probability/(1-probability));
+    return (float) log(probability/(1-probability));
   }
 
   /// compute probability from logodds:

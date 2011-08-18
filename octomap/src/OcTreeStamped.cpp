@@ -54,7 +54,7 @@ namespace octomap {
   }
 
   void OcTreeStamped::degradeOutdatedNodes(unsigned int time_thres) {
-    unsigned int query_time = time(NULL); 
+    unsigned int query_time = (unsigned int) time(NULL); 
 
     for(leaf_iterator it = this->begin_leafs(), end=this->end_leafs(); 
         it!= end; ++it) {

@@ -458,7 +458,7 @@ namespace octomap {
           currentNode = new ScanNode();
           currentNode->scan = new Pointcloud();
 
-          double x, y, z, roll, pitch, yaw;
+          float x, y, z, roll, pitch, yaw;
           std::string tmp;
           ss >> tmp >> x >> y >> z >> roll >> pitch >> yaw;
           pose6d pose(x, y, z, roll, pitch, yaw);
@@ -470,7 +470,7 @@ namespace octomap {
             OCTOMAP_ERROR_STR("Error parsing log file, no Scan to add point to!");
             break;
           }
-          double x, y, z;
+          float x, y, z;
           ss >> x >> y >> z;
 
           //std::cout << "Point "<< x << "," <<y <<"," <<z << " found.\n";

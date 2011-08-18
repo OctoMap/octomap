@@ -42,6 +42,7 @@
 
 #include <octomap/OcTreeNode.h>
 #include <octomap/OccupancyOcTreeBase.h>
+#include <ctime>
 
 namespace octomap {
   
@@ -66,7 +67,7 @@ namespace octomap {
     
     // timestamp
     inline unsigned int getTimestamp() const { return timestamp; }
-    inline void updateTimestamp() { timestamp = time(NULL);}
+    inline void updateTimestamp() { timestamp = (unsigned int) time(NULL);}
     inline void setTimestamp(unsigned int timestamp) {this->timestamp = timestamp; }
 
     // update occupancy and timesteps of inner nodes 

@@ -137,11 +137,11 @@ int main(int argc, char **argv)
         continue;
       } else if (strcmp(argv[i], "--offset") == 0 && i < argc - 4) {
         i++;
-        offset(0) = atof(argv[i]);
+        offset(0) = (float) atof(argv[i]);
         i++;
-        offset(1) = atof(argv[i]);
+        offset(1) = (float) atof(argv[i]);
         i++;
-        offset(2) = atof(argv[i]);
+        offset(2) = (float) atof(argv[i]);
 
         applyOffset = true;
 

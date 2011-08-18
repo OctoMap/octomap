@@ -82,10 +82,10 @@ namespace octomath {
       {    -spitch,                  cpitch*sroll,                  cpitch*croll}
     };
 
-    double _u = sqrt(std::max(0., 1 + m[0][0] + m[1][1] + m[2][2]))/2.0;
-    double _x = sqrt(std::max(0., 1 + m[0][0] - m[1][1] - m[2][2]))/2.0;
-    double _y = sqrt(std::max(0., 1 - m[0][0] + m[1][1] - m[2][2]))/2.0;
-    double _z = sqrt(std::max(0., 1 - m[0][0] - m[1][1] + m[2][2]))/2.0;
+    float _u = (float) (sqrt(std::max(0., 1 + m[0][0] + m[1][1] + m[2][2]))/2.0);
+    float _x = (float) (sqrt(std::max(0., 1 + m[0][0] - m[1][1] - m[2][2]))/2.0);
+    float _y = (float) (sqrt(std::max(0., 1 - m[0][0] + m[1][1] - m[2][2]))/2.0);
+    float _z = (float) (sqrt(std::max(0., 1 - m[0][0] - m[1][1] + m[2][2]))/2.0);
     u() = _u;
     x() = (m[2][1] - m[1][2])>=0?fabs(_x):-fabs(_x);
     y() = (m[0][2] - m[2][0])>=0?fabs(_y):-fabs(_y);
@@ -95,10 +95,10 @@ namespace octomath {
   Quaternion::Quaternion(const Vector3& axis, double angle) {
     double sa = sin(angle/2);
     double ca = cos(angle/2);
-    x() = axis.x()*sa;
-    y() = axis.y()*sa;
-    z() = axis.z()*sa;
-    u() = ca;
+    x() = (float) (axis.x()*sa);
+    y() = (float) (axis.y()*sa);
+    z() = (float) (axis.z()*sa);
+    u() = (float) ca;
   }
 
   float Quaternion::norm () const {
@@ -106,7 +106,7 @@ namespace octomath {
     for (unsigned int i=0; i<4; i++) {
       n += operator()(i) * operator()(i);
     }
-    return sqrt(n);
+    return (float) sqrt(n);
   }
 
   void Quaternion::operator/= (float x) 
@@ -161,9 +161,9 @@ namespace octomath {
     m[2][1] = yz + ux;
     m[1][2] = yz - ux;
 
-    double roll  = atan2(m[2][1], m[2][2]);
-    double pitch = atan2(-m[2][0], sqrt(m[2][1]*m[2][1] + m[2][2]*m[2][2]));
-    double yaw   = atan2(m[1][0], m[0][0]);
+    float roll  = (float) atan2(m[2][1], m[2][2]);
+    float pitch = (float) atan2(-m[2][0], sqrt(m[2][1]*m[2][1] + m[2][2]*m[2][2]));
+    float yaw   = (float) atan2(m[1][0], m[0][0]);
 
     return Vector3(roll, pitch, yaw);
   }
@@ -239,7 +239,7 @@ namespace octomath {
   Quaternion& Quaternion::normalize (){
     double len = norm ();
     if (len > 0)
-      *this /= len;
+      *this /= (float) len;
     return *this;
   }
 
@@ -287,7 +287,7 @@ namespace octomath {
     double val = 0;
     for (unsigned int i=0; i<4; i++) {
       s.read((char*)&val, sizeof(val));
-      operator()(i) = val;
+      operator()(i) = (float) val;
     }
     return s;
   }

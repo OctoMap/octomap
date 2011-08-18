@@ -47,6 +47,14 @@
 
 namespace octomap {
 
+  // deprecated members, to be removed
+  const double OcTreeNode::probHit = 0.7;
+  const double probMiss = 0.4;
+  const float occProbThres = 0.5;
+  const float occProbThresLog = 0.0;
+  const float clampingThresMin = -2;
+  const float clampingThresMax = 3.5;
+
   OcTreeNode::OcTreeNode()
     : OcTreeDataNode<float>(0.0)
   {

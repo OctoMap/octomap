@@ -53,7 +53,7 @@ namespace octomath {
 
 
 
-  Pose6D::Pose6D(double x, double y, double z, double roll, double pitch, double yaw) :
+  Pose6D::Pose6D(float x, float y, float z, double roll, double pitch, double yaw) :
     translation(x, y, z),
     rotation(roll, pitch, yaw)
   { }

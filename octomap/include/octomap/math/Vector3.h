@@ -213,7 +213,7 @@ namespace octomath {
       return result;
     }
 
-    inline Vector3 operator*  (double x) const {
+    inline Vector3 operator*  (float x) const {
       Vector3 result(*this);
       result(0) *= x;
       result(1) *= x;
@@ -243,13 +243,13 @@ namespace octomath {
       data[2] -= other(2);      
     }
 
-    inline void operator/= (double x) {
+    inline void operator/= (float x) {
       data[0] /= x;
       data[1] /= x;
       data[2] /= x;      
     }
 
-    inline void operator*= (double x) {    
+    inline void operator*= (float x) {    
       data[0] *= x;
       data[1] *= x;
       data[2] *= x;      
@@ -278,7 +278,7 @@ namespace octomath {
     inline Vector3& normalize () {
       double len = norm ();
       if (len > 0)
-        *this /= len;
+        *this /= (float) len;
       return *this;
     }
 

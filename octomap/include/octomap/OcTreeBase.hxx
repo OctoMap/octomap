@@ -69,7 +69,7 @@ namespace octomap {
     resolution = r;
     resolution_factor = 1. / resolution;
 
-    tree_center(0) = tree_center(1) = tree_center(2) = ((double) tree_max_val) / resolution_factor;
+    tree_center(0) = tree_center(1) = tree_center(2) = (float) (((double) tree_max_val) / resolution_factor);
 
     // init node size lookup table:
     sizeLookupTable.resize(tree_depth+1);
@@ -285,7 +285,7 @@ namespace octomap {
     // Initialization phase -------------------------------------------------------
 
     point3d direction = (end - origin);
-    double length = direction.norm();
+    float length = (float) direction.norm();
     direction /= length; // normalize vector
 
     int    step[3];
@@ -305,7 +305,7 @@ namespace octomap {
         // corner point of voxel (in direction of ray)
         float voxelBorder(0);
         this->genCoordFromKey(current_key[i], voxelBorder); 
-        voxelBorder += step[i] * this->resolution * 0.5;
+        voxelBorder += (float) (step[i] * this->resolution * 0.5);
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
@@ -318,7 +318,7 @@ namespace octomap {
 
     // for speedup:
     point3d origin_scaled = origin;  
-    origin_scaled /= this->resolution;  
+    origin_scaled /= (float) this->resolution;  
     double length_scaled = length - this->resolution/4.; // safety margin
     length_scaled /= this->resolution;  // scale 
     length_scaled = length_scaled*length_scaled;  // avoid sqrt in dist comp.

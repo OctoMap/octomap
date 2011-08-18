@@ -147,12 +147,12 @@ namespace octomap {
     // definition of "Occupancy"
     // These values are deprecated and should no longer be used.
     // Use the parameters of the tree instead (and e.g. tree->isNodeOccupied(node))
-    const static double probHit = 0.7;
-    const static double probMiss = 0.4;
-    const static float occProbThres = 0.5;
-    const static float occProbThresLog = 0.0;
-    const static float clampingThresMin = -2;
-    const static float clampingThresMax = 3.5;
+    const static double probHit; // = 0.7;
+    const static double probMiss; //= 0.4;
+    const static float occProbThres; //= 0.5;
+    const static float occProbThresLog; // = 0.0;
+    const static float clampingThresMin; // = -2;
+    const static float clampingThresMax; // = 3.5;
 
     // "value" stores log odds occupancy probability
   };
