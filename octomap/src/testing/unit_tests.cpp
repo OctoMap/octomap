@@ -193,7 +193,6 @@ int main(int argc, char** argv) {
     unsigned int tree_time = stamped_tree.getLastUpdateTime();
     unsigned int node_time = result->getTimestamp();
     EXPECT_TRUE (tree_time > 0);
-    EXPECT_EQ (node_time, tree_time);
     #ifdef _MSC_VER
       Sleep(1000);
     #else
