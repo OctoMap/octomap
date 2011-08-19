@@ -162,3 +162,6 @@ Press "Generate", select the appropriate generator, e. g. "Visual Studio 10".
 This generates a solution file octomap.sln,
 load this file and build the project.
 
+You can run the unit tests using ctest on the command prompt:
+> ctest.exe -C Release
+

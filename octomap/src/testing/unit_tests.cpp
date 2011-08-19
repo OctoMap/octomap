@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
     EXPECT_TRUE (tree_time > 0);
     EXPECT_EQ (node_time, tree_time);
     #ifdef _MSC_VER
-      Sleep(1);
+      Sleep(1000);
     #else
       sleep(1);
     #endif
