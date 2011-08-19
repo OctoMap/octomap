@@ -17,8 +17,8 @@ int main(int argc, char** argv) {
   OcTree tree (0.05);  
 
   //  point3d origin (10.01, 10.01, 10.02);
-  point3d origin (0.01, 0.01, 0.02);
-  point3d point_on_surface (2.01,0.01,0.01);
+  point3d origin (0.01f, 0.01f, 0.02f);
+  point3d point_on_surface (2.01f, 0.01f, 0.01f);
 
   cout << "generating sphere at " << origin << " ..." << endl;
 
@@ -77,9 +77,9 @@ int main(int argc, char** argv) {
   cout << "generating single rays..." << endl;
   OcTree single_beams(0.03333);
   int num_beams = 17;
-  double beamLength = 10.0;
-  point3d single_origin (1.0, 0.45, 0.45);
-  point3d single_endpoint(beamLength, 0.0, 0.0);
+  float beamLength = 10.0f;
+  point3d single_origin (1.0f, 0.45f, 0.45f);
+  point3d single_endpoint(beamLength, 0.0f, 0.0f);
 	
 	
   for (int i=0; i<num_beams; i++) {    

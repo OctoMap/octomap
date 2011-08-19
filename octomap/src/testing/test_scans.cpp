@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
 
   OcTree tree (0.05);  
 
-  point3d origin (0.01, 0.01, 0.02);
-  point3d point_on_surface (4.01,0.01,0.01);
+  point3d origin (0.01f, 0.01f, 0.02f);
+  point3d point_on_surface (4.01f, 0.01f, 0.01f);
 
   cout << "generating spherical scan at " << origin << " ..." << endl;
 

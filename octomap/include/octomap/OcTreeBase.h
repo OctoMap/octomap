@@ -172,7 +172,7 @@ namespace octomap {
 
 
     /// return centers of leafs that do NOT exist (but could) in a given bounding box
-    void getUnknownLeafCenters(point3d_list& node_centers, point3d min, point3d max) const;
+    void getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const;
 
 
     // -- raytracing  -----------------------

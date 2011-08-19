@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   for (int x=-20; x<20; x++) {
     for (int y=-20; y<20; y++) {
       for (int z=-20; z<20; z++) {
-        point3d endpoint ((double) x*0.05, (double) y*0.05, (double) z*0.05);
+        point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
         tree.updateNode(endpoint, true); // integrate 'occupied' measurement
       }
     }
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
   for (int x=-30; x<30; x++) {
     for (int y=-30; y<30; y++) {
       for (int z=-30; z<30; z++) {
-        point3d endpoint ((double) x*0.02-1., (double) y*0.02-1., (double) z*0.02-1.);
+        point3d endpoint ((float) x*0.02f-1.0f, (float) y*0.02f-1.0f, (float) z*0.02f-1.0f);
         tree.updateNode(endpoint, false);  // integrate 'free' measurement
       }
     }

@@ -402,8 +402,8 @@ namespace octomap {
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
       else {
-        tMax[i] =  std::numeric_limits<double>::max();
-        tDelta[i] = std::numeric_limits<double>::max();
+        tMax[i] =  std::numeric_limits<double>::max( );
+        tDelta[i] = std::numeric_limits<double>::max( );
       }
     }
 

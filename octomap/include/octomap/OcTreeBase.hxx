@@ -37,6 +37,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#undef max
+#undef min
+#include <limits>
 
 namespace octomap {
 
@@ -51,8 +54,8 @@ namespace octomap {
     
     this->setResolution(_resolution);
     for (unsigned i = 0; i< 3; i++){
-      maxValue[i] = -std::numeric_limits<double>::max();
-      minValue[i] = std::numeric_limits<double>::max();
+      maxValue[i] = -(std::numeric_limits<double>::max( ));
+      minValue[i] = std::numeric_limits<double>::max( );
     }
     sizeChanged = true;
 
@@ -311,8 +314,8 @@ namespace octomap {
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
       else {
-        tMax[i] =  std::numeric_limits<double>::max();
-        tDelta[i] = std::numeric_limits<double>::max();
+        tMax[i] =  std::numeric_limits<double>::max( );
+        tDelta[i] = std::numeric_limits<double>::max( );
       }
     }
 
@@ -655,7 +658,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
-    mx = my = mz = std::numeric_limits<double>::max();
+    mx = my = mz = std::numeric_limits<double>::max( );
     if (sizeChanged) {
       for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
               end=this->end(); it!= end; ++it)
@@ -679,7 +682,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
-    mx = my = mz = -std::numeric_limits<double>::max();
+    mx = my = mz = -std::numeric_limits<double>::max( );
     if (sizeChanged) {
       for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
           end=this->end(); it!= end; ++it)
@@ -736,17 +739,17 @@ namespace octomap {
 
 
   template <class NODE>
-  void OcTreeBase<NODE>::getUnknownLeafCenters(point3d_list& node_centers, point3d min, point3d max) const {
+  void OcTreeBase<NODE>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const {
 
     float diff[3];
     unsigned int steps[3];
     for (int i=0;i<3;++i) {
-      diff[i] = max(i) - min(i);
+      diff[i] = pmax(i) - pmin(i);
       steps[i] = floor(diff[i] / this->resolution);
       //      std::cout << "bbx " << i << " size: " << diff[i] << " " << steps[i] << " steps\n";
     }
     
-    point3d p = min;
+    point3d p = pmin;
     NODE* res;
     for (unsigned int x=0; x<steps[0]; ++x) {
       p.x() += this->resolution;
@@ -760,9 +763,9 @@ namespace octomap {
             node_centers.push_back(p);
           }
         }
-        p.z() = min.z();
+        p.z() = pmin.z();
       }
-      p.y() = min.y();
+      p.y() = pmin.y();
     }
   }
 

@@ -41,6 +41,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef M_PI_2
+  #define M_PI_2 1.5707963267948966192E0
+#endif
+
 #include <string>
 #include <fstream>
 #include <iostream>
