@@ -37,11 +37,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <octomap/octomap.h>
-#include <octomap/OcTreeFileIO.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/time.h>
+
+#include <octomap/octomap.h>
+#include <octomap/OcTreeFileIO.h>
+#include <octomap/octomap_timing.h>
 
 using namespace std;
 using namespace octomap;

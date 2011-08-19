@@ -175,7 +175,7 @@ namespace octomap {
       // needs to be fixed (only works on OcTreeNodes right now)
       //case 2: tree = new OcTreeBase<OcTreeDataNode<float> >(res); break;
       // ...
-      default: OCTOMAP_ERROR_STR( __PRETTY_FUNCTION__ << ": Unknown Octree id "<< id<<"."); break;
+      default: OCTOMAP_ERROR_STR( __FILE__":" << __LINE__ << ": Unknown Octree id "<< id<<"."); break;
     }
 
     return tree;
@@ -189,7 +189,7 @@ namespace octomap {
     } else if (dynamic_cast<const OcTreeBase<OcTreeDataNode<float> >*>(tree)){
       return 2;
     } else {
-      OCTOMAP_ERROR_STR( __PRETTY_FUNCTION__ << ": Unknown Octree type "<< typeid(tree).name()<<".");
+      OCTOMAP_ERROR_STR( __FILE__":" << __LINE__ << ": Unknown Octree type "<< typeid(tree).name()<<".");
     }
     return 0;
   }

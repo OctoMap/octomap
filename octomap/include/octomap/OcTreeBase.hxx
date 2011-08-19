@@ -176,7 +176,7 @@ namespace octomap {
 
 
   template <class NODE> 
-  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, const double& center_offset, 
+  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, const float& center_offset, 
                                              const point3d& parent_center, point3d& child_center) const {
     // x-axis
     if (pos & 1) child_center(0) = parent_center(0) + center_offset;
@@ -473,8 +473,7 @@ namespace octomap {
 
         for (unsigned int i = 0; i < 8; i++) {
           if (node->childExists(i)) {
-
-            computeChildCenter(i, center_offset, parent_center, search_center);
+            computeChildCenter(i, (float) center_offset, parent_center, search_center);
             getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center);
 
           }

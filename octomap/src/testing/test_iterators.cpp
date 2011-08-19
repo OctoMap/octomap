@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
+
+#include <octomap/octomap_timing.h>
 #include <octomap/octomap.h>
 #include <octomap/math/Utils.h>
 

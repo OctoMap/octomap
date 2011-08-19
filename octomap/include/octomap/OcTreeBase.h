@@ -677,7 +677,7 @@ namespace octomap {
 
  protected:
     /// compute center point of child voxel cell, for internal use
-    void computeChildCenter (const unsigned int& pos, const double& center_offset, 
+    void computeChildCenter (const unsigned int& pos, const float& center_offset, 
                              const point3d& parent_center, point3d& child_center) const;
 
 
