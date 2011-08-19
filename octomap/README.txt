@@ -22,6 +22,7 @@ REQUIREMENTS
 
  * cmake
  * regular build environment (gcc)
+ * skip to WINDOWS for tips on compilation under Windows
  
  viewer: 
  * Qt4
@@ -42,7 +43,7 @@ To install it:
        sudo apt-get install libqglviewer-qt4-dev
 
 
-INSTALLATION:
+INSTALLATION
 ############################
 
  * Note: skip to the end if you want to use OctoMap in ROS! *
@@ -145,4 +146,19 @@ Import the project (existing project, root is the build folder,
 do not copy contents) into Eclipse afterwards. For full Eclipse
 compatibility, it might be necessary to build in the main source
 directory.
+
+
+WINDOWS
+############################
+
+The octomap library is compatible with Visual Studio 2010
+although this has not been tested in-depth. Feedback is welcome.
+
+To compile the library you need cmake (http://www.cmake.org).
+Start the cmake-gui and set the code directory to the library root.
+Set the build directory to, e.g., octomap/build.
+Press "Generate", select the appropriate generator, e. g. "Visual Studio 10".
+
+This generates a solution file octomap.sln,
+load this file and build the project.
 

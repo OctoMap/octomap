@@ -12,7 +12,6 @@ SET (octomap_SRCS
 ADD_LIBRARY( octomap SHARED ${octomap_SRCS})
 ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
 SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap") 
-#SET_TARGET_PROPERTIES(octomap-static PROPERTIES PREFIX "lib")
 
 
 # Link in ROS libs e.g. for logging output if needed:
