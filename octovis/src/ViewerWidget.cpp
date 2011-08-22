@@ -26,9 +26,13 @@
 
 #include <octovis/ViewerWidget.h>
 
+#ifndef M_PI_2
+  #define M_PI_2 1.5707963267948966192E0
+#endif
+
 using namespace std;
 
-namespace octomap{
+namespace octomap {
 
 ViewerWidget::ViewerWidget(QWidget* parent) :
   QGLViewer(parent), m_zMin(0.0),m_zMax(1.0) {
@@ -51,7 +55,7 @@ void ViewerWidget::init() {
 }
 
 void ViewerWidget::resetView(){
-  this->camera()->setOrientation(-M_PI_2, M_PI_2);
+  this->camera()->setOrientation((float) -M_PI_2, (float) M_PI_2);
   this->showEntireScene();
   updateGL();
 

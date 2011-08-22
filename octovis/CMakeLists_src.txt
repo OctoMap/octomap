@@ -70,10 +70,9 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 add_library(octovis-static STATIC ${viewerlib_SRCS})
 target_link_libraries(octovis-static)
 set_target_properties(octovis-static PROPERTIES OUTPUT_NAME octovis)
-SET_TARGET_PROPERTIES(octovis-static PROPERTIES PREFIX "lib")
 
 add_library(octovis-shared SHARED ${viewerlib_SRCS})
-target_link_libraries(octovis-shared)
+target_link_libraries(octovis-shared ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} octomath octomap ${QGLViewer_LIBRARIES})
 set_target_properties(octovis-shared PROPERTIES OUTPUT_NAME octovis)
 
 
@@ -81,9 +80,8 @@ set_target_properties(octovis-shared PROPERTIES OUTPUT_NAME octovis)
 # If this is NOT done, then the ui_*.h files will not be generated
 add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
 
-# link the target against the Qt libraries. which libraries exactly, is defined by the "include(${QT_USE_FILE})" line above, which sets up this variable.
 target_link_libraries(octovis 
-  ${QGLViewer_LIBRARIES}
+#  ${QGLViewer_LIBRARIES}
   ${QT_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   octovis-shared

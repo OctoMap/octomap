@@ -56,15 +56,20 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 SET( BUILD_VIEWER 0)
 
 # Look for required libraries:
-FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(Qt4 REQUIRED)
-FIND_PACKAGE(QGLViewer)
-IF(QGLViewer_FOUND)
-  SET( BUILD_VIEWER 1)
+FIND_PACKAGE(OpenGL)
+FIND_PACKAGE(Qt4)
+IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND) 
+	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")	
 ELSE()
-  MESSAGE ( "\n")
-  MESSAGE ( "libQGLViewer could not be found or generated.")
+	FIND_PACKAGE(QGLViewer)
+	IF(QGLViewer_FOUND)
+	  SET( BUILD_VIEWER 1)
+	ELSE()
+	  MESSAGE ( "\n")
+  	MESSAGE ( "libQGLViewer could not be found or generated.")
+	ENDIF()
 ENDIF()
+
 
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
@@ -100,15 +105,17 @@ IF(BUILD_VIEWER)
     DESTINATION lib/cmake/octovis/)
     
   # make package release from source
-  SET(OCTOVIS_PKG_NAME "${PROJECT_NAME}-${OCTOVIS_VERSION}.tar.gz")
-  SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-  ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-    rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}"
-    COMMAND mkdir "${DIST_DIR}"
-    COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-    COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-  )
+	IF (NOT WIN32)
+		SET(OCTOVIS_PKG_NAME "${PROJECT_NAME}-${OCTOVIS_VERSION}.tar.gz")
+		SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
+		ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
+		  rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}"
+		  COMMAND mkdir "${DIST_DIR}"
+		  COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
+		  COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
+		    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+		)
+	ENDIF ()
     
   # #installation:
   # # store all header files to install:

@@ -548,7 +548,7 @@ namespace octomap {
   std::istream& OcTreeBase<NODE>::read(std::istream &s) {
 
     if (!s.good()){
-      OCTOMAP_WARNING_STR(__PRETTY_FUNCTION__ << "Warning: Input filestream not \"good\"");
+      OCTOMAP_WARNING_STR(__FILE__ << ":" << __LINE__ << "Warning: Input filestream not \"good\"");
     }
 
     this->tree_size = 0;

@@ -176,7 +176,7 @@ namespace octomap {
     s.read((char*)&children_char, sizeof(char));
 
 
-    std::bitset<8> children ((unsigned long) children_char);
+    std::bitset<8> children ((unsigned long long) children_char);
 
 //    std::cout << "read: " << log_odds_occupancy << " "
 //                << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;

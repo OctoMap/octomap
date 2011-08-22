@@ -761,13 +761,13 @@ namespace octomap {
       
       // draw binary occupied cells
       if (m_occupiedThresSize != 0) {
-        if (m_colorMode != CM_PRINTOUT) glColor4f(0.0, 0.0, 1.0, m_alphaOccupied);
+        if (m_colorMode != CM_PRINTOUT) glColor4f(0.0f, 0.0f, 1.0f, m_alphaOccupied);
         drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
       }
 
       // draw delta occupied cells
       if (m_occupiedSize != 0) {
-        if (m_colorMode != CM_PRINTOUT) glColor4f(0.2, 0.7, 1.0, m_alphaOccupied);
+        if (m_colorMode != CM_PRINTOUT) glColor4f(0.2f, 0.7f, 1.0f, m_alphaOccupied);
         drawCubes(m_occupiedArray, m_occupiedSize, m_occupiedColorArray);
       }
     }
@@ -788,14 +788,14 @@ namespace octomap {
 
     // draw binary freespace cells
     if (m_freeThresSize != 0) {
-      if (m_colorMode != CM_PRINTOUT) glColor4f(0.0, 1.0, 0., 0.3);
+      if (m_colorMode != CM_PRINTOUT) glColor4f(0.0f, 1.0f, 0.0f, 0.3f);
       drawCubes(m_freeThresArray, m_freeThresSize);
     }
 
 
     // draw delta freespace cells
     if (m_freeSize != 0) {
-      if (m_colorMode != CM_PRINTOUT) glColor4f(0.5, 1.0, 0.1, 0.3);
+      if (m_colorMode != CM_PRINTOUT) glColor4f(0.5f, 1.0f, 0.1f, 0.3f);
       drawCubes(m_freeArray, m_freeSize);
     }
   }
@@ -942,7 +942,7 @@ namespace octomap {
 
     glPushMatrix();
 
-    float length = .15; 
+    float length = 0.15f; 
 
     GLboolean lighting, colorMaterial;
     glGetBooleanv(GL_LIGHTING, &lighting);

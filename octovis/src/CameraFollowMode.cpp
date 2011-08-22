@@ -62,7 +62,7 @@ void CameraFollowMode::play() {
 		  if (scanNode)
 		    emit appendToCameraPath(ROBOT_TRAJECTORY_ID, scanNode->pose);
 		  else{
-		    std::cerr << "Error in " << __PRETTY_FUNCTION__<<": invalid node ID "<< i-1 << std::endl;
+		    std::cerr << "Error in " << __FILE__ << ":" << __LINE__ <<" : invalid node ID "<< i-1 << std::endl;
 		  }
 		}
 		emit playCameraPath(ROBOT_TRAJECTORY_ID, 0);

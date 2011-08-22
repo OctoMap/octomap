@@ -50,7 +50,7 @@ void ViewerSettingsPanel::on_nextScanButton_clicked(){
 }
 
 void ViewerSettingsPanel::on_fastFwdScanButton_clicked(){
-  unsigned increase = std::min(5, int(m_numberScans)-int(m_currentScan));
+  unsigned increase = min(5, int(m_numberScans)-int(m_currentScan));
   m_currentScan += increase;
   scanProgressChanged();
   emit addNextScans(increase);
@@ -70,7 +70,7 @@ void ViewerSettingsPanel::on_firstScanButton_clicked(){
 }
 
 void ViewerSettingsPanel::scanProgressChanged(){
-  ui.scanProgressBar->setMaximum(std::max(1,int(m_numberScans)));
+  ui.scanProgressBar->setMaximum(max(1,int(m_numberScans)));
 
   if (m_currentScan == m_numberScans){
     ui.nextScanButton->setEnabled(false);
@@ -116,7 +116,6 @@ void ViewerSettingsPanel::setTreeDepth(int depth){
 }
 
 void ViewerSettingsPanel::leafSizeChanged(){
-  double leafSize = m_resolution * pow(2,_TREE_MAX_DEPTH-m_treeDepth);
+  double leafSize = m_resolution * pow(2.0, (int) (_TREE_MAX_DEPTH-m_treeDepth));
   ui.leafSize->setText(QString::number(leafSize)+" m");
-
 }

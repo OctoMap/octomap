@@ -123,15 +123,17 @@ IF(DOXYGEN_FOUND)
 ENDIF(DOXYGEN_FOUND)
 
 # make package release from source
-SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
-SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-	rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
-	COMMAND mkdir "${DIST_DIR}"
-	COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-	COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-)
+IF (NOT WIN32)
+	SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
+	SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
+	ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
+		rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
+		COMMAND mkdir "${DIST_DIR}"
+		COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
+		COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
+			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+	)
+ENDIF()
 
 # Needs to be last statement:
 INCLUDE(CPackSettings)
@@ -140,5 +142,5 @@ INCLUDE(CPackSettings)
 MESSAGE ("\n")
 MESSAGE (STATUS "Compile octomap using: make")
 MESSAGE (STATUS "Install octomap using: make install")
-MESSAGE (    "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
+MESSAGE (STATUS "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
 MESSAGE (STATUS "Compile API-documentation using: make docs\n")
