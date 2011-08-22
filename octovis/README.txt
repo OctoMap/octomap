@@ -2,7 +2,8 @@
 Octovis is distributed under the GPL license (see "octovis/LICENSE.txt").
 
 It is based on qglviewer which also is distributed under the GPL license
-(see "octovis/src/extern/QGLViewer/LICENSE")
+(see "octovis/src/extern/QGLViewer/LICENSE" and the author's exception 
+   "octovis/src/extern/QGLViewer/GPL_EXCEPTION")
 
 
 LINUX
