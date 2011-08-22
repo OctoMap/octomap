@@ -39,5 +39,7 @@ Binaries and libs will end up in the directories "bin" and "lib" of the
 top-level directory where you started the build.
 
 
-See "octomap/README.txt" for details about compilation.
+See "octomap/README.txt" and "octovis/README.txt" for 
+details about compilation and hints on compiling under Windows.
+
 A list of changes is available in "octomap/CHANGELOG.txt"
