@@ -163,5 +163,5 @@ This generates a solution file octomap.sln,
 load this file and build the project.
 
 You can run the unit tests using ctest on the command prompt:
-> ctest.exe -C Release
+octomap/build> ctest.exe -C Release
 

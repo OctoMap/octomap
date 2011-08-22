@@ -50,7 +50,8 @@ void ViewerSettingsPanel::on_nextScanButton_clicked(){
 }
 
 void ViewerSettingsPanel::on_fastFwdScanButton_clicked(){
-  unsigned increase = min(5, int(m_numberScans)-int(m_currentScan));
+  unsigned increase = int(m_numberScans)-int(m_currentScan);
+  if (increase > 5) increase = 5;
   m_currentScan += increase;
   scanProgressChanged();
   emit addNextScans(increase);
@@ -70,7 +71,10 @@ void ViewerSettingsPanel::on_firstScanButton_clicked(){
 }
 
 void ViewerSettingsPanel::scanProgressChanged(){
-  ui.scanProgressBar->setMaximum(max(1,int(m_numberScans)));
+  if (int(m_numberScans) > 1)
+    ui.scanProgressBar->setMaximum(int(m_numberScans));
+  else 
+    ui.scanProgressBar->setMaximum(1);
 
   if (m_currentScan == m_numberScans){
     ui.nextScanButton->setEnabled(false);
