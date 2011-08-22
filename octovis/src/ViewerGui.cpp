@@ -120,7 +120,6 @@ namespace octomap{
       m_filename = filename;
       openFile();
     }
-    fprintf(stderr, "Viewer ready.\n"); fflush(stderr);
   }
 
   ViewerGui::~ViewerGui() {
@@ -695,7 +694,6 @@ namespace octomap{
                                                     tr("Open data file"), "",
                                                     "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
     if (!filename.isEmpty()){
-      std::cout << "File selected in dialog: " << filename.toLocal8Bit().data() << std::endl;      
 #ifdef _WIN32      
       m_filename = std::string(filename.toLocal8Bit().data());
 #else       
