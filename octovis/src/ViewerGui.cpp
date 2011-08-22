@@ -120,6 +120,7 @@ namespace octomap{
       m_filename = filename;
       openFile();
     }
+    fprintf(stderr, "Viewer ready.\n"); fflush(stderr);
   }
 
   ViewerGui::~ViewerGui() {
@@ -153,7 +154,7 @@ namespace octomap{
   }
 
   void ViewerGui::showInfo(QString string, bool newline) {
-    std::cerr << string.toStdString();
+    std::cerr << string.toLocal8Bit().data();
     if (newline) std::cerr << std::endl;
     else std::cerr << std::flush;
     int duration = 0;
@@ -217,12 +218,12 @@ namespace octomap{
         it->second.octree->getMetricMin(lminX, lminY, lminZ);
         it->second.octree->getMetricMax(lmaxX, lmaxY, lmaxZ);
         // transform to world coords using map origin
-        octomap::point3d min(lminX, lminY, lminZ);
-        octomap::point3d max(lmaxX, lmaxY, lmaxZ);
-        min = it->second.origin.transform(min);
-        max = it->second.origin.transform(max);
-        lminX = min.x(); lminY = min.y(); lminZ = min.z();
-        lmaxX = max.x(); lmaxY = max.y(); lmaxZ = max.z();
+        octomap::point3d pmin(lminX, lminY, lminZ);
+        octomap::point3d pmax(lmaxX, lmaxY, lmaxZ);
+        pmin = it->second.origin.transform(pmin);
+        pmax = it->second.origin.transform(pmax);
+        lminX = pmin.x(); lminY = pmin.y(); lminZ = pmin.z();
+        lmaxX = pmax.x(); lmaxY = pmax.y(); lmaxZ = pmax.z();
         // update global bbx
         if (lminX < minX) minX = lminX;
         if (lminY < minY) minY = lminY;
@@ -443,12 +444,11 @@ namespace octomap{
   // ==  file I/O   ===========================================
 
   void ViewerGui::openFile(){
-  
-    if (m_filename != ""){
-
+    if (!m_filename.empty()){
       m_glwidget->clearAll();
 
-      QFileInfo fileinfo(QString::fromStdString(m_filename));
+      QString temp = QString(m_filename.c_str());
+      QFileInfo fileinfo(temp);
       if (fileinfo.suffix() == "graph"){
         openGraph();
       }
@@ -464,16 +464,14 @@ namespace octomap{
       else {
         QMessageBox::warning(this, "Unknown file", "Cannot open file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
       }
-
     }
-
   }
 
 
   void ViewerGui::openGraph(bool completeGraph){
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    showInfo("Loading scan graph from file "+QString::fromStdString(m_filename)+"...");
+    showInfo("Loading scan graph from file " + QString(m_filename.c_str()) );  
 
     if (m_scanGraph) delete m_scanGraph;
     m_scanGraph = new octomap::ScanGraph();
@@ -486,7 +484,7 @@ namespace octomap{
   void ViewerGui::openPointcloud(){
   
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    showInfo("Loading ASCII pointcloud from file "+QString::fromStdString(m_filename)+"...");
+    showInfo("Loading ASCII pointcloud from file "+QString(m_filename.c_str()) + "..."); 
 
     if (m_scanGraph) delete m_scanGraph;
     m_scanGraph = new octomap::ScanGraph();
@@ -503,14 +501,6 @@ namespace octomap{
 
     pc->read(s);
 
-    //  point3d p;
-    //  while (!s.eof()) {
-    //    for (unsigned int i=0; i<3; i++){
-    //      s >> p(i);
-    //    }
-    //    pc.push_back(p);
-    //  }
-
     pose6d laser_pose(0,0,0,0,0,0);
     m_scanGraph->addNode(pc, laser_pose);
 
@@ -520,9 +510,6 @@ namespace octomap{
 
 
   void ViewerGui::openTree(){
-    // if (m_ocTree)
-    //   delete m_ocTree;
-
     OcTree* tree = new octomap::OcTree(m_filename);
     this->addOctree(tree, DEFAULT_OCTREE_ID);
 
@@ -544,7 +531,6 @@ namespace octomap{
 
     showOcTree();
     m_glwidget->resetView();
-
   }
 
   void ViewerGui::openOcTree(){
@@ -708,8 +694,13 @@ namespace octomap{
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open data file"), "",
                                                     "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
-    if (filename != ""){
+    if (!filename.isEmpty()){
+      std::cout << "File selected in dialog: " << filename.toLocal8Bit().data() << std::endl;      
+#ifdef _WIN32      
+      m_filename = std::string(filename.toLocal8Bit().data());
+#else       
       m_filename = filename.toStdString();
+#endif
       openFile();
     }
   }
@@ -719,10 +710,15 @@ namespace octomap{
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open graph file incrementally (at start)"), "",
                                                     "binary scan graph (*.graph)");
-    if (filename != ""){
+    if (!filename.isEmpty()){
       m_glwidget->clearAll();
 
+#ifdef _WIN32      
+      m_filename = std::string(filename.toLocal8Bit().data());
+#else       
       m_filename = filename.toStdString();
+#endif
+
       openGraph(false);
     }
   }
@@ -746,12 +742,16 @@ namespace octomap{
       showInfo("Writing file... ", false);
     
       QFileInfo fileinfo(filename);
+      std::string std_filename;
+#ifdef _WIN32      
+      std_filename = filename.toLocal8Bit().data();
+#else       
+      std_filename = filename.toStdString();
+#endif
       if (fileinfo.suffix() == "bt")
-        r->octree->writeBinaryConst(filename.toStdString());
+        r->octree->writeBinaryConst(std_filename); 
       else if (fileinfo.suffix() == "ot"){
-        OcTreeFileIO::write( r->octree, filename.toStdString());
-        //writer.write((OcTreeBase<octomap::OcTreeDataNode<float> >*) m_ocTree, filename.toStdString());
-        //m_ocTree->write(filename.toStdString());
+        OcTreeFileIO::write( r->octree, std_filename);
       }
       else{
         QMessageBox::warning(this, "Unknown file", "Cannot write file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
