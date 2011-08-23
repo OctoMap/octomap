@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string>
-#ifdef __WIN32
+#ifdef _WIN32
   #include <Windows.h>  // to define Sleep()
 #endif
 

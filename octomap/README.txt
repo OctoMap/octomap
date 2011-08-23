@@ -160,13 +160,16 @@ To compile the library you need cmake (http://www.cmake.org).
 MinGW
 ------------------------------
 
+* Download MinGW distribution (http://www.mingw.org)
+* Install C++ compiler and add MingGW/bin to your system PATH
+
 * Start the cmake-gui and set the code directory to the 
   library root (e.g. /octomap)
 * Set the build directory to, e.g., /octomap/build.
 * Press "Generate", select the appropriate generator, 
   "MinGW Makefiles".
 
-* start a command shell and "make" the project:
+* Start a command shell and "make" the project:
   octomap> cd build
   octomap/build> mingw32-make.exe
 
