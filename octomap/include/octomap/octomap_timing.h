@@ -1,8 +1,8 @@
 #ifndef OCTOMAP_TIMING_H_
 #define OCTOMAP_TIMING_H_
 
-
-#ifdef _WIN32
+#ifdef _MSC_VER
+	// MS compilers
   #include <sys/timeb.h>
   #include <sys/types.h>
   #include <winsock.h>
@@ -13,6 +13,7 @@
     t->tv_usec=1000*timebuffer.millitm;
   }
 #else 
+	// GCC and minGW
   #include <sys/time.h>
 #endif
 

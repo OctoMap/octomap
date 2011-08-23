@@ -151,17 +151,41 @@ directory.
 WINDOWS
 ############################
 
-The octomap library is compatible with Visual Studio 2010
-although this has not been tested in-depth. Feedback is welcome.
+The octomap library and tools can be compiled and used
+under Windows although this has not been tested in-depth. 
+Feedback is welcome.
 
 To compile the library you need cmake (http://www.cmake.org).
-Start the cmake-gui and set the code directory to the library root.
-Set the build directory to, e.g., octomap/build.
-Press "Generate", select the appropriate generator, e. g. "Visual Studio 10".
 
-This generates a solution file octomap.sln,
-load this file and build the project.
+MinGW
+------------------------------
 
-You can run the unit tests using ctest on the command prompt:
-octomap/build> ctest.exe -C Release
+* Start the cmake-gui and set the code directory to the 
+  library root (e.g. /octomap)
+* Set the build directory to, e.g., /octomap/build.
+* Press "Generate", select the appropriate generator, 
+  "MinGW Makefiles".
+
+* start a command shell and "make" the project:
+  octomap> cd build
+  octomap/build> mingw32-make.exe
+
+* You can run the unit tests using ctest on the command prompt:
+  octomap/build> ctest.exe
+
+
+Microsoft Visual Studio 2010
+------------------------------
+
+* Start the cmake-gui and set the code directory to the 
+  library root (e.g. /octomap)
+* Set the build directory to, e.g., /octomap/build.
+* Press "Generate", select the appropriate generator, 
+  e.g. "Visual Studio 10".
+
+* This generates a solution file octomap.sln
+  Load this file and build the project.
+
+* You can run the unit tests using ctest on the command prompt:
+  octomap/build> ctest.exe -C Release
 

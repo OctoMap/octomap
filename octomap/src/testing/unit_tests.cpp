@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string>
-#ifdef _MSC_VER
+#ifdef __WIN32
   #include <Windows.h>  // to define Sleep()
 #endif
 
@@ -193,7 +193,7 @@ int main(int argc, char** argv) {
     unsigned int tree_time = stamped_tree.getLastUpdateTime();
     unsigned int node_time = result->getTimestamp();
     EXPECT_TRUE (tree_time > 0);
-    #ifdef _MSC_VER
+    #ifdef _WIN32
       Sleep(1000);
     #else
       sleep(1);
