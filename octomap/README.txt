@@ -160,7 +160,7 @@ To compile the library you need cmake (http://www.cmake.org).
 MinGW
 ------------------------------
 
-* Download MinGW distribution (http://www.mingw.org)
+* Download the MinGW distribution (http://www.mingw.org)
 * Install C++ compiler and add MingGW/bin to your system PATH
 
 * Start the cmake-gui and set the code directory to the 
