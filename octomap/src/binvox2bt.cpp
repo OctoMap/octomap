@@ -204,10 +204,11 @@ int main(int argc, char **argv)
         }
 
         size = width * height * depth;
-        double res = double(scale)/double(depth);
+        int maxSide = std::max(std::max(width, height), depth);
+        double res = double(scale)/double(maxSide);
 
         if(!tree) {
-            cout << "Generate labeled octree with leaf size " << res << endl << endl;
+            cout << "Generating octree with leaf size " << res << endl << endl;
             tree = new OcTree(res);
         }
 
@@ -253,9 +254,10 @@ int main(int argc, char **argv)
                     int x = i / (width * height);
                     
                     // voxel coordinates --> world coordinates
-                    point3d endpoint((float) ((double) x*scale/depth + tx + 0.000001), 
-                                     (float) ((double) y*scale/depth + ty + 0.000001),
-                                     (float) ((double) z*scale/depth + tz + 0.000001));
+                    point3d endpoint((float) ((double) x*res + tx + 0.000001), 
+                                     (float) ((double) y*res + ty + 0.000001),
+                                     (float) ((double) z*res + tz + 0.000001));
+
                     if(rotate) {
                       endpoint.rotate_IP(M_PI_2, 0.0, 0.0);
                     }
@@ -268,7 +270,7 @@ int main(int argc, char **argv)
 
                       // mark cell in octree as free or occupied
                       if(mark_free || value == 1) {
-                          tree->updateNode(endpoint, value == 1);
+                          tree->updateNode(endpoint, value == 1, true);
                       }
                     } else{
                       nr_voxels_out ++;
@@ -288,7 +290,8 @@ int main(int argc, char **argv)
     }
     
     // prune octree
-    cout << "Prune octree" << endl << endl;
+    cout << "Pruning octree" << endl << endl;
+    tree->updateInnerOccupancy();
     tree->prune();
  
     // write octree to file  
