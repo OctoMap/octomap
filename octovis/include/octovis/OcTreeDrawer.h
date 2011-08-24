@@ -50,6 +50,7 @@ namespace octomap {
     /// sets a new OcTree that should be drawn by this drawer
     /// origin specifies a global transformation that should be applied
     void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin, int map_id_);
+    void setOcTreeOldSchool(const octomap::OcTree &octree, octomap::pose6d origin_, int map_id_);
 
     // modification of existing drawer  ------------------
 
@@ -87,18 +88,39 @@ namespace octomap {
 
     //! Initializes the OpenGL visualization for a list of OcTreeVolumes
     //! The array is cleared first, if needed
-    void generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
-                       GLfloat*** glArray, unsigned int& glArraySize, 
-                       GLfloat** glColorArray = NULL);
+    /* void generateCubes(const std::list<octomap::OcTreeVolume>& voxels, */
+    /*                    GLfloat*** glArray, unsigned int& glArraySize,  */
+    /*                    GLfloat** glColorArray = NULL); */
 
     /// same as above, but rotates cubes to correct reference frame
     void generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
                        GLfloat*** glArray, unsigned int& glArraySize, 
                        octomath::Pose6D& origin,
                        GLfloat** glColorArray = NULL);
+
+    void generateCubesOldSchool(const std::list<octomap::OcTreeVolume>& voxels,
+                       GLfloat*** glArray, unsigned int& glArraySize, 
+                       octomath::Pose6D& origin,
+                       GLfloat** glColorArray = NULL);
     
     //! clear OpenGL visualization
-    void clearCubes(GLfloat*** glArray, unsigned int& glArraySize, GLfloat** glColorArray = NULL);
+    void clearCubes(GLfloat*** glArray, unsigned int& glArraySize,
+                    GLfloat** glColorArray = NULL);
+    //! setup OpenGL arrays
+    void initGLArrays(const unsigned int& num_cubes, unsigned int& glArraySize,
+                       GLfloat*** glArray, GLfloat** glColorArray);
+    //! setup cube template
+    void initCubeTemplate(const octomath::Pose6D& origin,
+                          std::vector<octomath::Vector3>& cube_template);
+    //! add one cube to arrays
+    unsigned int generateCube(const octomap::OcTreeVolume& v,
+                              const std::vector<octomath::Vector3>& cube_template,
+                              const unsigned int& current_array_idx,
+                              GLfloat*** glArray);
+    unsigned int setCubeColor(const octomap::OcTreeVolume& v,
+                              const unsigned int& current_array_idx,
+                              GLfloat** glColorArray);
+      
 
     void initOctreeGridVis();
 
