@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string>
 #ifdef _WIN32
-  #include <Windows.h>  // to define Sleep()
+  #include <Windows.h>  // to define sleep()
+#else
+  #include <unistd.h>   // POSIX sleep()
 #endif
 
 
