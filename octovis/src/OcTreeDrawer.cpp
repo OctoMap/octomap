@@ -170,11 +170,11 @@ namespace octomap {
         if (octree.isNodeOccupied(*it)){ // occupied voxels
           if (octree.isNodeAtThreshold(*it)) {
             idx_occupied_thres = generateCube(voxel, cube_template, idx_occupied_thres, &m_occupiedThresArray);
-            color_idx_occupied_thres = setCubeColor(voxel, color_idx_occupied_thres, &m_occupiedThresColorArray);
+            color_idx_occupied_thres = setCubeColorHeightmap(voxel, color_idx_occupied_thres, &m_occupiedThresColorArray);
           }
           else {
             idx_occupied = generateCube(voxel, cube_template, idx_occupied, &m_occupiedArray);
-            color_idx_occupied = setCubeColor(voxel, color_idx_occupied, &m_occupiedColorArray);
+            color_idx_occupied = setCubeColorHeightmap(voxel, color_idx_occupied, &m_occupiedColorArray);
           }
         }
         else if (showAll) { // freespace voxels
@@ -422,20 +422,39 @@ namespace octomap {
   }
 
 
-  unsigned int OcTreeDrawer::setCubeColor(const octomap::OcTreeVolume& v,
+  unsigned int OcTreeDrawer::setCubeColorHeightmap(const octomap::OcTreeVolume& v,
                                           const unsigned int& current_array_idx,
                                           GLfloat** glColorArray) {
+
     if (glColorArray == NULL) return current_array_idx;
 
     unsigned int colorIdx = current_array_idx;
     // color for all 4 vertices (same height)
     for (int k = 0; k < 4; ++k) {
       if (m_colorMode == CM_GRAY_HEIGHT)
-        SceneObject::heightMapGray(v.first.z(), *glColorArray + colorIdx);
+        SceneObject::heightMapGray(v.first.z(), *glColorArray + colorIdx);  // sets r,g,b
       else
-        SceneObject::heightMapColor(v.first.z(), *glColorArray + colorIdx);
+        SceneObject::heightMapColor(v.first.z(), *glColorArray + colorIdx);   // sets r,g,b
       // set Alpha value:
       (*glColorArray)[colorIdx + 3] = m_alphaOccupied;
+      colorIdx += 4;
+    }  
+    return colorIdx;
+  }
+
+  unsigned int OcTreeDrawer::setCubeColorRGBA(const char& r, const char& g, const char& b,
+                                              const char& a,
+                                              const unsigned int& current_array_idx,
+                                              GLfloat** glColorArray) {
+
+    if (glColorArray == NULL) return current_array_idx;
+    unsigned int colorIdx = current_array_idx;
+    // set color for next 4 vertices (=one quad)
+    for (int k = 0; k < 4; ++k) {
+      (*glColorArray)[colorIdx    ] = (double) r/255.;
+      (*glColorArray)[colorIdx + 1] = (double) g/255.;
+      (*glColorArray)[colorIdx + 2] = (double) b/255.;
+      (*glColorArray)[colorIdx + 3] = (double) a/255.;
       colorIdx += 4;
     }  
     return colorIdx;
@@ -477,7 +496,7 @@ namespace octomap {
     if (glColorArray != NULL) {
       for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin(); 
            it != voxels.end(); it++) {
-        colorIdx = setCubeColor(*it, colorIdx, glColorArray);
+        colorIdx = setCubeColorHeightmap(*it, colorIdx, glColorArray);
       }
     }
   }

@@ -40,7 +40,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "OccupancyOcTreeBase.h"
 #include "OcTreeNode.h"
 #include "ScanGraph.h"
@@ -73,11 +72,7 @@ namespace octomap {
     OcTree(std::string _filename);
 
     virtual ~OcTree(){};
-
-
-
   };
-
 
 } // end namespace
 

@@ -117,9 +117,13 @@ namespace octomap {
                               const std::vector<octomath::Vector3>& cube_template,
                               const unsigned int& current_array_idx,
                               GLfloat*** glArray);
-    unsigned int setCubeColor(const octomap::OcTreeVolume& v,
-                              const unsigned int& current_array_idx,
-                              GLfloat** glColorArray);
+    unsigned int setCubeColorHeightmap(const octomap::OcTreeVolume& v,
+                                       const unsigned int& current_array_idx,
+                                       GLfloat** glColorArray);
+    unsigned int setCubeColorRGBA(const char& r, const char& g, const char& b,
+                                  const char& a,
+                                  const unsigned int& current_array_idx,
+                                  GLfloat** glColorArray);
       
 
     void initOctreeGridVis();

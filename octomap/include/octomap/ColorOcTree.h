@@ -94,7 +94,7 @@ namespace octomap {
 
 
   // tree definition
-  class ColorOcTree : public OccupancyOcTreeBase <ColorOcTreeNode> {    
+  class ColorOcTree : public OccupancyOcTreeBase <ColorOcTreeNode> {
 
   public:
     ColorOcTree(double _resolution);

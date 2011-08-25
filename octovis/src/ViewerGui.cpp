@@ -696,8 +696,8 @@ namespace octomap{
 
   void ViewerGui::on_actionOpen_file_triggered(){
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    tr("Open data file"), "",
-                                                    "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
+      tr("Open data file"), "",
+      "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
     if (!filename.isEmpty()){
 #ifdef _WIN32      
       m_filename = std::string(filename.toLocal8Bit().data());
@@ -711,8 +711,8 @@ namespace octomap{
 
   void ViewerGui::on_actionOpen_graph_incremental_triggered(){
     QString filename = QFileDialog::getOpenFileName(this,
-                                                    tr("Open graph file incrementally (at start)"), "",
-                                                    "binary scan graph (*.graph)");
+     tr("Open graph file incrementally (at start)"), "",
+     "binary scan graph (*.graph)");
     if (!filename.isEmpty()){
       m_glwidget->clearAll();
 
@@ -756,8 +756,10 @@ namespace octomap{
       else if (fileinfo.suffix() == "ot"){
         OcTreeFileIO::write( r->octree, std_filename);
       }
-      else{
-        QMessageBox::warning(this, "Unknown file", "Cannot write file, unknown extension: "+fileinfo.suffix(), QMessageBox::Ok);
+      else {
+        QMessageBox::warning(this, "Unknown file", 
+                             "Cannot write file, unknown extension: "+fileinfo.suffix(),
+                             QMessageBox::Ok);
       }
     
       QApplication::restoreOverrideCursor();
