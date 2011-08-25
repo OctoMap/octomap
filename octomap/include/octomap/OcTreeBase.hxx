@@ -58,7 +58,6 @@ namespace octomap {
       minValue[i] = std::numeric_limits<double>::max( );
     }
     sizeChanged = true;
-
   }
 
 
@@ -72,7 +71,8 @@ namespace octomap {
     resolution = r;
     resolution_factor = 1. / resolution;
 
-    tree_center(0) = tree_center(1) = tree_center(2) = (float) (((double) tree_max_val) / resolution_factor);
+    tree_center(0) = tree_center(1) = tree_center(2) 
+      = (float) (((double) tree_max_val) / resolution_factor);
 
     // init node size lookup table:
     sizeLookupTable.resize(tree_depth+1);
@@ -176,8 +176,10 @@ namespace octomap {
 
 
   template <class NODE> 
-  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, const float& center_offset, 
-                                             const point3d& parent_center, point3d& child_center) const {
+  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, 
+                                             const float& center_offset, 
+                                             const point3d& parent_center, 
+                                             point3d& child_center) const {
     // x-axis
     if (pos & 1) child_center(0) = parent_center(0) + center_offset;
     else  	 child_center(0) = parent_center(0) - center_offset;
@@ -533,14 +535,12 @@ namespace octomap {
   template <class NODE>
   std::ostream& OcTreeBase<NODE>::write(std::ostream &s){
     this->prune();
-
     return this->writeConst(s);
   }
 
   template <class NODE>
   std::ostream& OcTreeBase<NODE>::writeConst(std::ostream &s) const{
     itsRoot->writeValue(s);
-
     return s;
   }
 
@@ -556,14 +556,12 @@ namespace octomap {
 
     // tree needs to be newly created or cleared externally!
     if (itsRoot->hasChildren()) {
-      OCTOMAP_ERROR_STR("Trying to read into a tree that is already constructed!");
+      OCTOMAP_ERROR_STR("Trying to read into an existing tree.");
       return s;
     }
 
     itsRoot->readValue(s);
-
     tree_size = calcNumNodes();  // compute number of nodes
-
     return s;
   }
 
@@ -660,8 +658,7 @@ namespace octomap {
     mx = my = mz = std::numeric_limits<double>::max( );
     if (sizeChanged) {
       for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
-              end=this->end(); it!= end; ++it)
-      {
+              end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;
         double x = it.getX() - halfSize;
         double y = it.getY() - halfSize;
@@ -669,10 +666,9 @@ namespace octomap {
         if (x < mx) mx = x;
         if (y < my) my = y;
         if (z < mz) mz = z;
-
       }
-
-    } else {
+    } // end if size changed 
+    else {
       mx = minValue[0];
       my = minValue[1];
       mz = minValue[2];
@@ -684,8 +680,7 @@ namespace octomap {
     mx = my = mz = -std::numeric_limits<double>::max( );
     if (sizeChanged) {
       for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
-          end=this->end(); it!= end; ++it)
-      {
+            end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;
         double x = it.getX() + halfSize;
         double y = it.getY() + halfSize;
@@ -694,13 +689,13 @@ namespace octomap {
         if (y > my) my = y;
         if (z > mz) mz = z;
       }
-
-    } else {
+    } 
+    else {
       mx = maxValue[0];
       my = maxValue[1];
       mz = maxValue[2];
     }
- }
+  }
 
   template <class NODE>
   size_t OcTreeBase<NODE>::calcNumNodes() const {
@@ -711,9 +706,7 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::calcNumNodesRecurs(NODE* node, size_t& num_nodes) const {
-
     assert (node != NULL);
-
     if (node->hasChildren()) {
       for (unsigned int i=0; i<8; ++i) {
         if (node->childExists(i)) {
@@ -724,18 +717,13 @@ namespace octomap {
     }
   }
 
-
   template <class NODE>
   size_t OcTreeBase<NODE>::memoryUsage() const{
-
     size_t node_size = sizeof(NODE);
     size_t num_leaf_nodes = this->getNumLeafNodes();
     size_t num_inner_nodes = tree_size - num_leaf_nodes;
-
     return (sizeof(OcTreeBase<NODE>) + node_size * tree_size + num_inner_nodes * sizeof(NODE*[8]));
   }
-
-
 
   template <class NODE>
   void OcTreeBase<NODE>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const {

@@ -51,25 +51,27 @@ namespace octomap {
       else                children[i] = 0;
     }
     char children_char = (char) children.to_ulong();
-
+    
+    // write node data
     s.write((const char*) &value, sizeof(value)); // occupancy
     s.write((const char*) &color, sizeof(Color)); // color
-    s.write((char*)&children_char, sizeof(char));
+    s.write((char*)&children_char, sizeof(char)); // child existence
 
-    // write children's children
+    // write existing children
     for (unsigned int i=0; i<8; ++i) 
       if (children[i] == 1) this->getChild(i)->writeValue(s);    
     return s;
   }
 
   std::istream& ColorOcTreeNode::readValue (std::istream &s) {
+    // read node data
+    char children_char;
     s.read((char*) &value, sizeof(value)); // occupancy
     s.read((char*) &color, sizeof(Color)); // color
-    char children_char;
-    s.read((char*)&children_char, sizeof(char));
-    std::bitset<8> children ((unsigned long) children_char);
+    s.read((char*)&children_char, sizeof(char)); // child existence
 
-    // recurse: read children
+    // read existing children
+    std::bitset<8> children ((unsigned long long) children_char);
     for (unsigned int i=0; i<8; i++) {
       if (children[i] == 1){
         createChild(i);

@@ -172,15 +172,12 @@ namespace octomap {
 
     // read data:
     s.read((char*) &value, sizeof(value));
-
     s.read((char*)&children_char, sizeof(char));
-
-
     std::bitset<8> children ((unsigned long long) children_char);
 
-//    std::cout << "read: " << log_odds_occupancy << " "
-//                << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
-
+    // std::cout << "read: " << value << " "
+    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >()
+    //           << std::endl;
 
     for (unsigned int i=0; i<8; i++) {
       if (children[i] == 1){
@@ -188,7 +185,6 @@ namespace octomap {
         getChild(i)->readValue(s);
       }
     }
-
     return s;
   }
 
@@ -206,15 +202,13 @@ namespace octomap {
         children[i] = 0;
     }
 
-
     char children_char = (char) children.to_ulong();
-
-
     s.write((const char*) &value, sizeof(value));
     s.write((char*)&children_char, sizeof(char));
 
-//    std::cout << "wrote: " << log_odds_occupancy << " "
-//            << children.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
+    // std::cout << "wrote: " << value << " "
+    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >() 
+    //           << std::endl;
 
     // write children's children
     for (unsigned int i=0; i<8; i++) {
@@ -222,7 +216,6 @@ namespace octomap {
         this->getChild(i)->writeValue(s);
       }
     }
-
     return s;
   }
 

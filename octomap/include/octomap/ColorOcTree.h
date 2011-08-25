@@ -52,8 +52,9 @@ namespace octomap {
     class Color {
     public:
     Color() : r(255), g(255), b(255) {}
-    Color(char _r, char _g, char _b) : r(_r), g(_g), b(_b) {}
-      char r, g, b;
+    Color(unsigned char _r, unsigned char _g, unsigned char _b) 
+      : r(_r), g(_g), b(_b) {}
+      unsigned char r, g, b;
     };
 
   public:
@@ -72,9 +73,11 @@ namespace octomap {
       return true;
     }
     
-    // timestamp
     inline Color getColor() const { return color; }
     inline void  setColor(Color c) {this->color = color; }
+    inline void  setColor(unsigned char r, unsigned char g, unsigned char b) {
+      this->color = Color(r,g,b); 
+    }
 
     // update occupancy and color of inner nodes 
     inline void updateOccupancyChildren() {      
