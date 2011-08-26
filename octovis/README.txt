@@ -54,7 +54,7 @@ The viewer should be build along with the rest of the octomap package:
 
 * from a shell execute: 
    - cd octomap/build
-   - cmake ..
+   - cmake -G "MinGW Makefiles" ..
    - mingw32-make
 
 
