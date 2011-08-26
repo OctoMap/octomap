@@ -44,12 +44,13 @@ namespace octomap {
     /// sets a new OcTree that should be drawn by this drawer
     DEPRECATED( void setOcTree(const octomap::OcTree &octree) ) {
       octomap::pose6d o; // initialized to (0,0,0) , (0,0,0,1) by default
-      setOcTree(octree, o, 0);
+      const AbstractOcTree* tree_pnt = &octree;
+      setOcTree(tree_pnt, o, 0);
     }
 
     /// sets a new OcTree that should be drawn by this drawer
     /// origin specifies a global transformation that should be applied
-    void setOcTree(const octomap::OcTree &octree, octomap::pose6d origin, int map_id_);
+    virtual void setOcTree(const AbstractOcTree* tree_pnt, octomap::pose6d origin_, int map_id_);
     void setOcTreeOldSchool(const octomap::OcTree &octree, octomap::pose6d origin_, int map_id_);
 
     // modification of existing drawer  ------------------
@@ -120,8 +121,8 @@ namespace octomap {
     unsigned int setCubeColorHeightmap(const octomap::OcTreeVolume& v,
                                        const unsigned int& current_array_idx,
                                        GLfloat** glColorArray);
-    unsigned int setCubeColorRGBA(const char& r, const char& g, const char& b,
-                                  const char& a,
+    unsigned int setCubeColorRGBA(const unsigned char& r, const unsigned char& g, 
+                                  const unsigned char& b, const unsigned char& a,
                                   const unsigned int& current_array_idx,
                                   GLfloat** glColorArray);
       

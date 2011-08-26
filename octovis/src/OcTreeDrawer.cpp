@@ -105,8 +105,10 @@ namespace octomap {
   }
 
 
-  void OcTreeDrawer::setOcTree(const octomap::OcTree &octree, octomap::pose6d origin_, int map_id_) {
+  void OcTreeDrawer::setOcTree(const AbstractOcTree* tree_pnt, octomap::pose6d origin_, int map_id_) {
 
+    OcTree& octree = *((OcTree*) tree_pnt);
+      
     this->map_id = map_id_;
 
     // save origin used during cube generation
@@ -442,8 +444,8 @@ namespace octomap {
     return colorIdx;
   }
 
-  unsigned int OcTreeDrawer::setCubeColorRGBA(const char& r, const char& g, const char& b,
-                                              const char& a,
+  unsigned int OcTreeDrawer::setCubeColorRGBA(const unsigned char& r, const unsigned char& g, const unsigned char& b,
+                                              const unsigned char& a,
                                               const unsigned int& current_array_idx,
                                               GLfloat** glColorArray) {
 

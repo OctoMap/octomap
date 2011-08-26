@@ -1,42 +1,3 @@
-// $Id: simple.cpp 271 2011-08-19 10:02:26Z kai_wurm $
-
-/**
-* OctoMap:
-* A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
-
-/*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Freiburg nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
 #include <octomap/octomap.h>
 #include <octomap/ColorOcTree.h>
 
@@ -64,9 +25,9 @@ int main(int argc, char** argv) {
   for (int x=-20; x<20; x++) {
     for (int y=-20; y<20; y++) {
       for (int z=-20; z<20; z++) {
-        point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
+        point3d endpoint ((float) x*0.05f+0.01f, (float) y*0.05f+0.01f, (float) z*0.05f+0.01f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, true); 
-        n->setColor(255,0,0); // set color to red
+        n->setColor(z*5+100,x*5+100,y*5+100); // set color to red
       }
     }
   }
@@ -75,9 +36,9 @@ int main(int argc, char** argv) {
   for (int x=-30; x<30; x++) {
     for (int y=-30; y<30; y++) {
       for (int z=-30; z<30; z++) {
-        point3d endpoint ((float) x*0.02f-1.0f, (float) y*0.02f-1.0f, (float) z*0.02f-1.0f);
+        point3d endpoint ((float) x*0.02f+2.0f, (float) y*0.02f+2.0f, (float) z*0.02f+2.0f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, false); 
-        n->setColor(0,0,255); // set color to blue
+        n->setColor(255,255,0); // set color to yellow
       }
     }
   }
@@ -99,7 +60,7 @@ int main(int argc, char** argv) {
     print_query_info(query, result);
   }
  
-  std::string filename ("simple_tree.ct");
+  std::string filename ("simple_tree.cot");
   // write color tree
   std::ofstream outfile(filename.c_str(), std::ios_base::out | std::ios_base::binary);
   if (outfile.is_open()){
@@ -113,9 +74,9 @@ int main(int argc, char** argv) {
   }
 
   // read tree file
-    std::ifstream infile(filename.c_str(), std::ios_base::in |std::ios_base::binary);
+  std::ifstream infile(filename.c_str(), std::ios_base::in |std::ios_base::binary);
   if (!infile.is_open()) {
-    cout << "file "<< filename << " could not be opened for writing.\n";
+    cout << "file "<< filename << " could not be opened for reading.\n";
     return -1;
   }
 

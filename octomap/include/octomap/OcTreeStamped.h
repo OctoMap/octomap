@@ -91,7 +91,7 @@ namespace octomap {
     OcTreeStamped(double _resolution);
 
     //! \return timestamp of last update
-    unsigned int  getLastUpdateTime();
+    unsigned int getLastUpdateTime();
 
     void degradeOutdatedNodes(unsigned int time_thres);
     

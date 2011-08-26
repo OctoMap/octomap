@@ -18,6 +18,7 @@ set(viewerlib_SRCS
 	src/PointcloudDrawer.cpp
 	src/OcTreeDrawer.cpp
 	src/TrajectoryDrawer.cpp
+	src/ColorOcTreeDrawer.cpp
 )
 
 # sources for viewer binary

@@ -50,6 +50,7 @@
 #include "octomap_types.h"
 #include "OcTreeKey.h"
 #include "ScanGraph.h"
+#include <octomap/AbstractOcTree.h>
 
 
 namespace octomap {
@@ -69,7 +70,7 @@ namespace octomap {
    * \note The tree does not store individual data points.
    */
   template <class NODE>
-  class OcTreeBase {
+    class OcTreeBase : public AbstractOcTree {
 
   public:
     /// Make the templated NODE type available from the outside
@@ -124,9 +125,9 @@ namespace octomap {
     // -- statistics  ----------------------
 
     /// \return The number of nodes in the tree
-    inline size_t size() const { return tree_size; }
+    virtual inline size_t size() const { return tree_size; }
 
-    size_t memoryUsage() const;
+    virtual size_t memoryUsage() const;
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
     size_t memoryFullGrid();
@@ -134,12 +135,12 @@ namespace octomap {
     double volume();
 
     /// Size of OcTree in meters for x, y and z dimension
-    void getMetricSize(double& x, double& y, double& z);
+    virtual void getMetricSize(double& x, double& y, double& z);
     /// minimum value in x, y, z
-    void getMetricMin(double& x, double& y, double& z);
+    virtual void getMetricMin(double& x, double& y, double& z);
     void getMetricMin(double& x, double& y, double& z) const;
     /// maximum value in x, y, z
-    void getMetricMax(double& x, double& y, double& z);
+    virtual void getMetricMax(double& x, double& y, double& z);
     void getMetricMax(double& x, double& y, double& z) const;
 
     /// Traverses the tree to calculate the total number of nodes
@@ -645,7 +646,6 @@ namespace octomap {
      */
     bool genKeyValue(double coordinate, unsigned short int& keyval) const;
 
-
     /// generates a new key value at a specified depth in the tree given a key value at the final tree depth
     bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const;
 
@@ -679,7 +679,6 @@ namespace octomap {
     /// compute center point of child voxel cell, for internal use
     void computeChildCenter (const unsigned int& pos, const float& center_offset, 
                              const point3d& parent_center, point3d& child_center) const;
-
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();

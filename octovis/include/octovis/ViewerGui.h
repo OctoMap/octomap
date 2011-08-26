@@ -42,32 +42,21 @@
 #include "ViewerSettingsPanel.h"
 #include "ViewerSettingsPanelCamera.h"
 #include "ui_ViewerGui.h"
+
 #include <octomap/OcTreeFileIO.h>
+#include <octovis/OcTreeRecord.h>
 
 namespace octomap {
 
-
   class ViewerGui : public QMainWindow {
     Q_OBJECT
-
-      public:
-    
-    class OcTreeRecord {
-    public:
-      octomap::OcTree*  octree;
-      OcTreeDrawer*     octree_drawer;
-      unsigned int      id;
-      octomap::pose6d   origin;
-    };
-
-
+   
   public:
     ViewerGui(const std::string& filename="", QWidget *parent = 0);
     ~ViewerGui();
 
     static const unsigned int LASERTYPE_URG  = 0;
     static const unsigned int LASERTYPE_SICK = 1;
-
 
     // use this drawer id if loading files or none is specified in msg
     static const unsigned int DEFAULT_OCTREE_ID  = 0; 
@@ -164,6 +153,11 @@ namespace octomap {
     // open "regular" file containing an octree
     void openOcTree();
 
+    // open octree with per-voxel color info
+    void openColorOcTree();
+
+    void setOcTreeUISwitches();
+
     /*!
      * (Re-)generates OcTree from the internally stored ScanGraph
      */
@@ -172,16 +166,14 @@ namespace octomap {
 
     void showInfo(QString string, bool newline=false);
 
-
-    std::map<int, OcTreeRecord>    m_octrees;
-
-    void addOctree(octomap::OcTree* tree, int id, octomap::pose6d origin);
-    void addOctree(octomap::OcTree* tree, int id);
+    void addOctree(AbstractOcTree* tree, int id, pose6d origin);
+    void addOctree(AbstractOcTree* tree, int id);
     bool getOctreeRecord(int id, OcTreeRecord*& otr);
- 
-    octomap::ScanGraph* m_scanGraph;
-    octomap::ScanGraph::iterator m_nextScanToAdd;
 
+    std::map<int, OcTreeRecord> m_octrees;
+ 
+    ScanGraph* m_scanGraph;
+    ScanGraph::iterator m_nextScanToAdd;
 
     Ui::ViewerGuiClass ui;
     ViewerWidget* m_glwidget;
@@ -197,11 +189,11 @@ namespace octomap {
     QLabel* m_mapSizeStatus;
     QLabel* m_mapMemoryStatus;
 
-    //! Filename of last loaded file, in case it is necessary to reload it (no matter what kind of log)
+    //! Filename of last loaded file, in case it is necessary to reload it
     std::string m_filename;
-
   };
 
-}
+} // namespace
+
 
 #endif // VIEWERGUI_H

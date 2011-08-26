@@ -28,7 +28,9 @@
 #include <fstream>
 //#include <octomap/octomap_timing.h>
 
+#include <octovis/ColorOcTreeDrawer.h>
 #include <octovis/ViewerGui.h>
+
 #define _MAXRANGE_URG 5.1
 #define _MAXRANGE_SICK 50.0
 
@@ -40,7 +42,6 @@ namespace octomap{
       m_cameraFollowMode(NULL),
       m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
       m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
-
       m_cameraStored(false), m_filename("") {
 
     ui.setupUi(this);
@@ -174,20 +175,26 @@ namespace octomap{
     } 
   }
 
-  void ViewerGui::addOctree(octomap::OcTree* tree, int id, octomap::pose6d origin) {
+  void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id, octomap::pose6d origin) {
     // is id in use?
     OcTreeRecord* r;
     if (getOctreeRecord(id, r)) {
       delete r->octree;
       r->octree = tree;
       r->origin = origin;
+      // FIXME: check for drawer type
       // we reuse the old octree_drawer
     }
     // else add new OcTreeRecord
     else {
       OcTreeRecord otr;
       otr.id = id;
-      otr.octree_drawer = new OcTreeDrawer();
+      if (dynamic_cast<OcTree*>(tree)) {      
+        otr.octree_drawer = new OcTreeDrawer();
+      }
+      else if (dynamic_cast<ColorOcTree*>(tree)) {      
+        otr.octree_drawer = new ColorOcTreeDrawer();
+      }
       otr.octree = tree;
       otr.origin = origin;
       m_octrees[id] = otr;
@@ -195,7 +202,7 @@ namespace octomap{
     }
   }
 
-  void ViewerGui::addOctree(octomap::OcTree* tree, int id) {
+  void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id) {
     octomap::pose6d o; // initialized to (0,0,0) , (0,0,0,1) by default
     addOctree(tree, id, o);
   }
@@ -262,7 +269,7 @@ namespace octomap{
    // gettimeofday(&start, NULL);  // start timer    
     for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
       it->second.octree_drawer->setMax_tree_depth(m_max_tree_depth);
-      it->second.octree_drawer->setOcTree(*(it->second.octree), it->second.origin, it->second.id);
+      it->second.octree_drawer->setOcTree(it->second.octree, it->second.origin, it->second.id);
     }
 //    gettimeofday(&stop, NULL);  // stop timer
 //    double time_to_generate = (stop.tv_sec - start.tv_sec) + 1.0e-6 *(stop.tv_usec - start.tv_usec);
@@ -426,7 +433,8 @@ namespace octomap{
           fprintf(stderr, "ERROR: OctreeRecord for id %d not found!\n", DEFAULT_OCTREE_ID);
           return;
         }
-        r->octree->insertScan(**m_nextScanToAdd, m_laserMaxRange);
+        // not used with ColorOcTrees, omitting casts
+        ((OcTree*) r->octree)->insertScan(**m_nextScanToAdd, m_laserMaxRange); 
         m_nextScanToAdd++;
       }
 
@@ -461,6 +469,9 @@ namespace octomap{
       }
       else if (fileinfo.suffix() == "ot"){
         openOcTree();
+      }
+      else if (fileinfo.suffix() == "cot"){
+        openColorOcTree();
       }
       else if (fileinfo.suffix() == "dat"){
         openPointcloud();
@@ -513,13 +524,7 @@ namespace octomap{
   }
 
 
-  void ViewerGui::openTree(){
-    OcTree* tree = new octomap::OcTree(m_filename);
-    this->addOctree(tree, DEFAULT_OCTREE_ID);
-
-    m_octreeResolution = tree->getResolution();
-    emit changeResolution(m_octreeResolution);
-
+  void ViewerGui::setOcTreeUISwitches() {
     ui.actionPointcloud->setChecked(false);
     ui.actionPointcloud->setEnabled(false);
     ui.actionOctree_cells->setChecked(true);
@@ -532,18 +537,22 @@ namespace octomap{
     ui.actionConvert_ml_tree->setEnabled(false);
     ui.actionReload_Octree->setEnabled(true);
     ui.actionSettings->setEnabled(false);
+  }
 
+
+  void ViewerGui::openTree(){
+    OcTree* tree = new octomap::OcTree(m_filename);
+    this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+    m_octreeResolution = tree->getResolution();
+    emit changeResolution(m_octreeResolution);
+
+    setOcTreeUISwitches();
     showOcTree();
     m_glwidget->resetView();
   }
 
   void ViewerGui::openOcTree(){
-    // if (m_ocTree){
-    //   delete m_ocTree;
-    //   m_ocTree = NULL;
-    // }
-    //
-    //m_ocTree = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
     OcTree* tree(NULL);
     octomap::OcTreeBase<octomap::OcTreeNode>* tree_in = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
     if (tree_in){
@@ -552,28 +561,43 @@ namespace octomap{
 
     if (tree){
       this->addOctree(tree, DEFAULT_OCTREE_ID);
+
       m_octreeResolution = tree->getResolution();
       emit changeResolution(m_octreeResolution);
 
-      ui.actionPointcloud->setChecked(false);
-      ui.actionPointcloud->setEnabled(false);
-      ui.actionOctree_cells->setChecked(true);
-      ui.actionOctree_cells->setEnabled(true);
-      ui.actionFree->setChecked(false);
-      ui.actionFree->setEnabled(true);
-      ui.actionOctree_structure->setEnabled(true);
-      ui.actionOctree_structure->setChecked(false);
-      ui.actionTrajectory->setEnabled(false);
-      ui.actionConvert_ml_tree->setEnabled(true);
-      ui.actionReload_Octree->setEnabled(true);
-      ui.actionSettings->setEnabled(false);
-
+      setOcTreeUISwitches();
       showOcTree();
       m_glwidget->resetView();
-    } else {
+    } 
+    else {
       QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
     }
+  }
 
+  void ViewerGui::openColorOcTree() {
+
+    std::ifstream infile(m_filename.c_str(), std::ios_base::in |std::ios_base::binary);
+    if (!infile.is_open()) {
+      QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
+      return;
+    }
+
+    ColorOcTree* tree = new ColorOcTree(0.1);
+    tree->read(infile);
+    infile.close();
+
+    this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+    m_octreeResolution = tree->getResolution();
+    emit changeResolution(m_octreeResolution);
+
+    setOcTreeUISwitches();
+    showOcTree();
+    m_glwidget->resetView();
+    // map color and height map share the same color array and QAction
+    ui.actionHeight_map->setText ("map color");  // rename QAction in Menu
+    this->on_actionHeight_map_toggled(true); // enable color view
+    ui.actionHeight_map->setChecked(true); 
   }
 
 
@@ -697,7 +721,7 @@ namespace octomap{
   void ViewerGui::on_actionOpen_file_triggered(){
     QString filename = QFileDialog::getOpenFileName(this,
       tr("Open data file"), "",
-      "All supported files (*.graph *.bt *.ot *.dat);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;Pointcloud (*.dat);;All files (*)");
+      "All supported files (*.graph *.bt *.ot *.dat *.cot);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;ColorOcTree (*.cot);;Pointcloud (*.dat);;All files (*)");
     if (!filename.isEmpty()){
 #ifdef _WIN32      
       m_filename = std::string(filename.toLocal8Bit().data());
@@ -751,10 +775,24 @@ namespace octomap{
 #else       
       std_filename = filename.toStdString();
 #endif
-      if (fileinfo.suffix() == "bt")
-        r->octree->writeBinaryConst(std_filename); 
+
+      AbstractOcTree* t = r->octree;
+
+      if (fileinfo.suffix() == "bt") {
+        if (dynamic_cast<OcTree*>(t)) {
+          ((OcTree*) t)->writeBinaryConst(std_filename); 
+        }
+        else if (dynamic_cast<ColorOcTree*>(t)) {
+          ((ColorOcTree*) t)->writeBinaryConst(std_filename); 
+        }
+      }
       else if (fileinfo.suffix() == "ot"){
-        OcTreeFileIO::write( r->octree, std_filename);
+        if (dynamic_cast<OcTree*>(t)) {
+          OcTreeFileIO::write( (OcTree*) t, std_filename );
+        }
+        else if (dynamic_cast<ColorOcTree*>(t)) {
+          OcTreeFileIO::write( (ColorOcTree*) t, std_filename );
+        }
       }
       else {
         QMessageBox::warning(this, "Unknown file", 
@@ -800,7 +838,6 @@ namespace octomap{
       ui.actionPrintout_mode->setChecked(false);
       ui.actionSemanticColoring->setChecked(false);
     }
-
     m_glwidget->enableHeightColorMode(checked);
   }
 
@@ -883,31 +920,37 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionConvert_ml_tree_triggered(){
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    //if (m_ocTree) {
     if (m_octrees.size()) {
       showInfo("Converting OcTree to maximum Likelihood map... ");
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-        it->second.octree->toMaxLikelihood();
+        AbstractOcTree* t = it->second.octree;
+        if (dynamic_cast<OcTree*>(t)) {
+          ((OcTree*) t)->toMaxLikelihood();
+        }
+        else if (dynamic_cast<OcTree*>(t)) {
+          ((ColorOcTree*) t)->toMaxLikelihood();
+        }
       }
       showInfo("Done.", true);
       showOcTree();
-
       QApplication::restoreOverrideCursor();
     }
   }
 
 
   void ViewerGui::on_actionPrune_tree_triggered(){
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    if (m_octrees.size()) {
+    if (m_octrees.size()) { 
       showInfo("Pruning OcTree... ");
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-        it->second.octree->prune();
+        AbstractOcTree* t = it->second.octree;
+        if (dynamic_cast<OcTree*>(t)) {
+          ((OcTree*) t)->prune();
+        }
+        else if (dynamic_cast<ColorOcTree*>(t)) {
+          ((ColorOcTree*) t)->prune();
+        }
       }
       showOcTree();
       showInfo("Done.", true);
@@ -924,7 +967,13 @@ namespace octomap{
     if (m_octrees.size()) {
       showInfo("Expanding OcTree... ");
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-        it->second.octree->expand();
+        AbstractOcTree* t = it->second.octree;
+        if (dynamic_cast<OcTree*>(t)) {
+          ((OcTree*) t)->expand();
+        }
+        else if (dynamic_cast<OcTree*>(t)) {
+          ((ColorOcTree*) t)->expand();
+        }
       }
       showOcTree();
       

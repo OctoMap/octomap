@@ -108,8 +108,6 @@ namespace octomap {
                                   unsigned int max_depth,
                                   CountingOcTreeNode* node, unsigned int depth,
                                   const OcTreeKey& parent_key) const;
-
-
   };
 
 
