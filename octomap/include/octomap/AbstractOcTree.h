@@ -18,6 +18,10 @@ namespace octomap {
     virtual void getMetricMax(double& x, double& y, double& z) = 0;
     virtual void getMetricSize(double& x, double& y, double& z) = 0;
 
+    virtual void prune() = 0;
+    virtual void expand() = 0;
+
+
   protected:
 
   };

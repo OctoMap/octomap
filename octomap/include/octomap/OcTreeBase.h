@@ -114,11 +114,11 @@ namespace octomap {
 
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values
-    void prune();
+    virtual void prune();
 
     /// Expands all pruned nodes (reverse of prune())
     /// \note This is an expensive operation, especially when the tree is nearly empty!
-    void expand();
+    virtual void expand();
 
 
 

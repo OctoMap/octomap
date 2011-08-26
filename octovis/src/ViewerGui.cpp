@@ -944,13 +944,7 @@ namespace octomap{
     if (m_octrees.size()) { 
       showInfo("Pruning OcTree... ");
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-        AbstractOcTree* t = it->second.octree;
-        if (dynamic_cast<OcTree*>(t)) {
-          ((OcTree*) t)->prune();
-        }
-        else if (dynamic_cast<ColorOcTree*>(t)) {
-          ((ColorOcTree*) t)->prune();
-        }
+        it->second.octree->prune();
       }
       showOcTree();
       showInfo("Done.", true);
@@ -967,13 +961,7 @@ namespace octomap{
     if (m_octrees.size()) {
       showInfo("Expanding OcTree... ");
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
-        AbstractOcTree* t = it->second.octree;
-        if (dynamic_cast<OcTree*>(t)) {
-          ((OcTree*) t)->expand();
-        }
-        else if (dynamic_cast<OcTree*>(t)) {
-          ((ColorOcTree*) t)->expand();
-        }
+        it->second.octree->expand();
       }
       showOcTree();
       
