@@ -300,8 +300,8 @@ namespace octomap {
      * @param maxrange maximum range for raycasting (-1: unlimited)
      */
     void computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
-                        KeySet& free_cells,
-                        KeySet& occupied_cells,
+                       KeySet& free_cells,
+                       KeySet& occupied_cells,
                        double maxrange);
 
     // -- I/O  -----------------------------------------

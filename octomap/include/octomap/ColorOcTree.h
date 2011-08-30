@@ -101,10 +101,19 @@ namespace octomap {
 
   public:
     ColorOcTree(double _resolution);
+    
+    // set node color at given key or coordinate. Replaces previous color.
+    ColorOcTreeNode* updateColor(const OcTreeKey& key, const unsigned char& r, 
+                                 const unsigned char& g, const unsigned char& b);
 
-    // TODO
+    ColorOcTreeNode* updateColor(const float& x, const float& y, 
+                                 const float& z, const unsigned char& r, 
+                                 const unsigned char& g, const unsigned char& b) {
+      OcTreeKey key;
+      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      return updateColor(key,r,g,b);
+    }
 
-  protected:    
   };
 
 } // end namespace

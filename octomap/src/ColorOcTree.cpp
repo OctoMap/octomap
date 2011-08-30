@@ -90,6 +90,19 @@ namespace octomap {
     tree_size++;
   }
 
+
+  ColorOcTreeNode* ColorOcTree::updateColor(const OcTreeKey& key, 
+                                            const unsigned char& r, 
+                                            const unsigned char& g, 
+                                            const unsigned char& b) {
+    ColorOcTreeNode* n = search (key);
+    if (n != 0) {
+      n->setColor(r, g, b); 
+    }
+    return n;
+  }
+
+
   // void ColorOcTree::updateNodeLogOdds(ColorOcTreeNode* node, const float& update) const {
   //   OccupancyOcTreeBase<ColorOcTreeNode>::updateNodeLogOdds(node, update);
   // }
