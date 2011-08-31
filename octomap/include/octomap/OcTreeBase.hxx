@@ -278,14 +278,14 @@ namespace octomap {
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
       OCTOMAP_WARNING_STR("coordinates ( "
-                << origin << " -> " << end << ") out of bounds during ray casting");
+                << origin << " -> " << end << ") out of bounds in computeRayKeys");
       return false;
     }
 
-    ray.addKey(key_origin);
     
     if (key_origin == key_end) return true; // same tree cell, we're done.
 
+    ray.addKey(key_origin);
 
     // Initialization phase -------------------------------------------------------
 
