@@ -120,8 +120,6 @@ namespace octomap {
     /// \note This is an expensive operation, especially when the tree is nearly empty!
     virtual void expand();
 
-
-
     // -- statistics  ----------------------
 
     /// \return The number of nodes in the tree
@@ -690,7 +688,7 @@ namespace octomap {
     void pruneRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
 
     /// recursive call of expand()
-    void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_expanded);
+    void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
     
     /// Recursive call for getLeafNodes()
     void getLeafNodesRecurs(point3d_list& node_centers, unsigned int max_depth,

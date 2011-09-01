@@ -41,6 +41,7 @@
 
 namespace octomap {
 
+
   // node implementation  --------------------------------------
 
   std::ostream& ColorOcTreeNode::writeValue (std::ostream &s) const {
@@ -81,7 +82,6 @@ namespace octomap {
     return s;
   }
 
-
   ColorOcTreeNode::Color ColorOcTreeNode::getAverageChildColor() const {
     int mr(0), mg(0), mb(0);
     int c(0);
@@ -101,6 +101,33 @@ namespace octomap {
     return Color((unsigned char) mr, (unsigned char) mg, (unsigned char) mb);
   }
 
+  // pruning =============
+
+  bool ColorOcTreeNode::pruneNode() {
+    // checks for equal occupancy only, color ignored
+    if (!this->collapsible()) return false;
+    // set occupancy value 
+    setLogOdds(getChild(0)->getLogOdds());
+    // set color to average color
+    if (isColorSet()) color = getAverageChildColor();
+    // delete children
+    for (unsigned int i=0;i<8;i++) {
+      delete itsChildren[i];
+    }
+    delete[] itsChildren;
+    itsChildren = NULL;
+    return true;
+  }
+
+  void ColorOcTreeNode::expandNode() {
+    assert(!hasChildren());
+    for (unsigned int k=0; k<8; k++) {
+      createChild(k);
+      itsChildren[k]->setValue(value);
+      getChild(k)->setColor(color);
+    }
+  }
+
   // tree implementation  --------------------------------------
 
   ColorOcTree::ColorOcTree(double _resolution)
@@ -108,7 +135,6 @@ namespace octomap {
     itsRoot = new ColorOcTreeNode();
     tree_size++;
   }
-
 
   ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key, 
                                              const unsigned char& r, 

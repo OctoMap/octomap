@@ -248,21 +248,17 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::prune() {
-  
     for (unsigned int depth=tree_depth-1; depth>0; depth--) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->itsRoot, 0, depth, num_pruned);
       if (num_pruned == 0) break;
-    }
-   
+    }   
   }
 
   template <class NODE>
   void OcTreeBase<NODE>::expand() {
-    unsigned int num_expanded = 0;
-    expandRecurs(itsRoot,0, tree_depth, num_expanded);
+    expandRecurs(itsRoot,0, tree_depth);
   }
-
 
   template <class NODE>
   bool OcTreeBase<NODE>::computeRayKeys(const point3d& origin, 
@@ -511,24 +507,21 @@ namespace octomap {
 
   template <class NODE>
   void OcTreeBase<NODE>::expandRecurs(NODE* node, unsigned int depth,
-                            unsigned int max_depth, unsigned int& num_expanded) {
+                                      unsigned int max_depth) {
+    if (depth >= max_depth) return;
 
-    if (depth < max_depth) {
-      // current node has no children => can be expanded
-      if (!node->hasChildren()){
-        node->expandNode();
-        num_expanded +=8;
-        tree_size +=8;
-        sizeChanged = true;
+    // current node has no children => can be expanded
+    if (!node->hasChildren()){
+      node->expandNode();
+      tree_size +=8;
+      sizeChanged = true;
+    }
+    // recursively expand children
+    for (unsigned int i=0; i<8; i++) {
+      if (node->childExists(i)) {
+        expandRecurs(node->getChild(i), depth+1, max_depth);
       }
-
-      // recursively expand children:
-      for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          expandRecurs(node->getChild(i), depth+1, max_depth, num_expanded);
-        }
-      }
-    } // end if depth
+    }
   }
 
 

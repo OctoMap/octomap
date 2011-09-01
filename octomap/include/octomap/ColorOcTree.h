@@ -54,6 +54,12 @@ namespace octomap {
     Color() : r(255), g(255), b(255) {}
     Color(unsigned char _r, unsigned char _g, unsigned char _b) 
       : r(_r), g(_g), b(_b) {}
+      inline bool operator== (const Color &other) const {
+        return (r==other.r && g==other.g && b==other.b);
+      }
+      inline bool operator!= (const Color &other) const {
+        return (r!=other.r || g!=other.g || b!=other.b);
+      }
       unsigned char r, g, b;
     };
 
@@ -72,9 +78,12 @@ namespace octomap {
       itsChildren[i] = new ColorOcTreeNode();
       return true;
     }
+
+    bool pruneNode();
+    void expandNode();
     
     inline Color getColor() const { return color; }
-    inline void  setColor(Color c) {this->color = color; }
+    inline void  setColor(Color c) {this->color = c; }
     inline void  setColor(unsigned char r, unsigned char g, unsigned char b) {
       this->color = Color(r,g,b); 
     }
@@ -106,7 +115,7 @@ namespace octomap {
 
   public:
     ColorOcTree(double _resolution);
-    
+   
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 
                                  const unsigned char& g, const unsigned char& b);
@@ -150,10 +159,7 @@ namespace octomap {
     void writeColorHistogram(std::string filename);
     
   protected:
-
     void updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth);
-
-
   };
 
 } // end namespace

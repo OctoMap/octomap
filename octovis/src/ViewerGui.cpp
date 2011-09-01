@@ -122,6 +122,9 @@ namespace octomap{
       m_filename = filename;
       openFile();
     }
+
+    // background color defaults to white
+    m_glwidget->setBackgroundColor( QColor(255,255,255) );
   }
 
   ViewerGui::~ViewerGui() {
@@ -883,7 +886,8 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionAxes_toggled(bool checked){
-    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+         it != m_octrees.end(); ++it) {
       it->second.octree_drawer->enableAxes(checked);
     }
     m_glwidget->updateGL();
@@ -899,7 +903,8 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionClear_triggered() {
-    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+         it != m_octrees.end(); ++it) {
       m_glwidget->removeSceneObject(it->second.octree_drawer);
       delete (it->second.octree_drawer);
       delete (it->second.octree);
@@ -923,7 +928,8 @@ namespace octomap{
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (m_octrees.size()) {
       showInfo("Converting OcTree to maximum Likelihood map... ");
-      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+           it != m_octrees.end(); ++it) {
         AbstractOcTree* t = it->second.octree;
         if (dynamic_cast<OcTree*>(t)) {
           ((OcTree*) t)->toMaxLikelihood();
@@ -943,7 +949,8 @@ namespace octomap{
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if (m_octrees.size()) { 
       showInfo("Pruning OcTree... ");
-      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+           it != m_octrees.end(); ++it) {
         it->second.octree->prune();
       }
       showOcTree();
@@ -960,7 +967,8 @@ namespace octomap{
     // if (m_ocTree) {
     if (m_octrees.size()) {
       showInfo("Expanding OcTree... ");
-      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+      for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+           it != m_octrees.end(); ++it) {
         it->second.octree->expand();
       }
       showOcTree();
@@ -972,44 +980,61 @@ namespace octomap{
 
 
   void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
-    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+         it != m_octrees.end(); ++it) {
       it->second.octree_drawer->enableOcTreeCells(enabled);
     }
     m_glwidget->updateGL();
   }
 
   void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
-    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+         it != m_octrees.end(); ++it) {
       it->second.octree_drawer->enableOcTree(enabled);
     }
     m_glwidget->updateGL();
   }
 
   void ViewerGui::on_actionFree_toggled(bool enabled) {
-    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); 
+         it != m_octrees.end(); ++it) {
       it->second.octree_drawer->enableFreespace(enabled);
     }
     m_glwidget->updateGL();
   
   }
 
-void ViewerGui::on_actionSelected_toggled(bool enabled) {
-  // if(m_octreeDrawer) {
-  //   m_octreeDrawer->enableSelection(enabled);
+  void ViewerGui::on_actionSelected_toggled(bool enabled) {
+    // if(m_octreeDrawer) {
+    //   m_octreeDrawer->enableSelection(enabled);
 
-  //   // just for testing, you should set the selection somewhere else and only enable it here:
-  //   if (enabled){
-  //     std::list<OcTreeVolume> selection;
-  //     std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
-  //     selection.push_back(volume);
-  //     m_octreeDrawer->setOcTreeSelection(selection);
+    //   // just for testing, you should set the selection somewhere else and only enable it here:
+    //   if (enabled){
+    //     std::list<OcTreeVolume> selection;
+    //     std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
+    //     selection.push_back(volume);
+    //     m_octreeDrawer->setOcTreeSelection(selection);
 
-  //   } else{
-  //     m_octreeDrawer->clearOcTreeSelection();
-  //   }
-  //   m_glwidget->updateGL();
-  // }
-}
+    //   } else{
+    //     m_octreeDrawer->clearOcTreeSelection();
+    //   }
+    //   m_glwidget->updateGL();
+    // }
+  }
+
+
+  void ViewerGui::on_action_bg_black_triggered() {
+    m_glwidget->setBackgroundColor( QColor(0,0,0) );
+    // m_glwidget->qglClearColor( QColor(0,0,0) );
+  }
+
+  void ViewerGui::on_action_bg_white_triggered() {
+    m_glwidget->setBackgroundColor( QColor(255,255,255) );
+  }
+
+  void ViewerGui::on_action_bg_gray_triggered() {
+    m_glwidget->setBackgroundColor( QColor(117,117,117) );
+  }
 
 
 }

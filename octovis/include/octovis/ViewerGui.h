@@ -103,6 +103,10 @@ namespace octomap {
     void on_actionHideBackground_toggled(bool checked);
     void on_actionClear_triggered();
 
+    void on_action_bg_black_triggered();
+    void on_action_bg_white_triggered();
+    void on_action_bg_gray_triggered();
+
     // use it for testcases etc.
     void on_actionTest_triggered();
 
