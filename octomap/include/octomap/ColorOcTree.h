@@ -79,15 +79,20 @@ namespace octomap {
       this->color = Color(r,g,b); 
     }
 
-    // update occupancy and color of inner nodes 
-    inline void updateOccupancyChildren() {      
-      this->setLogOdds(this->getMaxChildLogOdds());  // conservative
-      // set color to average color?
+    Color& getColor() { return color; }
+
+    // has any color been integrated? (pure white is very unlikely...)
+    inline bool isColorSet() const { 
+      return ((color.r != 255) && (color.g != 255) && (color.b != 255)); 
     }
 
-    // file I/O
+    void updateColorChildren() {      
+      color = getAverageChildColor();
+    }
 
-    // TODO: UNTESTED
+    ColorOcTreeNode::Color getAverageChildColor() const;
+  
+    // file I/O
     std::istream& readValue (std::istream &s);
     std::ostream& writeValue(std::ostream &s) const;
     
@@ -103,16 +108,51 @@ namespace octomap {
     ColorOcTree(double _resolution);
     
     // set node color at given key or coordinate. Replaces previous color.
-    ColorOcTreeNode* updateColor(const OcTreeKey& key, const unsigned char& r, 
+    ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 
                                  const unsigned char& g, const unsigned char& b);
 
-    ColorOcTreeNode* updateColor(const float& x, const float& y, 
+    ColorOcTreeNode* setNodeColor(const float& x, const float& y, 
                                  const float& z, const unsigned char& r, 
                                  const unsigned char& g, const unsigned char& b) {
       OcTreeKey key;
       if (!this->genKey(point3d(x,y,z), key)) return NULL;
-      return updateColor(key,r,g,b);
+      return setNodeColor(key,r,g,b);
     }
+
+    // integrate color measurement at given key or coordinate. Average with previous color
+    ColorOcTreeNode* averageNodeColor(const OcTreeKey& key, const unsigned char& r, 
+                                  const unsigned char& g, const unsigned char& b);
+    
+    ColorOcTreeNode* averageNodeColor(const float& x, const float& y, 
+                                      const float& z, const unsigned char& r, 
+                                      const unsigned char& g, const unsigned char& b) {
+      OcTreeKey key;
+      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      return averageNodeColor(key,r,g,b);
+    }
+
+    // integrate color measurement at given key or coordinate. Average with previous color
+    ColorOcTreeNode* integrateNodeColor(const OcTreeKey& key, const unsigned char& r, 
+                                  const unsigned char& g, const unsigned char& b);
+    
+    ColorOcTreeNode* integrateNodeColor(const float& x, const float& y, 
+                                      const float& z, const unsigned char& r, 
+                                      const unsigned char& g, const unsigned char& b) {
+      OcTreeKey key;
+      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      return integrateNodeColor(key,r,g,b);
+    }
+
+    // update inner nodes, sets color to average child color
+    void updateInnerOccupancy();
+
+    // uses gnuplot to plot a RGB histogram in EPS format
+    void writeColorHistogram(std::string filename);
+    
+  protected:
+
+    void updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth);
+
 
   };
 

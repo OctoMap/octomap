@@ -14,6 +14,9 @@ TARGET_LINK_LIBRARIES(test_lut octomap)
 ADD_EXECUTABLE(color_tree_test color_tree_test.cpp)
 TARGET_LINK_LIBRARIES(color_tree_test octomap)
 
+ADD_EXECUTABLE(color_tree_histogram color_tree_histogram.cpp)
+TARGET_LINK_LIBRARIES(color_tree_histogram octomap)
+
 # CTest tests below
 
 ADD_EXECUTABLE(unit_tests unit_tests.cpp)
