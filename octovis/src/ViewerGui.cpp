@@ -122,9 +122,6 @@ namespace octomap{
       m_filename = filename;
       openFile();
     }
-
-    // background color defaults to white
-    m_glwidget->setBackgroundColor( QColor(255,255,255) );
   }
 
   ViewerGui::~ViewerGui() {
@@ -1025,15 +1022,17 @@ namespace octomap{
 
   void ViewerGui::on_action_bg_black_triggered() {
     m_glwidget->setBackgroundColor( QColor(0,0,0) );
-    // m_glwidget->qglClearColor( QColor(0,0,0) );
+    m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
   }
 
   void ViewerGui::on_action_bg_white_triggered() {
     m_glwidget->setBackgroundColor( QColor(255,255,255) );
+    m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
   }
 
   void ViewerGui::on_action_bg_gray_triggered() {
     m_glwidget->setBackgroundColor( QColor(117,117,117) );
+    m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
   }
 
 

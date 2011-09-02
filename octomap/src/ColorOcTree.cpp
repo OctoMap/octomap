@@ -210,6 +210,10 @@ namespace octomap {
   }
 
   void ColorOcTree::writeColorHistogram(std::string filename) {
+
+#ifdef _MSC_VER
+    fprintf(stderr, "The color histogram uses gnuplot, this is not supported under windows.\n");
+#else
     // build RGB histogram
     std::vector<int> histogram_r (256,0);
     std::vector<int> histogram_g (256,0);
@@ -247,6 +251,7 @@ namespace octomap {
     for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_b[i]);    
     fprintf(gui, "e\n");
     fflush(gui);
+#endif
   }
 
 } // end namespace

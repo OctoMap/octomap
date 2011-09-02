@@ -52,6 +52,10 @@ namespace octomap {
     float pos[4] = {-1.0, 1.0, 1.0, 0.0};
     // Directional light
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
+    // background color defaults to white
+    this->setBackgroundColor( QColor(255,255,255) );
+    this->qglClearColor( this->backgroundColor() );
   }
 
   void ViewerWidget::resetView(){
