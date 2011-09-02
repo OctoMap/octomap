@@ -69,9 +69,8 @@ Microsoft Visual Studio 2010
   - cd octovis/src/extern/QGLViewer
   - qmake -t vclib QGLViewer.pro -spec win32-msvc2010
     (ignore any warnings)
-
-Load the generated file QGLViewer.vcxproj and build the project.
-This will give you the files QGLViewer2.(dll,lib) that we will need.
+  - Load the generated file QGLViewer.vcxproj and build the project.
+    This will give you the files QGLViewer2.(dll,lib) that we will need.
 
 The viewer should be build along with the rest of the octomap package.
 These steps will create a solution file for the library and the viewer:
