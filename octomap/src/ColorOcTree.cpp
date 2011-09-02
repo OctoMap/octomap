@@ -97,8 +97,11 @@ namespace octomap {
       mr /= c;
       mg /= c;
       mb /= c;
+      return Color((unsigned char) mr, (unsigned char) mg, (unsigned char) mb);
     }
-    return Color((unsigned char) mr, (unsigned char) mg, (unsigned char) mb);
+    else { // no child had a color other than white
+      return Color(255, 255, 255);
+    }
   }
 
   // pruning =============

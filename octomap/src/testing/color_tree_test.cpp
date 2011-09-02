@@ -43,6 +43,9 @@ int main(int argc, char** argv) {
     }
   }
 
+  // set inner node colors
+  tree.updateInnerOccupancy();
+
   cout << endl;
   cout << "performing some queries:" << endl;
   
@@ -59,6 +62,7 @@ int main(int argc, char** argv) {
     result = tree.search (query);
     print_query_info(query, result);
   }
+
  
   std::string filename ("simple_tree.cot");
   // write color tree
