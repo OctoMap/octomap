@@ -18,7 +18,8 @@ using namespace octomath;
 
 int main(int argc, char** argv) {
 
-  if (argc < 2) return -1;
+  if (argc < 2)
+    return 1; // exit 1 means failure
   std::string test_name (argv[1]);
 
 
@@ -49,10 +50,9 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (rotation.x(), 1.2750367);
     EXPECT_FLOAT_EQ (rotation.y(), (-1.1329513));
     EXPECT_FLOAT_EQ (rotation.z(), 0.30116868);
-  }
   
   // ------------------------------------------------------------
-  if (test_name == "MathPose") {
+  } else if (test_name == "MathPose") {
     // constructors  
     Pose6D a (1.0f, 0.1f, 0.1f, 0.0f, 0.1f, (float) M_PI/4. );
     Pose6D b;
@@ -78,10 +78,9 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (t2.x() , trans.x());
     EXPECT_FLOAT_EQ (t2.y() , trans.y());
     EXPECT_FLOAT_EQ (t2.z() , trans.z());
-  }
-  
+
   // ------------------------------------------------------------
-  if (test_name == "InsertRay") {
+  } else if (test_name == "InsertRay") {
     OcTree tree (0.05);
     tree.setProbHit(0.7);
     tree.setProbMiss(0.4);
@@ -97,21 +96,15 @@ int main(int argc, char** argv) {
       point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
     }
     EXPECT_TRUE (tree.writeBinary("sphere.bt"));
-  }
-
   // ------------------------------------------------------------
   // tree read file test
-  if (test_name == "ReadTree") {
+  } else if (test_name == "ReadTree") {
     OcTree tree (0.05);  
     EXPECT_TRUE (tree.readBinary("sphere.bt"));
     EXPECT_EQ ((int) tree.size(), 59420);
-  }
-
-
-
   // ------------------------------------------------------------
   // data file read/write test
-  if (test_name == "DataTreeIO") {
+  } else if (test_name == "DataTreeIO") {
 
     OcTree tree (0.05);
     point3d origin (0.01f, 0.01f, 0.02f);
@@ -144,11 +137,9 @@ int main(int argc, char** argv) {
     unsigned int read_tree_size = read_tree.size();
     cout << "size of tree read from file: " << read_tree_size << endl; 
     EXPECT_EQ (tree_size, read_tree_size);
-  }
-
   // ------------------------------------------------------------
   // ray casting
-  if (test_name == "CastRay") {
+  } else if (test_name == "CastRay") {
     OcTree tree (0.05);  
     EXPECT_TRUE (tree.readBinary("sphere.bt"));
     OcTree sampled_surface (0.05);  
@@ -180,13 +171,59 @@ int main(int argc, char** argv) {
   
     EXPECT_EQ ((int) hits, 129416);
     EXPECT_EQ ((int) misses,  184);
-  }
+
+
+    double res = 0.1;
+    double res_2 = res/2.0;
+    OcTree cubeTree(res);
+    // fill a cube with "free", end is "occupied":
+    for (float x=-0.95; x <= 1.0; x+=res){
+      for (float y=-0.95; y <= 1.0; y+=res){
+        for (float z=-0.95; z <= 1.0; z+=res){
+          if (x < 0.9){
+            EXPECT_TRUE(cubeTree.updateNode(point3d(x,y,z), false));
+          } else{
+            EXPECT_TRUE(cubeTree.updateNode(point3d(x,y,z), true));
+          }
+        }
+      }
+    }
+
+    cubeTree.writeBinary("raycasting_cube.bt");
+    origin = point3d(0.0f, 0.0f, 0.0f);
+    point3d end;
+    // hit the corner:
+    direction = point3d(0.95f, 0.95f, 0.95f);
+    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
+    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
+
+    // hit boundary of unknown:
+    direction = point3d(0.0f, 1.0f, 0.0f);
+    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, false));
+    EXPECT_FALSE(cubeTree.search(end));
+
+    // hit boundary of octree:
+    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true));
+    EXPECT_FALSE(cubeTree.search(end));
+    EXPECT_FLOAT_EQ(end.x(), res_2);
+    EXPECT_FLOAT_EQ(end.y(), float(32768*res-res_2));
+    EXPECT_FLOAT_EQ(end.z(), res_2);
+
+    // test maxrange:
+    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true, 0.9));
+    OcTreeNode* endPt = cubeTree.search(end);
+    EXPECT_TRUE(endPt);
+    EXPECT_FALSE(cubeTree.isNodeOccupied(endPt));
+    double dist = (origin - end).norm();
+    EXPECT_NEAR(0.9, dist, res);
+
+
 
   // ------------------------------------------------------------
   // insert scan test
   // insert graph node test
   // write graph test
-  if (test_name == "InsertScan") {
+  } else if (test_name == "InsertScan") {
     Pointcloud* measurement = new Pointcloud();
   
     point3d origin (0.01f, 0.01f, 0.02f);
@@ -210,17 +247,13 @@ int main(int argc, char** argv) {
     graph->addNode(measurement, node_pose);
     EXPECT_TRUE (graph->writeBinary("test.graph"));
     delete graph;
-  }
-  
   // ------------------------------------------------------------
   // graph read file test
-  if (test_name == "ReadGraph") {
+  } else if (test_name == "ReadGraph") {
     ScanGraph graph;
     EXPECT_TRUE (graph.readBinary("test.graph"));
-  }
-
   // ------------------------------------------------------------
-  if (test_name == "StampedTree") { 
+  } else if (test_name == "StampedTree") {
     OcTreeStamped stamped_tree (0.05);
     // fill tree
     for (int x=-20; x<20; x++) 
@@ -248,10 +281,8 @@ int main(int argc, char** argv) {
     OcTreeNodeStamped* result2 = stamped_tree.search (query);
     EXPECT_TRUE (result2);
     EXPECT_TRUE (result->getTimestamp() < result2->getTimestamp()); // result2 has been updated
-  }
-
   // ------------------------------------------------------------
-  if (test_name == "OcTreeKey") { 
+  } else if (test_name == "OcTreeKey") {
     OcTree tree (0.05);  
     point3d p(0.0,0.0,0.0);
     OcTreeKey key;
@@ -261,10 +292,9 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (0.025, p_inv.x());
     EXPECT_FLOAT_EQ (0.025, p_inv.y());
     EXPECT_FLOAT_EQ (0.025, p_inv.z());
-  }
 
   // ------------------------------------------------------------
-  if (test_name == "OcTreeIterator") { 
+  } else if (test_name == "OcTreeIterator") {
     OcTree tree (0.05);  
     EXPECT_TRUE (tree.readBinary("sphere.bt"));
     for( octomap::OcTree::leaf_iterator it = tree.begin(),
@@ -278,6 +308,10 @@ int main(int argc, char** argv) {
       EXPECT_FLOAT_EQ (p.y(), p_inv.y());
       EXPECT_FLOAT_EQ (p.z(), p_inv.z());
     }
+  } else {
+    std::cerr << "Invalid test name specified: " << test_name << std::endl;
+    return 1;
+
   }
 
   fprintf(stderr, "test successful.\n");

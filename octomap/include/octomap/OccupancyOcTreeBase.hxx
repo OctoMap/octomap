@@ -370,11 +370,13 @@ namespace octomap {
     if (startingNode){
       if (isNodeOccupied(startingNode)){
         // Occupied node found at origin 
-        end = origin;
+        // (need to convert from key, since origin does not need to be a voxel center)
+        genCoords(current_key, this->tree_depth, end);
         return true;
       }
     } else if(!ignoreUnknown){
       OCTOMAP_ERROR_STR("Origin node at " << origin << " for raycasting not found, does the node exist?");
+      genCoords(current_key, this->tree_depth, end);
       return false;
     }
 
@@ -434,7 +436,7 @@ namespace octomap {
       if ((step[dim] < 0 && current_key[dim] == 0)
     		  || (step[dim] > 0 && current_key[dim] == 2* this->tree_max_val-1))
       {
-    	  OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast", dim);
+    	  OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
     	  // return border point nevertheless:
     	  genCoords(current_key, this->tree_depth, end);
     	  return false;
@@ -448,7 +450,6 @@ namespace octomap {
       // generate world coords from key
       double dist_from_origin(0);
       for (unsigned int j = 0; j < 3; j++) {
-    	  // TODO: coordFromKey instead?
         double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
         dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
         end(j) = (float) (coord * this->resolution);
