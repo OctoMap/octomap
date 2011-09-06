@@ -208,6 +208,12 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ(end.x(), res_2);
     EXPECT_FLOAT_EQ(end.y(), float(32768*res-res_2));
     EXPECT_FLOAT_EQ(end.z(), res_2);
+    direction = point3d(-1.0f, 0.0f, 0.0f);
+    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true));
+    EXPECT_FALSE(cubeTree.search(end));
+    EXPECT_FLOAT_EQ(end.x(), float(-32767*res-res_2));
+    EXPECT_FLOAT_EQ(end.y(), res_2);
+    EXPECT_FLOAT_EQ(end.z(), res_2);
 
     // test maxrange:
     EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true, 0.9));

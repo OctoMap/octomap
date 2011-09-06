@@ -89,7 +89,7 @@ namespace octomap {
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
 
     // keyval within range of tree?
-    if (( scaled_coord > 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+    if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
       keyval = scaled_coord;
       return true;
     }
