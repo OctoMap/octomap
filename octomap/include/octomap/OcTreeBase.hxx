@@ -86,7 +86,7 @@ namespace octomap {
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
 
     // keyval within range of tree?
-    if (( scaled_coord > 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+    if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
       keyval = scaled_coord;
       return true;
     }
@@ -273,14 +273,14 @@ namespace octomap {
     if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
          !OcTreeBase<NODE>::genKey(end, key_end) ) {
       OCTOMAP_WARNING_STR("coordinates ( "
-                << origin << " -> " << end << ") out of bounds during ray casting");
+                << origin << " -> " << end << ") out of bounds in computeRayKeys");
       return false;
     }
 
-    ray.addKey(key_origin);
     
     if (key_origin == key_end) return true; // same tree cell, we're done.
 
+    ray.addKey(key_origin);
 
     // Initialization phase -------------------------------------------------------
 

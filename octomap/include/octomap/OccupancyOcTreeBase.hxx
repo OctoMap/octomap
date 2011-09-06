@@ -370,11 +370,13 @@ namespace octomap {
     if (startingNode){
       if (isNodeOccupied(startingNode)){
         // Occupied node found at origin 
-        end = origin;
+        // (need to convert from key, since origin does not need to be a voxel center)
+        genCoords(current_key, this->tree_depth, end);
         return true;
       }
     } else if(!ignoreUnknown){
       OCTOMAP_ERROR_STR("Origin node at " << origin << " for raycasting not found, does the node exist?");
+      genCoords(current_key, this->tree_depth, end);
       return false;
     }
 
@@ -430,36 +432,41 @@ namespace octomap {
         else                   dim = 2;
       }
 
+      // check for overflow:
+      if ((step[dim] < 0 && current_key[dim] == 0)
+    		  || (step[dim] > 0 && current_key[dim] == 2* this->tree_max_val-1))
+      {
+    	  OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
+    	  // return border point nevertheless:
+    	  genCoords(current_key, this->tree_depth, end);
+    	  return false;
+      }
+
       // advance in direction "dim"
       current_key[dim] += step[dim];
       tMax[dim] += tDelta[dim];
 
-      assert (current_key[dim] < 2*this->tree_max_val);
 
       // generate world coords from key
-      point3d current_endpoint;
       double dist_from_origin(0);
       for (unsigned int j = 0; j < 3; j++) {
         double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
         dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
-        current_endpoint(j) = coord * this->resolution;
+        end(j) = (float) (coord * this->resolution);
       }
 
       if (max_range_set && (dist_from_origin > maxrange_2) ) { // reached user specified maxrange
-        //         end = current_endpoint;
-        done = true;
         return false;
       }
 
       NODE* currentNode = this->search(current_key);
-      if ( currentNode){
+      if (currentNode){
         if (isNodeOccupied(currentNode)) {
-          end = current_endpoint;
           done = true;
           break;
         }
         // otherwise: node is free and valid, raycasting continues
-      } 
+      }
       
       else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
         OCTOMAP_WARNING_STR("Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end);
