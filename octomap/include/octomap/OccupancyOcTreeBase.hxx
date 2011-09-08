@@ -128,12 +128,10 @@ namespace octomap {
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange) {
 
+    //#pragma omp parallel private (local_key_ray, point_it) 
     for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
       const point3d& p = *point_it;
-
-
       if (!use_bbx_limit) {
-
         // -------------- no BBX specified ---------------
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
@@ -173,9 +171,8 @@ namespace octomap {
               }
               else break;
             }
-          }
-
-        }
+          } // end if compute ray
+        } // end if in BBX and not maxrange
       } // end bbx case
 
     } // end for all points
