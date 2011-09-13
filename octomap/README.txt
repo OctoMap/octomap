@@ -112,10 +112,14 @@ Point CMake to your octomap installation so that it finds:
 Then add the following to your CMakeLists.txt:
 
 find_package(octomap REQUIRED)
-include_directories(OCTOMAP_INCLUDE_DIRS)
-link_libraries(OCTOMAP_LIBRARIES)
+include_directories(${OCTOMAP_INCLUDE_DIRS})
+link_directories(${OCTOMAP_LIBRARY_DIRS})
+link_libraries(${OCTOMAP_LIBRARIES})
 
 In addition to this cmake-module we also provide a pkgconfig-file.
+
+For convenience, there is a minimal project included in
+the file example-project.tgz
 
 
 ROS-INTEGRATION
