@@ -19,6 +19,16 @@ the these steps:
   make
 
 
+Note: If you get an error such as
+
+"CMake Error at /usr/share/cmake-2.8/Modules/FindQt4.cmake:1148 (MESSAGE):
+  Qt qmake not found!"
+
+but you have Qt4 installed, this probably means that both Qt3 and Qt4
+are installed. In Ubuntu this can be resolved using:
+$ sudo update-alternatives --config qmake"
+
+
 WINDOWS
 ############################
 
@@ -85,3 +95,5 @@ These steps will create a solution file for the library and the viewer:
 When executing octovis.exe, Windows needs to find the following 
 libraries, so make sure they are on the PATH or in the same 
 directory: QGLViewer2.dll, QtOpenGL4.dll, QTGui4.dll, QTCore4.dll
+
+
