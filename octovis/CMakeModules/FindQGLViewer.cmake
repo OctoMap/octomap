@@ -30,6 +30,7 @@ FIND_LIBRARY( QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
 SET( BUILD_LIB_FROM_SOURCE 0)
 
 IF( QGLViewer_INCLUDE_DIR )
+
   MESSAGE(STATUS "QGLViewer includes found in ${QGLViewer_INCLUDE_DIR}")
   IF (QGLViewer_LIBRARY_DIR_UBUNTU)
     MESSAGE(STATUS "qglviewer-qt4 found in ${QGLViewer_LIBRARY_DIR_UBUNTU}")
@@ -54,7 +55,7 @@ IF( QGLViewer_INCLUDE_DIR )
     SET( BUILD_LIB_FROM_SOURCE 1)
     SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" FORCE )
   ENDIF()    
-  
+
 ELSE()
   SET( BUILD_LIB_FROM_SOURCE 1)
 ENDIF()
@@ -89,7 +90,7 @@ IF(BUILD_LIB_FROM_SOURCE)
 	  )
       ENDIF(QMAKE-QT4)
       
-      MESSAGE(STATUS "\t building library")
+      MESSAGE(STATUS "\t building library (this may take some time...)")
       EXECUTE_PROCESS(
 	WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
 	COMMAND make
@@ -99,24 +100,27 @@ IF(BUILD_LIB_FROM_SOURCE)
   ENDIF(WIN32)
   
 ELSE(BUILD_LIB_FROM_SOURCE)
-  MESSAGE(STATUS "QGLViewer sources NOT found. Exiting.")
+  IF (NOT QGLViewer_FOUND)
+    MESSAGE(STATUS "QGLViewer sources NOT found. Exiting.")
+  ENDIF ()
 ENDIF(BUILD_LIB_FROM_SOURCE)
 
-FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
-FIND_PATH(QGLLIB libQGLViewer.so  ${QGLVIEWER_BASE_DIR})
-
-IF (NOT QGLLIB)
-  MESSAGE(STATUS "\nfailed to build libQGLViewer")
-  SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" FORCE )
-ELSE()
-  MESSAGE(STATUS "Successfully built ${QGLLIB}")
-  SET( QGLViewer_INCLUDE_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Include directory" FORCE)
-  SET( QGLViewer_LIBRARY_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Library directory" FORCE)
-  #  TODO: also include "m pthread  QGLViewerGen QGLViewerUtility"?
-  SET( QGLViewer_LIBRARIES QGLViewer)
-  SET( QGLViewer_FOUND 1 CACHE BOOL "Do we have QGLViewer?" FORCE )
+# verify that QGLViewer lib was build if we didnt find it elsewhere
+IF (NOT QGLViewer_FOUND)
+  #FIND_LIBRARY(QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
+  FIND_PATH(QGLLIB libQGLViewer.so ${QGLVIEWER_BASE_DIR})
+  IF (NOT QGLLIB)
+    MESSAGE(STATUS "\nfailed to build libQGLViewer")
+    SET( QGLViewer_FOUND 0 CACHE BOOL "Do we have QGLViewer?" FORCE )
+  ELSE()
+    MESSAGE(STATUS "Successfully built library in:\n${QGLLIB}")
+    SET( QGLViewer_INCLUDE_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Include directory" FORCE)
+    SET( QGLViewer_LIBRARY_DIR ${QGLVIEWER_BASE_DIR} CACHE PATH "QGLViewer Library directory" FORCE)
+    #  TODO: also include "m pthread  QGLViewerGen QGLViewerUtility"?
+    SET( QGLViewer_LIBRARIES QGLViewer)
+    SET( QGLViewer_FOUND 1 CACHE BOOL "Do we have QGLViewer?" FORCE )
+  ENDIF()
 ENDIF()
-
 
 # You need to use qmake of QT4. You are using QT3 if you get:
 
