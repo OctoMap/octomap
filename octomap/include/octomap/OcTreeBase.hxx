@@ -247,6 +247,19 @@ namespace octomap {
   }
 
   template <class NODE>
+  void OcTreeBase<NODE>::clear() {
+    // don't clear if there tree is empty:
+    if (this->itsRoot->hasChildren()) {
+      delete this->itsRoot;
+      this->itsRoot = new NODE();
+    }
+    this->tree_size = 1;
+    // may extent of tree changed:
+    this->sizeChanged = true;
+  }
+
+
+  template <class NODE>
   void OcTreeBase<NODE>::prune() {
     for (unsigned int depth=tree_depth-1; depth>0; depth--) {
       unsigned int num_pruned = 0;

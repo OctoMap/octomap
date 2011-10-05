@@ -715,14 +715,7 @@ namespace octomap {
     // TODO Treetype checks disabled, do they make any sense here?
     if (tree_type == 3){
 
-      this->tree_size = 0;
-      this->sizeChanged = true;
-
-      // clear tree if there are nodes
-      if (this->itsRoot->hasChildren()) {
-        delete this->itsRoot;
-        this->itsRoot = new NODE();
-      }
+      this->clear();
 
       double tree_resolution;
       s.read((char*)&tree_resolution, sizeof(tree_resolution));

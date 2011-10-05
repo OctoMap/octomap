@@ -112,6 +112,10 @@ namespace octomap {
      */
     NODE* search (const OcTreeKey& key) const;
 
+    /// Deletes the complete tree structure (only the root node will remain)
+    void clear();
+
+
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values
     virtual void prune();
@@ -354,7 +358,7 @@ namespace octomap {
         if (top.depth == maxDepth)
           return;
 
-        iterator_base::StackElement s;
+        StackElement s;
         s.depth = top.depth +1;
 
         unsigned short int center_offset_key = tree->tree_max_val >> (top.depth +1);
@@ -712,6 +716,7 @@ namespace octomap {
     double resolution_factor; ///< = 1. / resolution
   
     size_t tree_size; ///< number of nodes in tree
+    /// flag to denote whether the octree extent changed (for lazy min/max eval)
     bool sizeChanged;
 
     point3d tree_center;  // coordinate offset of tree
