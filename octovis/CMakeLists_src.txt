@@ -43,12 +43,12 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(viewer_MOC_HDRS
-  include/octovis/ViewerGui.h
-  include/octovis/ViewerWidget.h
-  include/octovis/ViewerSettings.h
-  include/octovis/ViewerSettingsPanel.h
-  include/octovis/ViewerSettingsPanelCamera.h
-  include/octovis/CameraFollowMode.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/ViewerGui.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/ViewerWidget.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettings.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanel.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanelCamera.h
+  ${PROJECT_SOURCE_DIR}/include/octovis/CameraFollowMode.h
 )
 
 # generate list of MOC srcs:
@@ -56,10 +56,10 @@ QT4_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
 
 # let cmake generate ui*.h files from .ui files (Qt Designer):
 SET(viewer_UIS
-    include/octovis/ViewerGui.ui
-    include/octovis/ViewerSettings.ui
-    include/octovis/ViewerSettingsPanel.ui
-    include/octovis/ViewerSettingsPanelCamera.ui
+    ${PROJECT_SOURCE_DIR}/include/octovis/ViewerGui.ui
+    ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettings.ui
+    ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanel.ui
+    ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanelCamera.ui
 )
 QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 
@@ -101,4 +101,9 @@ install(TARGETS octovis
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
+file(GLOB octovis_HDRS ${PROJECT_SOURCE_DIR}/include/octovis/*.h)
+# filter generated headers for GUI:
+list(REMOVE_ITEM octovis_HDRS ${viewer_MOC_HDRS} ${viewer_UIS_H})
+message(INFO ${octovis_HDRS})
+install(FILES ${octovis_HDRS} DESTINATION include/octovis)
 
