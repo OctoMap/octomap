@@ -49,6 +49,7 @@ namespace octomap {
 
   /**
    * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
+   * "value" stores their log-odds occupancy.
    *
    * Hint: If a class is derived from OcTreeNode, you have to implement (at least) 
    * createChild, getChild, and getChild const. See OcTreeNodeLabeled for an example.
@@ -97,63 +98,9 @@ namespace octomap {
 
     /// adds p to the node's logOdds value (with no boundary / threshold checking!)
     void addValue(const float& p);
-
-
-    // deprecated methods ################################################
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->isNodeOccupied(node) in OccupancyOcTreeBase
-    ///
-    /// \return true if occupancy probability of node is >= OCC_PROB_THRES
-    /// For efficiency, values are compared in log-space (no need for exp-computation)
-    DEPRECATED( inline bool isOccupied() ) {
-      return (this->getLogOdds() >= occProbThresLog);
-    }
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->isNodeAtThreshold(node) in OccupancyOcTreeBase
-    ///
-    /// node has reached the given occupancy threshold (CLAMPING_THRES_MIN, CLAMPING_THRES_MAX)
-    DEPRECATED( inline bool atThreshold() const ) {
-      return ((value <= clampingThresMin) ||
-              (value >= clampingThresMax));
-    }
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->nodeToMaxLikelihood(node) in OccupancyOcTreeBase
-    ///
-    /// rounds a node's occupancy value to the nearest clamping threshold (free or occupied),
-    /// effectively setting occupancy to the maximum likelihood value
-    DEPRECATED( void toMaxLikelihood() );
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->integrateHit(node) in OccupancyOcTreeBase
-    ///
-    /// integrate a measurement (beam ENDED in cell)
-    DEPRECATED( inline void integrateHit() ) {  updateProbability(probHit); }
-
-    /// This function is deprecated and will be removed,
-    /// instead use octree->integrateMiss(node) in OccupancyOcTreeBase
-    ///
-    /// integrate a measurement (beam PASSED in cell)
-    DEPRECATED( inline void integrateMiss() ) { updateProbability(probMiss); }
     
 
   protected:
-    /// update the probability of a node, p will first be converted to logodds
-    /// this will eventually be removed (see deprecations above)
-    void updateProbability(double p);
-
-    // definition of "Occupancy"
-    // These values are deprecated and should no longer be used.
-    // Use the parameters of the tree instead (and e.g. tree->isNodeOccupied(node))
-    const static double probHit; // = 0.7;
-    const static double probMiss; //= 0.4;
-    const static float occProbThres; //= 0.5;
-    const static float occProbThresLog; // = 0.0;
-    const static float clampingThresMin; // = -2;
-    const static float clampingThresMax; // = 3.5;
-
     // "value" stores log odds occupancy probability
   };
 

@@ -66,15 +66,6 @@ namespace octomap {
     insertScan(cloud, sensor_origin, frame_origin, maxrange, pruning, lazy_eval);
   }
 
-  // deprecated: use above method instead, or the new interface below
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& pc, const pose6d& originPose,
-                          double maxrange, bool pruning) {
-    point3d sensor_origin = originPose.trans();
-    pose6d frame_origin = originPose;
-    insertScan(pc, sensor_origin, frame_origin, maxrange, pruning);
-  }
-
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
@@ -230,7 +221,7 @@ namespace octomap {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created && (node != this->itsRoot)) {
           // current node does not have children AND it is not a new node 
-	  // AND its not the root node
+          // AND its not the root node
           // -> expand pruned node
           node->expandNode();
           this->tree_size+=8;
@@ -260,10 +251,14 @@ namespace octomap {
       if (use_change_detection) {
         bool occBefore = isNodeOccupied(node);
         updateNodeLogOdds(node, log_odds_update); 
-        if (occBefore != isNodeOccupied(node)) { // occupancy changed, track it
-          KeySet::iterator it = changedKeys.find(key);
-          if (it == changedKeys.end()) changedKeys.insert(key);
-          else                         changedKeys.erase(it);          
+        if (node_just_created){  // new node
+          changedKeys.insert(std::pair<OcTreeKey,bool>(key, true));
+        } else if (occBefore != isNodeOccupied(node)) {  // occupancy changed, track it
+          KeyBoolMap::iterator it = changedKeys.find(key);
+          if (it == changedKeys.end())
+            changedKeys.insert(std::pair<OcTreeKey,bool>(key, false));
+          else if (it->second == false)
+            changedKeys.erase(it);
         }
       }
       else {

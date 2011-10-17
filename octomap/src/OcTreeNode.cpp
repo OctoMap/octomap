@@ -47,14 +47,6 @@
 
 namespace octomap {
 
-  // deprecated members, to be removed
-  const double OcTreeNode::probHit = 0.7;
-  const double OcTreeNode::probMiss = 0.4;
-  const float OcTreeNode::occProbThres = 0.5;
-  const float OcTreeNode::occProbThresLog = 0.0;
-  const float OcTreeNode::clampingThresMin = -2;
-  const float OcTreeNode::clampingThresMax = 3.5;
-
   OcTreeNode::OcTreeNode()
     : OcTreeDataNode<float>(0.0)
   {
@@ -77,13 +69,6 @@ namespace octomap {
   // ============================================================
   // =  occupancy probability  ==================================
   // ============================================================
-
-  void OcTreeNode::toMaxLikelihood(){
-    if (this->getLogOdds() >= occProbThresLog)
-      setLogOdds(clampingThresMax);
-    else
-      setLogOdds(clampingThresMin);
-  }
 
   double OcTreeNode::getMeanChildLogOdds() const{
     double mean = 0;
@@ -111,26 +96,6 @@ namespace octomap {
 
   void OcTreeNode::addValue(const float& logOdds) {
     value += logOdds;
-  }
-
-  // ============================================================
-  // =  private methodes  =======================================
-  // ============================================================
-
-  void OcTreeNode::updateProbability(double p) {
-
-//     OCTOMAP_DEBUG("logodds before: %f\n", log_odds_occupancy);
-    value += logodds(p);
-//     OCTOMAP_DEBUG("logodds after : %f\n\n", log_odds_occupancy);
-
-    if (!hasChildren() &&
-        ((value > clampingThresMax) ||
-            (value < clampingThresMin))) {
-      if (this->getLogOdds() >= occProbThresLog)
-        setLogOdds(clampingThresMax);
-      else
-        setLogOdds(clampingThresMin);
-    }
   }
   
 } // end namespace

@@ -160,10 +160,7 @@ namespace octomap {
      * @param node_centers collection of center points
      * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getLeafNodes(point3d_list& node_centers) const;
-
-    // replaced by getLeafNodes(point3d_list&)
-    DEPRECATED( void getLeafNodes(std::list<OcTreeVolume>& nodes, unsigned int max_depth = 0) const );
+    DEPRECATED( void getLeafNodes(point3d_list& node_centers) const);
 
     /**
      * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
@@ -171,7 +168,7 @@ namespace octomap {
      * @param voxels list of all nodes to be returned
      * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
-    void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const;
+    DEPRECATED( void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const);
 
 
     /// return centers of leafs that do NOT exist (but could) in a given bounding box

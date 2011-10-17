@@ -14,7 +14,7 @@ void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " input.bt\n\n";
 
 
-  exit(0);
+  exit(1);
 }
 
 void compareResults(const std::list<OcTreeVolume>& list_iterator, const std::list<OcTreeVolume>& list_depr){
@@ -80,6 +80,10 @@ int main(int argc, char** argv) {
 
   cout << "\nReading OcTree file\n===========================\n";
   OcTree* tree = new OcTree(btFilename);
+  if (tree->size()<= 1){
+    std::cout << "Error reading file, exiting!\n";
+    return 1;
+  }
 
   std::list<OcTreeVolume> list_depr;
   unsigned count;
@@ -212,6 +216,6 @@ int main(int argc, char** argv) {
 
 
 
-
+  return 0;
 }
 

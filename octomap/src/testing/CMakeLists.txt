@@ -5,6 +5,9 @@ TARGET_LINK_LIBRARIES(test_raycasting octomap)
 ADD_EXECUTABLE(test_iterators test_iterators.cpp)
 TARGET_LINK_LIBRARIES(test_iterators octomap)
 
+ADD_EXECUTABLE(test_changedkeys test_changedkeys.cpp)
+TARGET_LINK_LIBRARIES(test_changedkeys octomap)
+
 ADD_EXECUTABLE(test_scans test_scans.cpp)
 TARGET_LINK_LIBRARIES(test_scans octomap)
 
@@ -32,3 +35,4 @@ ADD_TEST (NAME ReadGraph      COMMAND unit_tests ReadGraph      )
 ADD_TEST (NAME StampedTree    COMMAND unit_tests StampedTree    )
 ADD_TEST (NAME OcTreeKey      COMMAND unit_tests OcTreeKey      )
 ADD_TEST (NAME OcTreeIterator COMMAND unit_tests OcTreeIterator )
+ADD_TEST (NAME test_iterators COMMAND test_iterators ${CMAKE_CURRENT_SOURCE_DIR}/geb079.bt)

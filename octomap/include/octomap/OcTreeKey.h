@@ -43,8 +43,10 @@
 #include <assert.h>
 #ifdef __GNUC__
   #include <tr1/unordered_set>
+#include <tr1/unordered_map>
 #else
   #include <unordered_set>
+#include <unordered_map>
 #endif
 
 namespace octomap {
@@ -94,11 +96,18 @@ namespace octomap {
    * Data structure to efficiently compute the nodes to update from a scan
    * insertion using a hash set.
    * @note you need to use boost::unordered_set instead if your compiler does not
-   * yet support tr1
+   * yet support tr1!
    */
   typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
 
-  
+  /**
+   * Data structrure to efficiently track changed nodes as a combination of
+   * OcTreeKeys and a bool flag (to denote newly created nodes)
+   *
+   */
+  typedef std::tr1::unordered_map<OcTreeKey, bool, OcTreeKey::KeyHash> KeyBoolMap;
+
+
   class KeyRay {
   public:
     

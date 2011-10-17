@@ -110,9 +110,6 @@ namespace octomap {
      */
     virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
-    /// deprecated, use insertScan with separate sensor and frame origin instead
-    DEPRECATED(virtual void insertScan(const Pointcloud& pc, const pose6d& originPose, double maxrange=-1., bool pruning = true) );
-
     /// for testing only
     virtual void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning);
 
@@ -271,8 +268,15 @@ namespace octomap {
     /// Reset the set of changed keys. Call this after you obtained all changed nodes.
     void resetChangeDetection() { changedKeys.clear(); }
 
-    KeySet::const_iterator changedKeysBegin() {return changedKeys.begin();}
-    KeySet::const_iterator changedKeysEnd() {return changedKeys.end();}
+    /**
+     * Iterator to traverse all keys of changed nodes.
+     * you need to enableChangeDetection() first. Here, an OcTreeKey always
+     * refers to a node at the lowest tree level (its size is the minimum tree resolution)
+     */
+    KeyBoolMap::const_iterator changedKeysBegin() {return changedKeys.begin();}
+
+    /// Iterator to traverse all keys of changed nodes.
+    KeyBoolMap::const_iterator changedKeysEnd() {return changedKeys.end();}
 
     //-- parameters for occupancy and sensor model:
 
@@ -321,7 +325,6 @@ namespace octomap {
     /// Files will be smaller when the tree is pruned first.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
-
     /// Reads OcTree from a binary file.
     /// Existing nodes of the tree are deleted before the tree is read.
     bool readBinary(const std::string& filename);
@@ -333,8 +336,6 @@ namespace octomap {
     /// Writes OcTree to a binary file using writeBinaryConst().
     /// The OcTree is not changed, in particular not pruned first.
     bool writeBinaryConst(const std::string& filename) const;
-
-    // -- I/O  ---------------------------------------
 
     /**
      * Read node from binary stream (max-likelihood value), recursively
@@ -429,7 +430,8 @@ namespace octomap {
     OcTreeKey bbx_max_key;
 
     bool use_change_detection;
-    KeySet changedKeys;
+    /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
+    KeyBoolMap changedKeys;
     
     // occupancy parameters of tree, stored in logodds:
     float clampingThresMin;
