@@ -157,6 +157,8 @@ namespace octomap {
     /**
      * Traverse the tree and return all leaf nodes
      *
+     * @note deprecated and will be removed soon (use iterators instead)
+     *
      * @param node_centers collection of center points
      * @param max_depth Depth limit of query. 0 (default): no depth limit
      */
@@ -164,6 +166,8 @@ namespace octomap {
 
     /**
      * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
+     *
+     * @note deprecated and will be removed soon (use iterators instead)
      *
      * @param voxels list of all nodes to be returned
      * @param max_depth Depth limit of query. 0 (default): no depth limit
@@ -675,7 +679,7 @@ namespace octomap {
     void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const;
 
  protected:
-    /// compute center point of child voxel cell, for internal use
+    /// compute center point of child voxel cell, for internal use (will be removed soon)
     void computeChildCenter (const unsigned int& pos, const float& center_offset, 
                              const point3d& parent_center, point3d& child_center) const;
 

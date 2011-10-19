@@ -14,8 +14,9 @@
     } }
 
 #define EXPECT_EQ(a,b) {                                                \
-    if (!(a == b)) { fprintf(stderr, "test failed: %d != %d in %s, line %d\n", a, b, __FILE__, __LINE__); \
-      exit(1);                                                         \
+    if (!(a == b)) { std::cerr << "test failed: " <<a<<"!="<<b<< " in " \
+                      << __FILE__ << ", line " <<__LINE__ << std::endl; \
+      exit(1);                                                          \
     } }
 
 #define EXPECT_FLOAT_EQ(a,b) {                                          \

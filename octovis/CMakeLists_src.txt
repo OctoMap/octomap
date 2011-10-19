@@ -104,6 +104,5 @@ install(TARGETS octovis
 file(GLOB octovis_HDRS ${PROJECT_SOURCE_DIR}/include/octovis/*.h)
 # filter generated headers for GUI:
 list(REMOVE_ITEM octovis_HDRS ${viewer_MOC_HDRS} ${viewer_UIS_H})
-message(INFO ${octovis_HDRS})
 install(FILES ${octovis_HDRS} DESTINATION include/octovis)
 
