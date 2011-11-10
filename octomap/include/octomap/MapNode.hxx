@@ -97,5 +97,9 @@ namespace octomap {
     return node_map->readBinary(filename);
   }
 
+  template <class TREETYPE>
+  bool MapNode<TREETYPE>::writeMap(std::string filename){
+  	return node_map->writeBinary(filename);
+  }
 
 } // namespace

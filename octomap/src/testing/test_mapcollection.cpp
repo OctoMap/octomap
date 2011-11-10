@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
 
 	MapCollection<MapNode<OcTree> > collection(filename);
 
+	collection.write("writeout.txt");
+
 	collection.writePointcloud("test.vrml");
 
 

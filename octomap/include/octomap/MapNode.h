@@ -60,8 +60,11 @@ namespace octomap {
     inline std::string getId() { return id; }
     inline void setId(std::string newid) { id = newid; }
 
+    inline pose6d getOrigin() { return origin; }
+
     // returns cloud of voxel centers in global reference frame
     Pointcloud generatePointcloud();
+    bool writeMap(std::string filename);
 
   protected:
     TREETYPE*    node_map;  // occupancy grid map
