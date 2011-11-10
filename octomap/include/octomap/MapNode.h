@@ -50,6 +50,8 @@ namespace octomap {
     
   public:
     MapNode();
+    MapNode(TREETYPE* node_map, pose6d origin);
+    MapNode(std::string filename, pose6d origin);
     MapNode(const Pointcloud& cloud, pose6d origin);
     ~MapNode();
     
@@ -64,7 +66,11 @@ namespace octomap {
   protected:
     TREETYPE*    node_map;  // occupancy grid map
     pose6d       origin;    // origin and orientation relative to parent
-    std::string  id;  
+    std::string  id;
+
+    void clear();
+    bool readMap(std::string filename);
+
   };
 
 } // end namespace

@@ -81,6 +81,10 @@ namespace octomap {
     std::vector<Pointcloud*> segment(const Pointcloud& scan) const;
     // TODO
     MAPNODE* associate(const Pointcloud& scan);
+
+  	static void splitPathAndFilename(std::string &filenamefullpath, std::string* path, std::string *filename);
+  	static std::string combinePathAndFilename(std::string path, std::string filename);
+  	static bool readTagValue(std::string tag, std::ifstream &infile, std::string* value);
     
   protected:
 

@@ -38,7 +38,8 @@
  */
 
 #include <stdio.h>
-#include <octomap/MapCollection.h>
+#include <sstream>
+#include <fstream>
 
 namespace octomap {
   
@@ -58,11 +59,70 @@ namespace octomap {
 
   template <class MAPNODE>
   void MapCollection<MAPNODE>::clear() {
+		for(typename std::vector<MAPNODE*>::iterator it= nodes.begin(); it != nodes.end(); ++it)
+			delete *it;
+		nodes.clear();
   }
 
   template <class MAPNODE>
-  bool MapCollection<MAPNODE>::read(std::string filename) {
-    return false;
+  bool MapCollection<MAPNODE>::read(std::string filenamefullpath) {
+
+    std::string path;
+    std::string filename;
+    splitPathAndFilename(filenamefullpath, &path, &filename);
+
+    std::ifstream infile;
+    infile.open(filenamefullpath.c_str(), std::ifstream::in);
+    if(!infile.is_open()){
+    		OCTOMAP_ERROR_STR("Could not open "<< filenamefullpath << ". MapCollection not loaded.");
+    		return false;
+    }
+
+    bool ok = true;
+    while(ok){
+    		std::string nodeID;
+    		ok = readTagValue("MAPNODEID", infile, &nodeID);
+    		if(!ok){
+    			//do not throw error, you could be at the end of the file
+    			break;
+    		}
+
+    		std::string mapNodeFilename;
+    		ok = readTagValue("MAPNODEFILENAME", infile, &mapNodeFilename);
+    		if(!ok){
+    			OCTOMAP_ERROR_STR("Could not read MAPNODEFILENAME.");
+    			break;
+    		}
+
+    		std::string poseStr;
+    		ok = readTagValue("MAPNODEPOSE", infile, &poseStr);
+    		std::istringstream poseStream(poseStr);
+    		float x,y,z;
+    		poseStream >> x >> y >> z;
+    		double roll,pitch,yaw;
+    		poseStream >> roll >> pitch >> yaw;
+    		ok = ok && !poseStream.fail();
+    		if(!ok){
+    			OCTOMAP_ERROR_STR("Could not read MAPNODEPOSE.");
+    			break;
+    		}
+    		octomap::pose6d origin(x, y, z, roll, pitch, yaw);
+
+    		MAPNODE* node = new MAPNODE(combinePathAndFilename(path,mapNodeFilename), origin);
+    		//todo: how to be sure that reading worked?
+
+    		if(!ok){
+    			for(unsigned int i=0; i<nodes.size(); i++){
+    				delete nodes[i];
+    			}
+    			infile.close();
+    			return false;
+    		} else {
+    			nodes.push_back(node);
+    		}
+    	}
+    	infile.close();
+    	return true;
   }
 
 
@@ -104,7 +164,15 @@ namespace octomap {
   
   template <class MAPNODE>
   bool MapCollection<MAPNODE>::writePointcloud(std::string filename) {
-    return false;
+    Pointcloud pc;
+    for(typename std::vector<MAPNODE* >::iterator it = nodes.begin(); it != nodes.end(); ++it){
+    	Pointcloud tmp = (*it)->generatePointcloud();
+    	pc.push_back(tmp);
+    }
+
+    pc.writeVrml(filename);
+
+    return true;
   }
 
   template <class MAPNODE>
@@ -142,6 +210,55 @@ namespace octomap {
   MAPNODE* MapCollection<MAPNODE>::associate(const Pointcloud& scan) {
     fprintf(stderr, "ERROR: MapCollection::associate is not implemented yet.\n");
     return 0;
+  }
+
+  template <class MAPNODE>
+  void MapCollection<MAPNODE>::splitPathAndFilename(std::string &filenamefullpath, std::string* path, std::string *filename){
+  	#ifdef WIN32
+  		std::string::size_type lastSlash = filenamefullpath.find_last_of('\\');
+  	#else
+  		std::string::size_type lastSlash = filenamefullpath.find_last_of('/');
+  	#endif
+  		if (lastSlash != std::string::npos){
+  			*filename =  filenamefullpath.substr(lastSlash + 1);
+  			*path = filenamefullpath.substr(0, lastSlash);
+  		} else {
+  			*filename = filenamefullpath;
+  			*path = "";
+  		}
+  }
+
+  template <class MAPNODE>
+  std::string MapCollection<MAPNODE>::combinePathAndFilename(std::string path, std::string filename){
+  	std::string result = path;
+
+  	if(path != ""){
+  		#ifdef WIN32
+  		result.append("\\");
+  		#else
+  		result.append("/");
+  		#endif
+  	}
+
+  	result.append(filename);
+  	return result;
+  }
+
+  template <class MAPNODE>
+  bool MapCollection<MAPNODE>::readTagValue(std::string tag, std::ifstream& infile, std::string* value){
+  	std::string line;
+    while( getline(infile, line) ){
+    	if(line.length() != 0 && line[0] != '#')
+   			 break;
+    }
+
+    *value = "";
+    std::string::size_type firstSpace = line.find(' ');
+    if(firstSpace != std::string::npos && firstSpace != line.size()-1){
+    	*value = line.substr(firstSpace + 1);
+    	return true;
+    } else
+    	return false;
   }
 
 
