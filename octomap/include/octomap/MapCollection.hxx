@@ -261,5 +261,4 @@ namespace octomap {
     	return false;
   }
 
-
 } // namespace
