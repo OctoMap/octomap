@@ -1,0 +1,15 @@
+#a comment
+#a comment
+MAPNODEID cup0815
+#a further comment
+#a further comment
+MAPNODEFILENAME geb079.bt
+#a further comment
+MAPNODEPOSE 1 2 3 4.56 67.3 1.24
+#a further comment
+MAPNODEID glass
+MAPNODEFILENAME geb079.bt
+MAPNODEPOSE 1 2 3 4.56 67.3 1.24
+MAPNODEID cup08w5
+MAPNODEFILENAME geb079.bt
+MAPNODEPOSE 1 2 3 4.56 67.3 1.24
