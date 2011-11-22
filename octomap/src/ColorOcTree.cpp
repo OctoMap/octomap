@@ -104,6 +104,11 @@ namespace octomap {
     }
   }
 
+
+  void ColorOcTreeNode::updateColorChildren() {      
+    color = getAverageChildColor();
+  }
+
   // pruning =============
 
   bool ColorOcTreeNode::pruneNode() {

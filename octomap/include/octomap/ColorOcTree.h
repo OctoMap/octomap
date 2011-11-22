@@ -92,12 +92,11 @@ namespace octomap {
 
     // has any color been integrated? (pure white is very unlikely...)
     inline bool isColorSet() const { 
-      return ((color.r != 255) && (color.g != 255) && (color.b != 255)); 
+      return ((color.r != 255) || (color.g != 255) || (color.b != 255)); 
     }
 
-    void updateColorChildren() {      
-      color = getAverageChildColor();
-    }
+    void updateColorChildren();
+
 
     ColorOcTreeNode::Color getAverageChildColor() const;
   
