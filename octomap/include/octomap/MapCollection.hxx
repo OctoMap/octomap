@@ -125,6 +125,10 @@ namespace octomap {
     	return true;
   }
 
+  template <class MAPNODE>
+  void MapCollection<MAPNODE>::addNode( MAPNODE* node){
+  	nodes.push_back(node);
+  }
 
   template <class MAPNODE>
   MAPNODE* MapCollection<MAPNODE>::addNode() {

@@ -45,6 +45,8 @@ namespace octomap {
 
   template <class TREETYPE>
   MapNode<TREETYPE>::MapNode(TREETYPE* node_map, pose6d origin) {
+  	this->node_map = node_map;
+  	this->origin = origin;
   }
 
   template <class TREETYPE>

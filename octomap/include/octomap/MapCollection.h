@@ -53,6 +53,7 @@ namespace octomap {
     MapCollection(std::string filename);
     ~MapCollection();
 
+    void addNode( MAPNODE* node);
     MAPNODE* addNode();
     MAPNODE* addNode(const Pointcloud& cloud, point3d sensor_origin);
     bool removeNode(const MAPNODE* n);
