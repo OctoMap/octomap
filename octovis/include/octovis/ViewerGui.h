@@ -160,6 +160,11 @@ namespace octomap {
     // open octree with per-voxel color info
     void openColorOcTree();
 
+    // EXPERIMENTAL
+    // open a map collection (.hot-file)
+    void openMapCollection();
+
+
     void setOcTreeUISwitches();
 
     /*!

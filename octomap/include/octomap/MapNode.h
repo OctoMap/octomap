@@ -54,6 +54,10 @@ namespace octomap {
     MapNode(std::string filename, pose6d origin);
     MapNode(const Pointcloud& cloud, pose6d origin);
     ~MapNode();
+
+    typedef TREETYPE TreeType;
+
+    TREETYPE* getMap() { return  node_map; }
     
     void updateMap(const Pointcloud& cloud, point3d sensor_origin);
 

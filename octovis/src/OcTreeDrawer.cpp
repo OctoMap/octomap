@@ -63,7 +63,9 @@ namespace octomap {
 
     // push current status
     glPushMatrix();
-    octomap::pose6d relative_transform = origin * initial_origin.inv();
+    // octomap::pose6d relative_transform = origin * initial_origin.inv();
+
+    octomap::pose6d relative_transform = origin;// * initial_origin;
 
     // apply relative transform
     const octomath::Quaternion& q = relative_transform.rot();
@@ -71,12 +73,13 @@ namespace octomap {
     
     // convert quaternion to angle/axis notation
     float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
-    float axis_x = q.x() / scale;
-    float axis_y = q.y() / scale;
-    float axis_z = q.z() / scale;
-    float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
-
-    glRotatef(angle, axis_x, axis_y, axis_z);
+    if (scale) {
+      float axis_x = q.x() / scale;
+      float axis_y = q.y() / scale;
+      float axis_z = q.z() / scale;
+      float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
+      glRotatef(angle, axis_x, axis_y, axis_z);
+    }
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -113,6 +116,7 @@ namespace octomap {
 
     // save origin used during cube generation
     this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), origin_.rot());
+
     // origin is in global coords
     this->origin = origin_;
     
@@ -238,7 +242,6 @@ namespace octomap {
     cube_template.clear();
     cube_template.reserve(24);
 
-    octomath::Quaternion rot (origin.rot());
     cube_template.push_back(octomath::Vector3( 1, 1,-1));
     cube_template.push_back(octomath::Vector3( 1,-1,-1));
     cube_template.push_back(octomath::Vector3( 1, 1,-1));
@@ -266,12 +269,6 @@ namespace octomap {
     cube_template.push_back(octomath::Vector3(-1,-1,-1));
     cube_template.push_back(octomath::Vector3(-1, 1,-1));
     cube_template.push_back(octomath::Vector3(-1, 1, 1));
-
-    // rotate them according to object orientation
-    for (std::vector<octomath::Vector3>::iterator it = cube_template.begin(); 
-         it != cube_template.end(); ++it) {
-      *it = rot.rotate(*it);
-    }
   }
 
   unsigned int OcTreeDrawer::generateCube(const octomap::OcTreeVolume& v,

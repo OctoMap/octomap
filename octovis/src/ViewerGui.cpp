@@ -28,8 +28,10 @@
 #include <fstream>
 //#include <octomap/octomap_timing.h>
 
-#include <octovis/ColorOcTreeDrawer.h>
 #include <octovis/ViewerGui.h>
+#include <octovis/ColorOcTreeDrawer.h>
+#include <octomap/MapCollection.h>
+
 
 #define _MAXRANGE_URG 5.1
 #define _MAXRANGE_SICK 50.0
@@ -191,6 +193,7 @@ namespace octomap{
       otr.id = id;
       if (dynamic_cast<OcTree*>(tree)) {      
         otr.octree_drawer = new OcTreeDrawer();
+        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
       }
       else if (dynamic_cast<ColorOcTree*>(tree)) {      
         otr.octree_drawer = new ColorOcTreeDrawer();
@@ -473,6 +476,9 @@ namespace octomap{
       else if (fileinfo.suffix() == "cot"){
         openColorOcTree();
       }
+      else if (fileinfo.suffix() == "hot"){
+        openMapCollection();
+      }
       else if (fileinfo.suffix() == "dat"){
         openPointcloud();
       }
@@ -600,6 +606,38 @@ namespace octomap{
     ui.actionHeight_map->setChecked(true); 
   }
 
+
+  // EXPERIMENTAL
+  void ViewerGui::openMapCollection() {
+
+    fprintf(stderr, "opening hierarchy from %s...\n", m_filename.c_str());
+
+    std::ifstream infile(m_filename.c_str(), std::ios_base::in |std::ios_base::binary);
+    if (!infile.is_open()) {
+      QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
+      return;
+    }
+    infile.close();
+    
+    MapCollection<MapNode<OcTree> > collection(m_filename);
+    int i=0;
+    for (MapCollection<MapNode<OcTree> >::iterator it = collection.begin(); 
+         it != collection.end(); ++it) {
+      fprintf(stderr, "adding hierarchy node %s\n", (*it)->getId().c_str());
+      OcTree* tree = (*it)->getMap();
+      if (!tree)  fprintf(stderr, "error while reading node %s\n", (*it)->getId().c_str());
+      else {
+        fprintf(stderr, "read tree with %lu tree nodes\n", tree->size());
+      }
+      pose6d  origin = (*it)->getOrigin();
+      this->addOctree(tree, i, origin);
+      ++i;
+    }
+    setOcTreeUISwitches();
+    showOcTree();
+    m_glwidget->resetView();
+    fprintf(stderr, "done\n");
+  }
 
   void ViewerGui::loadGraph(bool completeGraph) {
   
