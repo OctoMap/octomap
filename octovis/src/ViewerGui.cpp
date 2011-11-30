@@ -193,7 +193,7 @@ namespace octomap{
       otr.id = id;
       if (dynamic_cast<OcTree*>(tree)) {      
         otr.octree_drawer = new OcTreeDrawer();
-        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
+        //        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
       }
       else if (dynamic_cast<ColorOcTree*>(tree)) {      
         otr.octree_drawer = new ColorOcTreeDrawer();

@@ -196,13 +196,15 @@ namespace octomap {
                                        bool ignoreUnknownCells, double maxRange) const {
     bool hit_obstacle = false;
     double min_dist = 1e6;
+    // SPEEDUP: use openMP to do raycasting in parallel
+    // SPEEDUP: use bounding boxes to determine submaps 
     for (const_iterator it = this->begin(); it != this->end(); ++it) {
       point3d origin_trans = (*it)->getOrigin().inv().transform(origin);
       point3d direction_trans = (*it)->getOrigin().inv().rot().rotate(direction);
-    printf("ray from %.2f,%.2f,%.2f in dir %.2f,%.2f,%.2f in node %s\n",
-           origin_trans.x(), origin_trans.y(), origin_trans.z(),
-           direction_trans.x(), direction_trans.y(), direction_trans.z(),
-           (*it)->getId().c_str());
+      printf("ray from %.2f,%.2f,%.2f in dir %.2f,%.2f,%.2f in node %s\n",
+             origin_trans.x(), origin_trans.y(), origin_trans.z(),
+             direction_trans.x(), direction_trans.y(), direction_trans.z(),
+             (*it)->getId().c_str());
       point3d temp_endpoint;
       if ((*it)->getMap()->castRay(origin_trans, direction_trans, temp_endpoint, ignoreUnknownCells, maxRange)) {
         printf("hit obstacle in node %s\n", (*it)->getId().c_str());
