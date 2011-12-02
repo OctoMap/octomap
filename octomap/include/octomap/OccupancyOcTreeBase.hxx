@@ -372,7 +372,7 @@ namespace octomap {
       return false;
     }
 
-    point3d direction = directionP.normalized ();
+    point3d direction = directionP.normalized();
     bool max_range_set = (maxRange > 0.);
 
     int step[3]; 
@@ -396,9 +396,14 @@ namespace octomap {
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
       else {
-        tMax[i] =  std::numeric_limits<double>::max( );
-        tDelta[i] = std::numeric_limits<double>::max( );
+        tMax[i] =  std::numeric_limits<double>::max();
+        tDelta[i] = std::numeric_limits<double>::max();
       }
+    }
+
+    if (step[0] == 0 && step[1] == 0 && step[2] == 0){
+    	OCTOMAP_ERROR("Raycasting in direction (0,0,0) is not possible!");
+    	return false;
     }
 
     // for speedup:
