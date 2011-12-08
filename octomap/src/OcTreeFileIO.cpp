@@ -37,11 +37,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include <octomap/OcTreeFileIO.h>
+#include <octomap/OcTree.h>
+#include <octomap/ColorOcTree.h>
+#include <octomap/CountingOcTree.h>
+#include <octomap/OcTreeStamped.h>
 namespace octomap {
 
-  template <class NODE>
-  bool OcTreeFileIO::write(const OcTreeBase<NODE>* tree, const std::string& filename){
+  OcTreeFileIO::OcTreeFileIO(){
+    AbstractOcTree* tree;
+
+    tree = new ColorOcTree(0.1);
+    classIDMapping[tree->getTreeType()] = tree;
+    tree = new CountingOcTree(0.1);
+    classIDMapping[tree->getTreeType()] = tree;
+    tree = new OcTree(0.1);
+    classIDMapping[tree->getTreeType()] = tree;
+    tree = new OcTreeStamped(0.1);
+    classIDMapping[tree->getTreeType()] = tree;
+  }
+
+  OcTreeFileIO::~OcTreeFileIO(){
+    std::map<std::string, AbstractOcTree*>::iterator it;
+    for (it = classIDMapping.begin(); it != classIDMapping.end(); it++){
+      delete it->second;
+    }
+
+    classIDMapping.clear();
+  }
+
+  bool OcTreeFileIO::write(const AbstractOcTree* tree, const std::string& filename){
     std::ofstream file(filename.c_str(), std::ios_base::out | std::ios_base::binary);
 
     if (!file.is_open()){
@@ -56,11 +81,10 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  std::ostream& OcTreeFileIO::write(const OcTreeBase<NODE>* tree, std::ostream& s){
+  std::ostream& OcTreeFileIO::write(const AbstractOcTree* tree, std::ostream& s){
     // write header:
     s << "# Octomap OcTree file\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
-    s << "id " << getTreeID(tree) << std::endl;
+    s << "id " << tree->getTreeType() << std::endl;
     s << "size "<< tree->size() << std::endl;
     s << "res " << tree->getResolution() << std::endl;
     s << "data" << std::endl;
@@ -69,8 +93,7 @@ namespace octomap {
    return s;
   }
 
-  template <class NODE>
-  OcTreeBase<NODE>* OcTreeFileIO::read(const std::string& filename){
+  AbstractOcTree* OcTreeFileIO::read(const std::string& filename){
     std::ifstream file(filename.c_str(), std::ios_base::in |std::ios_base::binary);
 
     if (!file.is_open()){
@@ -78,26 +101,50 @@ namespace octomap {
       return NULL;
     } else {
       // TODO: check is_good of finished stream, warn?
-      OcTreeBase<NODE>* tree = NULL;
+      AbstractOcTree* tree = NULL;
       read(file,tree);
       return tree;
     }
 
   }
 
-  template <class NODE>
-  std::istream& OcTreeFileIO::read(std::istream& s, OcTreeBase<NODE>*& tree){
-    unsigned id = 0;
+  std::istream& OcTreeFileIO::read(std::istream& s, AbstractOcTree*& tree){
+    std::string id = "";
     unsigned size = 0;
     double res = 0.0;
     tree = NULL;
 
     // check if first line valid:
     std::string line;
+    int streampos = s.tellg();
     std::getline(s, line);
     if (line.compare(0,9, "# Octomap OcTree file", 0, 9) !=0){
       OCTOMAP_ERROR_STR("First line of OcTree file header should start with \"# Octomap\", but reads:");
       OCTOMAP_ERROR_STR(line << "\n");
+
+      OCTOMAP_WARNING_STR("Could not detect OcTree in file, trying legacy formats.");
+      // try reading old .bt and .cot directly, reset stream
+      s.seekg(streampos);
+
+      OcTree* binaryTree = new OcTree(0.1);
+      binaryTree->readBinary(s);
+      if (binaryTree->size() > 1 && s.good()){
+        tree = binaryTree;
+        OCTOMAP_WARNING_STR("Detected Binary OcTree. Please update your files to the new format.");
+      } else{
+        // reset and try again, this time ColorOcTree:
+        delete binaryTree;
+        s.seekg(streampos);
+        ColorOcTree* colorTree = new ColorOcTree(0.1);
+        colorTree->read(s);
+        if (colorTree->size() > 1 && s.good()){
+          tree = colorTree;
+          OCTOMAP_WARNING_STR("Detected Binary OcTree. Please update your files to the new format.");
+        }
+        // else: failure, tree will be NULL
+      }
+
+
       return s;
     }
 
@@ -142,9 +189,14 @@ namespace octomap {
       return s;
     }
 
-    if (id == 0) {
-      OCTOMAP_ERROR_STR("Error reading OcTree header, ID 0");
+    if (id == "") {
+      OCTOMAP_ERROR_STR("Error reading OcTree header, ID not set");
       return s;
+    }
+    // fix deprecated id value:
+    if (id == "1"){
+      OCTOMAP_WARNING("You are using a deprecated id \"%s\", changing to \"OcTree\" (you should update your file header)\n", id.c_str());
+      id = "OcTree";
     }
 
     if (res <= 0.0) {
@@ -153,48 +205,31 @@ namespace octomap {
     }
 
     // otherwise: values are valid, stream is now at binary data!
-    OCTOMAP_DEBUG_STR("Reading OcTree type "<< id);
+    OCTOMAP_DEBUG_STR("Reading octree type "<< id);
 
-    tree = createTree<NODE>(id, res);
+    tree = createTree(id, res);
 
     if (tree){
       tree->read(s);
+      OCTOMAP_DEBUG_STR("Done ("<< tree->size() << " nodes)");
     }
 
-    OCTOMAP_DEBUG_STR("Done ("<< tree->size() << " nodes)");
 
     return s;
   }
 
 
-  template <class NODE>
-  OcTreeBase<NODE>* OcTreeFileIO::createTree(unsigned id, double res){
-    OcTreeBase<NODE>* tree = NULL;
-    switch(id) {
-      case 1: tree = new OcTree(res); break;
-      // needs to be fixed (only works on OcTreeNodes right now)
-      //case 2: tree = new OcTreeBase<OcTreeDataNode<float> >(res); break;
-      // ...
-      default: OCTOMAP_ERROR_STR( __FILE__":" << __LINE__ << ": Unknown Octree id "<< id<<"."); break;
-    }
-
-    return tree;
-  }
-
-  template <class NODE>
-  unsigned OcTreeFileIO::getTreeID(const OcTreeBase<NODE>* tree){
-    // check actual type of tree:
-    if (dynamic_cast<const OcTree*>(tree)){
-      return 1;
-    } else if (dynamic_cast<const OcTreeBase<OcTreeDataNode<float> >*>(tree)){
-      return 2;
+  AbstractOcTree* OcTreeFileIO::createTree(const std::string class_name, double res){
+    std::map<std::string, AbstractOcTree*>::iterator it =classIDMapping.find(class_name);
+    if (it == classIDMapping.end()){
+      OCTOMAP_ERROR("Could not create octree of type %s, not in store in OcTreeFileIO\n", class_name.c_str());
+      return NULL;
     } else {
-      OCTOMAP_ERROR_STR( __FILE__":" << __LINE__ << ": Unknown Octree type "<< typeid(tree).name()<<".");
+      AbstractOcTree* tree = it->second->create();
+
+      tree->setResolution(res);
+      return tree;
     }
-    return 0;
   }
-
-
-
 
 }

@@ -85,10 +85,13 @@ namespace octomap {
   class OcTreeStamped : public OccupancyOcTreeBase <OcTreeNodeStamped> {    
 
   public:
-    static const int TREETYPE=5;
-
-  public:
     OcTreeStamped(double _resolution);
+
+    /// virtual constructor: creates a new object of same type
+    /// (Covariant return type requires an up-to-date compiler)
+    OcTreeStamped* create() const {return new OcTreeStamped(resolution); }
+
+    std::string getTreeType() const {return "OcTreeStamped";}
 
     //! \return timestamp of last update
     unsigned int getLastUpdateTime();

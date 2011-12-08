@@ -54,9 +54,6 @@ namespace octomap {
   class OcTree : public OccupancyOcTreeBase <OcTreeNode> {
 
   public:
-    static const int TREETYPE=3;
-
-  public:
 
     /**
      * Creates a new (empty) OcTree of a given resolution
@@ -72,6 +69,12 @@ namespace octomap {
     OcTree(std::string _filename);
 
     virtual ~OcTree(){};
+
+    /// virtual constructor: creates a new object of same type
+    /// (Covariant return type requires an up-to-date compiler)
+    OcTree* create() const {return new OcTree(resolution); }
+
+    std::string getTreeType() const {return "OcTree";}
   };
 
 } // end namespace

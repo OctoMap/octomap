@@ -7,6 +7,7 @@ SET (octomap_SRCS
   OcTreeStamped.cpp
   OcTreeLUT.cpp
   ColorOcTree.cpp
+  OcTreeFileIO.cpp
   )
 
 # dynamic and static libs, see CMake FAQ:
@@ -38,6 +39,9 @@ TARGET_LINK_LIBRARIES(bt2vrml octomap)
 
 ADD_EXECUTABLE(edit_octree edit_octree.cpp)
 TARGET_LINK_LIBRARIES(edit_octree octomap)
+
+ADD_EXECUTABLE(convert_octree convert_octree.cpp)
+TARGET_LINK_LIBRARIES(convert_octree octomap)
 
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)

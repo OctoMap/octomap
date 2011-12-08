@@ -732,8 +732,11 @@ namespace octomap {
       toMaxLikelihood();
       this->sizeChanged = true;
       this->tree_size = OcTreeBase<NODE>::calcNumNodes();  // compute number of nodes
-
-      OCTOMAP_DEBUG_STR("done.");
+      if (tree_read_size != this->tree_size){
+        OCTOMAP_ERROR("Tree size mismatch: # read nodes (%zu) != # expected nodes (%zu)\n",this->tree_size, tree_read_size);
+      } else {
+        OCTOMAP_DEBUG_STR("done.");
+      }
     }
     else { 
       OCTOMAP_ERROR_STR("Binary file does not contain an OcTree!");

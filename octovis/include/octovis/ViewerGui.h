@@ -151,14 +151,8 @@ namespace octomap {
      */
     void openPC();
 
-    // open binary file containing an octree
-    void openTree();
-
     // open "regular" file containing an octree
     void openOcTree();
-
-    // open octree with per-voxel color info
-    void openColorOcTree();
 
     // EXPERIMENTAL
     // open a map collection (.hot-file)

@@ -114,6 +114,12 @@ namespace octomap {
 
   public:
     ColorOcTree(double _resolution);
+
+    /// virtual constructor: creates a new object of same type
+    /// (Covariant return type requires an up-to-date compiler)
+    ColorOcTree* create() const {return new ColorOcTree(resolution); }
+
+    std::string getTreeType() const {return "ColorOcTree";}
    
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 

@@ -1,18 +1,15 @@
-#ifndef OCTOMAP_ABSTRACT_OCTREE
-#define OCTOMAP_ABSTRACT_OCTREE
-
-// $Id:  $
+// $Id$
 
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011.
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
 
 /*
- * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,54 +37,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstddef>
+#include <octomap/OcTreeFileIO.h>
 #include <fstream>
-#include <string>
 #include <iostream>
+#include <string.h>
+#include <stdlib.h>
+#include <list>
 
-namespace octomap {
-  
-  /*!
-   * This abstract class is an interface to all octrees
-   */
-  class AbstractOcTree {
+using namespace std;
+using namespace octomap;
 
-  public:
-    AbstractOcTree() {};
-    virtual ~AbstractOcTree() {};
+void printUsage(char* self){
+  std::cerr << "\nUSAGE: " << self << " input.ot [output.bt]\n\n";
 
-    /// virtual constructor: creates a new object of same type
-    virtual AbstractOcTree* create() const = 0;
+  std::cerr << "This tool converts between OctoMap octree file formats, \n"
+      "e.g. to convert old legacy files to the new .ot format.\n\n";
 
-    /// returns actual class name as string for identification
-    virtual std::string getTreeType() const = 0;
+  exit(0);
+}
 
+int main(int argc, char** argv) {
+  string inputFilename = "";
+  string outputFilename = "";
 
+  if (argc < 2 || argc > 3 || (argc > 1 && strcmp(argv[1], "-h") == 0)){
+    printUsage(argv[0]);
+  }
 
-    virtual double getResolution() const = 0;
-    virtual void setResolution(double res) = 0;
-    virtual size_t size() const = 0;
-    virtual size_t memoryUsage() const = 0;
-    virtual void getMetricMin(double& x, double& y, double& z) = 0;
-    virtual void getMetricMax(double& x, double& y, double& z) = 0;
-    virtual void getMetricSize(double& x, double& y, double& z) = 0;
-
-    virtual void prune() = 0;
-    virtual void expand() = 0;
-
-    /// Read complete state of tree from stream
-    virtual std::istream& read(std::istream &s) = 0;
-    /// Write complete state of tree to stream, prune tree first (lossless compression)
-    virtual std::ostream& write(std::ostream &s) = 0;
-    /// Write complete state of tree to stream, no pruning (const version)
-    virtual std::ostream& writeConst(std::ostream &s) const = 0;
-
-  protected:
-
-  };
+  inputFilename = std::string(argv[1]);
+  if (argc == 3)
+    outputFilename = std::string(argv[2]);
+  else
+    outputFilename = inputFilename + ".ot";
 
 
-} // end namespace
+  cout << "\nReading OcTree file\n===========================\n";
+  OcTreeFileIO io;
+  AbstractOcTree* tree = io.read(inputFilename);
+  if (!tree){
+    std::cerr << "Error reading from file " << inputFilename << std::endl;
+    exit(-1);
+  }
+
+//  if (outputFilename)
+
+  if (!io.write(tree, outputFilename)){
+    std::cerr << "Error writing to " << outputFilename << std::endl;
+    exit(-2);
+  }
 
 
-#endif
+
+
+  std::cout << "Finished writing to " << outputFilename << std::endl;
+
+}

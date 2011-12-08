@@ -41,53 +41,45 @@
  */
 
 
-#include <octomap/OcTree.h>
-#include <octomap/OcTreeBase.h>
-#include <octomap/OcTreeDataNode.h>
+#include <octomap/AbstractOcTree.h>
+#include <octomap/octomap_types.h>
+
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <typeinfo>
+#include <map>
 
 namespace octomap {
 
   /**
-   * Static class for reading and writing OcTrees to files.
-   * Implements a simple Factory design pattern.
+   * Class for reading and writing OcTrees to files.
+   * Implements a simple Factory design pattern. The constructor fills
+   * the mapping between classes and (string) IDs
    *
    */
 
   class OcTreeFileIO {
   public:
-    template <class NODE>
-    static bool write(const OcTreeBase<NODE>* tree, const std::string& filename);
+    OcTreeFileIO();
+    ~OcTreeFileIO();
+
+    bool write(const AbstractOcTree* tree, const std::string& filename);
 
 
-    template <class NODE>
-    static std::ostream& write(const OcTreeBase<NODE>* tree, std::ostream& s);
+    std::ostream& write(const AbstractOcTree* tree, std::ostream& s);
 
 
     // TODO: non-const version: prune tree first before writing?
 //    template <class NODE>
-//    static bool write(OcTreeBase<NODE>* tree, const std::string& filename);
+//    bool write(OcTreeBase<NODE>* tree, const std::string& filename);
 //
 //    template <class NODE>
-//    static std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
+//    std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
 
-    template <class NODE>
-    static OcTreeBase<NODE>* read(const std::string& filename);
+    AbstractOcTree* read(const std::string& filename);
 
-    template <class NODE>
-    static std::istream& read(std::istream& s, OcTreeBase<NODE>*& tree);
+    std::istream& read(std::istream& s, AbstractOcTree*& tree);
 
-    /**
-     * Map OcTree classes to IDs
-     *
-     * @param tree
-     * @return unique (unsigned) ID of OcTree class
-     */
-    template <class NODE>
-    static unsigned getTreeID(const OcTreeBase<NODE>* tree);
 
     /**
      * Creates a certain OcTree (factory pattern)
@@ -96,13 +88,13 @@ namespace octomap {
      * @param res resolution of OcTree
      * @return pointer to newly created OcTree (empty). NULL if the ID is unknown!
      */
-    template <class NODE>
-    static OcTreeBase<NODE>* createTree(unsigned id, double res);
+    AbstractOcTree* createTree(const std::string id, double res);
 
+  protected:
+    std::map<std::string, AbstractOcTree*> classIDMapping;
 
   };
 }
 
-#include "octomap/OcTreeFileIO.hxx"
 
 #endif

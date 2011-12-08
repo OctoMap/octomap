@@ -161,7 +161,8 @@ int main(int argc, char** argv) {
   cout << endl;
 
   cout << "\nWriting tree files\n===========================\n";
-  OcTreeFileIO::write(tree, treeFilenameOT);
+  OcTreeFileIO io;
+  io.write(tree, treeFilenameOT);
   std::cout << "Full Octree written to "<< treeFilenameOT << std::endl;
   tree->writeBinary(treeFilename);
   std::cout << "Bonsai tree written to "<< treeFilename << std::endl;
