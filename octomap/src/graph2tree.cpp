@@ -41,7 +41,6 @@
 #include <stdlib.h>
 
 #include <octomap/octomap.h>
-#include <octomap/OcTreeFileIO.h>
 #include <octomap/octomap_timing.h>
 
 using namespace std;
@@ -161,8 +160,7 @@ int main(int argc, char** argv) {
   cout << endl;
 
   cout << "\nWriting tree files\n===========================\n";
-  OcTreeFileIO io;
-  io.write(tree, treeFilenameOT);
+  tree->write(treeFilenameOT);
   std::cout << "Full Octree written to "<< treeFilenameOT << std::endl;
   tree->writeBinary(treeFilename);
   std::cout << "Bonsai tree written to "<< treeFilename << std::endl;

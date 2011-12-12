@@ -44,16 +44,16 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <map>
 
 namespace octomap {
-  
   /*!
    * This abstract class is an interface to all octrees
    */
   class AbstractOcTree {
-
+    friend class StaticMapInit;
   public:
-    AbstractOcTree() {};
+    AbstractOcTree();
     virtual ~AbstractOcTree() {};
 
     /// virtual constructor: creates a new object of same type
@@ -75,16 +75,45 @@ namespace octomap {
     virtual void prune() = 0;
     virtual void expand() = 0;
 
+    /// Write file header and complete tree to file (serialization)
+    bool write(const std::string& filename) const;
+    /// Write file header and complete tree to stream (serialization)
+    bool write(std::ostream& s) const;
+
+    /**
+     * Creates a certain OcTree (factory pattern)
+     *
+     * @param id unique ID of OcTree
+     * @param res resolution of OcTree
+     * @return pointer to newly created OcTree (empty). NULL if the ID is unknown!
+     */
+    static AbstractOcTree* createTree(const std::string id, double res);
+
+    /// Read the file header, create the appropriate class and deserialize.
+    /// This creates a new octree which you need to delete yourself.
+    static AbstractOcTree* read(const std::string& filename);
+    /// Read the file header, create the appropriate class and deserialize.
+    /// This creates a new octree which you need to delete yourself.
+    static AbstractOcTree* read(std::istream &s);
     /// Read complete state of tree from stream
-    virtual std::istream& read(std::istream &s) = 0;
+    virtual std::istream& readData(std::istream &s) = 0;
     /// Write complete state of tree to stream, prune tree first (lossless compression)
-    virtual std::ostream& write(std::ostream &s) = 0;
+    virtual std::ostream& writeData(std::ostream &s) = 0;
     /// Write complete state of tree to stream, no pruning (const version)
-    virtual std::ostream& writeConst(std::ostream &s) const = 0;
+    virtual std::ostream& writeDataConst(std::ostream &s) const = 0;
+  private:
+    /// create private store, Construct on first use
+    static std::map<std::string, AbstractOcTree*>& classIDMapping();
 
   protected:
+    static bool readHeader(std::istream &s, std::string& id, unsigned& size, double& res);
+    static void registerTreeType(AbstractOcTree* tree);
 
+    static const std::string fileHeader;
+    static const std::string binaryFileHeader;
   };
+
+
 
 
 } // end namespace

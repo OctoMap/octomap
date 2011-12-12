@@ -102,6 +102,19 @@ namespace octomap {
     void integrateMissNoTime(OcTreeNodeStamped* node) const;
 
   protected:
+    /**
+     * Static member object which ensures that this OcTree's prototype
+     * ends up in the classIDMapping only once
+     */
+    class StaticMemberInitializer{
+    public:
+      StaticMemberInitializer() {
+        OcTreeStamped* tree = new OcTreeStamped(0.1);
+        AbstractOcTree::registerTreeType(tree);
+      }
+    };
+    /// to ensure static initialization (only once)
+    static StaticMemberInitializer ocTreeStampedMemberInit;
     
   };
 

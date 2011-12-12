@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
   }
 
   ColorOcTree tree (0.1);
-  tree.read(infile);
+  tree.readData(infile);
   infile.close();
   cout << "color tree read from "<< filename <<"\n"; 
 

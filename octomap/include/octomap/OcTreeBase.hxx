@@ -528,19 +528,19 @@ namespace octomap {
 
 
   template <class NODE>
-  std::ostream& OcTreeBase<NODE>::write(std::ostream &s){
+  std::ostream& OcTreeBase<NODE>::writeData(std::ostream &s){
     this->prune();
-    return this->writeConst(s);
+    return this->writeDataConst(s);
   }
 
   template <class NODE>
-  std::ostream& OcTreeBase<NODE>::writeConst(std::ostream &s) const{
+  std::ostream& OcTreeBase<NODE>::writeDataConst(std::ostream &s) const{
     itsRoot->writeValue(s);
     return s;
   }
 
   template <class NODE>
-  std::istream& OcTreeBase<NODE>::read(std::istream &s) {
+  std::istream& OcTreeBase<NODE>::readData(std::istream &s) {
 
     if (!s.good()){
       OCTOMAP_WARNING_STR(__FILE__ << ":" << __LINE__ << "Warning: Input filestream not \"good\"");

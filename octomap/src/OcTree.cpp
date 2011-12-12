@@ -56,6 +56,8 @@ namespace octomap {
     readBinary(_filename);
   }
 
+  OcTree::StaticMemberInitializer OcTree::ocTreeMemberInit;
+
   
 
 

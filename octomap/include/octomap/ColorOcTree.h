@@ -165,6 +165,21 @@ namespace octomap {
     
   protected:
     void updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth);
+
+    /**
+     * Static member object which ensures that this OcTree's prototype
+     * ends up in the classIDMapping only once
+     */
+    class StaticMemberInitializer{
+       public:
+         StaticMemberInitializer() {
+           ColorOcTree* tree = new ColorOcTree(0.1);
+           AbstractOcTree::registerTreeType(tree);
+         }
+    };
+    /// static member to ensure static initialization (only once)
+    static StaticMemberInitializer colorOcTreeMemberInit;
+
   };
 
 } // end namespace

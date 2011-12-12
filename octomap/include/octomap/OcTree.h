@@ -75,6 +75,22 @@ namespace octomap {
     OcTree* create() const {return new OcTree(resolution); }
 
     std::string getTreeType() const {return "OcTree";}
+
+
+  protected:
+    /**
+     * Static member object which ensures that this OcTree's prototype
+     * ends up in the classIDMapping only once
+     */
+    class StaticMemberInitializer{
+    public:
+      StaticMemberInitializer() {
+        OcTree* tree = new OcTree(0.1);
+        AbstractOcTree::registerTreeType(tree);
+      }
+    };
+    /// to ensure static initialization (only once)
+    static StaticMemberInitializer ocTreeMemberInit;
   };
 
 } // end namespace

@@ -74,5 +74,7 @@ namespace octomap {
     OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, probMissLog);
   }
 
+  OcTreeStamped::StaticMemberInitializer OcTreeStamped::ocTreeStampedMemberInit;
+
 } // end namespace
 

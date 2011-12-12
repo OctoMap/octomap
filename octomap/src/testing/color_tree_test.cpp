@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
   // write color tree
   std::ofstream outfile(filename.c_str(), std::ios_base::out | std::ios_base::binary);
   if (outfile.is_open()){
-    tree.writeConst(outfile); 
+    tree.writeDataConst(outfile);
     outfile.close();
     cout << "color tree written "<< filename <<"\n";
   }
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
   }
 
   ColorOcTree read_tree (0.1);
-  read_tree.read(infile);
+  read_tree.readData(infile);
   infile.close();
   cout << "color tree read from "<< filename <<"\n"; 
 

@@ -310,8 +310,6 @@ namespace octomap {
 
     // -- I/O  -----------------------------------------
 
-    // binary file format: treetype | resolution | num nodes | [binary nodes]
-
     /// Reads an OcTree from an input stream.
     /// Existing nodes of the tree are deleted before the tree is read.
     std::istream& readBinary(std::istream &s);
@@ -322,7 +320,8 @@ namespace octomap {
     std::ostream& writeBinary(std::ostream &s);
 
     /// Writes the maximum likelihood OcTree to a binary stream (const variant).
-    /// Files will be smaller when the tree is pruned first.
+    /// Files will be smaller when the tree is pruned first or by using
+    /// writeBinary() instead.
     std::ostream& writeBinaryConst(std::ostream &s) const;
 
     /// Reads OcTree from a binary file.
@@ -422,7 +421,11 @@ namespace octomap {
                                         unsigned int& num_thresholded,
                                         unsigned int& num_other) const;
 
+    /// Try to read the old binary format for conversion, will be removed in the future
+    bool readBinaryLegacyHeader(std::istream &s, unsigned int& size, double& res);
+
   protected:
+    const static std::string binaryFileHeader;
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
     point3d bbx_max;

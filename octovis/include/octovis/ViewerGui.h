@@ -43,7 +43,7 @@
 #include "ViewerSettingsPanelCamera.h"
 #include "ui_ViewerGui.h"
 
-#include <octomap/OcTreeFileIO.h>
+#include <octomap/AbstractOcTree.h>
 #include <octovis/OcTreeRecord.h>
 
 namespace octomap {
@@ -151,8 +151,11 @@ namespace octomap {
      */
     void openPC();
 
-    // open "regular" file containing an octree
+    /// open "regular" file containing an octree
     void openOcTree();
+
+    /// open binary format OcTree
+    void openTree();
 
     // EXPERIMENTAL
     // open a map collection (.hot-file)

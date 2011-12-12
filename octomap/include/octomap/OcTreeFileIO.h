@@ -44,54 +44,36 @@
 #include <octomap/AbstractOcTree.h>
 #include <octomap/octomap_types.h>
 
-#include <fstream>
-#include <string>
-#include <iostream>
-#include <map>
+
 
 namespace octomap {
 
   /**
    * Class for reading and writing OcTrees to files.
-   * Implements a simple Factory design pattern. The constructor fills
-   * the mapping between classes and (string) IDs
+   * @note This class is deprecated and will be removed in the future.
+   * Use read and write directly in AbstractOcTree instead.
+   *
    *
    */
 
   class OcTreeFileIO {
   public:
-    OcTreeFileIO();
-    ~OcTreeFileIO();
+    OcTreeFileIO() {};
+    ~OcTreeFileIO() {};
 
-    bool write(const AbstractOcTree* tree, const std::string& filename);
-
-
-    std::ostream& write(const AbstractOcTree* tree, std::ostream& s);
-
-
-    // TODO: non-const version: prune tree first before writing?
-//    template <class NODE>
-//    bool write(OcTreeBase<NODE>* tree, const std::string& filename);
-//
-//    template <class NODE>
-//    std::ostream& write(OcTreeBase<NODE>* tree, std::ostream& s);
-
-    AbstractOcTree* read(const std::string& filename);
-
-    std::istream& read(std::istream& s, AbstractOcTree*& tree);
+    /// Deprecated, use tree->write() instead
+    DEPRECATED( bool write(const AbstractOcTree* tree, const std::string& filename) );
+    /// Deprecated, use tree->write() instead
+    DEPRECATED( std::ostream& write(const AbstractOcTree* tree, std::ostream& s) );
+    /// Deprecated, AbstractOcTree::read() instead
+    DEPRECATED( AbstractOcTree* read(const std::string& filename) );
+    /// Deprecated, AbstractOcTree::read() instead
+    DEPRECATED( std::istream& read(std::istream& s, AbstractOcTree*& tree) );
 
 
-    /**
-     * Creates a certain OcTree (factory pattern)
-     *
-     * @param id unique ID of OcTree
-     * @param res resolution of OcTree
-     * @return pointer to newly created OcTree (empty). NULL if the ID is unknown!
-     */
-    AbstractOcTree* createTree(const std::string id, double res);
 
   protected:
-    std::map<std::string, AbstractOcTree*> classIDMapping;
+
 
   };
 }

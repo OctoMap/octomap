@@ -466,9 +466,10 @@ namespace octomap{
       QFileInfo fileinfo(temp);
       if (fileinfo.suffix() == "graph"){
         openGraph();
+      }else if (fileinfo.suffix() == "bt"){
+        openTree();
       }
       else if (fileinfo.suffix() == "ot"
-            || fileinfo.suffix() == "bt"
             || fileinfo.suffix() == "cot")
       {
         openOcTree();
@@ -542,9 +543,20 @@ namespace octomap{
     ui.actionSettings->setEnabled(false);
   }
 
+  void ViewerGui::openTree(){
+    OcTree* tree = new octomap::OcTree(m_filename);
+    this->addOctree(tree, DEFAULT_OCTREE_ID);
+
+    m_octreeResolution = tree->getResolution();
+    emit changeResolution(m_octreeResolution);
+
+    setOcTreeUISwitches();
+    showOcTree();
+    m_glwidget->resetView();
+  }
+
   void ViewerGui::openOcTree(){
-    OcTreeFileIO io;
-    AbstractOcTree* tree = io.read(m_filename);
+    AbstractOcTree* tree = AbstractOcTree::read(m_filename);
 
     if (tree){
       this->addOctree(tree, DEFAULT_OCTREE_ID);
@@ -777,7 +789,6 @@ namespace octomap{
 #endif
 
       AbstractOcTree* t = r->octree;
-      OcTreeFileIO io;
 
       if (fileinfo.suffix() == "bt") {
         if (dynamic_cast<OcTree*>(t)) {
@@ -788,7 +799,7 @@ namespace octomap{
         }
       }
       else if (fileinfo.suffix() == "ot"){
-        io.write(r->octree, std_filename);
+        r->octree->write(std_filename);
       }
       else {
         QMessageBox::warning(this, "Unknown file", 
