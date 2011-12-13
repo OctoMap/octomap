@@ -108,6 +108,20 @@ namespace octomap {
                                   unsigned int max_depth,
                                   CountingOcTreeNode* node, unsigned int depth,
                                   const OcTreeKey& parent_key) const;
+
+    /**
+     * Static member object which ensures that this OcTree's prototype
+     * ends up in the classIDMapping only once
+     */
+    class StaticMemberInitializer{
+       public:
+         StaticMemberInitializer() {
+           CountingOcTree* tree = new CountingOcTree(0.1);
+           AbstractOcTree::registerTreeType(tree);
+         }
+    };
+    /// static member to ensure static initialization (only once)
+    static StaticMemberInitializer countingOcTreeMemberInit;
   };
 
 

@@ -114,6 +114,12 @@ namespace octomap {
 
   public:
     ColorOcTree(double _resolution);
+
+    /// virtual constructor: creates a new object of same type
+    /// (Covariant return type requires an up-to-date compiler)
+    ColorOcTree* create() const {return new ColorOcTree(resolution); }
+
+    std::string getTreeType() const {return "ColorOcTree";}
    
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 
@@ -159,6 +165,21 @@ namespace octomap {
     
   protected:
     void updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth);
+
+    /**
+     * Static member object which ensures that this OcTree's prototype
+     * ends up in the classIDMapping only once
+     */
+    class StaticMemberInitializer{
+       public:
+         StaticMemberInitializer() {
+           ColorOcTree* tree = new ColorOcTree(0.1);
+           AbstractOcTree::registerTreeType(tree);
+         }
+    };
+    /// static member to ensure static initialization (only once)
+    static StaticMemberInitializer colorOcTreeMemberInit;
+
   };
 
 } // end namespace

@@ -150,11 +150,13 @@ namespace octomap {
 
       if (node->getCount() >= min_hits) {
         point3d p;
-	this->genCoords(parent_key, depth, p);
+        this->genCoords(parent_key, depth, p);
         node_centers.push_back(p);        
       }
     }
   }
+
+  CountingOcTree::StaticMemberInitializer CountingOcTree::countingOcTreeMemberInit;
 
 
 } // namespace

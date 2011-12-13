@@ -466,15 +466,13 @@ namespace octomap{
       QFileInfo fileinfo(temp);
       if (fileinfo.suffix() == "graph"){
         openGraph();
-      }
-      else if (fileinfo.suffix() == "bt"){
+      }else if (fileinfo.suffix() == "bt"){
         openTree();
       }
-      else if (fileinfo.suffix() == "ot"){
+      else if (fileinfo.suffix() == "ot"
+            || fileinfo.suffix() == "cot")
+      {
         openOcTree();
-      }
-      else if (fileinfo.suffix() == "cot"){
-        openColorOcTree();
       }
       else if (fileinfo.suffix() == "hot"){
         openMapCollection();
@@ -545,7 +543,6 @@ namespace octomap{
     ui.actionSettings->setEnabled(false);
   }
 
-
   void ViewerGui::openTree(){
     OcTree* tree = new octomap::OcTree(m_filename);
     this->addOctree(tree, DEFAULT_OCTREE_ID);
@@ -559,11 +556,7 @@ namespace octomap{
   }
 
   void ViewerGui::openOcTree(){
-    OcTree* tree(NULL);
-    octomap::OcTreeBase<octomap::OcTreeNode>* tree_in = OcTreeFileIO::read<octomap::OcTreeNode>(m_filename);
-    if (tree_in){
-      tree = dynamic_cast<OcTree*>(tree_in);
-    }
+    AbstractOcTree* tree = AbstractOcTree::read(m_filename);
 
     if (tree){
       this->addOctree(tree, DEFAULT_OCTREE_ID);
@@ -574,36 +567,17 @@ namespace octomap{
       setOcTreeUISwitches();
       showOcTree();
       m_glwidget->resetView();
+
+      if (tree->getTreeType() == "ColorOcTree"){
+        // map color and height map share the same color array and QAction
+        ui.actionHeight_map->setText ("Map color");  // rename QAction in Menu
+        this->on_actionHeight_map_toggled(true); // enable color view
+        ui.actionHeight_map->setChecked(true);
+      }
     } 
     else {
       QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
     }
-  }
-
-  void ViewerGui::openColorOcTree() {
-
-    std::ifstream infile(m_filename.c_str(), std::ios_base::in |std::ios_base::binary);
-    if (!infile.is_open()) {
-      QMessageBox::warning(this, "File error", "Cannot open OcTree file", QMessageBox::Ok);
-      return;
-    }
-
-    ColorOcTree* tree = new ColorOcTree(0.1);
-    tree->read(infile);
-    infile.close();
-
-    this->addOctree(tree, DEFAULT_OCTREE_ID);
-
-    m_octreeResolution = tree->getResolution();
-    emit changeResolution(m_octreeResolution);
-
-    setOcTreeUISwitches();
-    showOcTree();
-    m_glwidget->resetView();
-    // map color and height map share the same color array and QAction
-    ui.actionHeight_map->setText ("map color");  // rename QAction in Menu
-    this->on_actionHeight_map_toggled(true); // enable color view
-    ui.actionHeight_map->setChecked(true); 
   }
 
 
@@ -825,12 +799,7 @@ namespace octomap{
         }
       }
       else if (fileinfo.suffix() == "ot"){
-        if (dynamic_cast<OcTree*>(t)) {
-          OcTreeFileIO::write( (OcTree*) t, std_filename );
-        }
-        else if (dynamic_cast<ColorOcTree*>(t)) {
-          OcTreeFileIO::write( (ColorOcTree*) t, std_filename );
-        }
+        r->octree->write(std_filename);
       }
       else {
         QMessageBox::warning(this, "Unknown file", 

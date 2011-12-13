@@ -704,7 +704,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  std::istream& OccupancyOcTreeBase<NODE>::readBinary(std::istream &s) {
+  bool OccupancyOcTreeBase<NODE>::readBinaryLegacyHeader(std::istream &s, unsigned int& size, double& res) {
 
     if (!s.good()){
       OCTOMAP_WARNING_STR("Input filestream not \"good\" in OcTree::readBinary");
@@ -712,32 +712,75 @@ namespace octomap {
 
     int tree_type = -1;
     s.read((char*)&tree_type, sizeof(tree_type));
-    // TODO Treetype checks disabled, do they make any sense here?
     if (tree_type == 3){
 
       this->clear();
 
-      double tree_resolution;
-      s.read((char*)&tree_resolution, sizeof(tree_resolution));
+      s.read((char*)&res, sizeof(res));
+      if (res <= 0.0){
+        OCTOMAP_ERROR("Invalid tree resolution: %f", res);
+        return false;
+      }
 
-      this->setResolution(tree_resolution);
+      s.read((char*)&size, sizeof(size));
 
-      unsigned int tree_read_size = 0;
-      s.read((char*)&tree_read_size, sizeof(tree_read_size));
-      OCTOMAP_DEBUG_STR("Reading " << tree_read_size << " nodes from bonsai tree file...");
-
-      readBinaryNode(s, this->itsRoot);
-      // TODO workaround: do this to ensure all nodes have the tree's occupancy thres
-      // instead of their fixed ones
-      toMaxLikelihood();
-      this->sizeChanged = true;
-      this->tree_size = OcTreeBase<NODE>::calcNumNodes();  // compute number of nodes
-
-      OCTOMAP_DEBUG_STR("done.");
+      return true;
     }
-    else { 
+    else {
       OCTOMAP_ERROR_STR("Binary file does not contain an OcTree!");
+      return false;
     }
+  }
+
+
+  template <class NODE>
+  std::istream& OccupancyOcTreeBase<NODE>::readBinary(std::istream &s) {
+
+    if (!s.good()){
+      OCTOMAP_WARNING_STR("Input filestream not \"good\" in OcTree::readBinary");
+    }
+
+    // check if first line valid:
+    std::string line;
+    int streampos = s.tellg();
+    std::getline(s, line);
+    unsigned size;
+    double res;
+    if (line.compare(0,AbstractOcTree::binaryFileHeader.length(), AbstractOcTree::binaryFileHeader) ==0){
+      std::string id;
+      if (!AbstractOcTree::readHeader(s, id, size, res))
+        return s;
+
+      OCTOMAP_DEBUG_STR("Reading binary octree type "<< id);
+    } else{ // try to read old binary format:
+      s.seekg(streampos);
+      if (readBinaryLegacyHeader(s, size, res)){
+        OCTOMAP_WARNING_STR("You are using an outdated binary tree file format.");
+        OCTOMAP_WARNING_STR("Please convert your .bt files with convert_octree.");
+
+
+
+      }
+      else {
+        OCTOMAP_ERROR_STR("First line of OcTree file header does not start with \""<< AbstractOcTree::binaryFileHeader<<"\"");
+        return s;
+      }
+    }
+    // otherwise: values are valid, stream is now at binary data!
+    this->clear();
+    this->setResolution(res);
+
+
+
+
+    this->readBinaryNode(s, this->itsRoot);
+    this->sizeChanged = true;
+    this->tree_size = OcTreeBase<NODE>::calcNumNodes();  // compute number of nodes
+
+    if (size != this->tree_size){
+      OCTOMAP_ERROR("Tree size mismatch: # read nodes (%zu) != # expected nodes (%d)\n",this->tree_size, size);
+    }
+
     return s;
   }
 
@@ -770,29 +813,22 @@ namespace octomap {
   template <class NODE>
   std::ostream& OccupancyOcTreeBase<NODE>::writeBinary(std::ostream &s){
 
-    // format:    treetype | resolution | num nodes | [binary nodes]
-
-    //    this->toMaxLikelihood();  (disabled, not necessary, KMW)
+    // convert to max likelihood first, this makes efficient pruning on binary data possible
+    this->toMaxLikelihood();
     this->prune();
     return writeBinaryConst(s);
   }
 
   template <class NODE>
   std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryConst(std::ostream &s) const{
+    // write new header first:
+    s << AbstractOcTree::binaryFileHeader <<"\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
+    s << "id " << this->getTreeType() << std::endl;
+    s << "size "<< this->size() << std::endl;
+    s << "res " << this->getResolution() << std::endl;
+    s << "data" << std::endl;
 
-    // format:    treetype | resolution | num nodes | [binary nodes]
-
-    // TODO: Fix constant use => one for all occupancy trees?
-    unsigned int tree_type = 3;
-    s.write((char*)&tree_type, sizeof(tree_type));
-
-    double tree_resolution = this->resolution;
-    s.write((char*)&tree_resolution, sizeof(tree_resolution));
-
-    unsigned int tree_write_size = this->size();
-    OCTOMAP_DEBUG_STR("Writing " << tree_write_size << " nodes to output stream...");
-    s.write((char*)&tree_write_size, sizeof(tree_write_size));
-
+    OCTOMAP_DEBUG_STR("Writing " << this->size() << " nodes to output stream...");
     this->writeBinaryNode(s, this->itsRoot);
     OCTOMAP_DEBUG_STR(" done.");
     return s;

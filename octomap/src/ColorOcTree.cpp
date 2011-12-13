@@ -262,5 +262,8 @@ namespace octomap {
 #endif
   }
 
+
+  ColorOcTree::StaticMemberInitializer ColorOcTree::colorOcTreeMemberInit;
+
 } // end namespace
 

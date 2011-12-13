@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
   } else if (test_name == "ReadTree") {
     OcTree tree (0.05);  
     EXPECT_TRUE (tree.readBinary("sphere.bt"));
-    EXPECT_EQ ((int) tree.size(), 59420);
+    EXPECT_EQ ((int) tree.size(), 51740);
   // ------------------------------------------------------------
   // data file read/write test
   } else if (test_name == "DataTreeIO") {
@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
     std::string filename ("sphere.ot");
     std::ofstream outfile(filename.c_str(), std::ios_base::out | std::ios_base::binary);
     EXPECT_TRUE (outfile.is_open());
-    tree.writeConst(outfile); 
+    tree.writeDataConst(outfile);
     outfile.close();
     cout << "tree written "<< filename <<"\n";
 
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
     std::ifstream infile(filename.c_str(), std::ios_base::in |std::ios_base::binary);
     EXPECT_TRUE (infile.is_open());
     OcTree read_tree (0.1);
-    read_tree.read(infile);
+    read_tree.readData(infile);
     infile.close();
     cout << "tree read from "<< filename <<"\n";
     unsigned int read_tree_size = read_tree.size();

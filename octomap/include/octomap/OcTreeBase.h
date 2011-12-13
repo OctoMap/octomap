@@ -79,6 +79,11 @@ namespace octomap {
     OcTreeBase(double _resolution);
     virtual ~OcTreeBase();
 
+    /// virtual constructor: creates a new object of same type
+    /// (Covariant return type requires an up-to-date compiler)
+    OcTreeBase<NODE>* create() const {return new OcTreeBase<NODE>(resolution); }
+
+    std::string getTreeType() const {return "OcTreeBase";}
 
     void setResolution(double r);
     inline double getResolution() const { return resolution; }
@@ -221,15 +226,15 @@ namespace octomap {
     // file IO
 
     /// Read complete state of tree from stream
-    std::istream& read(std::istream &s);
+    std::istream& readData(std::istream &s);
 
     /// Write complete state of tree to stream, prune tree first (lossless compression)
-    std::ostream& write(std::ostream &s);
+    std::ostream& writeData(std::ostream &s);
 
     /// Write complete state of tree to stream, no pruning (const version)
-    std::ostream& writeConst(std::ostream &s) const;
+    std::ostream& writeDataConst(std::ostream &s) const;
 
-    // -- experimental section  -----------------------
+
     /**
      * Base class for OcTree iterators. So far, all iterator's are
      * const with respect to the tree

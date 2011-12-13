@@ -3,13 +3,13 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009.
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
 
 /*
- * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,44 +37,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "octomap/OcTreeStamped.h"
-
+#include <octomap/OcTreeFileIO.h>
+#include <octomap/OcTree.h>
+#include <octomap/ColorOcTree.h>
+#include <octomap/CountingOcTree.h>
+#include <octomap/OcTreeStamped.h>
 namespace octomap {
 
-  OcTreeStamped::OcTreeStamped(double _resolution)
-    : OccupancyOcTreeBase<OcTreeNodeStamped> (_resolution)  {
-    itsRoot = new OcTreeNodeStamped();
-    tree_size++;
+  bool OcTreeFileIO::write(const AbstractOcTree* tree, const std::string& filename){
+    return tree->write(filename);
   }
 
-  unsigned int OcTreeStamped::getLastUpdateTime() {
-    // this value is updated whenever inner nodes are 
-    // updated using updateOccupancyChildren()
-    return itsRoot->getTimestamp();
+  std::ostream& OcTreeFileIO::write(const AbstractOcTree* tree, std::ostream& s){
+    tree->write(s);
+
+   return s;
   }
 
-  void OcTreeStamped::degradeOutdatedNodes(unsigned int time_thres) {
-    unsigned int query_time = (unsigned int) time(NULL); 
-
-    for(leaf_iterator it = this->begin_leafs(), end=this->end_leafs(); 
-        it!= end; ++it) {
-      if ( this->isNodeOccupied(*it) 
-           && ((query_time - it->getTimestamp()) > time_thres) ) {
-        integrateMissNoTime(&*it);
-      }
-    }
-  }  
-
-  void OcTreeStamped::updateNodeLogOdds(OcTreeNodeStamped* node, const float& update) const {
-    OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, update);
-    node->updateTimestamp();
+  AbstractOcTree* OcTreeFileIO::read(const std::string& filename){
+    return AbstractOcTree::read(filename);
   }
 
-  void OcTreeStamped::integrateMissNoTime(OcTreeNodeStamped* node) const{
-    OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, probMissLog);
+  std::istream& OcTreeFileIO::read(std::istream& s, AbstractOcTree*& tree){
+    tree = AbstractOcTree::read(s);
+    return s;
+
   }
 
-  OcTreeStamped::StaticMemberInitializer OcTreeStamped::ocTreeStampedMemberInit;
-
-} // end namespace
-
+}
