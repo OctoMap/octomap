@@ -97,9 +97,9 @@ namespace octomap {
     static AbstractOcTree* read(std::istream &s);
     /// Read complete state of tree from stream
     virtual std::istream& readData(std::istream &s) = 0;
-    /// Write complete state of tree to stream, prune tree first (lossless compression)
+    /// Write complete state of tree to stream (without file header), prune tree first (lossless compression)
     virtual std::ostream& writeData(std::ostream &s) = 0;
-    /// Write complete state of tree to stream, no pruning (const version)
+    /// Write complete state of tree to stream (without file header), no pruning (const version)
     virtual std::ostream& writeDataConst(std::ostream &s) const = 0;
   private:
     /// create private store, Construct on first use

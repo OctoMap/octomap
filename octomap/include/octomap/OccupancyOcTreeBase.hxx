@@ -698,9 +698,7 @@ namespace octomap {
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing read.");
       return false;
     }
-    readBinary(binary_infile);
-    binary_infile.close();     
-    return true;
+    return readBinary(binary_infile);
   }
 
   template <class NODE>
@@ -734,7 +732,7 @@ namespace octomap {
 
 
   template <class NODE>
-  std::istream& OccupancyOcTreeBase<NODE>::readBinary(std::istream &s) {
+  bool OccupancyOcTreeBase<NODE>::readBinary(std::istream &s) {
 
     if (!s.good()){
       OCTOMAP_WARNING_STR("Input filestream not \"good\" in OcTree::readBinary");
@@ -749,7 +747,7 @@ namespace octomap {
     if (line.compare(0,AbstractOcTree::binaryFileHeader.length(), AbstractOcTree::binaryFileHeader) ==0){
       std::string id;
       if (!AbstractOcTree::readHeader(s, id, size, res))
-        return s;
+        return false;
 
       OCTOMAP_DEBUG_STR("Reading binary octree type "<< id);
     } else{ // try to read old binary format:
@@ -763,15 +761,12 @@ namespace octomap {
       }
       else {
         OCTOMAP_ERROR_STR("First line of OcTree file header does not start with \""<< AbstractOcTree::binaryFileHeader<<"\"");
-        return s;
+        return false;
       }
     }
     // otherwise: values are valid, stream is now at binary data!
     this->clear();
     this->setResolution(res);
-
-
-
 
     this->readBinaryNode(s, this->itsRoot);
     this->sizeChanged = true;
@@ -779,9 +774,10 @@ namespace octomap {
 
     if (size != this->tree_size){
       OCTOMAP_ERROR("Tree size mismatch: # read nodes (%zu) != # expected nodes (%d)\n",this->tree_size, size);
+      return false;
     }
 
-    return s;
+    return true;
   }
 
   template <class NODE>
@@ -792,9 +788,7 @@ namespace octomap {
       OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
       return false;
     }    
-    writeBinary(binary_outfile);
-    binary_outfile.close();
-    return true;
+    return writeBinary(binary_outfile);
   }
 
   template <class NODE>
@@ -811,7 +805,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  std::ostream& OccupancyOcTreeBase<NODE>::writeBinary(std::ostream &s){
+  bool OccupancyOcTreeBase<NODE>::writeBinary(std::ostream &s){
 
     // convert to max likelihood first, this makes efficient pruning on binary data possible
     this->toMaxLikelihood();
@@ -820,7 +814,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryConst(std::ostream &s) const{
+  bool OccupancyOcTreeBase<NODE>::writeBinaryConst(std::ostream &s) const{
     // write new header first:
     s << AbstractOcTree::binaryFileHeader <<"\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
     s << "id " << this->getTreeType() << std::endl;
@@ -830,8 +824,13 @@ namespace octomap {
 
     OCTOMAP_DEBUG_STR("Writing " << this->size() << " nodes to output stream...");
     this->writeBinaryNode(s, this->itsRoot);
-    OCTOMAP_DEBUG_STR(" done.");
-    return s;
+    if (s.good()){
+      OCTOMAP_DEBUG_STR(" done.");
+      return true;
+    } else {
+      OCTOMAP_WARNING_STR("Output stream not \"good\" after writing tree");
+      return false;
+    }
   }
 
   template <class NODE>

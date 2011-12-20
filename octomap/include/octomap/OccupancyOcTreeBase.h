@@ -310,30 +310,48 @@ namespace octomap {
 
     // -- I/O  -----------------------------------------
 
-    /// Reads an OcTree from an input stream.
-    /// Existing nodes of the tree are deleted before the tree is read.
-    std::istream& readBinary(std::istream &s);
+    /**
+     * Reads an OcTree from an input stream.
+     * Existing nodes of the tree are deleted before the tree is read.
+     * @return success of operation
+     */
+    bool readBinary(std::istream &s);
 
-    /// Writes OcTree to a binary stream.
-    /// The OcTree is first converted to the maximum likelihood estimate and pruned
-    /// for maximum compression.
-    std::ostream& writeBinary(std::ostream &s);
+    /**
+     * Writes compressed maximum likelihood OcTree to a binary stream.
+     * The OcTree is first converted to the maximum likelihood estimate and pruned
+     * for maximum compression.
+     * @return success of operation
+     */
+    bool writeBinary(std::ostream &s);
 
-    /// Writes the maximum likelihood OcTree to a binary stream (const variant).
-    /// Files will be smaller when the tree is pruned first or by using
-    /// writeBinary() instead.
-    std::ostream& writeBinaryConst(std::ostream &s) const;
+    /**
+     * Writes the maximum likelihood OcTree to a binary stream (const variant).
+     * Files will be smaller when the tree is pruned first or by using
+     * writeBinary() instead.
+     * @return success of operation
+     */
+    bool writeBinaryConst(std::ostream &s) const;
 
-    /// Reads OcTree from a binary file.
-    /// Existing nodes of the tree are deleted before the tree is read.
+    /**
+     * Reads OcTree from a binary file.
+     * Existing nodes of the tree are deleted before the tree is read.
+     * @return success of operation
+     */
     bool readBinary(const std::string& filename);
 
-    /// Writes OcTree to a binary file using writeBinary().
-    /// The OcTree is first converted to the maximum likelihood estimate and pruned.
+    /**
+     * Writes OcTree to a binary file using writeBinary().
+     * The OcTree is first converted to the maximum likelihood estimate and pruned.
+     * @return success of operation
+     */
     bool writeBinary(const std::string& filename);
 
-    /// Writes OcTree to a binary file using writeBinaryConst().
-    /// The OcTree is not changed, in particular not pruned first.
+    /**
+     * Writes OcTree to a binary file using writeBinaryConst().
+     * The OcTree is not changed, in particular not pruned first.
+     * @return success of operation
+     */
     bool writeBinaryConst(const std::string& filename) const;
 
     /**

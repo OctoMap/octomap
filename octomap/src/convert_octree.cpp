@@ -88,9 +88,8 @@ int main(int argc, char** argv) {
   // reading binary:
   if (inputFilename.length() > 3 && (inputFilename.compare(inputFilename.length()-3, 3, ".bt") == 0)){
     OcTree* binaryTree = new OcTree(0.1);
-    binaryTree->readBinary(file);
 
-    if (binaryTree->size() > 1)
+    if (binaryTree->readBinary(file) && binaryTree->size() > 1)
       tree = binaryTree;
     else {
       OCTOMAP_ERROR_STR("Could not detect binary OcTree format in file.");
