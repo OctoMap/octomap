@@ -60,6 +60,8 @@ install(TARGETS
 	log2graph
 	binvox2bt
 	bt2vrml
+	edit_octree
+	convert_octree
 	${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 

@@ -16,6 +16,8 @@ IF (NOT WIN32)
 	  COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
 	  COMMAND tar -czf "${CMAKE_BINARY_DIR}/${PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
 	    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+	  # cleanup so that there is no copy in the source dir
+	  COMMAND rm -rf "${DIST_DIR}"
 	)
 	
 	# also build subproject's dist for completeness
