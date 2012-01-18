@@ -40,6 +40,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
 #include <octomap/OcTreeNode.h>
 #include <octomap/OccupancyOcTreeBase.h>
 
@@ -181,6 +182,9 @@ namespace octomap {
     static StaticMemberInitializer colorOcTreeMemberInit;
 
   };
+
+  //! user friendly output in format (r g b)
+  std::ostream& operator<<(std::ostream& out, ColorOcTreeNode::Color const& c);
 
 } // end namespace
 

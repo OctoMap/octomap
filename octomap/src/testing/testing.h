@@ -4,12 +4,12 @@
 // this is mimicing gtest expressions
 
 #define EXPECT_TRUE(args) {                                             \
-    if (!(args)) { fprintf(stderr, "test failed in %s, line %d\n", __FILE__, __LINE__); \
+    if (!(args)) { fprintf(stderr, "test failed (EXPECT_TRUE) in %s, line %d\n", __FILE__, __LINE__); \
       exit(1);                                                         \
     } }
 
 #define EXPECT_FALSE(args) {                                             \
-    if (args) { fprintf(stderr, "test failed in %s, line %d\n", __FILE__, __LINE__); \
+    if (args) { fprintf(stderr, "test failed (EXPECT_FALSE) in %s, line %d\n", __FILE__, __LINE__); \
       exit(1);                                                         \
     } }
 

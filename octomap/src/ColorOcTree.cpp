@@ -262,6 +262,10 @@ namespace octomap {
 #endif
   }
 
+  std::ostream& operator<<(std::ostream& out, ColorOcTreeNode::Color const& c) {
+    return out << '(' << (unsigned int)c.r << ' ' << (unsigned int)c.g << ' ' << (unsigned int)c.b << ')';
+  }
+
 
   ColorOcTree::StaticMemberInitializer ColorOcTree::colorOcTreeMemberInit;
 
