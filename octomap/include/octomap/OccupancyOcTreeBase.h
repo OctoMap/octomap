@@ -421,8 +421,6 @@ namespace octomap {
 
 
     // recursive calls ----------------------------
-    NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
-                           unsigned int depth, bool occupied, bool lazy_eval = false);
 
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, const float& log_odds_update, bool lazy_eval = false);

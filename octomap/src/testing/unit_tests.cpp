@@ -18,8 +18,10 @@ using namespace octomath;
 
 int main(int argc, char** argv) {
 
-  if (argc < 2)
+  if (argc != 2){
+    std::cerr << "Error: you need to specify a test as argument" << std::endl;
     return 1; // exit 1 means failure
+  }
   std::string test_name (argv[1]);
 
 
@@ -259,6 +261,7 @@ int main(int argc, char** argv) {
     ScanGraph graph;
     EXPECT_TRUE (graph.readBinary("test.graph"));
   // ------------------------------------------------------------
+
   } else if (test_name == "StampedTree") {
     OcTreeStamped stamped_tree (0.05);
     // fill tree
@@ -320,6 +323,6 @@ int main(int argc, char** argv) {
 
   }
 
-  fprintf(stderr, "test successful.\n");
+  std::cerr << "Test successful.\n";
   return 0;
 }

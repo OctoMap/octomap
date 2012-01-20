@@ -23,6 +23,9 @@ TARGET_LINK_LIBRARIES(color_tree_histogram octomap)
 ADD_EXECUTABLE(test_mapcollection test_mapcollection.cpp)
 TARGET_LINK_LIBRARIES(test_mapcollection octomap octomath)
 
+ADD_EXECUTABLE(test_pruning test_pruning.cpp)
+TARGET_LINK_LIBRARIES(test_pruning octomap octomath)
+
 
 # CTest tests below
 
@@ -39,6 +42,7 @@ ADD_TEST (NAME ReadGraph      COMMAND unit_tests ReadGraph      )
 ADD_TEST (NAME StampedTree    COMMAND unit_tests StampedTree    )
 ADD_TEST (NAME OcTreeKey      COMMAND unit_tests OcTreeKey      )
 ADD_TEST (NAME OcTreeIterator COMMAND unit_tests OcTreeIterator )
+ADD_TEST (NAME test_pruning   COMMAND test_pruning )
 ADD_TEST (NAME test_iterators COMMAND test_iterators ${CMAKE_CURRENT_SOURCE_DIR}/geb079.bt)
 ADD_TEST (NAME test_mapcollection COMMAND test_mapcollection ${CMAKE_CURRENT_SOURCE_DIR}/mapcoll.txt)
 ADD_TEST (NAME test_color_tree COMMAND test_color_tree)

@@ -75,10 +75,10 @@ namespace octomap {
     computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
 
     // insert data into tree  -----------------------
-    for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); it++) {
+    for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
       updateNode(*it, false, lazy_eval);
     }
-    for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); it++) {
+    for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
       updateNode(*it, true, lazy_eval);
     }
 
@@ -232,8 +232,8 @@ namespace octomap {
           node->createChild(pos);
           this->tree_size++;
           this->sizeChanged = true;
+          created_node = true;
         }
-        created_node = true;
       }
 
       if (lazy_eval)
