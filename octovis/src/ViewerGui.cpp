@@ -180,15 +180,30 @@ namespace octomap{
   void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id, octomap::pose6d origin) {
     // is id in use?
     OcTreeRecord* r;
-    if (getOctreeRecord(id, r)) {
+    bool foundRecord = getOctreeRecord(id, r);
+    if (foundRecord && r->octree->getTreeType().compare(tree->getTreeType()) !=0){
+      // delete old drawer, create new
+      delete r->octree_drawer;
+      if (dynamic_cast<OcTree*>(tree)) {
+        r->octree_drawer = new OcTreeDrawer();
+        //        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
+      }
+      else if (dynamic_cast<ColorOcTree*>(tree)) {
+        r->octree_drawer = new ColorOcTreeDrawer();
+      }
+
       delete r->octree;
       r->octree = tree;
       r->origin = origin;
-      // FIXME: check for drawer type
-      // we reuse the old octree_drawer
-    }
-    // else add new OcTreeRecord
-    else {
+
+    } else if (foundRecord && r->octree->getTreeType().compare(tree->getTreeType()) ==0) {
+      // only swap out tree
+
+      delete r->octree;
+      r->octree = tree;
+      r->origin = origin;
+    } else {
+      // add new record
       OcTreeRecord otr;
       otr.id = id;
       if (dynamic_cast<OcTree*>(tree)) {      
@@ -469,8 +484,7 @@ namespace octomap{
       }else if (fileinfo.suffix() == "bt"){
         openTree();
       }
-      else if (fileinfo.suffix() == "ot"
-            || fileinfo.suffix() == "cot")
+      else if (fileinfo.suffix() == "ot")
       {
         openOcTree();
       }
@@ -790,12 +804,13 @@ namespace octomap{
 
       AbstractOcTree* t = r->octree;
 
+      // TODO: get rid of casts (requires occupancy tree interface)
       if (fileinfo.suffix() == "bt") {
         if (dynamic_cast<OcTree*>(t)) {
-          ((OcTree*) t)->writeBinaryConst(std_filename); 
+          ((OcTree*) t)->writeBinaryConst(std_filename);
         }
         else if (dynamic_cast<ColorOcTree*>(t)) {
-          ((ColorOcTree*) t)->writeBinaryConst(std_filename); 
+          ((ColorOcTree*) t)->writeBinaryConst(std_filename);
         }
       }
       else if (fileinfo.suffix() == "ot"){
