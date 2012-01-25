@@ -47,8 +47,11 @@
 #include <map>
 
 namespace octomap {
-  /*!
-   * This abstract class is an interface to all octrees
+
+  /**
+   * This abstract class is an interface to all octrees and provides a
+   * factory design pattern for readin and writing all kinds of OcTrees
+   * to files (see read()).
    */
   class AbstractOcTree {
     friend class StaticMapInit;
@@ -89,13 +92,27 @@ namespace octomap {
      */
     static AbstractOcTree* createTree(const std::string id, double res);
 
-    /// Read the file header, create the appropriate class and deserialize.
-    /// This creates a new octree which you need to delete yourself.
+    /**
+     * Read the file header, create the appropriate class and deserialize.
+     * This creates a new octree which you need to delete yourself. If you
+     * expect or requre a specific kind of octree, use dynamic_cast afterwards:
+     * @code
+     * AbstractOcTree* tree = AbstractOcTree::read("filename.ot");
+     * OcTree* octree = dynamic_cast<OcTree*>(tree);
+     *
+     * @endcode
+     */
     static AbstractOcTree* read(const std::string& filename);
     /// Read the file header, create the appropriate class and deserialize.
     /// This creates a new octree which you need to delete yourself.
     static AbstractOcTree* read(std::istream &s);
-    /// Read complete state of tree from stream
+
+    /**
+     * Read all nodes from the input stream (without file header),
+     * for this the tree needs to be already created.
+     * For general file IO, you
+     * should probably use AbstractOcTree::read() instead.
+     */
     virtual std::istream& readData(std::istream &s) = 0;
     /// Write complete state of tree to stream (without file header), prune tree first (lossless compression)
     virtual std::ostream& writeData(std::ostream &s) = 0;

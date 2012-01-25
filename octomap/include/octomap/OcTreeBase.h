@@ -225,13 +225,18 @@ namespace octomap {
 
     // file IO
 
-    /// Read complete state of tree from stream
+    /**
+     * Read all nodes from the input stream (without file header),
+     * for this the tree needs to be already created.
+     * For general file IO, you
+     * should probably use AbstractOcTree::read() instead.
+     */
     std::istream& readData(std::istream &s);
 
-    /// Write complete state of tree to stream, prune tree first (lossless compression)
+    /// Write complete state of tree to stream (without file header), prune tree first (lossless compression)
     std::ostream& writeData(std::ostream &s);
 
-    /// Write complete state of tree to stream, no pruning (const version)
+    /// Write complete state of tree to stream (without file header), no pruning (const version)
     std::ostream& writeDataConst(std::ostream &s) const;
 
 
@@ -271,9 +276,9 @@ namespace octomap {
       /// Comparison between interators. First compares the tree, then stack size and top element of stack.
       bool operator==(const iterator_base& other) const {
         return (tree ==other.tree && stack.size() == other.stack.size()
-            && stack.size() > 0 && (stack.top().node == other.stack.top().node
+            && (stack.size()==0 || (stack.size() > 0 && (stack.top().node == other.stack.top().node
                 && stack.top().depth == other.stack.top().depth
-                && stack.top().key == other.stack.top().key ));
+                && stack.top().key == other.stack.top().key ))));
       }
 
       /// Comparison between interators. First compares the tree, then stack size and top element of stack.
@@ -391,7 +396,7 @@ namespace octomap {
     /**
      * Iterator over the complete tree (inner nodes and leafs).
      * See below for example usage.
-     * Note that the non-trivial call to tree->end_tree() is done only once
+     * Note that the non-trivial call to tree->end_tree() should be done only once
      * for efficiency!
      *
      * @code
@@ -444,7 +449,7 @@ namespace octomap {
     /**
      * Iterator to iterate over all leafs of the tree. 
      * Inner nodes are skipped. See below for example usage.
-     * Note that the non-trivial call to tree->end_leafs() is done only once
+     * Note that the non-trivial call to tree->end_leafs() should be done only once
      * for efficiency!
      *
      * @code
@@ -513,7 +518,7 @@ namespace octomap {
     /**
      * Bounding-box leaf iterator. This iterator will traverse all leaf nodes
      * within a given bounding box (axis-aligned). See below for example usage.
-     * Note that the non-trivial call to tree->end_leafs_bbx() is done only once
+     * Note that the non-trivial call to tree->end_leafs_bbx() should be done only once
      * for efficiency!
      *
      * @code
@@ -531,7 +536,14 @@ namespace octomap {
     public:
       leaf_bbx_iterator() : iterator_base() {};
       /**
-      * Constructor of the iterator.
+      * Constructor of the iterator. The bounding box corners min and max are
+      * converted into an OcTreeKey first.
+      *
+      * @note Due to rounding and discretization
+      * effects, nodes may be traversed that have float coordinates appearing
+      * outside of the (float) bounding box. However, the node's complete volume
+      * will include the bounding box coordinate. For a more exact control, use
+      * the constructor with OcTreeKeys instead.
       * 
       * @param tree OcTreeBase on which the iterator is used on
       * @param min Minimum point3d of the axis-aligned boundingbox
@@ -553,6 +565,23 @@ namespace octomap {
           this->operator ++();
         }
 
+      }
+
+      /**
+      * Constructor of the iterator. This version uses the exact keys as axis-aligned
+      * bounding box (including min and max).
+      *
+      * @param tree OcTreeBase on which the iterator is used on
+      * @param min Minimum OcTreeKey to be included in the axis-aligned boundingbox
+      * @param max Maximum OcTreeKey to be included in the axis-aligned boundingbox
+      * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
+      */
+      leaf_bbx_iterator(OcTreeBase<NodeType> const* tree, const OcTreeKey& min, const OcTreeKey& max, unsigned char depth=0)
+        : iterator_base(tree, depth), minKey(min), maxKey(max)
+      {
+          // advance from root to next valid leaf in bbx:
+          this->stack.push(this->stack.top());
+          this->operator ++();
       }
 
       leaf_bbx_iterator(const leaf_bbx_iterator& other) : iterator_base(other) {
@@ -633,6 +662,9 @@ namespace octomap {
     leaf_iterator begin_leafs(unsigned char maxDepth=0) const {return leaf_iterator(this, maxDepth);};
     const leaf_iterator end_leafs() const {return leaf_iterator_end;}
 
+    leaf_bbx_iterator begin_leafs_bbx(const OcTreeKey& min, const OcTreeKey& max, unsigned char maxDepth=0) const {
+      return leaf_bbx_iterator(this, min, max, maxDepth);
+    }
     leaf_bbx_iterator begin_leafs_bbx(const point3d& min, const point3d& max, unsigned char maxDepth=0) const {
       return leaf_bbx_iterator(this, min, max, maxDepth);
     }

@@ -257,35 +257,93 @@ int main(int argc, char** argv) {
   std::cout << "All inner lists traversed, times: "
       <<time_it << " / " << time_depr << "\n========================\n\n";
 
-  /**
-   * get bounding box
-   */
-  point3d min(-1, -1, -1);
-  point3d max(5, 5, 5);
-  list_iterator.clear();
-  list_depr.clear();
-  gettimeofday(&start, NULL);  // start timer
-  //tree->setBBXMax()  getVoxels(list_depr);
-  gettimeofday(&stop, NULL);  // stop timer
-  time_depr = timediff(start, stop);
 
-  OcTree bbxTree(tree->getResolution());
-  tree->expand();
+  /**
+   * bounding box tests
+   */
+  //tree->expand();
+  // test complete tree (should be equal to no bbx)
+  OcTreeKey bbxMinKey, bbxMaxKey;
+  double temp_x,temp_y,temp_z;
+  tree->getMetricMin(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMin(temp_x,temp_y,temp_z);
+
+  tree->getMetricMax(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMax(temp_x,temp_y,temp_z);
+
+  EXPECT_TRUE(tree->genKey(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->genKey(bbxMax, bbxMaxKey));
+
+  OcTree::leaf_bbx_iterator it_bbx = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey);
+  EXPECT_TRUE(it_bbx == tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey));
+  OcTree::leaf_bbx_iterator end_bbx = tree->end_leafs_bbx();
+  EXPECT_TRUE(end_bbx == tree->end_leafs_bbx());
+
+  OcTree::leaf_iterator it = tree->begin_leafs();
+  EXPECT_TRUE(it == tree->begin_leafs());
+  OcTree::leaf_iterator end = tree->end_leafs();
+  EXPECT_TRUE(end == tree->end_leafs());
+
+
+  for( ; it!= end && it_bbx != end_bbx; ++it, ++it_bbx){
+    EXPECT_TRUE(it == it_bbx);
+  }
+  EXPECT_TRUE(it == end && it_bbx == end_bbx);
+
+
+  // now test an actual bounding box:
+  tree->expand(); // (currently only works properly for expanded tree (no multires)
+  bbxMin = point3d(-1, -1, - 1);
+  bbxMax = point3d(3, 2, 1);
+  EXPECT_TRUE(tree->genKey(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->genKey(bbxMax, bbxMaxKey));
+
+  typedef std::tr1::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
+
+  KeyVolumeMap bbxVoxels;
 
   count = 0;
-  gettimeofday(&start, NULL);  // start timers
-  for(OcTree::leaf_bbx_iterator it = tree->begin_leafs_bbx(min,max), end=tree->end_leafs_bbx();
-      it!= end; ++it){
-    count ++;
-    bbxTree.updateNode(it.getCoordinate(), tree->isNodeOccupied(*it));
+  for(OcTree::leaf_bbx_iterator it = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey), end=tree->end_leafs_bbx();
+      it!= end; ++it)
+  {
+    count++;
+    OcTreeKey currentKey = it.getKey();
+    // leaf is actually a leaf:
+    EXPECT_FALSE(it->hasChildren());
+
+    // leaf exists in tree:
+    OcTreeNode* node = tree->search(currentKey);
+    EXPECT_TRUE(node);
+    EXPECT_EQ(node, &(*it));
+    // all leafs are actually in the bbx:
+    for (unsigned i = 0; i < 3; ++i){
+//      if (!(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i])){
+//        std::cout << "Key failed: " << i << " " << currentKey[i] << " "<< bbxMinKey[i] << " "<< bbxMaxKey[i]
+//             << "size: "<< it.getSize()<< std::endl;
+//      }
+      EXPECT_TRUE(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i]);
+    }
+
+    bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, it.getSize()));
   }
-  gettimeofday(&stop, NULL);  // stop timer
-  time_it = timediff(start, stop);
+  EXPECT_EQ(bbxVoxels.size(), count);
+  std::cout << "Bounding box traverserd ("<< count << " leaf nodes)\n";
 
-  bbxTree.writeBinary("test_bbx.bt");
-  std::cout << "BBX volume traversed, "
-    << count<< " voxels in " << time_it << "s\n========================\n\n";
 
+  // compare with manual BBX check on all leafs:
+  for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
+    OcTreeKey key = it.getKey();
+    if (    key[0] >= bbxMinKey[0] && key[0] <= bbxMaxKey[0]
+         && key[1] >= bbxMinKey[1] && key[1] <= bbxMaxKey[1]
+         && key[2] >= bbxMinKey[2] && key[2] <= bbxMaxKey[2])
+    {
+      KeyVolumeMap::iterator bbxIt = bbxVoxels.find(key);
+      EXPECT_FALSE(bbxIt == bbxVoxels.end());
+      EXPECT_TRUE(key == bbxIt->first);
+      EXPECT_EQ(it.getSize(), bbxIt->second);
+    }
+
+  }
 
 
   return 0;
