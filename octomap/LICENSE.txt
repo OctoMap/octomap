@@ -4,7 +4,7 @@ A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
 License for the "octomap" library: New BSD License. 
 
-Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
+Copyright (c) 2009-2012, K. M. Wurm, A. Hornung, University of Freiburg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

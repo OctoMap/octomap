@@ -1,3 +1,17 @@
+v1.4: 2012-02-22
+===================
+ - New generalized file IO for all kinds of OcTrees to .ot files. The updated
+ 	file format requires a conversion of your old bt and ot files with the 
+ 	"convert_octree" tool. bt files are read and written as before. 
+ 	To write the general .ot file format use tree.write(...) and read it with 
+ 	AbstractOcTree::read(...) as factory (dynamic_cast to the correct class 
+ 	afterwards).
+ - New ColorOcTree class to store color in addition to occupancy 
+	(e.g. from Kinect), with visualization in octovis
+ - New map collections of octrees (hierarchical octree maps, experimental)
+ - enhancements and fixes in changeDetection
+ - minor fixes and unit tests added
+
 v1.2: 2011-08-17
 ===================
  - divided code into a library (octomap) and visualization part (octvis) to 
