@@ -751,8 +751,8 @@ namespace octomap {
 
       OCTOMAP_DEBUG_STR("Reading binary octree type "<< id);
     } else{ // try to read old binary format:
-      s.seekg(streampos);
       s.clear(); // clear eofbit of istream
+      s.seekg(streampos);
       if (readBinaryLegacyHeader(s, size, res)){
         OCTOMAP_WARNING_STR("You are using an outdated binary tree file format.");
         OCTOMAP_WARNING_STR("Please convert your .bt files with convert_octree.");

@@ -1057,6 +1057,36 @@ namespace octomap{
     m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
   }
 
+  void ViewerGui::on_savecampose_triggered() {
+    QString filename = QFileDialog::getSaveFileName(this, "Save Viewer State", "camera.xml", "Camera/State file (*.xml)");
+    if (!filename.isEmpty()) {
+      saveCameraPosition(filename.toAscii().constData());
+    }
+  }
+
+  void ViewerGui::on_loadcampose_triggered() {
+    QString filename = QFileDialog::getOpenFileName(this, "Load Viewer State", "camera.xml", "Camera/State file (*.xml)");
+    if (!filename.isEmpty()) {
+      loadCameraPosition(filename.toAscii().constData());
+    }
+  }
+
+
+
+  void ViewerGui::saveCameraPosition(const char* filename) const {
+    // HACK get non-const pointer to myself
+    ViewerWidget* aux = const_cast<ViewerWidget*>( m_glwidget);
+    aux->setStateFileName(QString(filename));
+    aux->saveStateToFile();
+    aux->setStateFileName(QString::null);
+  }
+
+  void ViewerGui::loadCameraPosition(const char* filename) {
+     m_glwidget->setStateFileName(QString(filename));
+     m_glwidget->restoreStateFromFile();
+     m_glwidget->setStateFileName(QString::null);
+  } 
+
 
 }
 

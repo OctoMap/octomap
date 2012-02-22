@@ -107,6 +107,9 @@ namespace octomap {
     void on_action_bg_white_triggered();
     void on_action_bg_gray_triggered();
 
+    void on_savecampose_triggered();
+    void on_loadcampose_triggered();
+
     // use it for testcases etc.
     void on_actionTest_triggered();
 
@@ -175,6 +178,10 @@ namespace octomap {
     void addOctree(AbstractOcTree* tree, int id, pose6d origin);
     void addOctree(AbstractOcTree* tree, int id);
     bool getOctreeRecord(int id, OcTreeRecord*& otr);
+
+    void saveCameraPosition(const char* filename) const;
+    void loadCameraPosition(const char* filename);
+
 
     std::map<int, OcTreeRecord> m_octrees;
  

@@ -46,6 +46,10 @@
     <addaction name="separator"/>
     <addaction name="menuShow"/>
     <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+    <addaction name="loadcampose"/>
+    <addaction name="savecampose"/>
+    <addaction name="separator"/>
     <addaction name="actionHelp"/>
     <addaction name="actionExit"/>
    </widget>
@@ -216,6 +220,16 @@
    </property>
    <property name="shortcut">
     <string>F</string>
+   </property>
+  </action>
+  <action name="savecampose">
+   <property name="text">
+    <string>Save viewer state (camera, window)</string>
+   </property>
+  </action>
+  <action name="loadcampose">
+   <property name="text">
+    <string>Load viewer state (camera, window)</string>
    </property>
   </action>
   <action name="actionHelp">

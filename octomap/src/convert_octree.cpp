@@ -102,11 +102,12 @@ int main(int argc, char** argv) {
       OCTOMAP_WARNING_STR("Could not detect OcTree in file, trying legacy formats.");
       // TODO: check if .cot extension, try old format only then
       // reset and try old ColorOcTree format:
+      file.clear(); // clear eofbit of istream
       file.seekg(streampos);
       ColorOcTree* colorTree = new ColorOcTree(0.1);
       colorTree->readData(file);
       if (colorTree->size() > 1 && file.good()){
-        OCTOMAP_WARNING_STR("Detected Binary ColorOcTree. Please update your files to the new format.");
+        OCTOMAP_WARNING_STR("Detected Binary ColorOcTree to convert. \nPlease check and update the new file header (resolution will likely be wrong).");
         tree = colorTree;
       } else{
         delete colorTree;
