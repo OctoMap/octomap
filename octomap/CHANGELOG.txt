@@ -9,6 +9,7 @@ v1.4: 2012-02-22
  - New ColorOcTree class to store color in addition to occupancy 
 	(e.g. from Kinect), with visualization in octovis
  - New map collections of octrees (hierarchical octree maps, experimental)
+ - Support for Linux, Mac OSX, and Windows
  - enhancements and fixes in changeDetection
  - minor fixes and unit tests added
 
