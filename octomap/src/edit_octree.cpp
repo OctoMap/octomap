@@ -53,19 +53,18 @@ typedef unsigned char byte;
 int main(int argc, char **argv)
 {
 
-    bool mark_free = false;    // Mark free cells (false = cells remain "unknown")    
-    bool rotate = false;       // Fix orientation of webots-exported files
+    //bool rotate = false;       // Fix orientation of webots-exported files
     bool show_help = false;
     string outputFilename("");
     string inputFilename("");
-    double minX = 0.0;
-    double minY = 0.0;
-    double minZ = 0.0;
-    double maxX = 0.0;
-    double maxY = 0.0;
-    double maxZ = 0.0;
-    bool applyBBX = false;
-    bool applyOffset = false;
+//    double minX = 0.0;
+//    double minY = 0.0;
+//    double minZ = 0.0;
+//    double maxX = 0.0;
+//    double maxY = 0.0;
+//    double maxZ = 0.0;
+//    bool applyBBX = false;
+//    bool applyOffset = false;
     octomap::point3d offset(0.0, 0.0, 0.0);
 
     double scale = 1.0;
@@ -95,34 +94,30 @@ int main(int argc, char **argv)
     
     for(int i = 1; i < argc; i++) {
       // Parse command line arguments
-      if(strcmp(argv[i], "--mark-free") == 0) {
-        mark_free = true;
-        continue;
-      } else if(strcmp(argv[i], "--no-mark-free") == 0) {
-        mark_free = false;
-        continue;
-      }else if(strcmp(argv[i], "--rotate") == 0) {
-        rotate = true;
+      if(strcmp(argv[i], "--rotate") == 0) {
+        OCTOMAP_WARNING_STR(argv[i] << " not yet implemented!\n");
+        //rotate = true;
         continue;
       } else if(strcmp(argv[i], "-o") == 0 && i < argc - 1) {
         i++;
         outputFilename = argv[i];
         continue;
       } else if (strcmp(argv[i], "--bb") == 0 && i < argc - 7) {
+        OCTOMAP_WARNING_STR(argv[i] << " not yet implemented!\n");
         i++;
-        minX = atof(argv[i]);
+        //minX = atof(argv[i]);
         i++;
-        minY = atof(argv[i]);
+        //minY = atof(argv[i]);
         i++;
-        minZ = atof(argv[i]);
+        //minZ = atof(argv[i]);
         i++;
-        maxX = atof(argv[i]);
+        //maxX = atof(argv[i]);
         i++;
-        maxY = atof(argv[i]);
+        //maxY = atof(argv[i]);
         i++;
-        maxZ = atof(argv[i]);
+        //maxZ = atof(argv[i]);
 
-        applyBBX = true;
+        //applyBBX = true;
 
         continue;
       } else if (strcmp(argv[i], "--res") == 0 && i < argc - 1) {
@@ -136,6 +131,7 @@ int main(int argc, char **argv)
 
         continue;
       } else if (strcmp(argv[i], "--offset") == 0 && i < argc - 4) {
+        OCTOMAP_WARNING_STR(argv[i] << " not yet implemented!\n");
         i++;
         offset(0) = (float) atof(argv[i]);
         i++;
@@ -143,7 +139,7 @@ int main(int argc, char **argv)
         i++;
         offset(2) = (float) atof(argv[i]);
 
-        applyOffset = true;
+        //applyOffset = true;
 
         continue;
       } else if (i == argc-1){
@@ -155,7 +151,11 @@ int main(int argc, char **argv)
       outputFilename = inputFilename + ".edit.bt";
     }
 
-    OcTree* tree = new OcTree(inputFilename);
+    OcTree* tree = new OcTree(0.1);
+    if (!tree->readBinary(inputFilename)){
+      OCTOMAP_ERROR("Could not open file, exiting.\n");
+      exit(1);
+    }
 
     // apply scale / resolution setting:
 
@@ -219,10 +219,14 @@ int main(int argc, char **argv)
  
     // write octree to file  
 
-    cout << "Writing octree to " << outputFilename << endl << endl;
+    cout << "Writing octree to " << outputFilename << endl;
    
-    tree->writeBinary(outputFilename.c_str());
+    if (!tree->writeBinary(outputFilename)){
+      OCTOMAP_ERROR("Error writing tree to %s\n", outputFilename.c_str());
+      exit(1);
+    }
 
     cout << "done" << endl << endl;
+    delete tree;
     return 0;
 }
