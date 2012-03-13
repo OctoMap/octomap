@@ -160,8 +160,13 @@ namespace octomap {
     virtual NODE* updateNode(const point3d& value, bool occupied, bool lazy_eval = false);
 
 
-    /// Creates the maximum likelihood map by calling toMaxLikelihood on all
-    /// tree nodes, setting their occupancy to the corresponding occupancy thresholds.
+    ///
+    ///
+    /**
+     * Creates the maximum likelihood map by calling toMaxLikelihood on all
+     * tree nodes, setting their occupancy to the corresponding occupancy thresholds.
+     * This enables a very efficient compression if you call prune() afterwards.
+     */
     virtual void toMaxLikelihood();
 
     /**

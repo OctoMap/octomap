@@ -134,30 +134,42 @@ int main(int argc, char** argv) {
 
   cout << "\nDone building tree.\n\n";
   cout << "time to insert scans: " << time_to_insert << " sec" << endl;
-  cout << "inserting 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (average)" << endl << endl;  
+  cout << "time to insert 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (avg)" << endl << endl;
 
   unsigned int numThresholded, numOther;
   tree->calcNumThresholdedNodes(numThresholded, numOther);
 
-  cout << "Tree size: " << tree->size() <<" (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
+  std::cout << "Full tree\n" << "===========================\n";
+  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
 
   unsigned int memUsage = tree->memoryUsage();
   unsigned int memFullGrid = tree->memoryFullGrid();
   cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
+  double x, y, z;
+  tree->getMetricSize(x, y, z);
+  cout << "Size: " << x << " x " << y << " x " << z << " m^3\n";
+  cout << endl;
 
+  std::cout << "Pruned tree (lossless compression)\n" << "===========================\n";
   tree->prune();
   tree->calcNumThresholdedNodes(numThresholded, numOther);
   memUsage = tree->memoryUsage();
 
+  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
+  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << endl;
-  cout << "Pruned tree size: " << tree->size() <<" (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
-  cout << "Pruned memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
 
-  double x, y, z;
-  tree->getMetricSize(x, y, z);
-  cout << "size: " << x << " x " << y << " x " << z << endl;
+  std::cout << "Pruned max-likelihood tree (lossy compression)\n" << "===========================\n";
+  tree->toMaxLikelihood();
+  tree->prune();
+  tree->calcNumThresholdedNodes(numThresholded, numOther);
+  memUsage = tree->memoryUsage();
+  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
+  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << endl;
+
+
 
   cout << "\nWriting tree files\n===========================\n";
   tree->write(treeFilenameOT);

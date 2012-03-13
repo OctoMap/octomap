@@ -552,7 +552,7 @@ namespace octomap{
     ui.actionOctree_structure->setEnabled(true);
     ui.actionOctree_structure->setChecked(false);
     ui.actionTrajectory->setEnabled(false);
-    ui.actionConvert_ml_tree->setEnabled(false);
+    ui.actionConvert_ml_tree->setEnabled(true);
     ui.actionReload_Octree->setEnabled(true);
     ui.actionSettings->setEnabled(false);
   }
@@ -598,7 +598,7 @@ namespace octomap{
   // EXPERIMENTAL
   void ViewerGui::openMapCollection() {
 
-    fprintf(stderr, "opening hierarchy from %s...\n", m_filename.c_str());
+    OCTOMAP_DEBUG("Opening hierarchy from %s...\n", m_filename.c_str());
 
     std::ifstream infile(m_filename.c_str(), std::ios_base::in |std::ios_base::binary);
     if (!infile.is_open()) {
@@ -611,11 +611,12 @@ namespace octomap{
     int i=0;
     for (MapCollection<MapNode<OcTree> >::iterator it = collection.begin(); 
          it != collection.end(); ++it) {
-      fprintf(stderr, "adding hierarchy node %s\n", (*it)->getId().c_str());
+      OCTOMAP_DEBUG("Adding hierarchy node %s\n", (*it)->getId().c_str());
       OcTree* tree = (*it)->getMap();
-      if (!tree)  fprintf(stderr, "error while reading node %s\n", (*it)->getId().c_str());
+      if (!tree)
+        OCTOMAP_ERROR("Error while reading node %s\n", (*it)->getId().c_str());
       else {
-        fprintf(stderr, "read tree with %lu tree nodes\n", tree->size());
+        OCTOMAP_DEBUG("Read tree with %zu tree nodes\n", tree->size());
       }
       pose6d  origin = (*it)->getOrigin();
       this->addOctree(tree, i, origin);
@@ -624,7 +625,7 @@ namespace octomap{
     setOcTreeUISwitches();
     showOcTree();
     m_glwidget->resetView();
-    fprintf(stderr, "done\n");
+    OCTOMAP_DEBUG("done\n");
   }
 
   void ViewerGui::loadGraph(bool completeGraph) {
