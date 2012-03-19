@@ -39,6 +39,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <iostream>
+#include <fstream>
 
 #include <octomap/octomap.h>
 #include <octomap/octomap_timing.h>
@@ -50,14 +52,19 @@ void printUsage(char* self){
   std::cerr << "\nUSAGE: " << self << " [options]\n\n"
             "OPTIONS:\n-i <InputFile.graph> (required)\n"
             "-o <OutputFile.bt> (required) \n"
+            "-res <resolution> (default: 0.1 m)\n\n"
             "-m <maxrange> (optional) \n"
             "-n <max scan no.> (optional) \n"
-            "-res <resolution> (default: 0.1 m)\n\n";
+            "-log (output a detailed log file with statistics) \n"
+            "-compress (enable lossless compression after every scan)\n"
+            "-compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
+  "\n";
 
-  std::cerr << "This tool inserts the data of a binary" << std::endl;
-  std::cerr << "graph file into an octree. A binary octree" << std::endl;
-  std::cerr << "file (.bt, bonsai tree) is generated." << std::endl;
-  std::cerr << std::endl;
+
+  std::cerr << "This tool inserts the data of a binary graph file into an octree.\n"
+               "The output is a compact maximum-likelihood binary octree file \n"
+               "(.bt, bonsai tree)  and general octree files (.ot) with the full\n"
+               "information.\n\n";
 
   exit(0);
 }
@@ -69,6 +76,8 @@ int main(int argc, char** argv) {
   string treeFilename = "";
   double maxrange = -1;
   int max_scan_no = -1;
+  bool detailedLog = false;
+  unsigned char compression = 0;
 
   timeval start; 
   timeval stop; 
@@ -81,6 +90,12 @@ int main(int argc, char** argv) {
       treeFilename = std::string(argv[++arg]);
     else if (! strcmp(argv[arg], "-res"))
       res = atof(argv[++arg]);
+    else if (! strcmp(argv[arg], "-log"))
+      detailedLog = true;
+    else if (! strcmp(argv[arg], "-compress"))
+      compression = 1;
+    else if (! strcmp(argv[arg], "-compressML"))
+      compression = 2;
     else if (! strcmp(argv[arg], "-m"))
       maxrange = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-n"))
@@ -95,17 +110,26 @@ int main(int argc, char** argv) {
 
 
   std::string treeFilenameOT = treeFilename + ".ot";
+  std::string treeFilenameMLOT = treeFilename + "_ml.ot";
+
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
   graph->readBinary(graphFilename);
   unsigned int num_points_in_graph = 0;
   if (max_scan_no > 0) {
     num_points_in_graph = graph->getNumPoints(max_scan_no-1);
-    cout << "\n Data points in graph upto scan " << max_scan_no << ": " << num_points_in_graph << endl;
+    cout << "\n Data points in graph up to scan " << max_scan_no << ": " << num_points_in_graph << endl;
   }
   else {
     num_points_in_graph = graph->getNumPoints();
     cout << "\n Data points in graph: " << num_points_in_graph << endl;
+  }
+  std::ofstream logfile;
+  if (detailedLog){
+    logfile.open((treeFilename+".log").c_str());
+    logfile << "# Memory of processing " << graphFilename << " over time\n";
+    logfile << "# Resolution: "<< res <<"; compression: " << int(compression) << "; scan endpoints: "<< num_points_in_graph << std::endl;
+    logfile << "# [scan number] [bytes octree] [bytes full 3D grid]\n";
   }
 
   cout << "\nCreating tree\n===========================\n";
@@ -119,8 +143,18 @@ int main(int argc, char** argv) {
     if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;
 
-    tree->insertScan(**scan_it, maxrange, false);
-    if ((max_scan_no > 0) && (currentScan == (unsigned int) max_scan_no)) break;
+    tree->insertScan(**scan_it, maxrange, (compression==1));
+    if (compression == 2){
+      tree->toMaxLikelihood();
+      tree->prune();
+    }
+
+    if (detailedLog)
+      logfile << currentScan << " " << tree->memoryUsage() << " " << tree->memoryFullGrid() << "\n";
+
+    if ((max_scan_no > 0) && (currentScan == (unsigned int) max_scan_no))
+      break;
+
     currentScan++;
   }
   gettimeofday(&stop, NULL);  // stop timer
@@ -129,6 +163,8 @@ int main(int argc, char** argv) {
 
   // get rid of graph in mem before doing anything fancy with tree (=> memory)
   delete graph;
+  if (logfile.is_open())
+    logfile.close();
 
 
 
@@ -160,6 +196,8 @@ int main(int argc, char** argv) {
   cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
   cout << endl;
 
+  tree->write(treeFilenameOT);
+
   std::cout << "Pruned max-likelihood tree (lossy compression)\n" << "===========================\n";
   tree->toMaxLikelihood();
   tree->prune();
@@ -172,8 +210,9 @@ int main(int argc, char** argv) {
 
 
   cout << "\nWriting tree files\n===========================\n";
-  tree->write(treeFilenameOT);
-  std::cout << "Full Octree written to "<< treeFilenameOT << std::endl;
+  tree->write(treeFilenameMLOT);
+  std::cout << "Full Octree (pruned) written to "<< treeFilenameOT << std::endl;
+  std::cout << "Full Octree (max.likelihood, pruned) written to "<< treeFilenameOT << std::endl;
   tree->writeBinary(treeFilename);
   std::cout << "Bonsai tree written to "<< treeFilename << std::endl;
   cout << endl;
