@@ -126,7 +126,20 @@ int main(int argc, char** argv) {
   if (outputFilename.length() > 3 && (outputFilename.compare(outputFilename.length()-3, 3, ".bt") == 0)){
     std::cerr << "Writing binary (BonsaiTree) file" << std::endl;
     OcTree* octree = dynamic_cast<OcTree*>(tree);
-    if (!octree || !octree->writeBinary(outputFilename)){
+    if (!octree){
+      ColorOcTree* colorTree = dynamic_cast<ColorOcTree*>(tree);
+      if (!colorTree){
+        std::cerr << "Error: Writing to .bt is not supported for this tree type" << std::endl;
+        exit(-2);
+      }
+
+      if (!colorTree->writeBinary(outputFilename)){
+        std::cerr << "Error writing ColorOcTree to " << outputFilename << std::endl;
+        exit(-2);
+      }
+    }
+
+    if (!octree->writeBinary(outputFilename)){
       std::cerr << "Error writing to " << outputFilename << std::endl;
       exit(-2);
     }

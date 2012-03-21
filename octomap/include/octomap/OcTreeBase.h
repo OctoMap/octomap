@@ -134,7 +134,11 @@ namespace octomap {
     /// \return The number of nodes in the tree
     virtual inline size_t size() const { return tree_size; }
 
+    /// \return Memory usage of the complete octree in bytes (may vary between architectures)
     virtual size_t memoryUsage() const;
+
+    /// \return Memory usage of the a single octree node
+    virtual inline size_t memoryUsageNode() const {return sizeof(NODE); };
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
     size_t memoryFullGrid();

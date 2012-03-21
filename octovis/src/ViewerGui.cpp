@@ -234,8 +234,10 @@ namespace octomap{
       maxX = maxY = maxZ = -1e6;
       double sizeX, sizeY, sizeZ;
       sizeX = sizeY = sizeZ = 0.;
-      unsigned memoryUsage = 0;
-      unsigned int num_nodes = 0;
+      size_t memoryUsage = 0;
+      size_t num_nodes = 0;
+      size_t memorySingleNode = 0;
+
     
       for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
         // get map bbx
@@ -264,13 +266,14 @@ namespace octomap{
         if (lsizeZ > sizeZ) sizeZ = lsizeZ;
         memoryUsage += it->second.octree->memoryUsage();
         num_nodes += it->second.octree->size();
+        memorySingleNode = std::max(memorySingleNode, it->second.octree->memoryUsageNode());
       }
 
       m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
 
-      QString size = QString("%L1m x %L2m x %L3m").arg(sizeX).arg(sizeY).arg(sizeZ);
-      QString memory = QString("%L1 nodes; ").arg(num_nodes)
-        + QString ("%L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
+      QString size = QString("%L1 x %L2 x %L3 m^3; %L4 nodes").arg(sizeX).arg(sizeY).arg(sizeZ).arg(unsigned(num_nodes));
+      QString memory = QString("Single node: %L1 B; ").arg(memorySingleNode)
+        + QString ("Octree: %L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
       m_mapMemoryStatus->setText(memory);
       m_mapSizeStatus->setText(size);
       m_glwidget->updateGL();

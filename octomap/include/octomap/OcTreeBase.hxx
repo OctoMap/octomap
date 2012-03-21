@@ -714,10 +714,9 @@ namespace octomap {
 
   template <class NODE>
   size_t OcTreeBase<NODE>::memoryUsage() const{
-    size_t node_size = sizeof(NODE);
     size_t num_leaf_nodes = this->getNumLeafNodes();
     size_t num_inner_nodes = tree_size - num_leaf_nodes;
-    return (sizeof(OcTreeBase<NODE>) + node_size * tree_size + num_inner_nodes * sizeof(NODE*[8]));
+    return (sizeof(OcTreeBase<NODE>) + memoryUsageNode() * tree_size + num_inner_nodes * sizeof(NODE*[8]));
   }
 
   template <class NODE>
