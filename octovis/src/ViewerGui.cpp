@@ -859,6 +859,14 @@ namespace octomap{
     m_glwidget->enablePrintoutMode(checked);
   }
 
+  void ViewerGui::on_actionSelection_box_toggled(bool checked){
+	  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin();
+			  it != m_octrees.end(); ++it) {
+		  it->second.octree_drawer->enableSelectionBox(checked);
+	  }
+	  m_glwidget->updateGL();
+  }
+
   void ViewerGui::on_actionHeight_map_toggled(bool checked){
     if (checked) {
       ui.actionPrintout_mode->setChecked(false);
