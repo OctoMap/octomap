@@ -28,6 +28,7 @@
 #define VIEWERWIDGET_H_
 
 #include "SceneObject.h"
+#include "SelectionBox.h"
 #include <octomap/octomap.h>
 #include <qglviewer.h>
 
@@ -60,6 +61,7 @@ class ViewerWidget : public QGLViewer {
   void enablePrintoutMode (bool enabled = true);
   void enableHeightColorMode (bool enabled = true);
   void enableSemanticColoring (bool enabled = true);
+  void enableSelectionBox (bool enabled = true);
   void setCamPosition(double x, double y, double z, double lookX, double lookY, double lookZ);
   void setCamPose(const octomath::Pose6D& pose);
   virtual void setSceneBoundingBox(const qglviewer::Vec& min, const qglviewer::Vec& max);
@@ -72,6 +74,7 @@ class ViewerWidget : public QGLViewer {
   void jumpToCamFrame(int id, int frame);
   void playCameraPath(int id, int start_frame);
   void stopCameraPath(int id);
+  const SelectionBox& selectionBox() const { return m_selectionBox;}
 
   /**
    * Resets the 3D viewpoint to the initial value
@@ -89,16 +92,19 @@ signals:
  protected:
 
   virtual void draw();
+  virtual void drawWithNames();
   virtual void init();
   /**
    * Overloaded from QGLViewer. Draws own axis and grid in scale, then calls QGLViewer::postDraw().
    */
   virtual void postDraw();
+  virtual void postSelection(const QPoint&);
   virtual QString helpString() const;
 
   qglviewer::Quaternion poseToQGLQuaternion(const octomath::Pose6D& pose);
 
   std::vector<SceneObject*> m_sceneObjects;
+  SelectionBox m_selectionBox;
 
   bool m_printoutMode;
   bool m_heightColorMode;
@@ -106,6 +112,7 @@ signals:
 
   bool m_drawAxis; // actual state of axis (original overwritten)
   bool m_drawGrid; // actual state of grid (original overwritten)
+  bool m_drawSelectionBox;
 
   double m_zMin;
   double m_zMax;

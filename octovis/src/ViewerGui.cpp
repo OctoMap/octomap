@@ -831,6 +831,41 @@ namespace octomap{
     }
   }
 
+  void ViewerGui::on_actionClear_selection_triggered(){
+	  point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+	  updateNodesInBBX(min, max, -100);
+  }
+
+  void ViewerGui::on_actionFill_selection_triggered(){
+	  point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+	  updateNodesInBBX(min, max, 100); // TODO get val from tree properties
+  }
+
+  void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, float logodds){
+	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
+	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
+
+	    if (octree){
+
+	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
+	    			end=octree->end_leafs_bbx(); it!= end; ++it){
+	    		it->setLogOdds(logodds);
+	    		octree->updateNode(it.getKey(), logodds);
+	    	}
+	    }
+
+	  }
+
+	  showOcTree();
+
+  }
+
   void ViewerGui::on_actionExport_view_triggered(){
     m_glwidget->openSnapshotFormatDialog();
     m_glwidget->saveSnapshot(false);
@@ -860,10 +895,7 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionSelection_box_toggled(bool checked){
-	  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin();
-			  it != m_octrees.end(); ++it) {
-		  it->second.octree_drawer->enableSelectionBox(checked);
-	  }
+	  m_glwidget->enableSelectionBox(checked);
 	  m_glwidget->updateGL();
   }
 

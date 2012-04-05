@@ -28,7 +28,6 @@
 #define OCTREEDRAWER_H_
 
 #include "SceneObject.h"
-#include "SelectionBox.h"
 
 namespace octomap {
 
@@ -73,7 +72,6 @@ namespace octomap {
     // set new origin (move object)
     void setOrigin(octomap::pose6d t);
     void enableAxes(bool enabled = true) { m_displayAxes = enabled; };
-    void enableSelectionBox(bool enabled = true) {m_displaySelectionBox = enabled;};
 
   protected:
     //void clearOcTree();
@@ -151,11 +149,9 @@ namespace octomap {
     bool m_drawSelection;
     bool m_octree_grid_vis_initialized;
     bool m_displayAxes;
-    bool m_displaySelectionBox;
 
     unsigned int m_max_tree_depth;
     double m_alphaOccupied;
-    SelectionBox m_selectionBox;
 
     octomap::pose6d origin;
     octomap::pose6d initial_origin;

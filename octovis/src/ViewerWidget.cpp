@@ -40,11 +40,30 @@ namespace octomap {
     m_printoutMode = false;
     m_heightColorMode = false;      
     m_semantic_coloring = false;      
+    m_drawSelectionBox = false;
   }
 
   void ViewerWidget::init() {
     // Restore previous viewer state.
     restoreStateFromFile();
+
+    // Make camera the default manipulated frame.
+    setManipulatedFrame( camera()->frame() );
+
+#if QT_VERSION < 0x040000
+    // Preserve CAMERA bindings, see setHandlerKeyboardModifiers documentation.
+    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltButton);
+    // The frames can be move without any key pressed
+    setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoButton);
+    // The camera can always be moved with the Control key.
+    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlButton);
+#else
+    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltModifier);
+    setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoModifier);
+    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlModifier);
+#endif
+
+
 
     // Light initialization:
     glEnable(GL_LIGHT0);
@@ -103,6 +122,11 @@ namespace octomap {
       (*it)->enableSemanticColoring(enabled);
     }
     updateGL();
+  }
+
+  void ViewerWidget::enableSelectionBox(bool enabled) {
+	  m_drawSelectionBox = enabled;
+	  updateGL();
   }
 
 
@@ -315,6 +339,16 @@ namespace octomap {
         it != m_sceneObjects.end(); ++it){
       (*it)->draw();
     }
+
+    if (m_drawSelectionBox)
+    	m_selectionBox.draw();
+
+  }
+
+  void ViewerWidget::drawWithNames(){
+
+	  if (m_drawSelectionBox)
+		  m_selectionBox.draw(true);
   }
 
   void ViewerWidget::postDraw(){
@@ -353,6 +387,24 @@ namespace octomap {
     setAxisIsDrawn(m_drawAxis);
     setGridIsDrawn(m_drawGrid);
   }
+
+  void ViewerWidget::postSelection(const QPoint&)
+  {
+
+    if (selectedName() == -1)
+      {
+        // Camera will be the default frame is no object is selected.
+        setManipulatedFrame( camera()->frame());
+ //       m_selectionBox.setSelectedFrameNumber(4); // dummy value meaning camera
+      }
+    else
+      {
+        setManipulatedFrame(m_selectionBox.frame(selectedName()));
+        //m_selectionBox.setSelectedFrameNumber(selectedName());
+      }
+  }
+
+
 
 } // namespace
 

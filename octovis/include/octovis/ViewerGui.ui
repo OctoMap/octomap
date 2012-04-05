@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -93,9 +93,11 @@
    </widget>
    <widget class="QMenu" name="menuInteract">
     <property name="title">
-     <string>Interact</string>
+     <string>Edit</string>
     </property>
     <addaction name="actionSelection_box"/>
+    <addaction name="actionClear_selection"/>
+    <addaction name="actionFill_selection"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
@@ -438,6 +440,16 @@
    </property>
    <property name="text">
     <string>Selection box</string>
+   </property>
+  </action>
+  <action name="actionClear_selection">
+   <property name="text">
+    <string>Clear selection (set free)</string>
+   </property>
+  </action>
+  <action name="actionFill_selection">
+   <property name="text">
+    <string>Fill selection (set occupied)</string>
    </property>
   </action>
  </widget>

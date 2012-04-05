@@ -41,7 +41,6 @@ namespace octomap {
     m_drawFree = false;
     m_drawSelection = true;
     m_displayAxes = false;
-    m_displaySelectionBox = false;
 
     m_occupiedArray = NULL;
     m_freeArray = NULL;
@@ -101,9 +100,6 @@ namespace octomap {
 
     // reset previous status
     glPopMatrix();
-
-    if (m_displaySelectionBox)
-    	m_selectionBox.draw();
 
   }
 
