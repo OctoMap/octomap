@@ -84,6 +84,8 @@ namespace octomap {
     void on_actionExport_sequence_triggered(bool checked);
     void on_actionClear_selection_triggered();
     void on_actionFill_selection_triggered();
+    void on_actionClear_nodes_in_selection_triggered();
+    void on_actionFill_nodes_in_selection_triggered();
     void on_actionHelp_triggered();
     void on_actionSettings_triggered();
     void on_actionPrune_tree_triggered();
@@ -186,6 +188,7 @@ namespace octomap {
     void loadCameraPosition(const char* filename);
 
     void updateNodesInBBX(const point3d& min, const point3d& max, float logodds);
+    void setNodesInBBX(const point3d& min, const point3d& max, float logodds);
 
 
     std::map<int, OcTreeRecord> m_octrees;

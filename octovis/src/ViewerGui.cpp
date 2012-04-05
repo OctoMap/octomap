@@ -831,7 +831,7 @@ namespace octomap{
     }
   }
 
-  void ViewerGui::on_actionClear_selection_triggered(){
+  void ViewerGui::on_actionClear_nodes_in_selection_triggered(){
 	  point3d min, max;
 	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
 	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
@@ -839,13 +839,31 @@ namespace octomap{
 	  updateNodesInBBX(min, max, -100);
   }
 
+  void ViewerGui::on_actionClear_selection_triggered(){
+	  point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+	  setNodesInBBX(min, max, -100);
+  }
+
   void ViewerGui::on_actionFill_selection_triggered(){
+	  point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+	  setNodesInBBX(min, max, 100); // TODO get val from tree properties
+  }
+
+  void ViewerGui::on_actionFill_nodes_in_selection_triggered(){
 	  point3d min, max;
 	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
 	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
 
 	  updateNodesInBBX(min, max, 100); // TODO get val from tree properties
   }
+
+
 
   void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, float logodds){
 	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
@@ -855,7 +873,6 @@ namespace octomap{
 
 	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
 	    			end=octree->end_leafs_bbx(); it!= end; ++it){
-	    		it->setLogOdds(logodds);
 	    		octree->updateNode(it.getKey(), logodds);
 	    	}
 	    }
@@ -863,7 +880,30 @@ namespace octomap{
 	  }
 
 	  showOcTree();
+  }
 
+
+  void ViewerGui::setNodesInBBX(const point3d& min, const point3d& max, float logodds){
+	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
+	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
+
+	    if (octree){
+	    	OcTreeKey minKey, maxKey;
+	    	octree->genKey(min, minKey);
+	    	octree->genKey(max, maxKey);
+	    	OcTreeKey k;
+	    	for (k[0] = minKey[0]; k[0] < maxKey[0]; ++k[0]){
+	    		for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
+	    			for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
+	    				octree->updateNode(k, logodds);
+	    			}
+	    		}
+	    	}
+	    }
+
+	  }
+
+	  showOcTree();
   }
 
   void ViewerGui::on_actionExport_view_triggered(){

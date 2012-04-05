@@ -96,8 +96,12 @@
      <string>Edit</string>
     </property>
     <addaction name="actionSelection_box"/>
+    <addaction name="separator"/>
     <addaction name="actionClear_selection"/>
     <addaction name="actionFill_selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear_nodes_in_selection"/>
+    <addaction name="actionFill_nodes_in_selection"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
@@ -439,17 +443,27 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Selection box</string>
+    <string>Show selection box</string>
    </property>
   </action>
   <action name="actionClear_selection">
    <property name="text">
-    <string>Clear selection (set free)</string>
+    <string>Fill selection with &quot;free&quot;</string>
    </property>
   </action>
   <action name="actionFill_selection">
    <property name="text">
-    <string>Fill selection (set occupied)</string>
+    <string>Fill selection with &quot;occupied&quot;</string>
+   </property>
+  </action>
+  <action name="actionClear_nodes_in_selection">
+   <property name="text">
+    <string>Set nodes in selection to &quot;free&quot;</string>
+   </property>
+  </action>
+  <action name="actionFill_nodes_in_selection">
+   <property name="text">
+    <string>Set nodes in selection to &quot;occupied&quot;</string>
    </property>
   </action>
  </widget>
