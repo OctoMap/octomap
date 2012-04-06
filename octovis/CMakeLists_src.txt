@@ -17,6 +17,7 @@ set(viewerlib_SRCS
 	src/SceneObject.cpp
 	src/PointcloudDrawer.cpp
 	src/OcTreeDrawer.cpp
+	src/SelectionBox.cpp
 	src/TrajectoryDrawer.cpp
 	src/ColorOcTreeDrawer.cpp
 )

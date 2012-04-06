@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -91,13 +91,26 @@
     <addaction name="separator"/>
     <addaction name="menuBackground_color"/>
    </widget>
+   <widget class="QMenu" name="menuInteract">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionSelection_box"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear_selection"/>
+    <addaction name="actionFill_selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear_nodes_in_selection"/>
+    <addaction name="actionFill_nodes_in_selection"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
+   <addaction name="menuInteract"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_file">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
@@ -109,7 +122,7 @@
   </action>
   <action name="actionSave_file">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
    </property>
    <property name="text">
@@ -121,7 +134,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/application-exit.png</normaloff>:/icons/application-exit.png</iconset>
    </property>
    <property name="text">
@@ -234,7 +247,7 @@
   </action>
   <action name="actionHelp">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/help-contents.png</normaloff>:/icons/help-contents.png</iconset>
    </property>
    <property name="text">
@@ -243,7 +256,7 @@
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
@@ -252,7 +265,7 @@
   </action>
   <action name="actionReset_view">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
    </property>
    <property name="text">
@@ -272,7 +285,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/go-top.png</normaloff>:/icons/go-top.png</iconset>
    </property>
    <property name="text">
@@ -308,7 +321,7 @@
   </action>
   <action name="actionOpen_graph_incremental">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
@@ -317,7 +330,7 @@
   </action>
   <action name="actionExport_view">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/view-preview.png</normaloff>:/icons/view-preview.png</iconset>
    </property>
    <property name="text">
@@ -373,7 +386,7 @@
   </action>
   <action name="actionExpand_tree">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/go-bottom.png</normaloff>:/icons/go-bottom.png</iconset>
    </property>
    <property name="text">
@@ -385,7 +398,7 @@
   </action>
   <action name="actionReload_Octree">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../../src/icons.qrc">
      <normaloff>:/icons/view-refresh.png</normaloff>:/icons/view-refresh.png</iconset>
    </property>
    <property name="text">
@@ -425,9 +438,37 @@
     <string>Selected Octree Volumes</string>
    </property>
   </action>
+  <action name="actionSelection_box">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show selection box</string>
+   </property>
+  </action>
+  <action name="actionClear_selection">
+   <property name="text">
+    <string>Fill selection with &quot;free&quot;</string>
+   </property>
+  </action>
+  <action name="actionFill_selection">
+   <property name="text">
+    <string>Fill selection with &quot;occupied&quot;</string>
+   </property>
+  </action>
+  <action name="actionClear_nodes_in_selection">
+   <property name="text">
+    <string>Set nodes in selection to &quot;free&quot;</string>
+   </property>
+  </action>
+  <action name="actionFill_nodes_in_selection">
+   <property name="text">
+    <string>Set nodes in selection to &quot;occupied&quot;</string>
+   </property>
+  </action>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../../src/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

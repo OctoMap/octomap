@@ -40,7 +40,7 @@ namespace octomap {
     m_drawOcTreeGrid = false;
     m_drawFree = false;
     m_drawSelection = true;
-    m_display_axes = false;
+    m_displayAxes = false;
 
     m_occupiedArray = NULL;
     m_freeArray = NULL;
@@ -92,7 +92,7 @@ namespace octomap {
     if (m_drawSelection)
       drawSelection();
 
-    if (m_display_axes) {
+    if (m_displayAxes) {
       drawAxes();
     }
 
