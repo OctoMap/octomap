@@ -12,7 +12,7 @@ namespace octomap{
 	  frame(0)->setTranslation(0,0,0);
 	  frame(1)->setTranslation(1,1,1);
 
-	  qglviewer::LocalConstraint* XAxis = new qglviewer::LocalConstraint();
+	  qglviewer::WorldConstraint* XAxis = new qglviewer::WorldConstraint();
 	  XAxis->setTranslationConstraint(qglviewer::AxisPlaneConstraint::FREE, qglviewer::Vec(1.0,0.0,0.0));
 	  XAxis->setRotationConstraint   (qglviewer::AxisPlaneConstraint::FORBIDDEN, qglviewer::Vec(0.0,0.0,0.0));
 	  frame(0)->setConstraint(XAxis);
@@ -74,22 +74,25 @@ namespace octomap{
 
 
 	  // draw spheres in their frames:
-	  GLUquadricObj* quadric=gluNewQuadric();
-	  gluQuadricNormals(quadric, GLU_SMOOTH);
-      glColor4f(1.0, 0.0, 0.0, 1.0);
+//	  GLUquadricObj* quadric=gluNewQuadric();
+//	  gluQuadricNormals(quadric, GLU_SMOOTH);
+//      glColor4f(1.0, 0.0, 0.0, 1.0);
 
       for (unsigned i = 0; i < m_frames.size(); ++i){
 		  glPushMatrix();
 		  glMultMatrixd(m_frames[i]->matrix());
 		  if (withNames)
 			  glPushName(i);
-		  gluSphere(quadric, 0.04, 32, 32);
+
+		  drawAxis();
+		  //gluSphere(quadric, 0.04, 32, 32);
+
 		  if (withNames)
 			  glPopName();
 		  glPopMatrix();
       }
 
-	  gluDeleteQuadric(quadric);
+	  //gluDeleteQuadric(quadric);
 
   }
 
@@ -115,6 +118,42 @@ namespace octomap{
 		y = std::max(y,frame(i)->position().y);
 		z = std::max(z,frame(i)->position().z);
 	  }
+  }
+
+  void SelectionBox::drawAxis()
+  {
+	const float length = 0.2;
+	const float radius = 0.01;
+
+  	GLboolean lighting, colorMaterial;
+  	glGetBooleanv(GL_LIGHTING, &lighting);
+  	glGetBooleanv(GL_COLOR_MATERIAL, &colorMaterial);
+
+  	glDisable(GL_COLOR_MATERIAL);
+
+  	float color[4];
+  	color[0] = 0.7f;  color[1] = 0.7f;  color[2] = 1.0f;  color[3] = 1.0f;
+  	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+  	QGLViewer::drawArrow(length, radius);
+
+  	color[0] = 1.0f;  color[1] = 0.7f;  color[2] = 0.7f;  color[3] = 1.0f;
+  	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+  	glPushMatrix();
+  	glRotatef(90.0, 0.0, 1.0, 0.0);
+  	QGLViewer::drawArrow(length, radius);
+  	glPopMatrix();
+
+  	color[0] = 0.7f;  color[1] = 1.0f;  color[2] = 0.7f;  color[3] = 1.0f;
+  	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+  	glPushMatrix();
+  	glRotatef(-90.0, 1.0, 0.0, 0.0);
+  	QGLViewer::drawArrow(length, radius);
+  	glPopMatrix();
+
+  	if (colorMaterial)
+  		glEnable(GL_COLOR_MATERIAL);
+  	if (!lighting)
+  		glDisable(GL_LIGHTING);
   }
 
 

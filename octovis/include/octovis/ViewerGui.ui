@@ -34,19 +34,13 @@
     </widget>
     <addaction name="actionOpen_file"/>
     <addaction name="actionOpen_graph_incremental"/>
+    <addaction name="actionReload_Octree"/>
     <addaction name="separator"/>
     <addaction name="actionSave_file"/>
     <addaction name="actionExport_view"/>
     <addaction name="actionExport_sequence"/>
     <addaction name="separator"/>
-    <addaction name="actionConvert_ml_tree"/>
-    <addaction name="actionPrune_tree"/>
-    <addaction name="actionExpand_tree"/>
-    <addaction name="actionReload_Octree"/>
-    <addaction name="separator"/>
     <addaction name="menuShow"/>
-    <addaction name="actionSettings"/>
-    <addaction name="separator"/>
     <addaction name="loadcampose"/>
     <addaction name="savecampose"/>
     <addaction name="separator"/>
@@ -81,7 +75,6 @@
     <addaction name="actionTrajectory"/>
     <addaction name="actionAxes"/>
     <addaction name="actionHideBackground"/>
-    <addaction name="actionClear"/>
     <addaction name="separator"/>
     <addaction name="actionReset_view"/>
     <addaction name="actionStore_camera"/>
@@ -95,13 +88,19 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionSelection_box"/>
+    <addaction name="actionConvert_ml_tree"/>
+    <addaction name="actionPrune_tree"/>
+    <addaction name="actionExpand_tree"/>
     <addaction name="separator"/>
+    <addaction name="actionSelection_box"/>
     <addaction name="actionClear_selection"/>
     <addaction name="actionFill_selection"/>
-    <addaction name="separator"/>
     <addaction name="actionClear_nodes_in_selection"/>
     <addaction name="actionFill_nodes_in_selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
@@ -218,7 +217,7 @@
   </action>
   <action name="actionClear">
    <property name="text">
-    <string>Remove all objects</string>
+    <string>Remove all octrees</string>
    </property>
    <property name="shortcut">
     <string>C</string>

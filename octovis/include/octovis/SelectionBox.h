@@ -16,6 +16,7 @@ namespace octomap {
     void getBBXMax(float& x, float& y, float& z) const;
 
   protected:
+    static void drawAxis();
     bool m_visible;
     std::vector<qglviewer::ManipulatedFrame*> m_frames;
     unsigned short m_selectedFrame;
