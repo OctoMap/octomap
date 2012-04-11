@@ -751,7 +751,7 @@ namespace octomap{
   void ViewerGui::on_actionOpen_file_triggered(){
     QString filename = QFileDialog::getOpenFileName(this,
       tr("Open data file"), "",
-      "All supported files (*.graph *.bt *.ot *.dat *.cot);;Binary scan graph (*.graph);;Bonsai tree (*.bt);;OcTree (*.ot);;ColorOcTree (*.cot);;Pointcloud (*.dat);;All files (*)");
+      "All supported files (*.graph *.bt *.ot *.dat);;OcTree file (*.ot);;Bonsai tree file (*.bt);;Binary scan graph (*.graph);;Pointcloud (*.dat);;All files (*)");
     if (!filename.isEmpty()){
 #ifdef _WIN32      
       m_filename = std::string(filename.toLocal8Bit().data());
@@ -766,7 +766,7 @@ namespace octomap{
   void ViewerGui::on_actionOpen_graph_incremental_triggered(){
     QString filename = QFileDialog::getOpenFileName(this,
      tr("Open graph file incrementally (at start)"), "",
-     "binary scan graph (*.graph)");
+     "Binary scan graph (*.graph)");
     if (!filename.isEmpty()){
       m_glwidget->clearAll();
 
@@ -792,7 +792,7 @@ namespace octomap{
     }
 
     QString filename = QFileDialog::getSaveFileName(this, tr("Save octree file"),
-                                                    "", tr("Bonsai Tree file (*.bt);;Full OcTree (*.ot)"));
+                                                    "", tr("Full OcTree (*.ot);;Bonsai Tree file (*.bt);;"));
 
     if (filename != ""){
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -888,7 +888,8 @@ namespace octomap{
 	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
 
 	    if (octree){
-	    	OcTreeKey minKey, maxKey;
+	    	OcTreeKey minKey(0,0,0);
+            OcTreeKey maxKey(0,0,0);
 	    	octree->genKey(min, minKey);
 	    	octree->genKey(max, maxKey);
 	    	OcTreeKey k;
