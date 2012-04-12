@@ -1,0 +1,14 @@
+Catkin-ProjectName: octovis
+Version: 1.4.1
+
+Depends: octomap,libqglviewer-qt4-dev,libqt4-dev,libqt4-opengl-dev
+
+Description: octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer.
+
+Author: Kai M. Wurm and Armin Hornung
+Maintainer: Armin Hornung <hornunga@informatik.uni-freiburg.de>
+Homepage: http://octomap.sourceforge.net/
+
+Catkin-CopyrightType:  willowgarage
+Catkin-DebRulesType: cmake
+
