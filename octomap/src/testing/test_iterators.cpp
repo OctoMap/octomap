@@ -97,17 +97,15 @@ void getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
 /// compare two lists of octree nodes on equality
 void compareResults(const std::list<OcTreeVolume>& list_iterator, const std::list<OcTreeVolume>& list_depr){
   EXPECT_EQ(list_iterator.size(), list_depr.size());
-  std::cout << "Sizes match: "<< list_iterator.size() << std::endl;
+  list<OcTreeVolume>::const_iterator list_it = list_iterator.begin();
+  list<OcTreeVolume>::const_iterator list_depr_it = list_depr.begin();
 
-
-    list<OcTreeVolume>::const_iterator list_it = list_iterator.begin();
-    list<OcTreeVolume>::const_iterator list_depr_it = list_depr.begin();
-
-    for (; list_it != list_iterator.end(); ++list_it, ++list_depr_it){
-      EXPECT_NEAR(list_it->first.x(), list_depr_it->first.x(), 0.005);
-      EXPECT_NEAR(list_it->first.y(), list_depr_it->first.y(), 0.005);
-      EXPECT_NEAR(list_it->first.z(), list_depr_it->first.z(), 0.005);
-    }
+  for (; list_it != list_iterator.end(); ++list_it, ++list_depr_it){
+    EXPECT_NEAR(list_it->first.x(), list_depr_it->first.x(), 0.005);
+    EXPECT_NEAR(list_it->first.y(), list_depr_it->first.y(), 0.005);
+    EXPECT_NEAR(list_it->first.z(), list_depr_it->first.z(), 0.005);
+  }
+  std::cout << "Resulting lists (size "<< list_iterator.size() << ") identical\n";
 }
 
 // for unique comparing, need to sort the lists:
@@ -131,6 +129,7 @@ int main(int argc, char** argv) {
   //##############################################################     
 
   string btFilename = "";
+  unsigned char maxDepth = 16;
 
 
   // test timing:
@@ -138,11 +137,16 @@ int main(int argc, char** argv) {
   timeval stop;
   double time_it, time_depr;
 
-  if (argc != 2 || (argc > 1 && strcmp(argv[1], "-h") == 0)){
+  if (argc < 1|| argc >3 || strcmp(argv[1], "-h") == 0){
     printUsage(argv[0]);
   }
 
   btFilename = std::string(argv[1]);
+  if (argc > 2){
+    maxDepth = (unsigned char)atoi(argv[2]);
+  }
+  maxDepth = std::min((unsigned char)16,maxDepth);
+
 
   cout << "\nReading OcTree file\n===========================\n";
   OcTree* tree = new OcTree(btFilename);
@@ -151,7 +155,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  unsigned count;
+  size_t count;
   std::list<OcTreeVolume> list_depr;
   std::list<OcTreeVolume> list_iterator;
 
@@ -159,12 +163,12 @@ int main(int argc, char** argv) {
    * get number of nodes:
    */
   gettimeofday(&start, NULL);  // start timer
-  unsigned num_leafs_recurs = tree->getNumLeafNodes();
+  size_t num_leafs_recurs = tree->getNumLeafNodes();
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 
   gettimeofday(&start, NULL);  // start timer
-  unsigned num_leafs_it = 0;
+  size_t num_leafs_it = 0;
   for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
     num_leafs_it++;
   }
@@ -200,9 +204,10 @@ int main(int argc, char** argv) {
   gettimeofday(&stop, NULL);  // stop timer
   time_it = timediff(start, stop);
 
-  compareResults(list_iterator, list_depr);
   std::cout << "Occupied lists traversed, times: "
-      <<time_it << " / " << time_depr << "\n========================\n\n";
+      <<time_it << " / " << time_depr << "\n";
+  compareResults(list_iterator, list_depr);
+  std::cout << "========================\n\n";
 
 
   /**
@@ -223,10 +228,10 @@ int main(int argc, char** argv) {
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 
-  compareResults(list_iterator, list_depr);
   std::cout << "Free lists traversed, times: "
-      <<time_it << " / " << time_depr << "\n========================\n\n";
-
+      <<time_it << " / " << time_depr << "\n";
+  compareResults(list_iterator, list_depr);
+    std::cout << "========================\n\n";
 
 
 
@@ -253,9 +258,28 @@ int main(int argc, char** argv) {
   list_iterator.sort(OcTreeVolumeSortPredicate);
   list_depr.sort(OcTreeVolumeSortPredicate);
 
-  compareResults(list_iterator, list_depr);
   std::cout << "All inner lists traversed, times: "
-      <<time_it << " / " << time_depr << "\n========================\n\n";
+      <<time_it << " / " << time_depr << "\n";
+  compareResults(list_iterator, list_depr);
+    std::cout << "========================\n\n";
+
+
+
+    // traverse all leaf nodes, timing:
+    gettimeofday(&start, NULL);  // start timers
+    count = 0;
+    for(OcTree::iterator it = tree->begin(maxDepth), end=tree->end();
+        it!= end; ++it){
+      // do something:
+      count++;
+    }
+
+    gettimeofday(&stop, NULL);  // stop timer
+    time_it = timediff(start, stop);
+
+    std::cout << "Time to traverse all leafs at max depth " <<(unsigned int)maxDepth <<" ("<<count<<" nodes): "<< time_it << " s\n\n";
+
+
 
 
   /**
@@ -327,7 +351,7 @@ int main(int argc, char** argv) {
     bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, it.getSize()));
   }
   EXPECT_EQ(bbxVoxels.size(), count);
-  std::cout << "Bounding box traverserd ("<< count << " leaf nodes)\n";
+  std::cout << "Bounding box traversed ("<< count << " leaf nodes)\n\n";
 
 
   // compare with manual BBX check on all leafs:
@@ -344,6 +368,9 @@ int main(int argc, char** argv) {
     }
 
   }
+
+
+  std::cout << "Tests successful\n";
 
 
   return 0;

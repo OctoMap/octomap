@@ -98,7 +98,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning) {
+  void OccupancyOcTreeBase<NODE>::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning, bool lazy_eval) {
     if (pc.size() < 1)
       return;
 
@@ -106,7 +106,7 @@ namespace octomap {
     octomap::point3d p;
     for (octomap::Pointcloud::const_iterator point_it = pc.begin();
          point_it != pc.end(); point_it++) {
-      this->insertRay(origin, *point_it, maxrange);
+      this->insertRay(origin, *point_it, maxrange, lazy_eval);
     }
 
     if (pruning)
@@ -476,35 +476,35 @@ namespace octomap {
 
 
   template <class NODE> inline bool 
-  OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end) {
+  OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end, bool lazy_eval) {
 
     if (!this->computeRayKeys(origin, end, this->keyray)) {
       return false;
     }
     
     for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
-      updateNode(*it, false); // insert freespace measurement
+      updateNode(*it, false, lazy_eval); // insert freespace measurement
     }
   
     return true;
   }
 
   template <class NODE> bool 
-  OccupancyOcTreeBase<NODE>::insertRay(const point3d& origin, const point3d& end, double maxrange)
+  OccupancyOcTreeBase<NODE>::insertRay(const point3d& origin, const point3d& end, double maxrange, bool lazy_eval)
   {
     // cut ray at maxrange
     if ((maxrange > 0) && ((end - origin).norm () > maxrange)) 
       {
         point3d direction = (end - origin).normalized ();
         point3d new_end = origin + direction * (float) maxrange;
-        return integrateMissOnRay(origin, new_end);
+        return integrateMissOnRay(origin, new_end,lazy_eval);
       }
     // insert complete ray
     else 
       {
-        if (!integrateMissOnRay(origin, end)) 
+        if (!integrateMissOnRay(origin, end,lazy_eval))
           return false;
-        updateNode(end, true); // insert hit cell
+        updateNode(end, true, lazy_eval); // insert hit cell
         return true;
       }
   }
