@@ -446,21 +446,33 @@
    </property>
   </action>
   <action name="actionClear_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Fill selection with &quot;free&quot;</string>
    </property>
   </action>
   <action name="actionFill_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Fill selection with &quot;occupied&quot;</string>
    </property>
   </action>
   <action name="actionClear_nodes_in_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Set nodes in selection to &quot;free&quot;</string>
    </property>
   </action>
   <action name="actionFill_nodes_in_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Set nodes in selection to &quot;occupied&quot;</string>
    </property>

@@ -228,10 +228,9 @@ namespace octomap{
   void ViewerGui::showOcTree() {
 
     // update viewer stat
-    if (m_octrees.size()) {
       double minX, minY, minZ, maxX, maxY, maxZ;
-      minX = minY = minZ = 1e6;
-      maxX = maxY = maxZ = -1e6;
+      minX = minY = minZ = -10; // min bbx for drawing
+      maxX = maxY = maxZ = 10;  // max bbx for drawing
       double sizeX, sizeY, sizeZ;
       sizeX = sizeY = sizeZ = 0.;
       size_t memoryUsage = 0;
@@ -271,18 +270,15 @@ namespace octomap{
 
       m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
 
+    if (m_octrees.size()) {
       QString size = QString("%L1 x %L2 x %L3 m^3; %L4 nodes").arg(sizeX).arg(sizeY).arg(sizeZ).arg(unsigned(num_nodes));
       QString memory = QString("Single node: %L1 B; ").arg(memorySingleNode)
         + QString ("Octree: %L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
       m_mapMemoryStatus->setText(memory);
       m_mapSizeStatus->setText(size);
-      m_glwidget->updateGL();
     }
-    else {
-      QMessageBox::warning(this, "Tree not present",
-       "Trying to show OcTree but no tree present. This should not happen.",
-       QMessageBox::Ok);
-    }
+
+    m_glwidget->updateGL();
 
     // generate cubes -> display
    // timeval start; 
@@ -936,7 +932,14 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionSelection_box_toggled(bool checked){
-	  m_glwidget->enableSelectionBox(checked);
+	  ui.actionClear_selection->setEnabled(checked);
+	  ui.actionFill_selection->setEnabled(checked);
+	  ui.actionClear_nodes_in_selection->setEnabled(checked);
+	  ui.actionFill_nodes_in_selection->setEnabled(checked);
+
+    m_glwidget->enableSelectionBox(checked);
+
+
 	  m_glwidget->updateGL();
   }
 

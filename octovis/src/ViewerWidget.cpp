@@ -44,25 +44,17 @@ namespace octomap {
   }
 
   void ViewerWidget::init() {
+
+//    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltModifier);
+//    setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoModifier);
+//    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlModifier);
+    setMouseTracking(true);
+
     // Restore previous viewer state.
     restoreStateFromFile();
 
     // Make camera the default manipulated frame.
     setManipulatedFrame( camera()->frame() );
-
-#if QT_VERSION < 0x040000
-    // Preserve CAMERA bindings, see setHandlerKeyboardModifiers documentation.
-    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltButton);
-    // The frames can be move without any key pressed
-    setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoButton);
-    // The camera can always be moved with the Control key.
-    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlButton);
-#else
-    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltModifier);
-    setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoModifier);
-    setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlModifier);
-#endif
-
 
 
     // Light initialization:
@@ -340,8 +332,16 @@ namespace octomap {
       (*it)->draw();
     }
 
-    if (m_drawSelectionBox)
+    if (m_drawSelectionBox){
     	m_selectionBox.draw();
+
+      if (m_selectionBox.getGrabbedFrame() >= 0){
+        setMouseBinding(Qt::LeftButton, FRAME, TRANSLATE);
+      } else {
+        setMouseBinding(Qt::LeftButton, FRAME, ROTATE);
+      }
+
+    }
 
   }
 
@@ -391,17 +391,6 @@ namespace octomap {
   void ViewerWidget::postSelection(const QPoint&)
   {
 
-    if (selectedName() == -1)
-      {
-        // Camera will be the default frame is no object is selected.
-        setManipulatedFrame( camera()->frame());
- //       m_selectionBox.setSelectedFrameNumber(4); // dummy value meaning camera
-      }
-    else
-      {
-        setManipulatedFrame(m_selectionBox.frame(selectedName()));
-        //m_selectionBox.setSelectedFrameNumber(selectedName());
-      }
   }
 
 
