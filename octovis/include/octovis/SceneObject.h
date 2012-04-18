@@ -27,6 +27,12 @@
 #ifndef SCENEOBJECT_H_
 #define SCENEOBJECT_H_
 
+#ifdef Q_WS_MAC
+  #include <OpenGL/glu.h>
+#else
+  #include <GL/glu.h>
+#endif
+
 #include <qglviewer.h>
 #include <octomap/octomap.h>
 
