@@ -60,10 +60,16 @@ convenient exchange between robots even under bandwidth constraints.
 <p> Octomap is actively maintained by <a
 href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and
 <a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin
-Hornung</a>. Feel free to contact us.</p>
+Hornung</a>. Feel free to contact us. A tracker for bug reports and
+feature requests is available available at <a href="https://sourceforge.net/apps/trac/octomap">https://sourceforge.net/apps/trac/octomap</a></p>
 
   \section install_sec Installation
   <p>See the file README.txt in the main folder.
+  </p>
+
+
+  \section changelog_sec Changelog
+  <p>See the file CHANGELOG.txt in the main folder or the <a href="http://octomap.svn.sourceforge.net/viewvc/octomap/trunk/octomap/CHANGELOG.txt">latest version online</a>
   </p>
 
 

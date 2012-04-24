@@ -4,7 +4,7 @@ PROJECT( octovis )
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
 set(OCTOVIS_MINOR_VERSION 4)
-set(OCTOVIS_PATCH_VERSION 0)
+set(OCTOVIS_PATCH_VERSION 2)
 set(OCTOVIS_VERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION}.${OCTOVIS_PATCH_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
