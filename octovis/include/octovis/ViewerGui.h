@@ -188,8 +188,9 @@ namespace octomap {
     void loadCameraPosition(const char* filename);
 
     void updateNodesInBBX(const point3d& min, const point3d& max, float logodds);
+    void updateNodesInBBX(const point3d& min, const point3d& max, bool occupied);
     void setNodesInBBX(const point3d& min, const point3d& max, float logodds);
-
+    void setNodesInBBX(const point3d& min, const point3d& max, bool occupied);
 
     std::map<int, OcTreeRecord> m_octrees;
  

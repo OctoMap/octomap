@@ -299,6 +299,32 @@ namespace octomap {
     /// sets the maximum threshold for occupancy clamping (sensor model)
     void setClampingThresMax(double thresProb){clampingThresMax = logodds(thresProb); }
 
+    /// @return threshold (probability) for occupancy - sensor model
+    double getOccupancyThres() const {return probability(occProbThresLog); }
+    /// @return threshold (logodds) for occupancy - sensor model
+    float getOccupancyThresLog() const {return occProbThresLog; }
+
+    /// @return probablility for a "hit" in the sensor model (probability)
+    double getProbHit() const {return probability(probHitLog); }
+    /// @return probablility for a "hit" in the sensor model (logodds)
+    float getProbHitLog() const {return probHitLog; }
+    /// @return probablility for a "miss"  in the sensor model (probability)
+    double getProbMiss() const {return probability(probMissLog); }
+    /// @return probablility for a "miss"  in the sensor model (logodds)
+    float getProbMissLog() const {return probMissLog; }
+
+    /// @return minimum threshold for occupancy clamping in the sensor model (probability)
+    double getClampingThresMin() const {return probability(clampingThresMin); }
+    /// @return minimum threshold for occupancy clamping in the sensor model (logodds)
+    float getClampingThresMinLog() const {return clampingThresMin; }
+    /// @return maximum threshold for occupancy clamping in the sensor model (probability)
+    double getClampingThresMax() const {return probability(clampingThresMax); }
+    /// @return maximum threshold for occupancy clamping in the sensor model (logodds)
+    float getClampingThresMaxLog() const {return clampingThresMax; }
+
+
+
+
 
     /**
      * Helper for insertScan. Computes all octree nodes affected by the point cloud

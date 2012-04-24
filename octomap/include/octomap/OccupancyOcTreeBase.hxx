@@ -823,10 +823,10 @@ namespace octomap {
     s << "res " << this->getResolution() << std::endl;
     s << "data" << std::endl;
 
-    OCTOMAP_DEBUG_STR("Writing " << this->size() << " nodes to output stream...");
+    OCTOMAP_DEBUG("Writing %zu nodes to output stream...", this->size());
     this->writeBinaryNode(s, this->itsRoot);
     if (s.good()){
-      OCTOMAP_DEBUG_STR(" done.");
+      OCTOMAP_DEBUG(" done.\n");
       return true;
     } else {
       OCTOMAP_WARNING_STR("Output stream not \"good\" after writing tree");

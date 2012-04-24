@@ -83,6 +83,21 @@ int main(int argc, char** argv) {
 
   // ------------------------------------------------------------
   } else if (test_name == "InsertRay") {
+    double p = 0.5;
+    EXPECT_FLOAT_EQ(p, probability(logodds(p)));
+    p = 0.1;
+    EXPECT_FLOAT_EQ(p, probability(logodds(p)));
+    p = 0.99;
+    EXPECT_FLOAT_EQ(p, probability(logodds(p)));
+
+    float l = 0;
+    EXPECT_FLOAT_EQ(l, logodds(probability(l)));
+    l = -4;
+    EXPECT_FLOAT_EQ(l, logodds(probability(l)));
+    l = 2;
+    EXPECT_FLOAT_EQ(l, logodds(probability(l)));
+
+
     OcTree tree (0.05);
     tree.setProbHit(0.7);
     tree.setProbMiss(0.4);
