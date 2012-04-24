@@ -1,5 +1,5 @@
 
-Octovis is distributed under the GPL license (see "octovis/LICENSE.txt").
+Octovis is distributed under the GPL license (see "LICENSE.txt").
 
 It is based on qglviewer which also is distributed under the GPL license
 (see "octovis/src/extern/QGLViewer/LICENSE" and the author's exception 
@@ -17,7 +17,10 @@ the these steps:
   cd build
   cmake ..
   make
-
+  
+  
+You can manually set the location of the octomap library with the
+octomap_DIR variable in CMake.
 
 Note: If you get an error such as
 

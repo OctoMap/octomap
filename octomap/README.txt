@@ -47,7 +47,7 @@ To install it:
 INSTALLATION
 ############################
 
- * Note: skip to the end if you want to use OctoMap in ROS! *
+ * See http://www.ros.org/wiki/octomap if you want to use OctoMap in ROS! *
 
 Build the complete project by changing into the "build" directory 
 and running cmake:
@@ -121,22 +121,6 @@ In addition to this cmake-module we also provide a pkgconfig-file.
 
 For convenience, there is a minimal project included in
 the file example-project.tgz
-
-
-ROS-INTEGRATION
-############################
-
-Octomap can directly be used in any node running in the Robot
-Operating System (ROS, http://www.ros.org). A virtual ROS package
-and more code is available in Freiburg's ROS repository at:
-
-http://code.google.com/p/alufr-ros-pkg/
-
-The "octomap_mapping" stack (see http://www.ros.org/wiki/octomap_mapping
-for details) contains the "octomap" package which provides the 
-actual ROS integration by downloading and compiling the latest release. 
-If you plan to use octomap mainly in ROS, just install the 
-octomap_mapping stack.
 
 
 ECLIPSE PROJECT FILES

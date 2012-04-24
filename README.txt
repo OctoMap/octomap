@@ -6,6 +6,8 @@ Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2012
 http://octomap.sourceforge.net/
 
 Further Contributors:
+C. Sprunk, University of Freiburg
+J. Mueller, University of Freiburg
 S. Osswald, University of Freiburg
 R. Schmitt, University of Freiburg
 R. Bogdan Rusu, Willow Garage Inc.
@@ -17,7 +19,7 @@ License:
 OVERVIEW
 ############################
 
-OctoMap now consists of two separated libraries each in its own subfolder:
+OctoMap now consists of two separate libraries each in its own subfolder:
 octomap, the actual library, and octovis, our visualization libraries and tools.
 
 You can build each separately with CMake by running it from the subdirectories, 
