@@ -108,12 +108,6 @@ namespace octomath {
     return sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z);
   }
 
-
-  double Pose6D::TransLength() const {
-    return transLength();
-  }
-
-
   double Pose6D::transLength() const {
     return sqrt(x()*x() + y()*y() + z()*z());
   }

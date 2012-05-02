@@ -184,27 +184,6 @@ namespace octomap {
 
     // -- access tree nodes  ------------------
 
-    /**
-     * Traverse the tree and return all leaf nodes
-     *
-     * @note deprecated and will be removed soon (use iterators instead)
-     *
-     * @param node_centers collection of center points
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED( void getLeafNodes(point3d_list& node_centers) const);
-
-    /**
-     * Traverse the tree and return all nodes, at all levels. Used e.g. in visualization.
-     *
-     * @note deprecated and will be removed soon (use iterators instead)
-     *
-     * @param voxels list of all nodes to be returned
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED( void getVoxels(std::list<OcTreeVolume>& voxels, unsigned int max_depth = 0) const);
-
-
     /// return centers of leafs that do NOT exist (but could) in a given bounding box
     void getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const;
 
@@ -768,15 +747,6 @@ namespace octomap {
     /// recursive call of expand()
     void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
     
-    /// Recursive call for getLeafNodes()
-    void getLeafNodesRecurs(point3d_list& node_centers, unsigned int max_depth,
-                            NODE* node, unsigned int depth, const point3d& parent_center) const;
-
-    /// Recursive call for getVoxels()
-    void getVoxelsRecurs(std::list<OcTreeVolume>& nodes, unsigned int max_depth,
-                         NODE* node, unsigned int depth, const point3d& parent_center) const;
-
-
     size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
   protected:
