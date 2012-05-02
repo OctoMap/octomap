@@ -97,6 +97,8 @@
     <addaction name="actionFill_selection"/>
     <addaction name="actionClear_nodes_in_selection"/>
     <addaction name="actionFill_nodes_in_selection"/>
+    <addaction name="actionDelete_nodes_in_selection"/>
+    <addaction name="actionDelete_nodes_outside_of_selection"/>
     <addaction name="separator"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
@@ -475,6 +477,22 @@
    </property>
    <property name="text">
     <string>Set nodes in selection to &quot;occupied&quot;</string>
+   </property>
+  </action>
+  <action name="actionDelete_nodes_in_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Delete nodes in selection</string>
+   </property>
+  </action>
+  <action name="actionDelete_nodes_outside_of_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Delete nodes outside of selection (crop)</string>
    </property>
   </action>
  </widget>

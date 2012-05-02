@@ -89,6 +89,14 @@ namespace octomap {
   }
 
   template <typename T>
+  void OcTreeDataNode<T>::deleteChild(unsigned int i) {
+    assert((i < 8) && (itsChildren != NULL));
+    assert(itsChildren[i] != NULL);
+    delete itsChildren[i];
+    itsChildren[i] = NULL;
+  }
+
+  template <typename T>
   OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) {
     assert((i < 8) && (itsChildren != NULL));
     assert(itsChildren[i] != NULL);

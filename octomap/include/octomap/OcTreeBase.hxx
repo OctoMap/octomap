@@ -246,15 +246,43 @@ namespace octomap {
     return curNode;
   }
 
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::deleteNode(const point3d& value, unsigned int depth) {
+    OcTreeKey key;
+    if (!genKey(value, key)){
+      OCTOMAP_ERROR_STR("Error in deleteNode: ["<< value <<"] is out of OcTree bounds!");
+      return false;
+    }
+    else {
+      return this->deleteNode(key, depth);
+    }
+
+  }
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::deleteNode(float x, float y, float z, unsigned int depth) {
+    return this->deleteNode(point3d(x,y,z), depth);
+  }
+
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::deleteNode(const OcTreeKey& key, unsigned int depth) {
+    if (depth == 0)
+      depth = tree_depth;
+
+    return deleteNodeRecurs(itsRoot, 0, depth, key);
+  }
+
   template <class NODE>
   void OcTreeBase<NODE>::clear() {
-    // don't clear if there tree is empty:
+    // don't clear if the tree is empty:
     if (this->itsRoot->hasChildren()) {
       delete this->itsRoot;
       this->itsRoot = new NODE();
     }
     this->tree_size = 1;
-    // may extent of tree changed:
+    // max extent of tree changed:
     this->sizeChanged = true;
   }
 
@@ -481,6 +509,47 @@ namespace octomap {
       }
       double voxelSize = resolution * pow(2., double(tree_depth - depth));
       voxels.push_back(std::make_pair(parent_center - tree_center, voxelSize));
+    }
+  }
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
+    unsigned int pos (0);
+    this->genPos(key, this->tree_depth-1-depth, pos);
+
+
+    if (!node->childExists(pos)) {
+      // child does not exist, but maybe it's a pruned node?
+      if ((!node->hasChildren()) && (node != this->itsRoot)) {
+        // current node does not have children AND it's not the root node
+        // -> expand pruned node
+        node->expandNode();
+        this->tree_size+=8;
+        this->sizeChanged = true;
+      } else { // no branch here, node does not exist
+        return false;
+      }
+    }
+
+    // on last level: delete child when going up
+    if (depth == max_depth){
+      return true;
+    } else { // follow down further, fix inner nodes on way back up
+      bool deleteChild = deleteNodeRecurs(node->getChild(pos), depth+1, max_depth, key);
+      if (deleteChild){
+        // TODO: lazy eval?
+        node->deleteChild(pos);
+        this->tree_size--;
+        this->sizeChanged = true;
+        if (!node->hasChildren())
+          return true;
+        else{
+          node->updateOccupancyChildren();
+        }
+      }
+      // node did not lose a child, or still has other children
+      return false;
+
     }
   }
 

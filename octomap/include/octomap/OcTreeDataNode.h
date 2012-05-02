@@ -83,6 +83,9 @@ namespace octomap {
     /// and have the same occupancy value
     bool collapsible() const;
 
+    /// Deletes the i-th child of the node
+    void deleteChild(unsigned int i);
+
     // -- pruning of children  -----------------------
 
 

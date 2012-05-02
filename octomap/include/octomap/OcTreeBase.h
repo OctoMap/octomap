@@ -100,22 +100,43 @@ namespace octomap {
     inline NODE* getRoot() const { return itsRoot; }
 
     /** 
-     *  search node given a 3d point 
+     *  Search node given a 3d point
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* search (float x, float y, float z) const;
+    NODE* search(float x, float y, float z) const;
+
+    /**
+     *  Search node given a 3d point
+     *  @return pointer to node if found, NULL otherwise
+     */
+    NODE* search(const point3d& value) const;
+
+    /**
+     *  Search a node given an addressing key
+     *  @return pointer to node if found, NULL otherwise
+     */
+    NODE* search(const OcTreeKey& key) const;
+
+    /**
+     *  Delete a node (if exists) given a 3d point. Will always
+     *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
+     *  Pruned nodes at level "depth" will directly be deleted as a whole.
+     */
+    bool deleteNode(float x, float y, float z, unsigned int depth = 0);
 
     /** 
-     *  search node given a 3d point
-     *  @return pointer to node if found, NULL otherwise
+     *  Delete a node (if exists) given a 3d point. Will always
+     *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
+     *  Pruned nodes at level "depth" will directly be deleted as a whole.
      */
-    NODE* search (const point3d& value) const;
+    bool deleteNode(const point3d& value, unsigned int depth = 0);
 
     /** 
-     *  search node given an addressing keys
-     *  @return pointer to node if found, NULL otherwise
+     *  Delete a node (if exists) given an addressing key. Will always
+     *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
+     *  Pruned nodes at level "depth" will directly be deleted as a whole.
      */
-    NODE* search (const OcTreeKey& key) const;
+    bool deleteNode(const OcTreeKey& key, unsigned int depth = 0);
 
     /// Deletes the complete tree structure (only the root node will remain)
     void clear();
@@ -738,6 +759,8 @@ namespace octomap {
 
     void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
 
+    /// recursive call of deleteNode()
+    bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);
 
     /// recursive call of prune()
     void pruneRecurs(NODE* node, unsigned int depth, unsigned int max_depth, unsigned int& num_pruned);
