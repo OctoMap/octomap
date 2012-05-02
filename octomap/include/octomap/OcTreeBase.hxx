@@ -293,7 +293,7 @@ namespace octomap {
       unsigned int num_pruned = 0;
       pruneRecurs(this->itsRoot, 0, depth, num_pruned);
       if (num_pruned == 0) break;
-    }   
+    }
   }
 
   template <class NODE>
@@ -433,9 +433,11 @@ namespace octomap {
 
   template <class NODE>
   bool OcTreeBase<NODE>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
+    if (depth >= max_depth) // on last level: delete child when going up
+      return true;
+
     unsigned int pos (0);
     this->genPos(key, this->tree_depth-1-depth, pos);
-
 
     if (!node->childExists(pos)) {
       // child does not exist, but maybe it's a pruned node?
@@ -450,26 +452,22 @@ namespace octomap {
       }
     }
 
-    // on last level: delete child when going up
-    if (depth == max_depth){
-      return true;
-    } else { // follow down further, fix inner nodes on way back up
-      bool deleteChild = deleteNodeRecurs(node->getChild(pos), depth+1, max_depth, key);
-      if (deleteChild){
-        // TODO: lazy eval?
-        node->deleteChild(pos);
-        this->tree_size--;
-        this->sizeChanged = true;
-        if (!node->hasChildren())
-          return true;
-        else{
-          node->updateOccupancyChildren();
-        }
+    // follow down further, fix inner nodes on way back up
+    bool deleteChild = deleteNodeRecurs(node->getChild(pos), depth+1, max_depth, key);
+    if (deleteChild){
+      // TODO: lazy eval?
+      node->deleteChild(pos);
+      this->tree_size-=1;
+      this->sizeChanged = true;
+      if (!node->hasChildren())
+        return true;
+      else{
+        node->updateOccupancyChildren();
       }
-      // node did not lose a child, or still has other children
-      return false;
-
     }
+    // node did not lose a child, or still has other children
+    return false;
+
   }
 
   template <class NODE>

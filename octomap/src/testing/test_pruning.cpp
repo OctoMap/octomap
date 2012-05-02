@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
       }
     }
     // node + 1 branch of depth 16
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(tree.size(), 17);
     // create diagonal neighbor in same parent node
     OcTreeKey singleKey2 = singleKey;
@@ -57,6 +58,7 @@ int main(int argc, char** argv) {
     singleKey2[1] +=1;
     singleKey2[2] +=1;
     EXPECT_TRUE(tree.updateNode(singleKey2, true));
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(tree.size(), 18); // one more leaf at lowest level
     // pruning should do nothing:
     tree.prune();
@@ -70,6 +72,7 @@ int main(int argc, char** argv) {
         }
       }
     }
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(tree.size(), 18);
 
     // now test larger volume pruning:
@@ -82,11 +85,13 @@ int main(int argc, char** argv) {
         }
       }
     }
-
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(37477, tree.size());
     tree.prune();
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(29, tree.size());
     tree.expand();
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(37477, tree.size());
     tree.prune();
     // test expansion:
@@ -113,7 +118,7 @@ int main(int argc, char** argv) {
         }
       }
     }
-
+    EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(69, tree.size());
 
 
