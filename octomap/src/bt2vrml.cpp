@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   outfile << "# created from OctoMap file "<<btFilename<< " with bt2vrml\n";
 
 
-  size_t count;
+  size_t count(0);
   for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
     if(tree->isNodeOccupied(*it)){
       count++;

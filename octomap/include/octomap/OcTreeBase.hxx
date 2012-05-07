@@ -44,9 +44,6 @@
 namespace octomap {
 
 
-  /*template <class NODE>
-  const OcTreeBase<NODE>::leaf_iterator OcTreeBase<NODE>::leaf_iterator_end = OcTreeBase<NODE>::leaf_iterator();*/
-
   template <class NODE>
   OcTreeBase<NODE>::OcTreeBase(double _resolution) :
     itsRoot(NULL), tree_depth(16), tree_max_val(32768), 
@@ -166,13 +163,13 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE> void  // do not inline
+  template <class NODE> void
   OcTreeBase<NODE>::genPos(const OcTreeKey& key, int depth, unsigned int& pos) const {
-    pos = 0;
-    if (key.k[0] & (1 << depth)) pos += 1;
-    if (key.k[1] & (1 << depth)) pos += 2;
-    if (key.k[2] & (1 << depth)) pos += 4;
+    pos = computeChildIdx(key, depth);
+
   }
+
+
 
 
   template <class NODE> 
@@ -220,24 +217,20 @@ namespace octomap {
   NODE* OcTreeBase<NODE>::search (const OcTreeKey& key) const {
 
     NODE* curNode (itsRoot);
-    unsigned int pos (0);
 
     // follow nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      genPos(key, i, pos);
-
+      unsigned int pos = computeChildIdx(key, i);
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
         curNode = static_cast<NODE*>( curNode->getChild(pos) );
-      }
-      else {
+      } else {
         // we expected a child but did not get it
         // is the current node a leaf already?
         if (!curNode->hasChildren()) {
           return curNode;
-        }
-        else {
+        } else {
           // it is not, search failed
           return NULL;
         }
@@ -436,8 +429,7 @@ namespace octomap {
     if (depth >= max_depth) // on last level: delete child when going up
       return true;
 
-    unsigned int pos (0);
-    this->genPos(key, this->tree_depth-1-depth, pos);
+    unsigned int pos = computeChildIdx(key, this->tree_depth-1-depth);
 
     if (!node->childExists(pos)) {
       // child does not exist, but maybe it's a pruned node?

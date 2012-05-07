@@ -903,7 +903,9 @@ namespace octomap{
           OcTreeKey k = it.getKey();
           if  (k[0] < minKey[0] || k[1] < minKey[1] || k[2] < minKey[2]
             || k[0] > maxKey[0] || k[1] > maxKey[1] || k[2] > maxKey[2])
-          octree->deleteNode(k, it.getDepth());
+          {
+            octree->deleteNode(k, it.getDepth());
+          }
         }
       } else
         QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",

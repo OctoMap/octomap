@@ -158,6 +158,15 @@ namespace octomap {
     else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
   }
   
+  /// generate child index (between 0 and 7) from key at given tree depth
+  inline unsigned char computeChildIdx(const OcTreeKey& key, int depth){
+    unsigned char pos = 0;
+    if (key.k[0] & (1 << depth)) pos += 1;
+    if (key.k[1] & (1 << depth)) pos += 2;
+    if (key.k[2] & (1 << depth)) pos += 4;
+    return pos;
+  }
+
 } // namespace
 
 #endif

@@ -98,12 +98,12 @@ namespace octomap {
 
     CountingOcTreeNode* curNode (itsRoot);
     curNode->increaseCount();
-    unsigned int pos(0);
+
 
     // follow or construct nodes down to last level...
     for (int i=(tree_depth-1); i>=0; i--) {
 
-      genPos(k, i, pos);
+      unsigned int pos = computeChildIdx(k, i);
 
       // requested node does not exist
       if (!curNode->childExists(pos)) {

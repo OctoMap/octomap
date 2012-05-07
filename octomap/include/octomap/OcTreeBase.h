@@ -687,6 +687,52 @@ namespace octomap {
     const tree_iterator end_tree() const {return tree_iterator_end;}
 
 
+    // --- new key / coord functions ---//
+
+    unsigned short int coordToKey(double coordinate) const{
+      return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+    }
+
+    bool coordToKeyChecked(double coordinate, unsigned short int& key) const{
+      // scale to resolution and shift center for tree_max_val
+      int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+
+      // keyval within range of tree?
+      if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+        keyval = scaled_coord;
+        return true;
+      }
+      return false;
+    }
+
+    // TODO: replacement key/coord functions
+//    double keyToCoord(unsigned short int key, unsigned depth) const{
+//
+//    }
+//
+//    double keyToCoord(unsigned short int key) const{
+//
+//    }
+//
+//    point3d keyToCoord(const OcTreeKey& key) const{
+//
+//    }
+//
+//    bool keyToCoordChecked(unsigned short int key, unsigned depth, double& coordinate){
+//
+//      return true;
+//    }
+//
+//    bool keyToCoordChecked(unsigned short int key, double& coordinate){
+//
+//      return true;
+//    }
+//
+//    OcTreeKey coordToKey(const point3d& coord) const{
+//
+//    }
+
+
 
 
     /**
@@ -726,7 +772,8 @@ namespace octomap {
     bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const;
 
     /// generate child index (between 0 and 7) from key at given tree depth
-    void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const;
+    /// DEPRECATED
+    DEPRECATED( void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const);
 
  protected:
     /// compute center point of child voxel cell, for internal use (will be removed soon)

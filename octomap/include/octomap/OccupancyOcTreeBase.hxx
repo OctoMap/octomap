@@ -211,8 +211,7 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                                                     unsigned int depth, const float& log_odds_update, bool lazy_eval) {
-    unsigned int pos (0);
-    this->genPos(key, this->tree_depth-1-depth, pos);
+    unsigned int pos = computeChildIdx(key, this->tree_depth-1-depth);
     bool created_node = false;
 
     // follow down to last level
