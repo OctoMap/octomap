@@ -688,24 +688,25 @@ namespace octomap {
 
 
     // --- new key / coord functions ---//
-
-    unsigned short int coordToKey(double coordinate) const{
-      return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
-    }
-
-    bool coordToKeyChecked(double coordinate, unsigned short int& key) const{
-      // scale to resolution and shift center for tree_max_val
-      int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
-
-      // keyval within range of tree?
-      if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
-        keyval = scaled_coord;
-        return true;
-      }
-      return false;
-    }
-
     // TODO: replacement key/coord functions
+
+//    unsigned short int coordToKey(double coordinate) const{
+//      return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+//    }
+//
+//    bool coordToKeyChecked(double coordinate, unsigned short int& key) const{
+//      // scale to resolution and shift center for tree_max_val
+//      int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+//
+//      // keyval within range of tree?
+//      if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+//        keyval = scaled_coord;
+//        return true;
+//      }
+//      return false;
+//    }
+
+
 //    double keyToCoord(unsigned short int key, unsigned depth) const{
 //
 //    }
