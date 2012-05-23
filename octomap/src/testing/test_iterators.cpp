@@ -295,8 +295,8 @@ int main(int argc, char** argv) {
   tree->getMetricMax(temp_x,temp_y,temp_z);
   octomap::point3d bbxMax(temp_x,temp_y,temp_z);
 
-  EXPECT_TRUE(tree->genKey(bbxMin, bbxMinKey));
-  EXPECT_TRUE(tree->genKey(bbxMax, bbxMaxKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
 
   OcTree::leaf_bbx_iterator it_bbx = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey);
   EXPECT_TRUE(it_bbx == tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey));
@@ -319,8 +319,8 @@ int main(int argc, char** argv) {
   tree->expand(); // (currently only works properly for expanded tree (no multires)
   bbxMin = point3d(-1, -1, - 1);
   bbxMax = point3d(3, 2, 1);
-  EXPECT_TRUE(tree->genKey(bbxMin, bbxMinKey));
-  EXPECT_TRUE(tree->genKey(bbxMax, bbxMaxKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
 
   typedef std::tr1::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
 

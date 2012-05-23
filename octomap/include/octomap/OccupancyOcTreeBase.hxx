@@ -131,7 +131,7 @@ namespace octomap {
           }
           // occupied endpoint
           OcTreeKey key;
-          if (this->genKey(p, key))
+          if (this->coordToKeyChecked(p, key))
             occupied_cells.insert(key);
         } // end if NOT maxrange
 
@@ -151,7 +151,7 @@ namespace octomap {
 
           // occupied endpoint
           OcTreeKey key;
-          if (this->genKey(p, key))
+          if (this->coordToKeyChecked(p, key))
             occupied_cells.insert(key);
 
           // update freespace, break as soon as bbx limit is reached
@@ -186,7 +186,7 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, float log_odds_update, bool lazy_eval) {
     OcTreeKey key;
-    if (!this->genKey(value, key)) return NULL;
+    if (!this->coordToKeyChecked(value, key)) return NULL;
     return updateNode(key, log_odds_update, lazy_eval);
   }
 
@@ -204,7 +204,7 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, bool occupied, bool lazy_eval) {
     OcTreeKey key;
-    if (!this->genKey(value, key)) return NULL;
+    if (!this->coordToKeyChecked(value, key)) return NULL;
     return updateNode(key, occupied, lazy_eval);
   }
 
@@ -352,7 +352,7 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
     OcTreeKey current_key;
-    if ( !OcTreeBase<NODE>::genKey(origin, current_key) ) {
+    if ( !OcTreeBase<NODE>::coordToKeyChecked(origin, current_key) ) {
       OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
@@ -362,17 +362,17 @@ namespace octomap {
       if (isNodeOccupied(startingNode)){
         // Occupied node found at origin 
         // (need to convert from key, since origin does not need to be a voxel center)
-        genCoords(current_key, this->tree_depth, end);
+        end = this->keyToCoord(current_key);
         return true;
       }
     } else if(!ignoreUnknown){
       OCTOMAP_ERROR_STR("Origin node at " << origin << " for raycasting not found, does the node exist?");
-      genCoords(current_key, this->tree_depth, end);
+      end = this->keyToCoord(current_key);
       return false;
     }
 
     point3d direction = directionP.normalized();
-    bool max_range_set = (maxRange > 0.);
+    bool max_range_set = (maxRange > 0.0);
 
     int step[3]; 
     double tMax[3];
@@ -387,9 +387,8 @@ namespace octomap {
       // compute tMax, tDelta
       if (step[i] != 0) {
         // corner point of voxel (in direction of ray)
-        float voxelBorder(0);
-        this->genCoordFromKey(current_key[i], voxelBorder); 
-        voxelBorder += float (step[i] * this->resolution * 0.5);
+        double voxelBorder = this->keyToCoord(current_key[i]);
+        voxelBorder += double(step[i] * this->resolution * 0.5);
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
@@ -432,10 +431,10 @@ namespace octomap {
       if ((step[dim] < 0 && current_key[dim] == 0)
     		  || (step[dim] > 0 && current_key[dim] == 2* this->tree_max_val-1))
       {
-    	  OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
-    	  // return border point nevertheless:
-    	  genCoords(current_key, this->tree_depth, end);
-    	  return false;
+        OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
+        // return border point nevertheless:
+        end = this->keyToCoord(current_key);
+        return false;
       }
 
       // advance in direction "dim"
@@ -656,9 +655,7 @@ namespace octomap {
                                                              const OcTreeKey& min, const OcTreeKey& max) const {
     if (depth == max_depth) { // max level reached
       if (isNodeOccupied(node)) {
-        point3d p;
-        this->genCoords(parent_key, depth, p);
-        node_centers.push_back(p);        
+        node_centers.push_back(this->keyToCoords(parent_key, depth));
       }
     }
 

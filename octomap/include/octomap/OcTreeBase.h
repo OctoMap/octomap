@@ -83,6 +83,8 @@ namespace octomap {
     /// (Covariant return type requires an up-to-date compiler)
     OcTreeBase<NODE>* create() const {return new OcTreeBase<NODE>(resolution); }
 
+    bool operator== (const OcTreeBase& other) const;
+
     std::string getTreeType() const {return "OcTreeBase";}
 
     void setResolution(double r);
@@ -216,16 +218,6 @@ namespace octomap {
     */
     bool computeRay(const point3d& origin, const point3d& end, std::vector<point3d>& ray);
 
-    /**
-     * Generates key for all three dimensions of a given point
-     * using genKeyValue().
-     *
-     * @param point 3d coordinate of a point
-     * @param keys values that will be computed, an array of fixed size 3.
-     * @return true when point is within the octree, false otherwise
-     */
-    bool genKey(const point3d& point, OcTreeKey& key) const;
-
 
     // file IO
 
@@ -277,7 +269,7 @@ namespace octomap {
       iterator_base(const iterator_base& other)
       : tree(other.tree), maxDepth(other.maxDepth), stack(other.stack) {}
 
-      /// Comparison between interators. First compares the tree, then stack size and top element of stack.
+      /// Comparison between iterators. First compares the tree, then stack size and top element of stack.
       bool operator==(const iterator_base& other) const {
         return (tree ==other.tree && stack.size() == other.stack.size()
             && (stack.size()==0 || (stack.size() > 0 && (stack.top().node == other.stack.top().node
@@ -285,7 +277,7 @@ namespace octomap {
                 && stack.top().key == other.stack.top().key ))));
       }
 
-      /// Comparison between interators. First compares the tree, then stack size and top element of stack.
+      /// Comparison between iterators. First compares the tree, then stack size and top element of stack.
       bool operator!=(const iterator_base& other) const {
         return (tree !=other.tree || stack.size() != other.stack.size()
             || (stack.size() > 0 && ((stack.top().node != other.stack.top().node
@@ -318,22 +310,20 @@ namespace octomap {
 
       /// return the center coordinate of the current node
       point3d getCoordinate() const {
-        point3d coord;
-        tree->genCoords(stack.top().key, stack.top().depth, coord);
-        return coord;
+        return tree->keyToCoord(stack.top().key, stack.top().depth);
       }
 
       /// @return single coordinate of the current node
       double getX() const{
-        return tree->genCoordFromKey(stack.top().key[0], stack.top().depth);
+        return tree->keyToCoord(stack.top().key[0], stack.top().depth);
       }
       /// @return single coordinate of the current node
       double getY() const{
-        return tree->genCoordFromKey(stack.top().key[1], stack.top().depth);
+        return tree->keyToCoord(stack.top().key[1], stack.top().depth);
       }
       /// @return single coordinate of the current node
       double getZ() const{
-        return tree->genCoordFromKey(stack.top().key[2], stack.top().depth);
+        return tree->keyToCoord(stack.top().key[2], stack.top().depth);
       }
 
       /// @return the side if the volume occupied by the current node
@@ -558,7 +548,7 @@ namespace octomap {
         : iterator_base(tree, depth)
       {
 
-        if (!this->tree->genKey(min, minKey) || !this->tree->genKey(max, maxKey)){
+        if (!this->tree->coordToKeyChecked(min, minKey) || !this->tree->coordToKeyChecked(max, maxKey)){
           // coordinates invalid, set to end iterator
           tree = NULL;
           this->maxDepth = 0;
@@ -690,61 +680,82 @@ namespace octomap {
     // --- new key / coord functions ---//
     // TODO: replacement key/coord functions
 
-//    unsigned short int coordToKey(double coordinate) const{
-//      return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
-//    }
-//
-//    bool coordToKeyChecked(double coordinate, unsigned short int& key) const{
-//      // scale to resolution and shift center for tree_max_val
-//      int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
-//
-//      // keyval within range of tree?
-//      if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
-//        keyval = scaled_coord;
-//        return true;
-//      }
-//      return false;
-//    }
+    /// Converts from a single coordinate into a discrete key
+    inline unsigned short int coordToKey(double coordinate) const{
+      return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+    }
 
+    /// Converts from a 3D coordinate into a 3D addressing key
+    inline OcTreeKey coordToKey(const point3d& coord) const{
+      OcTreeKey k;
+      for (unsigned int i=0; i<3; ++i) {
+        k[i] = coordToKey(coord(i));
+      }
+      return k;
+    }
 
-//    double keyToCoord(unsigned short int key, unsigned depth) const{
-//
-//    }
-//
-//    double keyToCoord(unsigned short int key) const{
-//
-//    }
-//
-//    point3d keyToCoord(const OcTreeKey& key) const{
-//
-//    }
-//
-//    bool keyToCoordChecked(unsigned short int key, unsigned depth, double& coordinate){
-//
-//      return true;
-//    }
-//
-//    bool keyToCoordChecked(unsigned short int key, double& coordinate){
-//
-//      return true;
-//    }
-//
-//    OcTreeKey coordToKey(const point3d& coord) const{
-//
-//    }
+    /// converts from a discrete key at a given depth into a coordinate
+    /// corresponding to the key's center
+    double keyToCoord(unsigned short int key, unsigned depth) const{
+      assert(depth <= tree_depth);
 
+      // root is centered on 0 = 0.0
+      if (depth == 0) {
+        return 0.0;
+      } else if (depth == tree_depth) {
+        return keyToCoord(key);
+      } else {
+        return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
+      }
 
+    }
+
+    /// converts from a discrete key at the lowest tree level into a coordinate
+    /// corresponding to the key's center
+    inline double keyToCoord(unsigned short int key) const{
+      return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
+    }
+
+    /// converts from an addressing key at the lowest tree level into a coordinate
+    /// corresponding to the key's center
+    inline point3d keyToCoord(const OcTreeKey& key) const{
+      return point3d(keyToCoord(key[0]), keyToCoord(key[1]), keyToCoord(key[2]));
+    }
+
+    /// converts from an addressing key at a given depth into a coordinate
+    /// corresponding to the key's center
+    inline point3d keyToCoord(const OcTreeKey& key, unsigned depth) const{
+      return point3d(keyToCoord(key[0], depth), keyToCoord(key[1], depth), keyToCoord(key[2], depth));
+    }
+
+    /// @deprecated, replaced with coordToKeyChecked()
+    DEPRECATED( bool genKeyValue(double coordinate, unsigned short int& keyval) const) {
+      return coordToKeyChecked(coordinate, keyval);
+    }
+
+    /// @deprecated, replaced with coordToKeyChecked()
+    DEPRECATED( bool genKey(const point3d& point, OcTreeKey& key) const ) {
+      return coordToKeyChecked(point, key);
+    }
 
 
     /**
-     * Generates a 16-bit key from/for given value when it is within
-     * the octree bounds, returns false otherwise
+     * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
      *
-     * @param val coordinate of one dimension in the octree
-     * @param key 16bit key of the given coordinate, returned
-     * @return true if val is within the octree bounds
+     * @param coord 3d coordinate of a point
+     * @param key values that will be computed, an array of fixed size 3.
+     * @return true if point is within the octree (valid), false otherwise
      */
-    bool genKeyValue(double coordinate, unsigned short int& keyval) const;
+    bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
+
+    /**
+     * Converts a singl coordinate into a discrete addressing key, with boundary checking.
+     *
+     * @param coordinate 3d coordinate of a point
+     * @param key discrete 16 bit adressing key
+     * @return true if coordinate is within the octree bounds (valid), false otherwise
+     */
+    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
 
     /// generates a new key value at a specified depth in the tree given a key value at the final tree depth
     bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const;
@@ -752,34 +763,51 @@ namespace octomap {
     /// generates a new key for all three dimensions at a specified depth, calling genKeyValueAtDepth
     bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const;
 
-    /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
-    /// This checks if the key is valid and returns the success.
+    /// @deprecated, replaced by keyToCoord()
+    /// Will always return true, there is no more boundary check here
     DEPRECATED( bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const ){
-      return genCoordFromKey(key, coord, depth);
-    }
-    bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const;
-    inline bool genCoordFromKey(const unsigned short int& key, float& coord) const {
-      return genCoordFromKey(key, coord, tree_depth);
+      coord = float(keyToCoord(key, depth));
+      return true;
     }
 
-    /// reverse of genKey(), generates center coordinate of cell corresponding to a key for cells not on the last level
-    /// returns the coordinate without checking for validity.
-    double genCoordFromKey(const unsigned short int& key, unsigned depth) const;
-    inline double genCoordFromKey(const unsigned short int& key) const {
-      return genCoordFromKey(key, tree_depth);
+    /// @deprecated, replaced by keyToCoord()
+    /// Will always return true, there is no more boundary check here
+    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const) {
+      coord = float(keyToCoord(key, depth));
+      return true;
     }
 
-    // generates 3d coordinates from a key at a given depth
-    bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const;
+    /// @deprecated, replaced by keyToCoord()
+    /// Will always return true, there is no more boundary check here
+    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord) const) {
+      coord = float(keyToCoord(key));
+      return true;
+    }
+
+    /// @deprecated, replaced by keyToCoord()
+    DEPRECATED( double genCoordFromKey(const unsigned short int& key, unsigned depth) const) {
+      return keyToCoord(key, depth);
+    }
+
+    /// @deprecated, replaced by keyToCoord()
+    DEPRECATED( inline double genCoordFromKey(const unsigned short int& key) const) {
+      return keyToCoord(key);
+    }
+
+     /// @deprecated, replaced by keyToCoord().
+     /// Will always return true, there is no more boundary check here
+    DEPRECATED( inline bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const){
+      point = keyToCoord(key, depth);
+      return true;
+    }
 
     /// generate child index (between 0 and 7) from key at given tree depth
     /// DEPRECATED
-    DEPRECATED( void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const);
+    DEPRECATED( inline void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const) {
+      pos = computeChildIdx(key, depth);
+    }
 
  protected:
-    /// compute center point of child voxel cell, for internal use (will be removed soon)
-    void computeChildCenter (const unsigned int& pos, const float& center_offset, 
-                             const point3d& parent_center, point3d& child_center) const;
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();

@@ -64,6 +64,36 @@ namespace octomap {
   }
 
   template <class NODE>
+  bool OcTreeBase<NODE>::operator== (const OcTreeBase<NODE>& other) const{
+    if (tree_depth != other.tree_depth || tree_max_val != other.tree_max_val
+        || resolution != other.resolution || tree_size != other.tree_size){
+      return false;
+    }
+
+    // traverse all nodes, check if structure the same
+    OcTreeBase<NODE>::tree_iterator it = this->begin_tree();
+    OcTreeBase<NODE>::tree_iterator end = this->end_tree();
+    OcTreeBase<NODE>::tree_iterator other_it = other.begin_tree();
+    OcTreeBase<NODE>::tree_iterator other_end = other.end_tree();
+
+    for (; it != end; ++it, ++other_it){
+      if (other_it == other_end)
+        return false;
+
+      if (it.getDepth() != other_it.getDepth()
+          || it.getKey() != other_it.getKey()
+          || it->getValue() != other_it->getValue())
+      {
+        return false;
+      }
+    }
+    if (other_it != other_end)
+      return false;
+
+    return true;
+  }
+
+  template <class NODE>
   void OcTreeBase<NODE>::setResolution(double r) {
     resolution = r;
     resolution_factor = 1. / resolution;
@@ -80,7 +110,7 @@ namespace octomap {
 
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genKeyValue(double coordinate, unsigned short int& keyval) const {
+  bool OcTreeBase<NODE>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -94,10 +124,10 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genKey(const point3d& point, OcTreeKey& key) const{
+  bool OcTreeBase<NODE>::coordToKeyChecked(const point3d& point, OcTreeKey& key) const{
 
     for (unsigned int i=0;i<3;i++) {
-      if (!genKeyValue( point(i), key[i])) return false;
+      if (!coordToKeyChecked( point(i), key[i])) return false;
     }
     return true;
   }
@@ -127,77 +157,13 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const {
-    if (key >= 2*tree_max_val)
-      return false;
-    coord = float(genCoordFromKey(key, depth));
-    return true;
-  }
-
-  template <class NODE>
-  double OcTreeBase<NODE>::genCoordFromKey(const unsigned short int& key, unsigned depth) const {
-    assert(depth <= tree_depth);
-   
-    // root is centered on 0 = 0.0
-    if (depth == 0) {
-      return 0.0; 
-    }
-    else if (depth == tree_depth) {
-      return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution; 
-    }
-    else {
-      return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
-    }
-  }
-
-  template <class NODE>
-  bool OcTreeBase<NODE>::genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const {
-    assert (depth <= tree_depth);
-
-    for (unsigned int i=0; i<3; ++i) {
-      if ( !genCoordFromKey(key[i], point(i), depth) ) {  
-        // TODO someday: move content of call here
-        return false;
-      }
-    }
-    return true;
-  }
-
-  template <class NODE> void
-  OcTreeBase<NODE>::genPos(const OcTreeKey& key, int depth, unsigned int& pos) const {
-    pos = computeChildIdx(key, depth);
-
-  }
-
-
-
-
-  template <class NODE> 
-  void OcTreeBase<NODE>::computeChildCenter (const unsigned int& pos, 
-                                             const float& center_offset, 
-                                             const point3d& parent_center, 
-                                             point3d& child_center) const {
-    // x-axis
-    if (pos & 1) child_center(0) = parent_center(0) + center_offset;
-    else  	 child_center(0) = parent_center(0) - center_offset;
-
-    // y-axis
-    if (pos & 2) child_center(1) = parent_center(1) + center_offset;
-    else	 child_center(1) = parent_center(1) - center_offset;
-    // z-axis
-    if (pos & 4) child_center(2) = parent_center(2) + center_offset;
-    else	 child_center(2) = parent_center(2) - center_offset;
-  }
-
-
-  template <class NODE>
   NODE* OcTreeBase<NODE>::search(const point3d& value) const {
 
     // Search is a variant of insert which aborts if
     // it had to insert nodes
 
     OcTreeKey key;
-    if (!genKey(value, key)){
+    if (!coordToKeyChecked(value, key)){
       OCTOMAP_ERROR_STR("Error in search: ["<< value <<"] is out of OcTree bounds!");
       return NULL;
     }
@@ -243,7 +209,7 @@ namespace octomap {
   template <class NODE>
   bool OcTreeBase<NODE>::deleteNode(const point3d& value, unsigned int depth) {
     OcTreeKey key;
-    if (!genKey(value, key)){
+    if (!coordToKeyChecked(value, key)){
       OCTOMAP_ERROR_STR("Error in deleteNode: ["<< value <<"] is out of OcTree bounds!");
       return false;
     }
@@ -305,8 +271,8 @@ namespace octomap {
     ray.reset();
 
     OcTreeKey key_origin, key_end;
-    if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
-         !OcTreeBase<NODE>::genKey(end, key_end) ) {
+    if ( !OcTreeBase<NODE>::coordToKeyChecked(origin, key_origin) ||
+         !OcTreeBase<NODE>::coordToKeyChecked(end, key_end) ) {
       OCTOMAP_WARNING_STR("coordinates ( "
                 << origin << " -> " << end << ") out of bounds in computeRayKeys");
       return false;
@@ -338,8 +304,7 @@ namespace octomap {
       // compute tMax, tDelta
       if (step[i] != 0) {
         // corner point of voxel (in direction of ray)
-        float voxelBorder(0);
-        this->genCoordFromKey(current_key[i], voxelBorder); 
+        double voxelBorder = this->keyToCoord(current_key[i]);
         voxelBorder += (float) (step[i] * this->resolution * 0.5);
 
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
@@ -417,9 +382,7 @@ namespace octomap {
     _ray.clear();
     if (!computeRayKeys(origin, end, keyray)) return false;
     for (KeyRay::const_iterator it = keyray.begin(); it != keyray.end(); ++it) {
-      point3d p;
-      if (!genCoords(*it, tree_depth, p)) return false;
-      _ray.push_back(p);
+      _ray.push_back(keyToCoord(*it));
     }
     return true;
   }

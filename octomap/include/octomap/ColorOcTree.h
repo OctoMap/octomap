@@ -130,7 +130,7 @@ namespace octomap {
                                  const float& z, const unsigned char& r, 
                                  const unsigned char& g, const unsigned char& b) {
       OcTreeKey key;
-      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
       return setNodeColor(key,r,g,b);
     }
 
@@ -142,7 +142,7 @@ namespace octomap {
                                       const float& z, const unsigned char& r, 
                                       const unsigned char& g, const unsigned char& b) {
       OcTreeKey key;
-      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
       return averageNodeColor(key,r,g,b);
     }
 
@@ -154,7 +154,7 @@ namespace octomap {
                                       const float& z, const unsigned char& r, 
                                       const unsigned char& g, const unsigned char& b) {
       OcTreeKey key;
-      if (!this->genKey(point3d(x,y,z), key)) return NULL;
+      if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
       return integrateNodeColor(key,r,g,b);
     }
 

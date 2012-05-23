@@ -88,7 +88,7 @@ namespace octomap {
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 
     OcTreeKey key;
-    if (!genKey(value, key)) return NULL;
+    if (!coordToKeyChecked(value, key)) return NULL;
     return updateNode(key);
   }
 
@@ -149,9 +149,7 @@ namespace octomap {
     else { // max level reached
 
       if (node->getCount() >= min_hits) {
-        point3d p;
-        this->genCoords(parent_key, depth, p);
-        node_centers.push_back(p);        
+        node_centers.push_back(this->keyToCoord(parent_key, depth));
       }
     }
   }

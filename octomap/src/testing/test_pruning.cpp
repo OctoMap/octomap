@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 
     point3d singlePt(-0.05, -0.02, 1.0);
     OcTreeKey singleKey;
-    tree.genKey(singlePt, singleKey);
+    tree.coordToKeyChecked(singlePt, singleKey);
     OcTreeNode* singleNode = tree.updateNode(singleKey, true);
     EXPECT_TRUE(singleNode);
     EXPECT_EQ(singleNode, tree.search(singlePt));
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
       }
     }
 
-    tree.genKey(point3d(0.1, 0.1, 0.1), singleKey);
+    tree.coordToKeyChecked(point3d(0.1, 0.1, 0.1), singleKey);
 
     EXPECT_TRUE(tree.updateNode(singleKey, true));
 

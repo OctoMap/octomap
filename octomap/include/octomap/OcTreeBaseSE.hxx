@@ -72,8 +72,8 @@ namespace octomap {
     ray.reset();
 
     OcTreeKey key_origin, key_end;
-    if ( !OcTreeBase<NODE>::genKey(origin, key_origin) || 
-         !OcTreeBase<NODE>::genKey(end, key_end) ) {
+    if ( !OcTreeBase<NODE>::coordToKeyChecked(origin, key_origin) || 
+         !OcTreeBase<NODE>::coordToKeyChecked(end, key_end) ) {
       OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
@@ -103,9 +103,8 @@ namespace octomap {
       else step[i] = 0;
 
       // compute tMax, tDelta
-      double voxelBorder(0);
-      this->genCoordFromKey(current_key[i], voxelBorder); // negative corner point of voxel
-      if (step[i] > 0) voxelBorder += this->resolution;   // positive corner point of voxel
+      double voxelBorder = this->keyToCoord(current_key[i]); // negative corner point of voxel
+      voxelBorder += double(step[i] * this->resolution * 0.5);
 
       if (step[i] != 0) {
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
@@ -184,7 +183,7 @@ namespace octomap {
 
     OcTreeKey start_key;
 
-    if (! OcTreeBase<NODE>::genKey(node_coord, start_key)) {
+    if (! OcTreeBase<NODE>::coordToKeyChecked(node_coord, start_key)) {
       OCTOMAP_ERROR_STR("Error in search: ["<< node_coord <<"] is out of OcTree bounds!");
       return NULL;
     }

@@ -113,47 +113,8 @@ int main(int argc, char** argv) {
       point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
     }
     EXPECT_TRUE (tree.writeBinary("sphere.bt"));
-  // ------------------------------------------------------------
-  // tree read file test
-  } else if (test_name == "ReadTree") {
-    OcTree tree (0.05);  
-    EXPECT_TRUE (tree.readBinary("sphere.bt"));
     EXPECT_EQ ((int) tree.size(), 51740);
-  // ------------------------------------------------------------
-  // data file read/write test
-  } else if (test_name == "DataTreeIO") {
-
-    OcTree tree (0.05);
-    point3d origin (0.01f, 0.01f, 0.02f);
-    point3d point_on_surface (2.01f,0.01f,0.01f);
   
-    for (int i=0; i<360; i++) {    
-      for (int j=0; j<360; j++) {
-        EXPECT_TRUE (tree.insertRay(origin, origin+point_on_surface));
-        point_on_surface.rotate_IP (0,0,DEG2RAD(1.));
-      }
-      point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
-    }
-
-    unsigned int tree_size = tree.size();
-    cout << "tree size: " << tree_size << endl; 
-    std::string filename ("sphere.ot");
-    std::ofstream outfile(filename.c_str(), std::ios_base::out | std::ios_base::binary);
-    EXPECT_TRUE (outfile.is_open());
-    tree.writeDataConst(outfile);
-    outfile.close();
-    cout << "tree written "<< filename <<"\n";
-
-    // read tree file
-    std::ifstream infile(filename.c_str(), std::ios_base::in |std::ios_base::binary);
-    EXPECT_TRUE (infile.is_open());
-    OcTree read_tree (0.1);
-    read_tree.readData(infile);
-    infile.close();
-    cout << "tree read from "<< filename <<"\n";
-    unsigned int read_tree_size = read_tree.size();
-    cout << "size of tree read from file: " << read_tree_size << endl; 
-    EXPECT_EQ (tree_size, read_tree_size);
   // ------------------------------------------------------------
   // ray casting
   } else if (test_name == "CastRay") {
@@ -310,9 +271,8 @@ int main(int argc, char** argv) {
     OcTree tree (0.05);  
     point3d p(0.0,0.0,0.0);
     OcTreeKey key;
-    tree.genKey(p, key);
-    point3d p_inv;
-    tree.genCoords(key, tree.getTreeDepth(), p_inv);
+    tree.coordToKeyChecked(p, key);
+    point3d p_inv = tree.keyToCoord(key);
     EXPECT_FLOAT_EQ (0.025, p_inv.x());
     EXPECT_FLOAT_EQ (0.025, p_inv.y());
     EXPECT_FLOAT_EQ (0.025, p_inv.z());
@@ -325,9 +285,8 @@ int main(int argc, char** argv) {
 	   end=tree.end(); it!= end; ++it){
       point3d p = it.getCoordinate();
       OcTreeKey key;
-      tree.genKey(p, key);
-      point3d p_inv;
-      tree.genCoords(key, it.getDepth(), p_inv);
+      tree.coordToKeyChecked(p, key);
+      point3d p_inv = tree.keyToCoord(key, it.getDepth());
       EXPECT_FLOAT_EQ (p.x(), p_inv.x());
       EXPECT_FLOAT_EQ (p.y(), p_inv.y());
       EXPECT_FLOAT_EQ (p.z(), p_inv.z());
