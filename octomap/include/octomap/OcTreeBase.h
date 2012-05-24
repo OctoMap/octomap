@@ -677,8 +677,6 @@ namespace octomap {
     const tree_iterator end_tree() const {return tree_iterator_end;}
 
 
-    // --- new key / coord functions ---//
-    // TODO: replacement key/coord functions
 
     /// Converts from a single coordinate into a discrete key
     inline unsigned short int coordToKey(double coordinate) const{
@@ -693,6 +691,24 @@ namespace octomap {
       }
       return k;
     }
+
+    /**
+     * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
+     *
+     * @param coord 3d coordinate of a point
+     * @param key values that will be computed, an array of fixed size 3.
+     * @return true if point is within the octree (valid), false otherwise
+     */
+    bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
+
+    /**
+     * Converts a singl coordinate into a discrete addressing key, with boundary checking.
+     *
+     * @param coordinate 3d coordinate of a point
+     * @param key discrete 16 bit adressing key
+     * @return true if coordinate is within the octree bounds (valid), false otherwise
+     */
+    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
@@ -737,25 +753,6 @@ namespace octomap {
     DEPRECATED( bool genKey(const point3d& point, OcTreeKey& key) const ) {
       return coordToKeyChecked(point, key);
     }
-
-
-    /**
-     * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
-     *
-     * @param coord 3d coordinate of a point
-     * @param key values that will be computed, an array of fixed size 3.
-     * @return true if point is within the octree (valid), false otherwise
-     */
-    bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
-
-    /**
-     * Converts a singl coordinate into a discrete addressing key, with boundary checking.
-     *
-     * @param coordinate 3d coordinate of a point
-     * @param key discrete 16 bit adressing key
-     * @return true if coordinate is within the octree bounds (valid), false otherwise
-     */
-    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
 
     /// generates a new key value at a specified depth in the tree given a key value at the final tree depth
     bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const;
