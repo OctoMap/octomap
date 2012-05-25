@@ -133,6 +133,20 @@ namespace octomap {
   }
 
   template <class NODE>
+  double OcTreeBase<NODE>::keyToCoord(unsigned short int key, unsigned depth) const{
+    assert(depth <= tree_depth);
+
+    // root is centered on 0 = 0.0
+    if (depth == 0) {
+      return 0.0;
+    } else if (depth == tree_depth) {
+      return keyToCoord(key);
+    } else {
+      return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
+    }
+  }
+
+  template <class NODE>
   bool OcTreeBase<NODE>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
 
     if (keyval >= 2*tree_max_val)

@@ -676,7 +676,9 @@ namespace octomap {
     /// @return end of the tree as iterator to all nodes (incl. inner)
     const tree_iterator end_tree() const {return tree_iterator_end;}
 
-
+    //
+    // Key / coordinate conversion functions
+    //
 
     /// Converts from a single coordinate into a discrete key
     inline unsigned short int coordToKey(double coordinate) const{
@@ -685,11 +687,7 @@ namespace octomap {
 
     /// Converts from a 3D coordinate into a 3D addressing key
     inline OcTreeKey coordToKey(const point3d& coord) const{
-      OcTreeKey k;
-      for (unsigned int i=0; i<3; ++i) {
-        k[i] = coordToKey(coord(i));
-      }
-      return k;
+      return OcTreeKey(coordToKey(coord(0)), coordToKey(coord(1)), coordToKey(coord(2)));
     }
 
     /**
@@ -712,19 +710,7 @@ namespace octomap {
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
-    double keyToCoord(unsigned short int key, unsigned depth) const{
-      assert(depth <= tree_depth);
-
-      // root is centered on 0 = 0.0
-      if (depth == 0) {
-        return 0.0;
-      } else if (depth == tree_depth) {
-        return keyToCoord(key);
-      } else {
-        return (floor( (double(key)-double(this->tree_max_val)) /double(1 << (tree_depth - depth)) )  + 0.5 ) * this->getNodeSize(depth);
-      }
-
-    }
+    double keyToCoord(unsigned short int key, unsigned depth) const;
 
     /// converts from a discrete key at the lowest tree level into a coordinate
     /// corresponding to the key's center
@@ -754,11 +740,12 @@ namespace octomap {
       return coordToKeyChecked(point, key);
     }
 
-    /// generates a new key value at a specified depth in the tree given a key value at the final tree depth
-    bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const;
+    /// @deprecated, will be removed. If needed, we need to re-implement with a cleaner interface.
+    DEPRECATED( bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const );
 
+    /// @deprecated, will be removed. If needed, we need to re-implement with a cleaner interface.
     /// generates a new key for all three dimensions at a specified depth, calling genKeyValueAtDepth
-    bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const;
+    DEPRECATED( bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const );
 
     /// @deprecated, replaced by keyToCoord()
     /// Will always return true, there is no more boundary check here

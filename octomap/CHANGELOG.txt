@@ -3,7 +3,7 @@ v1.4.2: 2012-04-24
 - extended graph2tree with more verbose logging / statistics
 - fixed conversion from color .ot to .bt in convert_octree
 - minor fixes in octovis with color rendering 
-- fixed octovis compilation witg Qt 4.8 (Ubuntu 12.04)
+- fixed octovis compilation with Qt 4.8 (Ubuntu 12.04)
 - experimental editing functionality in octovis to clear and fill volumes
 
 v1.4.1: 2012-03-12
