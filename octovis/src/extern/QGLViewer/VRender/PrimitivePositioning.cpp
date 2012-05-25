@@ -17,14 +17,14 @@
 
  You should have received a copy of the GNU General Public License
  along with VRender; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -168,7 +168,7 @@ int PrimitivePositioning::computeRelativePosition(const Polygone *P,const Segmen
 
 	double t1,t2 ;
 
-	for(int i=0;i<P->nbVertices();++i)
+        for(unsigned int i=0;i<P->nbVertices();++i)
 		if(intersectSegments_XY(Vector2(S->vertex(0)),Vector2(S->vertex(1)),Vector2(P->vertex(i)),Vector2(P->vertex(i+1)),_EPS,t1,t2))
 			intersections.push_back(t1) ;
 
@@ -447,7 +447,7 @@ gpc_polygon PrimitivePositioning::createGPCPolygon_XY(const Polygone *P)
 	gpc_p_verts->num_vertices = P->nbVertices() ;
 	gpc_p_verts->vertex = new gpc_vertex[P->nbVertices()] ;
 
-	for(int i=0;i<P->nbVertices();++i)
+        for(unsigned int i=0;i<P->nbVertices();++i)
 	{
 		gpc_p_verts->vertex[i].x = P->vertex(i).x() ;
 		gpc_p_verts->vertex[i].y = P->vertex(i).y() ;

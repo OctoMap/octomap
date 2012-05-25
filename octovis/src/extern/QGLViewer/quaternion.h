@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -137,7 +137,7 @@ namespace qglviewer {
 		/*! @name Accessing values */
 		//@{
 		Vec axis() const;
-		float angle() const;
+		double angle() const;
 		void getAxisAngle(Vec& axis, float& angle) const;
 
 		/*! Bracket operator, with a constant return value. \p i must range in [0..3]. See the Quaternion(double, double, double, double) documentation. */

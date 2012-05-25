@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -79,7 +79,7 @@ namespace qglviewer {
 
     /*! @name Fly parameters */
     //@{
-  public slots:
+  public Q_SLOTS:
     /*! Sets the flySpeed(), defined in OpenGL units.
 
     Default value is 0.0, but it is modified according to the QGLViewer::sceneRadius() when the
@@ -126,7 +126,7 @@ namespace qglviewer {
 
     /*! @name Spinning */
     //@{
-  protected slots:
+  protected Q_SLOTS:
     virtual void spin();
     //@}
 
@@ -134,7 +134,7 @@ namespace qglviewer {
     //@{
   public:
     virtual QDomElement domElement(const QString& name, QDomDocument& document) const;
-  public slots:
+  public Q_SLOTS:
     virtual void initFromDOMElement(const QDomElement& element);
     //@}
 
@@ -143,7 +143,7 @@ namespace qglviewer {
     virtual void startAction(int ma, bool withConstraint=true); // int is really a QGLViewer::MouseAction
 #endif
 
-  private slots:
+  private Q_SLOTS:
     virtual void flyUpdate();
 
   private:

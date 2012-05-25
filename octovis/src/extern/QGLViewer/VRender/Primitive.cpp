@@ -17,14 +17,14 @@
 
  You should have received a copy of the GNU General Public License
  along with VRender; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -124,7 +124,7 @@ void Polygone::initNormal()
 	Vector3 normalmax = Vector3(0.0,0.0,0.0) ;
 	FLOAT v12norm = (vertex(1)-vertex(0)).norm() ;
 
-	for(int i=0;i<nbVertices();i++)
+        for(unsigned int i=0;i<nbVertices();i++)
 	{
 		Vector3 v1(vertex(i)) ;
 		Vector3 v2(vertex(i+1));

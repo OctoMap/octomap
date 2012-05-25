@@ -17,14 +17,14 @@
 
  You should have received a copy of the GNU General Public License
  along with VRender; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -301,7 +301,7 @@ void TopologicalSortUtils::topologicalSort(vector< vector<int> >& precedence_gra
 	vector<bool> already_rendered(primitive_tab.size(),false) ;
 	int nb_skews = 0 ;
 
-	int info_cnt = primitive_tab.size()/200 + 1 ;
+        unsigned int info_cnt = primitive_tab.size()/200 + 1 ;
 	int nbrendered = 0 ;
 
 	// 1 - sorts primitives by rendering order
@@ -450,7 +450,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 			// 0.5 - determine cycle beginning
 
 			int cycle_beginning_index = -1 ;
-			for(int i=ancestors.size()-1; i >= 0 && cycle_beginning_index < 0;--i)
+                        for(int i=(int)(ancestors.size())-1; i >= 0 && cycle_beginning_index < 0;--i)
 				if(ancestors[i] == precedence_graph[indx][j])
 					cycle_beginning_index = i ;
 #ifdef DEBUG_TS
@@ -515,7 +515,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 
 					vector<int> old_prec = vector<int>(precedence_graph[ancestors[i3]]) ;
 
-					int upper_indx = precedence_graph.size() ;
+                                        unsigned int upper_indx = precedence_graph.size() ;
 					int lower_indx = ancestors[i3] ;
 
 					//  Updates the precedence graph downwards.
@@ -686,7 +686,3 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 	ancestors.pop_back() ;
 }
 } // namespace
-
-
-
-

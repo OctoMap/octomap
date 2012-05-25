@@ -17,14 +17,14 @@
 
  You should have received a copy of the GNU General Public License
  along with VRender; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -72,7 +72,7 @@ void Exporter::exportToFile(const QString& filename,
 #if QT_VERSION >= 0x040000
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 #else
-        if (!file.open(IO_WriteOnly)) {
+	if (!file.open(IO_WriteOnly | IO_Translate)) {
 #endif
 		QMessageBox::warning(NULL, QGLViewer::tr("Exporter error", "Message box window title"), QGLViewer::tr("Unable to open file %1.").arg(filename));
 		return;
@@ -82,7 +82,7 @@ void Exporter::exportToFile(const QString& filename,
 
 	writeHeader(out) ;
 
-	int N = primitive_tab.size()/200 + 1 ;
+        unsigned int N = primitive_tab.size()/200 + 1 ;
 
 	for(unsigned int i=0;i<primitive_tab.size();++i)
 	{

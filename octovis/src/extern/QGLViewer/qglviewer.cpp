@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -39,6 +39,7 @@
 # include <QTimer>
 # include <QImage>
 # include <QDir>
+# include <QUrl>
 #else
 # include <qapplication.h>
 # include <qfileinfo.h>
@@ -49,31 +50,17 @@
 # include <qtextstream.h>
 # include <qtimer.h>
 # include <qimage.h>
+# include <qtextedit.h>
+# include <qkeysequence.h>
 # include <qdir.h>
-// Patch for enums names change
+  // Patch for enums names change
 # define KeyboardModifierMask KeyButtonMask
-// Patch for QMap API change
+  // Patch for QMap API change
 # define value data
-# if QT_VERSION >= 0x030000
-#  include <qtextedit.h>
-#  include <qkeysequence.h>
-# else
-#  include <qtextview.h>
-typedef QTextView QTextEdit;
-#  include <qtextstream.h>
-#  include <algorithm>
-#  include "keySequence.h"
-# endif
 #endif
 
 using namespace std;
 using namespace qglviewer;
-
-/*
-TXXXXXRANSLATOR qglviewer::QGLViewer
-
-Necessary for lupdate.
-*/
 
 // Static private variable
 #if QT_VERSION >= 0x040000
@@ -119,16 +106,21 @@ void QGLViewer::defaultConstructor()
 	// if (glGetString(GL_VERSION) == 0)
 	// qWarning("Unable to get OpenGL version, context may not be available - Check your configuration");
 
-	QGLViewer::QGLViewerPool_.append(this);
+#if QT_VERSION >= 0x040000
+	int poolIndex = QGLViewer::QGLViewerPool_.indexOf(NULL);
+	setFocusPolicy(Qt::StrongFocus);
+#else
+	int poolIndex = QGLViewer::QGLViewerPool_.findRef(NULL);
+	setFocusPolicy(QWidget::StrongFocus);
+#endif
+
+        if (poolIndex >= 0)
+          QGLViewer::QGLViewerPool_.replace(poolIndex, this);
+        else
+	  QGLViewer::QGLViewerPool_.append(this);
 
 	camera_ = new Camera();
 	setCamera(camera());
-
-#if QT_VERSION >= 0x040000
-	setFocusPolicy(Qt::StrongFocus);
-#else
-	setFocusPolicy(QWidget::StrongFocus);
-#endif
 
 	setDefaultShortcuts();
 	setDefaultMouseBindings();
@@ -139,10 +131,10 @@ void QGLViewer::defaultConstructor()
 	setSnapshotQuality(95);
 
 	fpsTime_.start();
-	fpsCounter_		= 0;
-	f_p_s_		= 0.0;
-	fpsString_		= tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
-	visualHint_		= 0;
+	fpsCounter_     = 0;
+	f_p_s_          = 0.0;
+	fpsString_      = tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
+	visualHint_     = 0;
 	previousPathId_	= 0;
 	// prevPos_ is not initialized since pos() is not meaningful here. It will be set by setFullScreen().
 
@@ -193,9 +185,11 @@ void QGLViewer::defaultConstructor()
 #if QT_VERSION >= 0x040000
 	setAttribute(Qt::WA_NoSystemBackground);
 #endif
+
+	tileRegion_ = NULL;
 }
 
-#if QT_VERSION >= 0x040000
+#if QT_VERSION >= 0x040000 && !defined QT3_SUPPORT
 /*! Constructor. See \c QGLWidget documentation for details.
 
 All viewer parameters (display flags, scene parameters, associated objects...) are set to their default values. See
@@ -305,29 +299,6 @@ static int convertToShortModifier(int state)
 	return state;
 }
 
-/*! Opens an about dialog.
-
-Default implementation displays libQGLViewer version, copyright notice and web site. */
-void QGLViewer::aboutQGLViewer()
-{
-	QMessageBox mb(tr("About libQGLViewer", "About message box title"),
-		tr("libQGLViewer, version %1.<br>"
-		"A versatile 3D viewer based on OpenGL and Qt.<br>"
-		"Copyright 2002-%2 Gilles Debunne.<br>"
-		"<code>%3</code>").arg(QGLViewerVersionString()).arg("2008").arg("http://artis.imag.fr/Software/QGLViewer"),
-		QMessageBox::Information,
-		QMessageBox::Ok,
-		QMessageBox::NoButton,
-		QMessageBox::NoButton,
-		this);	
-
-#include "qglviewer-icon.xpm"
-	QPixmap pixmap(qglviewer_icon);
-	mb.setIconPixmap(pixmap);
-	mb.setTextFormat(Qt::RichText);
-	mb.exec();
-}
-
 /*! Initializes the QGLViewer OpenGL context and then calls user-defined init().
 
 This method is automatically called once, before the first call to paintGL().
@@ -417,7 +388,7 @@ void QGLViewer::paintGL()
 		postDraw();
 	}
 	updateGLOK_ = true;
-	emit drawFinished(true);
+	Q_EMIT drawFinished(true);
 }
 
 /*! Sets OpenGL state before draw().
@@ -440,7 +411,7 @@ void QGLViewer::preDraw()
 	// GL_MODELVIEW matrix
 	camera()->loadModelViewMatrix();
 
-	emit drawNeeded();
+	Q_EMIT drawNeeded();
 }
 
 /*! Called after draw() to draw viewer visual hints.
@@ -509,6 +480,7 @@ void QGLViewer::postDraw()
 	color[3] = 1.0;
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
 
 	if (FPSIsDisplayed()) displayFPS();
 	if (displayMessage_) drawText(10, height()-10,  message_);
@@ -540,7 +512,7 @@ void QGLViewer::preDrawStereo(bool leftBuffer)
 	// GL_MODELVIEW matrix
 	camera()->loadModelViewMatrixStereo(leftBuffer);
 
-	emit drawNeeded();
+	Q_EMIT drawNeeded();
 }
 
 /*! Draws a simplified version of the scene to guarantee interactive camera displacements.
@@ -574,7 +546,7 @@ void QGLViewer::setCameraIsEdited(bool edit)
 	else
 		camera()->setZClippingCoefficient(previousCameraZClippingCoefficient_);
 
-	emit cameraIsEditedChanged(edit);
+	Q_EMIT cameraIsEditedChanged(edit);
 
 	if (updateGLOK_)
 		updateGL();
@@ -602,6 +574,7 @@ void QGLViewer::setDefaultShortcuts()
 	setShortcut(MOVE_CAMERA_DOWN,	Qt::Key_Down);
 	setShortcut(INCREASE_FLYSPEED,Qt::Key_Plus);
 	setShortcut(DECREASE_FLYSPEED,Qt::Key_Minus);
+	setShortcut(SNAPSHOT_TO_CLIPBOARD,Qt::CTRL+Qt::Key_C);
 
 	keyboardActionDescription_[DISPLAY_FPS] = tr("Toggles the display of the FPS", "DISPLAY_FPS action description");
 	keyboardActionDescription_[SAVE_SCREENSHOT] = tr("Saves a screenshot", "SAVE_SCREENSHOT action description");
@@ -621,6 +594,7 @@ void QGLViewer::setDefaultShortcuts()
 	keyboardActionDescription_[MOVE_CAMERA_DOWN] = tr("Moves camera down", "MOVE_CAMERA_DOWN action description");
 	keyboardActionDescription_[INCREASE_FLYSPEED] = tr("Increases fly speed", "INCREASE_FLYSPEED action description");
 	keyboardActionDescription_[DECREASE_FLYSPEED] = tr("Decreases fly speed", "DECREASE_FLYSPEED action description");
+	keyboardActionDescription_[SNAPSHOT_TO_CLIPBOARD] = tr("Copies a snapshot to clipboard", "SNAPSHOT_TO_CLIPBOARD action description");
 
 	// K e y f r a m e s   s h o r t c u t   k e y s
 	setPathKey(Qt::Key_F1,   1);
@@ -649,22 +623,18 @@ void QGLViewer::setDefaultShortcuts()
 void QGLViewer::setDefaultMouseBindings()
 {
 #if QT_VERSION >= 0x040000
+	const QtKeyboardModifiers cameraKeyboardModifiers = Qt::NoModifier;
 	const QtKeyboardModifiers frameKeyboardModifiers = Qt::ControlModifier;
 #else
+	const QtKeyboardModifiers cameraKeyboardModifiers = Qt::NoButton;
 	const QtKeyboardModifiers frameKeyboardModifiers = Qt::ControlButton;
 #endif
 	//#CONNECTION# toggleCameraMode()
 	for (int handler=0; handler<2; ++handler)
 	{
 		MouseHandler mh = (MouseHandler)(handler);
-#if QT_VERSION >= 0x040000
-		QtKeyboardModifiers modifiers = Qt::NoModifier;
-#else
-		QtKeyboardModifiers modifiers = Qt::NoButton;
-#endif
-		if (mh == FRAME)
-			modifiers = frameKeyboardModifiers;
-
+		QtKeyboardModifiers modifiers = (mh == FRAME) ? frameKeyboardModifiers : cameraKeyboardModifiers;
+		
 		setMouseBinding(modifiers | Qt::LeftButton,  mh, ROTATE);
 		setMouseBinding(modifiers | Qt::MidButton,   mh, ZOOM);
 		setMouseBinding(modifiers | Qt::RightButton, mh, TRANSLATE);
@@ -685,7 +655,6 @@ void QGLViewer::setDefaultMouseBindings()
 	setMouseBinding(Qt::ShiftButton | Qt::LeftButton, SELECT);
 #endif
 
-
 	// D o u b l e   c l i c k
 	setMouseBinding(Qt::LeftButton,  ALIGN_CAMERA,      true);
 	setMouseBinding(Qt::MidButton,   SHOW_ENTIRE_SCENE, true);
@@ -699,6 +668,30 @@ void QGLViewer::setDefaultMouseBindings()
 	setMouseBinding(Qt::RightButton, RAP_IS_CENTER,  true, Qt::LeftButton);
 	setMouseBinding(Qt::LeftButton,  ZOOM_ON_PIXEL,  true, Qt::MidButton);
 	setMouseBinding(Qt::RightButton, ZOOM_TO_FIT,    true, Qt::MidButton);
+
+#ifdef Q_OS_MAC
+	// Specific Mac bindings. Double finger emulates a wheelEvent which zooms.
+	// Make Option + left emulate the right button. Other bindings should be changed accordingly.
+	// Done at the end to override previous settings.
+# if QT_VERSION >= 0x040000
+	const QtKeyboardModifiers macKeyboardModifiers = Qt::AltModifier;
+# else
+	const QtKeyboardModifiers macKeyboardModifiers = Qt::AltButton;
+# endif
+
+	setMouseBinding(macKeyboardModifiers | Qt::LeftButton, CAMERA, TRANSLATE);
+	setMouseBinding(macKeyboardModifiers | Qt::LeftButton, CENTER_SCENE, true);
+	setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers | Qt::LeftButton, CENTER_FRAME, true);
+	setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers | Qt::LeftButton, FRAME, TRANSLATE);
+	
+	// S p e c i f i c   d o u b l e   c l i c k s
+	// A single tap is actually seen as a left followed by a right button click.
+	setMouseBinding(Qt::MetaModifier | Qt::RightButton,  RAP_FROM_PIXEL, true, Qt::LeftButton);
+	setMouseBinding(Qt::ShiftModifier | Qt::MetaModifier | Qt::RightButton, RAP_IS_CENTER,  true, Qt::LeftButton);
+	// A tap with two fingers is actually considered a rightButton.
+	setMouseBinding(Qt::MetaModifier | Qt::RightButton,  ZOOM_ON_PIXEL, false);
+	setMouseBinding(Qt::ShiftModifier | Qt::MetaModifier | Qt::RightButton, ZOOM_TO_FIT, false);
+#endif
 }
 
 /*! Associates a new qglviewer::Camera to the viewer.
@@ -709,7 +702,7 @@ one of its instances instead of the original class.
 It you simply want to save and restore Camera positions, use qglviewer::Camera::addKeyFrameToPath()
 and qglviewer::Camera::playPath() instead.
 
-This method silently ignores NULL \p camera pointers. The calling method is responsible for deleting
+This method silently ignores \c NULL \p camera pointers. The calling method is responsible for deleting
 the previous camera pointer in order to prevent memory leaks if needed.
 
 The sceneRadius() and sceneCenter() of \p camera are set to the \e current QGLViewer values.
@@ -834,7 +827,7 @@ upper left corner of the widget).
 The default QApplication::font() is used to render the text when no \p fnt is specified. Use
 QApplication::setFont() to define this default font.
 
-You should disable \c GL_LIGHTING before this method so that colors are properly rendered.
+You should disable \c GL_LIGHTING and \c GL_DEPTH_TEST before this method so that colors are properly rendered.
 
 This method can be used in conjunction with the qglviewer::Camera::projectedCoordinatesOf()
 method to display a text attached to an object. In your draw() method use:
@@ -847,10 +840,10 @@ See the <a href="../examples/screenCoordSystem.html">screenCoordSystem example</
 Text is displayed only when textIsEnabled() (default). This mechanism allows the user to
 conveniently remove all the displayed text with a single keyboard shortcut.
 
-Use displayMessage() to drawText() for only a short amount of time.
+See also displayMessage() to drawText() for only a short amount of time.
 
-Use the QGLWidget::renderText(x,y,z, text) method (Qt version >= 3.1) to draw a text (fixed size,
-facing the camera) located at a specific 3D position instead of 2D screen coordinates.
+Use QGLWidget::renderText(x,y,z, text) instead (Qt version >= 3.1) if you want to draw a text located 
+ at a specific 3D position instead of 2D screen coordinates (fixed size text, facing the camera).
 
 The \c GL_MODELVIEW and \c GL_PROJECTION matrices are not modified by this method.
 
@@ -899,7 +892,6 @@ void QGLViewer::drawText(int x, int y, const QString& text, const QFont& fnt)
 	glPopAttrib();
 
 	stopScreenCoordinatesSystem();
-
 #else
 
 # if QT_VERSION < 0x030300 && defined Q_OS_UNIX
@@ -909,13 +901,17 @@ void QGLViewer::drawText(int x, int y, const QString& text, const QFont& fnt)
 	newFont.setRawMode(true);
 	newFont.setPixelSize(10);
 	newFont.setFixedPitch(true);
-#  if QT_VERSION >= 0x030200
+#   if QT_VERSION >= 0x030200
 	newFont.setStyleStrategy(QFont::OpenGLCompatible);
-#  endif
+#   endif
 	newFont.setStyleHint(QFont::AnyStyle, QFont::PreferBitmap);
 	renderText(x, y, text, newFont);
 # else
-	renderText(x, y, text, fnt);
+	if (tileRegion_ != NULL) {
+	  renderText((x-tileRegion_->xMin) * width() / (tileRegion_->xMax - tileRegion_->xMin), 
+                     (y-tileRegion_->yMin) * height() / (tileRegion_->yMax - tileRegion_->yMin), text, scaledFont(fnt));
+	} else
+	  renderText(x, y, text, fnt);
 # endif
 
 #endif
@@ -924,7 +920,7 @@ void QGLViewer::drawText(int x, int y, const QString& text, const QFont& fnt)
 /* Similar to drawText(), but the text is handled as a classical 3D object of the scene.
 
 Although useful, this method is deprecated with recent Qt versions. Indeed, Qt renders text as
-pixmaps that cannot be orientated. However, when GLUT is used instead of Qt (when your Qt version is
+pixmaps that cannot be oriented. However, when GLUT is used instead of Qt (when your Qt version is
 lower than 3.1, see drawText() documentation) orientated characters are possible and this method will work.
 
 \p pos and \p normal respectively represent the 3D coordinate of the text and the normal to the text
@@ -1074,10 +1070,16 @@ void QGLViewer::startScreenCoordinatesSystem(bool upward) const
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	if (upward)
-		glOrtho(0, width(), 0, height(), 0.0, -1.0);
+	if (tileRegion_ != NULL)
+	  if (upward)
+	    glOrtho(tileRegion_->xMin, tileRegion_->xMax, tileRegion_->yMin, tileRegion_->yMax, 0.0, -1.0);
+	  else
+	    glOrtho(tileRegion_->xMin, tileRegion_->xMax, tileRegion_->yMax, tileRegion_->yMin, 0.0, -1.0);
 	else
-		glOrtho(0, width(), height(), 0, 0.0, -1.0);
+	  if (upward)
+	    glOrtho(0, width(), 0, height(), 0.0, -1.0);
+	  else
+	    glOrtho(0, width(), height(), 0, 0.0, -1.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -1175,7 +1177,7 @@ button). Use setMouseBinding() to change this. */
 void QGLViewer::select(const QMouseEvent* event)
 {
 	// For those who don't derive but rather rely on the signal-slot mechanism.
-	emit pointSelected(event);
+	Q_EMIT pointSelected(event);
 	select(event->pos());
 }
 
@@ -1184,7 +1186,7 @@ void QGLViewer::select(const QMouseEvent* event)
 It is called when the user clicks on the QGLViewer::SELECT QGLViewer::ClickAction binded button(s)
 (default is Shift + LeftButton).
 
-This method successively calls four other methods:
+This template method successively calls four other methods:
 \code
 beginSelection(point);
 drawWithNames();
@@ -1526,25 +1528,25 @@ if ( ((e->state() & Qt::KeyButtonMask) == myModifiers) &&
 
 // With Qt 4, use instead :
 if ((e->button() == myButton) && (e->modifiers() == myModifiers))
-myMouseBehavior = true;
+  myMouseBehavior = true;
 else
-QGLViewer::mousePressEvent(e);
+  QGLViewer::mousePressEvent(e);
 }
 
 void Viewer::mouseMoveEvent(QMouseEvent *e)
 {
 if (myMouseBehavior)
-// Use e->x() and e->y() as you want...
+  // Use e->x() and e->y() as you want...
 else
-QGLViewer::mouseMoveEvent(e);
+  QGLViewer::mouseMoveEvent(e);
 }
 
 void Viewer::mouseReleaseEvent(QMouseEvent* e)
 {
 if (myMouseBehavior)
-myMouseBehavior = false;
+  myMouseBehavior = false;
 else
-QGLViewer::mouseReleaseEvent(e);
+  QGLViewer::mouseReleaseEvent(e);
 }
 \endcode */
 void QGLViewer::mouseMoveEvent(QMouseEvent* e)
@@ -1582,7 +1584,7 @@ void QGLViewer::mouseMoveEvent(QMouseEvent* e)
 				if (hasMouseTracking())
 				{
 #if QT_VERSION >= 0x040000
-					foreach (MouseGrabber* mg, MouseGrabber::MouseGrabberPool())
+					Q_FOREACH (MouseGrabber* mg, MouseGrabber::MouseGrabberPool())
 					{
 #else
 					QPtrListIterator<MouseGrabber> it(MouseGrabber::MouseGrabberPool());
@@ -1704,7 +1706,7 @@ void QGLViewer::wheelEvent(QWheelEvent* e)
 				camera()->frame()->wheelEvent(e, camera());
 				break;
 			case FRAME :
-				if (manipulatedFrame())
+				if (manipulatedFrame()) {
 					if (manipulatedFrameIsACamera_)
 					{
 						manipulatedFrame()->ManipulatedFrame::startAction(map.action, map.withConstraint);
@@ -1715,7 +1717,8 @@ void QGLViewer::wheelEvent(QWheelEvent* e)
 						manipulatedFrame()->startAction(map.action, map.withConstraint);
 						manipulatedFrame()->wheelEvent(e, camera());
 					}
-					break;
+				}
+				break;
 			}
 		}
 #if QT_VERSION >= 0x030000
@@ -1771,7 +1774,7 @@ void QGLViewer::setStereoDisplay(bool stereo)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		emit stereoChanged(stereo_);
+		Q_EMIT stereoChanged(stereo_);
 
 		if (updateGLOK_)
 			updateGL();
@@ -1826,7 +1829,7 @@ void QGLViewer::setMouseGrabber(MouseGrabber* mouseGrabber)
 	mouseGrabberIsAManipulatedFrame_       = (dynamic_cast<ManipulatedFrame*>(mouseGrabber) != NULL);
 	mouseGrabberIsAManipulatedCameraFrame_ = ((dynamic_cast<ManipulatedCameraFrame*>(mouseGrabber) != NULL) &&
 		(mouseGrabber != camera()->frame()));
-	emit mouseGrabberChanged(mouseGrabber);
+	Q_EMIT mouseGrabberChanged(mouseGrabber);
 }
 
 /*! Sets the mouseGrabberIsEnabled() state. */
@@ -1840,23 +1843,37 @@ void QGLViewer::setMouseGrabberIsEnabled(const qglviewer::MouseGrabber* const mo
 
 static QString keyboardModifiersString(QtKeyboardModifiers m, bool noButton=false)
 {
-	QString result("");
 #if QT_VERSION >= 0x040000
-	if (m & Qt::ControlModifier) result += QGLViewer::tr("Ctrl+", "Modifier key");
-	if (m & Qt::AltModifier) result += QGLViewer::tr("Alt+", "Modifier key");
-	if (m & Qt::ShiftModifier) result += QGLViewer::tr("Shift+", "Modifier key");
-	if (m & Qt::MetaModifier) result += QGLViewer::tr("Meta+", "Modifier key");
-	if (noButton && (m==Qt::NoModifier)) result += QGLViewer::tr("(no button)");
+	if (noButton && (m==Qt::NoModifier)) 
 #else
-	if (m & Qt::ControlButton) result += QGLViewer::tr("Ctrl+", "Modifier key");
-	if (m & Qt::AltButton) result += QGLViewer::tr("Alt+", "Modifier key");
-	if (m & Qt::ShiftButton) result += QGLViewer::tr("Shift+", "Modifier key");
-# if QT_VERSION >= 0x030000
-	if (m & Qt::MetaButton) result += QGLViewer::tr("Meta+", "Modifier key");
-# endif
-	if (noButton && (m==Qt::NoButton)) result += QGLViewer::tr("(no button)");
+	if (noButton && (m==Qt::NoButton))
 #endif
-	return result;
+		return QGLViewer::tr("(no button)");
+	
+	QString keySequence = "";
+
+#if QT_VERSION >= 0x040000
+	if (m & Qt::ControlModifier) keySequence += "Ctrl+";
+	if (m & Qt::AltModifier) keySequence += "Alt+";
+	if (m & Qt::ShiftModifier) keySequence += "Shift+";
+	if (m & Qt::MetaModifier) keySequence += "Meta+";
+#else
+	if (m & Qt::ControlButton) keySequence += "Ctrl+";
+	if (m & Qt::AltButton) keySequence += "Alt+";
+	if (m & Qt::ShiftButton) keySequence += "Shift+";
+# if QT_VERSION >= 0x030000
+	if (m & Qt::MetaButton) keySequence += "Meta+";
+# endif
+#endif
+
+	if (keySequence.length() > 0)
+#if QT_VERSION >= 0x040000
+		return QKeySequence(keySequence+"X").toString(QKeySequence::NativeText).replace("X", "");
+#else
+		return QString(QKeySequence(keySequence+"X")).replace("X", "");
+#endif
+	else
+		return QString();
 }
 
 static QString mouseButtonsString(QtMouseButtons b)
@@ -2007,7 +2024,7 @@ QString QGLViewer::mouseString() const
 
 	QMap<ClickActionPrivate, QString> mouseBinding;
 
-	// User-defined mouse bondings come first.
+	// User-defined mouse bindings come first.
 	for (QMap<ClickActionPrivate, QString>::ConstIterator itm=mouseDescription_.begin(), endm=mouseDescription_.end(); itm!=endm; ++itm)
 		mouseBinding[itm.key()] = itm.value();
 
@@ -2274,25 +2291,35 @@ QString QGLViewer::keyboardString() const
 	return text;
 }
 
-/*! Opens a modal help window that includes three tabs, respectively filled with helpString(),
-keyboardString() and mouseString().
+/*! Displays the help window "About" tab. See help() for details. */
+void QGLViewer::aboutQGLViewer() {
+	help();
+#if QT_VERSION >= 0x040000
+ 	helpWidget()->setCurrentIndex(3);
+#else
+	helpWidget()->setCurrentPage(3);
+#endif
+}
+
+	
+/*! Opens a modal help window that includes four tabs, respectively filled with helpString(),
+keyboardString(), mouseString() and about libQGLViewer.
 
 Rich html-like text can be used (see the QStyleSheet documentation). This method is called when the
-user presses the QGLViewer::HELP (default is 'H').
+user presses the QGLViewer::HELP key (default is 'H').
 
-Use helpWidget() to access to the help widget (to add/remove tabs, change layout...). The "About"
-button (helpWidget()->cornerWidget()) is connected to the aboutQGLViewer() slot.
+You can use helpWidget() to access to the help widget (to add/remove tabs, change layout...).
 
 The helpRequired() signal is emitted. */
 void QGLViewer::help()
 {
-	emit helpRequired();
+	Q_EMIT helpRequired();
 
 	bool resize = false;
 	int width=600;
 	int height=400;
 
-	static QString label[] = {tr("&Help", "Help window tab title"), tr("&Keyboard", "Help window tab title"), tr("&Mouse", "Help window tab title")};
+	static QString label[] = {tr("&Help", "Help window tab title"), tr("&Keyboard", "Help window tab title"), tr("&Mouse", "Help window tab title"), tr("&About", "Help window about title")};
 
 	if (!helpWidget())
 	{
@@ -2304,14 +2331,8 @@ void QGLViewer::help()
 		helpWidget()->setCaption(tr("Help", "Help window title"));
 #endif
 
-#if QT_VERSION >= 0x030200
-		QPushButton* aboutButton = new QPushButton(tr("About", "About button in help window"), helpWidget());
-		connect(aboutButton, SIGNAL(released()), SLOT(aboutQGLViewer()));
-		helpWidget()->setCornerWidget(aboutButton);
-#endif
-
 		resize = true;
-		for (int i=0; i<3; ++i)
+		for (int i=0; i<4; ++i)
 		{
 			QTextEdit* tab = new QTextEdit(NULL);
 #if QT_VERSION >= 0x030000
@@ -2320,18 +2341,25 @@ void QGLViewer::help()
 
 #if QT_VERSION >= 0x040000
 			helpWidget()->insertTab(i, tab, label[i]);
+			if (i==3) {
+#               include "qglviewer-icon.xpm"
+				QPixmap pixmap(qglviewer_icon);
+				tab->document()->addResource(QTextDocument::ImageResource,
+											 QUrl("mydata://qglviewer-icon.xpm"), QVariant(pixmap));
+			}
 #else
 			tab->setTextFormat(Qt::RichText);
 			helpWidget()->insertTab(tab, label[i]);
 #endif
 		}
 	}
-
+	
+	
 #if QT_VERSION < 0x030000
 	const int currentPageIndex = helpWidget()->currentPageIndex();
 #endif
 
-	for (int i=0; i<3; ++i)
+	for (int i=0; i<4; ++i)
 	{
 		QString text;
 		switch (i)
@@ -2339,6 +2367,14 @@ void QGLViewer::help()
 		case 0 : text = helpString();	  break;
 		case 1 : text = keyboardString(); break;
 		case 2 : text = mouseString();	  break;
+		case 3 : text = QString("<center><br><img src=\"mydata://qglviewer-icon.xpm\">") + tr(
+						   "<h1>libQGLViewer</h1>"
+						   "<h3>Version %1</h3><br>"																	  
+						   "A versatile 3D viewer based on OpenGL and Qt<br>"
+						   "Copyright 2002-%2 Gilles Debunne<br>"
+						   "<code>%3</code>").arg(QGLViewerVersionString()).arg("2012").arg("http://www.libqglviewer.com") +
+						   QString("</center>");
+				break;
 		default : break;
 		}
 
@@ -2382,18 +2418,18 @@ viewer default key bindings:
 \code
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
+  // Defines the Alt+R shortcut.
+  if ((e->key() == Qt::Key_R) && (e->modifiers() == Qt::AltModifier))
+  {
+    myResetFunction();
+    updateGL(); // Refresh display
+  }
+  else
+    QGLViewer::keyPressEvent(e);
+}
+
 // With Qt 2 or 3, you would retrieve modifiers keys using :
 // const Qt::ButtonState modifiers = (Qt::ButtonState)(e->state() & Qt::KeyButtonMask);
-
-// Defines the Alt+R shortcut. Call updateGL to refresh display.
-if ((e->key() == Qt::Key_R) && (e->modifiers() == Qt::AltModifier))
-{
-myResetFunction();
-updateGL();
-}
-else
-QGLViewer::keyPressEvent(e);
-}
 \endcode
 When you define a new keyboard shortcut, use setKeyDescription() to provide a short description
 which is displayed in the help() window Keyboard tab. See the <a
@@ -2491,12 +2527,13 @@ void QGLViewer::handleKeyboardAction(KeyboardAction id)
 	case DISPLAY_FPS :		toggleFPSIsDisplayed(); break;
 	case ENABLE_TEXT :		toggleTextIsEnabled(); break;
 	case EXIT_VIEWER :		saveStateToFileForAllViewers(); qApp->closeAllWindows(); break;
-	case SAVE_SCREENSHOT :	saveSnapshot(false, false); break;
+	case SAVE_SCREENSHOT :		saveSnapshot(false, false); break;
 	case FULL_SCREEN :		toggleFullScreen(); break;
-	case STEREO :		toggleStereoDisplay(); break;
+	case STEREO :			toggleStereoDisplay(); break;
 	case ANIMATION :		toggleAnimation(); break;
 	case HELP :			help(); break;
 	case EDIT_CAMERA :		toggleCameraIsEdited(); break;
+	case SNAPSHOT_TO_CLIPBOARD :	snapshotToClipboard(); break;
 	case CAMERA_MODE :
 		toggleCameraMode();
 		displayMessage(cameraIsInRevolveMode()?tr("Camera in revolve around mode", "Feedback message"):tr("Camera in fly mode", "Feedback message"));
@@ -2563,8 +2600,8 @@ void QGLViewer::setShortcut(KeyboardAction action, int key)
 
 /*! Returns the keyboard shortcut associated to a given QGLViewer::KeyboardAction.
 
-Result is an \c int defined using Qt enumerated values, as in \c Qt::Key_Q or \c
-Qt::CTRL+Qt::Key_X. Use Qt::MODIFIER_MASK to separate the key from the state keys. Returns \c 0 if
+Result is an \c int defined using Qt enumerated values, as in \c Qt::Key_Q or
+\c Qt::CTRL + Qt::Key_X. Use Qt::MODIFIER_MASK to separate the key from the state keys. Returns \c 0 if
 the KeyboardAction is disabled (not binded). Set using setShortcut().
 
 If you want to define keyboard shortcuts for custom actions (say, open a scene file), overload
@@ -2874,7 +2911,7 @@ the <a href="../mouse.html">mouse page</a>.
 See the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse</a> example for an illustration.
 
 If no mouse button is specified in \p state, the binding is ignored. If an action was previously
-associated with this \p state, it is silently overwritten (use mouseAction() before to know if the
+associated with this \p state, it is silently overwritten (call mouseAction() before to know if this
 \p state is already binded).
 
 To remove a specific mouse binding, use code like:
@@ -2890,9 +2927,9 @@ void QGLViewer::setMouseBinding(int state, MouseHandler handler, MouseAction act
 		(action == ZOOM_ON_REGION)))
 	{
 #if QT_VERSION >= 0x040000
-		qWarning(QString("Cannot bind " + mouseActionString(action) + " to FRAME").toLatin1().constData());
+		qWarning("Cannot bind %s to FRAME", mouseActionString(action).toLatin1().constData());
 #else
-		qWarning("Cannot bind " + mouseActionString(action) + " to FRAME");
+		qWarning("Cannot bind %s to FRAME", mouseActionString(action).latin1());
 #endif
 	}
 	else
@@ -2937,7 +2974,7 @@ illustration.
 
 The binding is ignored if no mouse button is specified in \p state.
 
-\note If you use Qt version 2 or 3, the \p buttonsBefore is actually a Qt::ButtonState. */
+\note If you use Qt version 2 or 3, the \p buttonsBefore parameter is actually a Qt::ButtonState. */
 void QGLViewer::setMouseBinding(int state, ClickAction action, bool doubleClick, QtMouseButtons buttonsBefore)
 {
 	if ((buttonsBefore != Qt::NoButton) && !doubleClick)
@@ -2979,16 +3016,16 @@ void QGLViewer::setWheelBinding(QtKeyboardModifiers modifiers, MouseHandler hand
 	//#CONNECTION# ManipulatedFrame::wheelEvent and ManipulatedCameraFrame::wheelEvent switches
 	if ((action != ZOOM) && (action != MOVE_FORWARD) && (action != MOVE_BACKWARD) && (action != NO_MOUSE_ACTION))
 #if QT_VERSION >= 0x040000
-		qWarning(QString("Cannot bind " + mouseActionString(action) + " to wheel").toLatin1().constData());
+		qWarning("Cannot bind %s to wheel", mouseActionString(action).toLatin1().constData());
 #else
-		qWarning("Cannot bind " + mouseActionString(action) + " to wheel");
+		qWarning("Cannot bind %s to wheel",  + mouseActionString(action).latin1());
 #endif
 	else
 		if ((handler == FRAME) && (action != ZOOM) && (action != NO_MOUSE_ACTION))
 #if QT_VERSION >= 0x040000
-			qWarning(QString("Cannot bind " + mouseActionString(action) + " to FRAME wheel").toLatin1().constData());
+			qWarning("Cannot bind %s to FRAME wheel", mouseActionString(action).toLatin1().constData());
 #else
-			qWarning("Cannot bind " + mouseActionString(action) + " to FRAME wheel");
+			qWarning("Cannot bind %s to FRAME wheel", mouseActionString(action).latin1());
 #endif
 		else
 		{
@@ -3397,8 +3434,9 @@ void QGLViewer::drawArrow(const Vec& from, const Vec& to, float radius, int nbSu
 {
 	glPushMatrix();
 	glTranslatef(from[0],from[1],from[2]);
-	glMultMatrixd(Quaternion(Vec(0,0,1), to-from).matrix());
-	QGLViewer::drawArrow((to-from).norm(), radius, nbSubdivisions);
+	const Vec dir = to-from;
+	glMultMatrixd(Quaternion(Vec(0,0,1), dir).matrix());
+	QGLViewer::drawArrow(dir.norm(), radius, nbSubdivisions);
 	glPopMatrix();
 }
 
@@ -3518,7 +3556,7 @@ void QGLViewer::drawGrid(float size, int nbSubdivisions)
 void QGLViewer::saveStateToFileForAllViewers()
 {
 #if QT_VERSION >= 0x040000
-	foreach (QGLViewer* viewer, QGLViewer::QGLViewerPool())
+	Q_FOREACH (QGLViewer* viewer, QGLViewer::QGLViewerPool())
 	{
 #else
 	QPtrListIterator<QGLViewer> it(QGLViewer::QGLViewerPool());
@@ -3830,9 +3868,9 @@ void QGLViewer::initFromDOMElement(const QDomElement& element)
 	if (version[0] != '2')
 		// Patches for previous versions should go here when the state file syntax is modified.
 #if QT_VERSION >= 0x040000
-		qWarning(QString("State file created using QGLViewer version "+version+" may not be correctly read."+QGLViewerVersionString()).toLatin1().constData());
+		qWarning("State file created using QGLViewer version %s may not be correctly read.", version.toLatin1().constData());
 #else
-		qWarning("State file created using QGLViewer version "+version+" may not be correctly read.");
+		qWarning("State file created using QGLViewer version %s may not be correctly read.", version.latin1());
 #endif
 
 	QDomElement child=element.firstChild().toElement();
@@ -3883,6 +3921,7 @@ void QGLViewer::initFromDOMElement(const QDomElement& element)
 				int width  = DomUtils::intFromDom(child, "width",  600);
 				int height = DomUtils::intFromDom(child, "height", 400);
 				topLevelWidget()->resize(width, height);
+				camera()->setScreenWidthAndHeight(this->width(), this->height());
 
 				QPoint pos;
 				pos.setX(DomUtils::intFromDom(child, "posX", 0));

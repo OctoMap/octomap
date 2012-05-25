@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -97,7 +97,7 @@ void KeyFrameInterpolator::update()
 	  interpolateAtTime(keyFrame_.last()->time());
 	  stopInterpolation();
 	}
-      emit endReached();
+      Q_EMIT endReached();
     }
   else
     if (interpolationTime() < keyFrame_.first()->time())
@@ -110,7 +110,7 @@ void KeyFrameInterpolator::update()
 	    interpolateAtTime(keyFrame_.first()->time());
 	    stopInterpolation();
 	  }
-	emit endReached();
+	Q_EMIT endReached();
       }
 }
 
@@ -423,7 +423,7 @@ void KeyFrameInterpolator::drawPath(int mask, int nbFrames, float scale)
 	{
 	  glBegin(GL_LINE_STRIP);
 #if QT_VERSION >= 0x040000
-	  foreach (Frame fr, path_)
+	  Q_FOREACH (Frame fr, path_)
 	    glVertex3fv(fr.position());
 #else
 # if QT_VERSION < 0x030000
@@ -443,7 +443,7 @@ void KeyFrameInterpolator::drawPath(int mask, int nbFrames, float scale)
 	    nbFrames = nbSteps;
 	  float goal = 0.0f;
 #if QT_VERSION >= 0x040000
-	  foreach (Frame fr, path_)
+	  Q_FOREACH (Frame fr, path_)
 #else
 # if QT_VERSION < 0x030000
 	  for (int i=0; i < path_.size(); ++i)
@@ -694,7 +694,7 @@ void KeyFrameInterpolator::interpolateAtTime(float time)
 				   currentFrame_[2]->peekNext()->tgQ(), currentFrame_[2]->peekNext()->orientation(), alpha);
   frame()->setPositionAndOrientationWithConstraint(pos, q);
 
-  emit interpolated();
+  Q_EMIT interpolated();
 }
 
 /*! Returns an XML \c QDomElement that represents the KeyFrameInterpolator.
@@ -717,7 +717,7 @@ QDomElement KeyFrameInterpolator::domElement(const QString& name, QDomDocument& 
   QDomElement de = document.createElement(name);
   int count = 0;
 #if QT_VERSION >= 0x040000
-  foreach (KeyFrame* kf, keyFrame_)
+  Q_FOREACH (KeyFrame* kf, keyFrame_)
 #else
   for (KeyFrame* kf = keyFrame_.first(); kf; kf = keyFrame_.next() )
 #endif

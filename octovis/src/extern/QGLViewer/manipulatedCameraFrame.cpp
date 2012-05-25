@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -101,7 +101,7 @@ void ManipulatedCameraFrame::flyUpdate()
 
   // Needs to be out of the switch since ZOOM/fastDraw()/wheelEvent use this callback to trigger a final draw().
   // #CONNECTION# wheelEvent.
-  emit manipulated();
+  Q_EMIT manipulated();
 }
 #endif
 
@@ -350,7 +350,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent* const event, Camera* co
       if (action_ != QGLViewer::ZOOM_ON_REGION)
 	// ZOOM_ON_REGION should not emit manipulated().
 	// prevPos_ is used to draw rectangle feedback.
-	emit manipulated();
+	Q_EMIT manipulated();
     }
 }
 
@@ -386,14 +386,14 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent* const event, Camera* const 
        	const float coef = qMax(fabsf((camera->frame()->coordinatesOf(camera->revolveAroundPoint())).z), 0.2f*camera->sceneRadius());
 	Vec trans(0.0, 0.0, coef * event->delta() * wheelSensitivity() * wheelSensitivityCoef);
 	translate(inverseTransformOf(trans));
-	emit manipulated();
+	Q_EMIT manipulated();
 	break;
       }
     case QGLViewer::MOVE_FORWARD:
     case QGLViewer::MOVE_BACKWARD:
       //#CONNECTION# mouseMoveEvent() MOVE_FORWARD case
       translate(inverseTransformOf(Vec(0.0, 0.0, 0.2*flySpeed()*event->delta())));
-      emit manipulated();
+      Q_EMIT manipulated();
       break;
     default:
       break;

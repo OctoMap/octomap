@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -137,7 +137,7 @@ namespace qglviewer {
     KeyFrameInterpolator(Frame* fr=NULL);
     virtual ~KeyFrameInterpolator();
 
-  signals:
+  Q_SIGNALS:
     /*! This signal is emitted whenever the frame() state is interpolated.
 
     The emission of this signal triggers the synchronous emission of the frame()
@@ -163,7 +163,7 @@ namespace qglviewer {
 
     /*! @name Path creation */
     //@{
-  public slots:
+  public Q_SLOTS:
     void addKeyFrame(const Frame& frame);
     void addKeyFrame(const Frame& frame, float time);
 
@@ -184,7 +184,7 @@ namespace qglviewer {
     Set using setFrame() or with the KeyFrameInterpolator constructor. */
     Frame* frame() const { return frame_; };
 
-  public slots:
+  public Q_SLOTS:
     void setFrame(Frame* const frame);
     //@}
 
@@ -243,7 +243,7 @@ namespace qglviewer {
     \attention The closed path feature is not yet implemented. */
     bool closedPath() const { return closedPath_; };
 #endif
-  public slots:
+  public Q_SLOTS:
     /*! Sets the interpolationTime().
 
     \attention The frame() state is not affected by this method. Use this function to define the
@@ -269,7 +269,7 @@ namespace qglviewer {
     /*! Returns \c true when the interpolation is being performed. Use startInterpolation(),
     stopInterpolation() or toggleInterpolation() to modify this state. */
     bool interpolationIsStarted() const { return interpolationStarted_; };
-  public slots:
+  public Q_SLOTS:
     void startInterpolation(int period = -1);
     void stopInterpolation();
     void resetInterpolation();
@@ -291,7 +291,7 @@ namespace qglviewer {
     virtual void initFromDOMElement(const QDomElement& element);
     //@}
 
-  private slots:
+  private Q_SLOTS:
     virtual void update();
     virtual void invalidateValues() { valuesAreValid_ = false; pathIsValid_ = false; splineCacheIsValid_ = false; };
 

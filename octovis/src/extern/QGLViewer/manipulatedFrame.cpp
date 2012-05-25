@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -196,7 +196,7 @@ void ManipulatedFrame::spin()
 void ManipulatedFrame::spinUpdate()
 {
   spin();
-  emit spun();
+  Q_EMIT spun();
 }
 
 #ifndef DOXYGEN
@@ -419,7 +419,7 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent* const event, Camera* const ca
   if (action_ != QGLViewer::NO_MOUSE_ACTION)
     {
       prevPos_ = event->pos();
-      emit manipulated();
+      Q_EMIT manipulated();
     }
 }
 
@@ -483,7 +483,7 @@ void ManipulatedFrame::wheelEvent(QWheelEvent* const event, Camera* const camera
       if (referenceFrame())
 	trans = referenceFrame()->transformOf(trans);
       translate(trans);
-      emit manipulated();
+      Q_EMIT manipulated();
     }
 
   // #CONNECTION# startAction should always be called before

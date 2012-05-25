@@ -222,9 +222,9 @@ namespace octomap{
     z = frame(0)->position().z;
 
     for (unsigned i = 1; i < m_frames.size(); ++i){
-      x = std::min(x,frame(i)->position().x);
-      y = std::min(y,frame(i)->position().y);
-      z = std::min(z,frame(i)->position().z);
+      x = std::min(x,float(frame(i)->position().x));
+      y = std::min(y,float(frame(i)->position().y));
+      z = std::min(z,float(frame(i)->position().z));
     }
   }
 
@@ -234,9 +234,9 @@ namespace octomap{
     z = frame(0)->position().z;
 
     for (unsigned i = 1; i < m_frames.size(); ++i){
-      x = std::max(x,frame(i)->position().x);
-      y = std::max(y,frame(i)->position().y);
-      z = std::max(z,frame(i)->position().z);
+      x = std::max(x,float(frame(i)->position().x));
+      y = std::max(y,float(frame(i)->position().y));
+      z = std::max(z,float(frame(i)->position().z));
     }
   }
 

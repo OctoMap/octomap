@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -53,7 +53,7 @@ Frame::Frame(const Vec& position, const Quaternion& orientation)
   \attention Signal and slot connections are not copied. */
 Frame& Frame::operator=(const Frame& frame)
 {
-  // Automatic compiler generated version would not emit the modified signals as is done in
+  // Automatic compiler generated version would not emit the modified() signals as is done in
   // setTranslationAndRotation.
   setTranslationAndRotation(frame.translation(), frame.rotation());
   setConstraint(frame.constraint());
@@ -242,7 +242,7 @@ void Frame::setFromMatrix(const GLdouble m[4][4])
 	rot[i][j] = m[j][i] / m[3][3];
     }
   q_.setFromRotationMatrix(rot);
-  emit modified();
+  Q_EMIT modified();
 }
 
 /*! Sets the Frame from an OpenGL matrix representation (rotation in the upper left 3x3 matrix and
@@ -337,7 +337,7 @@ void Frame::translate(Vec& t)
   if (constraint())
     constraint()->constrainTranslation(t, this);
   t_ += t;
-  emit modified();
+  Q_EMIT modified();
 }
 
 /*! Same as translate(const Vec&) but with \c float parameters. */
@@ -379,7 +379,7 @@ void Frame::rotate(Quaternion& q)
     constraint()->constrainRotation(q, this);
   q_ *= q;
   q_.normalize(); // Prevents numerical drift
-  emit modified();
+  Q_EMIT modified();
 }
 
 /*! Same as rotate(Quaternion&) but with \c float Quaternion parameters. */
@@ -421,7 +421,7 @@ void Frame::rotateAroundPoint(Quaternion& rotation, const Vec& point)
   if (constraint())
     constraint()->constrainTranslation(trans, this);
   t_ += trans;
-  emit modified();
+  Q_EMIT modified();
 }
 
 /*! Same as rotateAroundPoint(), but with a \c const \p rotation Quaternion. Note that the actual
@@ -471,7 +471,7 @@ void Frame::setPositionAndOrientation(const Vec& position, const Quaternion& ori
       t_ = position;
       q_ = orientation;
     }
-  emit modified();
+  Q_EMIT modified();
 }
 
 
@@ -484,7 +484,7 @@ void Frame::setTranslationAndRotation(const Vec& translation, const Quaternion& 
 {
   t_ = translation;
   q_ = rotation;
-  emit modified();
+  Q_EMIT modified();
 }
 
 
@@ -604,7 +604,7 @@ void Frame::setTranslationAndRotationWithConstraint(Vec& translation, Quaternion
   translation = this->translation();
   rotation = this->rotation();
 
-  emit modified();
+  Q_EMIT modified();
 }
 
 /*! Same as setPosition(), but \p position is modified so that the potential constraint() of the
@@ -662,7 +662,7 @@ void Frame::setReferenceFrame(const Frame* const refFrame)
       bool identical = (referenceFrame_ == refFrame);
       referenceFrame_ = refFrame;
       if (!identical)
-	emit modified();
+	Q_EMIT modified();
     }
 }
 

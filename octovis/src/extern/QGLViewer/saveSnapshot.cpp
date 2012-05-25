@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -394,17 +394,19 @@ bool QGLViewer::saveImageSnapshot(const QString& fileName)
     imageInterface = new ImageInterface(this, "", true);  // Make the dialog modal
 #endif
 
-  // 1 means never set
-  //if (imageInterface->imgWidth->value() == 1)
-  imageInterface->imgWidth->setValue(width());
-  //if (imageInterface->imgHeight->value() == 1)
-  imageInterface->imgHeight->setValue(height());
+  // 1 means never set : use current window size as default
+  if ((imageInterface->imgWidth->value() == 1) && (imageInterface->imgHeight->value() == 1))
+    {
+      imageInterface->imgWidth->setValue(width());
+      imageInterface->imgHeight->setValue(height());
+    }
+
   imageInterface->imgQuality->setValue(snapshotQuality());
 
   if (imageInterface->exec() == QDialog::Rejected)
     return true;
 
-  // Hide Closed dialog
+  // Hide closed dialog
   qApp->processEvents();
   
   setSnapshotQuality(imageInterface->imgQuality->value());
@@ -460,15 +462,19 @@ bool QGLViewer::saveImageSnapshot(const QString& fileName)
       return false;
     }
 
+  // ProgressDialog disabled since it interfers with the screen grabing mecanism on some platforms. Too bad.
   // ProgressDialog::showProgressDialog(this);
 
-  double deltaX = 2.0 * xMin * subSize.width() / finalSize.width();
-  double deltaY = 2.0 * yMin * subSize.height() / finalSize.height();
+  double scaleX = subSize.width() / static_cast<double>(finalSize.width());
+  double scaleY = subSize.height() / static_cast<double>(finalSize.height());
+
+  double deltaX = 2.0 * xMin * scaleX;
+  double deltaY = 2.0 * yMin * scaleY;
 
   int nbX = finalSize.width() / subSize.width();
   int nbY = finalSize.height() / subSize.height();
 
-  // Extra subimage on the border if needed
+  // Extra subimage on the right/bottom border(s) if needed
   if (nbX * subSize.width() < finalSize.width())
     nbX++;
   if (nbY * subSize.height() < finalSize.height())
@@ -476,11 +482,35 @@ bool QGLViewer::saveImageSnapshot(const QString& fileName)
 
   makeCurrent();
 
+  // tileRegion_ is used by startScreenCoordinatesSystem to appropriately set the local
+  // coordinate system when tiling
+  tileRegion_ = new TileRegion();
+  double tileXMin, tileWidth, tileYMin, tileHeight;
+  if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+    {
+      double tileTotalWidth = newAspectRatio * height();
+      tileXMin = (width() - tileTotalWidth) / 2.0;
+      tileWidth = tileTotalWidth * scaleX;
+      tileYMin = 0.0;
+      tileHeight = height() * scaleY;
+      tileRegion_->textScale = 1.0 / scaleY;
+    }
+  else
+    {
+      double tileTotalHeight = width() / newAspectRatio;
+      tileYMin = (height() - tileTotalHeight) / 2.0;
+      tileHeight = tileTotalHeight * scaleY;
+      tileXMin = 0.0;
+      tileWidth = width() * scaleX;
+      tileRegion_->textScale = 1.0 / scaleX;
+    }
+
   int count=0;
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
       {
 	preDraw();
+
 	// Change projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -489,7 +519,12 @@ bool QGLViewer::saveImageSnapshot(const QString& fileName)
 	else
 	  glOrtho(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - (j+1)*deltaY, yMin - j*deltaY, zNear, zFar);
 	glMatrixMode(GL_MODELVIEW);
-	  
+
+	tileRegion_->xMin = tileXMin + i * tileWidth;
+	tileRegion_->xMax = tileXMin + (i+1) * tileWidth;
+	tileRegion_->yMin = tileYMin + j * tileHeight;
+	tileRegion_->yMax = tileYMin + (j+1) * tileHeight;
+
 	draw();
 	postDraw();
 
@@ -543,6 +578,9 @@ bool QGLViewer::saveImageSnapshot(const QString& fileName)
   // #else
   // setCursor(QCursor(Qt::ArrowCursor));
   // #endif
+
+  delete tileRegion_;
+  tileRegion_ = NULL;
 
   if (imageInterface->whiteBackground->isChecked())
     setBackgroundColor(previousBGColor);
@@ -680,14 +718,7 @@ void QGLViewer::saveSnapshot(bool automatic, bool overwrite)
 #endif
     if (automatic)
 	{
-      // Viewer must be on top of other windows.
-      makeCurrent();
-      raise();
-      // Hack: Qt has problems if the frame buffer is grabbed after QFileDialog is displayed.
-      // We grab the frame buffer before, even if it might be not necessary (vectorial rendering).
-      // The problem could not be reproduced on a simple example to submit a Qt bug.
-      // However, only grabs the backgroundImage in the eponym example. May come from the driver.
-      QImage snapshot = grabFrameBuffer(true);
+      QImage snapshot = frameBufferSnapshot();
 #if QT_VERSION >= 0x040000
     saveOK = snapshot.save(fileInfo.filePath(), snapshotFormat().toLatin1().constData(), snapshotQuality());
 #else
@@ -699,6 +730,18 @@ void QGLViewer::saveSnapshot(bool automatic, bool overwrite)
 
   if (!saveOK)
     QMessageBox::warning(this, "Snapshot problem", "Unable to save snapshot in\n"+fileInfo.filePath());
+}
+
+QImage QGLViewer::frameBufferSnapshot()
+{
+      // Viewer must be on top of other windows.
+      makeCurrent();
+      raise();
+      // Hack: Qt has problems if the frame buffer is grabbed after QFileDialog is displayed.
+      // We grab the frame buffer before, even if it might be not necessary (vectorial rendering).
+      // The problem could not be reproduced on a simple example to submit a Qt bug.
+      // However, only grabs the backgroundImage in the eponym example. May come from the driver.
+      return grabFrameBuffer(true);
 }
 
 /*! Same as saveSnapshot(), except that it uses \p fileName instead of snapshotFileName().
@@ -723,6 +766,15 @@ void QGLViewer::saveSnapshot(const QString& fileName, bool overwrite)
   setSnapshotCounter(previousCounter);
 }
 
+/*! Takes a snapshot of the current display and pastes it to the clipboard.
+
+This action is activated by the KeyboardAction::SNAPSHOT_TO_CLIPBOARD enum, binded to \c Ctrl+C by default.
+*/
+void QGLViewer::snapshotToClipboard()
+{
+	QClipboard *cb = QApplication::clipboard();
+	cb->setImage(frameBufferSnapshot()); 
+}
 
 #if QT_VERSION < 0x030000
 // This code is largely inspired from Qt's method available in version 3

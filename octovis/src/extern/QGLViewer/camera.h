@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -153,7 +153,7 @@ namespace qglviewer {
     void setFromModelViewMatrix(const GLdouble* const modelViewMatrix);
     void setFromProjectionMatrix(const float matrix[12]);
 
-  public slots:
+  public Q_SLOTS:
     /*! Sets the Camera position() (the eye), defined in the world coordinate system. */
     void setPosition(const Vec& pos) { frame()->setPosition(pos); };
     void setOrientation(const Quaternion& q);
@@ -165,7 +165,7 @@ namespace qglviewer {
 
     /*! @name Positioning tools */
     //@{
-  public slots:
+  public Q_SLOTS:
     void lookAt(const Vec& target);
     void showEntireScene();
     void fitSphere(const Vec& center, float radius);
@@ -271,7 +271,7 @@ namespace qglviewer {
     virtual void getOrthoWidthHeight(GLdouble& halfWidth, GLdouble& halfHeight) const;
     void getFrustumPlanesCoefficients(GLdouble coef[6][4]) const;
 
-  public slots:
+  public Q_SLOTS:
     void setType(Type type);
 
     /*! Sets the vertical fieldOfView() of the Camera (in radians).
@@ -338,7 +338,7 @@ namespace qglviewer {
     Vec sceneCenter() const { return sceneCenter_; };
     float distanceToSceneCenter() const;
 
-  public slots:
+  public Q_SLOTS:
     void setSceneRadius(float radius);
     void setSceneCenter(const Vec& center);
     bool setSceneCenterFromPixel(const QPoint& pixel);
@@ -348,7 +348,7 @@ namespace qglviewer {
 
     /*! @name Revolve Around Point */
     //@{
- public slots:
+ public Q_SLOTS:
     void setRevolveAroundPoint(const Vec& rap);
     bool setRevolveAroundPointFromPixel(const QPoint& pixel);
 
@@ -370,7 +370,7 @@ namespace qglviewer {
     This ManipulatedCameraFrame defines its position() and orientation() and can translate mouse
     events into Camera displacement. Set using setFrame(). */
     ManipulatedCameraFrame* frame() const { return frame_; };
-  public slots:
+  public Q_SLOTS:
     void setFrame(ManipulatedCameraFrame* const mcf);
     //@}
 
@@ -380,7 +380,7 @@ namespace qglviewer {
    public:
     KeyFrameInterpolator* keyFrameInterpolator(int i) const;
 
-public slots:
+public Q_SLOTS:
     void setKeyFrameInterpolator(int i, KeyFrameInterpolator* const kfi);
 
     virtual void addKeyFrameToPath(int i);
@@ -464,9 +464,9 @@ public slots:
     This value is only meaningful when the MouseAction bindings is QGLViewer::MOVE_FORWARD or
     QGLViewer::MOVE_BACKWARD.
 
-    Set to 0.5% of the sceneRadius() by setSceneRadius(). See also setFlySpeed(). */
+    Set to 1% of the sceneRadius() by setSceneRadius(). See also setFlySpeed(). */
     float flySpeed() const { return frame()->flySpeed(); };
-  public slots:
+  public Q_SLOTS:
     /*! Sets the Camera flySpeed().
 
     \attention This value is modified by setSceneRadius(). */
@@ -485,39 +485,23 @@ public slots:
 
     /*! Returns the physical distance between the user's eyes and the screen (in meters).
 
-    Default value is 0.5m.
-
-    Used by loadModelViewMatrixStereo() and loadProjectionMatrixStereo() for stereo display. Value
-    is set using setPhysicalDistanceToScreen().
-
-    physicalDistanceToScreen() and focusDistance() represent the same distance. The first one is
+    physicalDistanceToScreen() and focusDistance() represent the same distance. The former is
     expressed in physical real world units, while the latter is expressed in OpenGL virtual world
-    units. Use their ratio to convert distances between these worlds.
+    units.
 
-    Use the following code to detect a reality center configuration (using its screen aspect ratio)
-    and to automatically set physical distances accordingly:
-    \code
-    QDesktopWidget screen;
-    if (fabs((float)screen.width() / (float)screen.height()) > 2.0)
-    {
-      camera()->setPhysicalDistanceToScreen(4.0);
-      camera()->setPhysicalScreenWidth(10.0);
-    }
-    \endcode */
-    float physicalDistanceToScreen() const { return physicalDistanceToScreen_; };
+	This is a helper function. It simply returns physicalScreenWidth() / tan(horizontalFieldOfView() / 2.0); */
+    float physicalDistanceToScreen() const { return physicalScreenWidth() / tan(horizontalFieldOfView() / 2.0); };
 
-    /*! Returns the physical screen width, in meters. Default value is 0.4m (average monitor).
+    /*! Returns the physical screen width, in meters. Default value is 0.5m (average monitor width).
 
     Used for stereo display only (see loadModelViewMatrixStereo() and loadProjectionMatrixStereo()).
-    Set using setPhysicalScreenWidth().
-
-    See physicalDistanceToScreen() for reality center automatic configuration. */
+    Set using setPhysicalScreenWidth(). */
     float physicalScreenWidth() const { return physicalScreenWidth_; };
 
     /*! Returns the focus distance used by stereo display, expressed in OpenGL units.
 
     This is the distance in the virtual world between the Camera and the plane where the horizontal
-    stereo parallax is null (the stereo left and right images are superimposed).
+    stereo parallax is null (the stereo left and right cameras' lines of sigth cross at this distance).
 
     This distance is the virtual world equivalent of the real-world physicalDistanceToScreen().
 
@@ -525,12 +509,14 @@ public slots:
     setFieldOfView(). When one of these values is modified, focusDistance() is set to sceneRadius()
     / tan(fieldOfView()/2), which provides good results. */
     float focusDistance() const { return focusDistance_; };
-  public slots:
+  public Q_SLOTS:
     /*! Sets the IODistance(). */
     void setIODistance(float distance) { IODistance_ = distance; };
 
-    /*! Sets the physicalDistanceToScreen(). */
-    void setPhysicalDistanceToScreen(float distance) { physicalDistanceToScreen_ = distance; };
+#ifndef DOXYGEN
+	/*! This method is deprecated. Use setPhysicalScreenWidth() instead. */
+	void setPhysicalDistanceToScreen(float distance) { Q_UNUSED(distance); qWarning("setPhysicalDistanceToScreen is deprecated, use setPhysicalScreenWidth instead"); };
+#endif
 
     /*! Sets the physical screen (monitor or projected wall) width (in meters). */
     void setPhysicalScreenWidth(float width) { physicalScreenWidth_ = width; };
@@ -544,7 +530,7 @@ public slots:
     //@{
   public:
     virtual QDomElement domElement(const QString& name, QDomDocument& document) const;
-  public slots:
+  public Q_SLOTS:
     virtual void initFromDOMElement(const QDomElement& element);
     //@}
 
@@ -568,7 +554,6 @@ public slots:
     // S t e r e o   p a r a m e t e r s
     float IODistance_;		     // inter-ocular distance, in meters
     float focusDistance_;	     // in scene units
-    float physicalDistanceToScreen_; // in meters
     float physicalScreenWidth_;	     // in meters
 
     // P o i n t s   o f   V i e w s   a n d   K e y F r a m e s

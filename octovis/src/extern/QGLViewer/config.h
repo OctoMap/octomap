@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2008 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.1.
+ This file is part of the QGLViewer library version 2.3.17.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -28,7 +28,7 @@
 #ifndef QGLVIEWER_CONFIG_H
 #define QGLVIEWER_CONFIG_H
 
-#define QGLVIEWER_VERSION 0x020301
+#define QGLVIEWER_VERSION 0x020311
 
 // Needed for Qt < 4 (?)
 #ifndef QT_CLEAN_NAMESPACE
@@ -51,10 +51,18 @@
 #  define M_PI 3.14159265358979323846f
 # endif
 # ifndef QGLVIEWER_STATIC
-#  ifdef CREATE_QGLVIEWER_DLL
-#   define QGLVIEWER_EXPORT  __declspec(dllexport)
-#  else
-#   define QGLVIEWER_EXPORT  __declspec(dllimport)
+#   ifdef CREATE_QGLVIEWER_DLL
+#     if QT_VERSION >= 0x040500
+#       define QGLVIEWER_EXPORT Q_DECL_EXPORT
+#     else
+#       define QGLVIEWER_EXPORT  __declspec(dllexport)
+#     endif
+#   else
+#     if QT_VERSION >= 0x040500
+#       define QGLVIEWER_EXPORT Q_DECL_IMPORT
+#     else
+#       define QGLVIEWER_EXPORT  __declspec(dllimport)
+#     endif
 #  endif
 # endif
 # ifndef __MINGW32__
@@ -73,6 +81,13 @@
 # include <QGLWidget>
 #else
 # include <qgl.h>
+#endif
+
+// GLU was removed from Qt in version 4.8 
+#ifdef Q_OS_MAC
+# include <OpenGL/glu.h>
+#else
+# include <GL/glu.h>
 #endif
 
 // Old Qt versions require GLUT for text rendering
@@ -98,6 +113,13 @@
 # define qMax(a,b) QMAX(a,b)
 # include <qptrlist.h>
 # include <qvaluevector.h>
+#endif
+
+// Support for the no_keywords CONFIG option on previous Qt versions
+#if QT_VERSION < 0x040400
+# define Q_SLOTS slots
+# define Q_SIGNALS signals
+# define Q_EMIT emit
 #endif
 
 // For deprecated methods
