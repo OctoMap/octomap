@@ -736,7 +736,7 @@ namespace octomap {
 
     // check if first line valid:
     std::string line;
-    int streampos = s.tellg();
+    std::istream::pos_type streampos = s.tellg();
     std::getline(s, line);
     unsigned size;
     double res;

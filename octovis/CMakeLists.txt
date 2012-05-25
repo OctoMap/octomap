@@ -126,6 +126,7 @@ IF(BUILD_VIEWER)
   
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
+	MESSAGE ( "This will not affect the compilation of the stand-alone library and tools (octomap)")
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
 ENDIF()
 

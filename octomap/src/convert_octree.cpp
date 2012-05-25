@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     exit(-1);
   }
 
-  int streampos = file.tellg();
+  std::istream::pos_type streampos = file.tellg();
   AbstractOcTree* tree;
 
   // reading binary:

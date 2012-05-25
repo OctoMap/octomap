@@ -721,13 +721,13 @@ namespace octomap {
     /// converts from an addressing key at the lowest tree level into a coordinate
     /// corresponding to the key's center
     inline point3d keyToCoord(const OcTreeKey& key) const{
-      return point3d(keyToCoord(key[0]), keyToCoord(key[1]), keyToCoord(key[2]));
+      return point3d(float(keyToCoord(key[0])), float(keyToCoord(key[1])), float(keyToCoord(key[2])));
     }
 
     /// converts from an addressing key at a given depth into a coordinate
     /// corresponding to the key's center
     inline point3d keyToCoord(const OcTreeKey& key, unsigned depth) const{
-      return point3d(keyToCoord(key[0], depth), keyToCoord(key[1], depth), keyToCoord(key[2], depth));
+      return point3d(float(keyToCoord(key[0], depth)), float(keyToCoord(key[1], depth)), float(keyToCoord(key[2], depth)));
     }
 
     /// @deprecated, replaced with coordToKeyChecked()
