@@ -27,6 +27,12 @@
 #ifndef SCENEOBJECT_H_
 #define SCENEOBJECT_H_
 
+// fix Windows includes
+#include <qglobal.h>
+#ifdef Q_WS_WIN
+  #include <QtCore/qt_windows.h>
+#endif
+
 #ifdef Q_WS_MAC
   #include <OpenGL/glu.h>
 #else
