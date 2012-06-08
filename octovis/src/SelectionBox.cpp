@@ -73,7 +73,6 @@ namespace octomap{
   SelectionBox::~SelectionBox(){
 	  delete m_frames[0];
 	  delete m_frames[1];
-
   }
 
   void SelectionBox::draw(bool withNames){

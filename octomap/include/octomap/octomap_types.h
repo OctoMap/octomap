@@ -76,7 +76,9 @@ namespace octomap {
   #else
     // no debug output if not in debug mode:
     #ifdef NDEBUG
-      #define OCTOMAP_NODEBUGOUT
+      #ifndef OCTOMAP_NODEBUGOUT
+        #define OCTOMAP_NODEBUGOUT
+      #endif
     #endif
 
     #ifdef OCTOMAP_NODEBUGOUT
