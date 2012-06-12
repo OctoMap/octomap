@@ -1,0 +1,23 @@
+<stack>
+  <name>octovis</name>
+  <version>1.4.2</version>
+  <description brief="Visualization for OctoMap">octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See http://octomap.sf.net for details.</description>
+  <author>Kai M. Wurm</author>
+  <author>Armin Hornung</author>
+  <maintainer email="hornunga@informatik.uni-freiburg.de">Armin Hornung</maintainer>
+  <license>GPLv2</license>
+  <copyright>Copyright (c) 2009-2012, K. M. Wurm, A. Hornung, University of Freiburg</copyright>
+
+  <url>http://octomap.sf.net</url>
+
+  <build_depends>cmake</build_depends>
+  <build_depends>octomap</build_depends>
+  <build_depends>libqglviewer-qt4-dev</build_depends>
+  <build_depends>libqt4-dev</build_depends>
+  <build_depends>libqt4-opengl-dev</build_depends>
+  
+  <depends>octomap</depends>
+  <depends>libqglviewer-qt4</depends>
+  <depends>libqt4</depends>
+  <depends>libqt4-opengl</depends>
+</stack>

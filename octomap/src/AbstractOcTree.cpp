@@ -3,13 +3,13 @@
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2011
+* @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2012
 * @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
 
 /*
- * Copyright (c) 2009-2011, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2009-2012, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
