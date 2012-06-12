@@ -12,10 +12,7 @@ S. Osswald, University of Freiburg
 R. Schmitt, University of Freiburg
 R. Bogdan Rusu, Willow Garage Inc.
 
-License: 
-  * New BSD License (see LICENSE.txt in /octomap)
-  * The viewer "octovis" and all related libraries are licensed under the GPL 
-    (see LICENSE.txt in /octovis).
+License for octomap: New BSD License (see LICENSE.txt)
 
 
 REQUIREMENTS
@@ -35,19 +32,15 @@ REQUIREMENTS
 
  Hint: you can install all dependencies on Ubuntu by running:
 
-       sudo apt-get install cmake doxygen libqt4-dev libqt4-opengl-dev
+    sudo apt-get install cmake doxygen libqt4-dev libqt4-opengl-dev libqglviewer-qt4-dev
        
-If you are running Ubuntu 9.10 or later, you can use its supplied
-version of qglviewer, otherwise it will be compiled from source. 
-To install it:
 
-       sudo apt-get install libqglviewer-qt4-dev
-
-
+       
 INSTALLATION
 ############################
-
- * See http://www.ros.org/wiki/octomap if you want to use OctoMap in ROS! *
+ 
+ * See http://www.ros.org/wiki/octomap if you want to use OctoMap in ROS! There  *
+ * are pre-compiled packages for octomap, octovis, and ROS integration available *
 
 Build the complete project by changing into the "build" directory 
 and running cmake:
@@ -68,6 +61,9 @@ in "build" or a different directory (e.g. "build-debug").
 
 You can install the library by running "make install", though it 
 is not necessary. Be sure to adjust CMAKE_INSTALL_PREFIX before.
+
+The target "make test" executes the unit tests for the octomap library,
+if you are interested in verifying the functionality on your machine.
 
 
 DOCUMENTATION
@@ -119,8 +115,8 @@ link_libraries(${OCTOMAP_LIBRARIES})
 
 In addition to this cmake-module we also provide a pkgconfig-file.
 
-For convenience, there is a minimal project included in
-the file example-project.tgz
+For convenience, there is a minimal project included in the file 
+example-project.tgz
 
 
 ECLIPSE PROJECT FILES

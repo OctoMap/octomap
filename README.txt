@@ -21,8 +21,12 @@ OVERVIEW
 
 OctoMap now consists of two separate libraries each in its own subfolder:
 octomap, the actual library, and octovis, our visualization libraries and tools.
+This README provides an overview of both, for details on compiling each please 
+see "octomap/README.txt" and "octovis/README.txt" respectively.
+See http://www.ros.org/wiki/octomap and http://www.ros.org/wiki/octovis if you 
+want to use OctoMap in ROS; there are pre-compiled packages available.
 
-You can build each separately with CMake by running it from the subdirectories, 
+You can build each library separately with CMake by running it from the subdirectories, 
 or build octomap and octovis together from this top-level directory. E.g., to
 only compile the library, run:
 
@@ -43,5 +47,8 @@ top-level directory where you started the build.
 
 See "octomap/README.txt" and "octovis/README.txt" for 
 details about compilation and hints on compiling under Windows.
+
+Report bugs and request features in our tracker:
+https://sourceforge.net/apps/trac/octomap    
 
 A list of changes is available in "octomap/CHANGELOG.txt"

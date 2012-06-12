@@ -1,9 +1,15 @@
+Octomap
+- A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
-Octovis is distributed under the GPL license (see "LICENSE.txt").
+Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2012.
+http://octomap.sourceforge.net/
 
-It is based on qglviewer which also is distributed under the GPL license
-(see "octovis/src/extern/QGLViewer/LICENSE" and the author's exception 
-   "octovis/src/extern/QGLViewer/GPL_EXCEPTION")
+Octovis is a visualization tool and library for OctoMap.
+It is distributed under the GPL license (see "LICENSE.txt").
+
+Octivos is based on QGLViewer,distributed under the GPL license (see 
+"octovis/src/extern/QGLViewer/LICENSE" and the author's exception 
+"octovis/src/extern/QGLViewer/GPL_EXCEPTION")
 
 
 LINUX
@@ -93,7 +99,23 @@ These steps will create a solution file for the library and the viewer:
 * Press "Generate", select the appropriate generator, e. g. "Visual Studio 10".
 * This generates a solution file octomap-distribution.sln
   Load this file and build the project.
-
+  
+Some more hints on compiling with Visual Studio (these may be necessary depending
+on the VS version and CMake version):
+* When compiling QGLViewer, modify the output path in "Properties->Linker->
+  General->Output". Remove the "debug" and "release" prefix so the libs are 
+  installed in the base dir.
+* For the octivis-shared target, add the Qt lib path ("C:\path\to\Qt\4.7.2\lib") 
+  to "Properties->Linker->General->Additional Library Directories", and add 
+  the following Qt libs as dependencies in "Properties->Linker->Input->
+  Additional Dependencies": QtCore4.lib, QtOpenGL4.lib, QtGui4.lib and 
+  QtXml4.lib (and the debug versions of them to the Debug configuration)
+* If the debug version of octovis throws this error: "QWidget: Must construct a 
+  QApplication before a QPaintDevice", it is linking to the release version of 
+  QGLViewer. Change the library dependency of octovis and octovis-shared to the 
+  debug version QGLViewerd2.lib in "Properties->Linker->Input->Additional 
+  Dependencies".
+  
 
 When executing octovis.exe, Windows needs to find the following 
 libraries, so make sure they are on the PATH or in the same 
