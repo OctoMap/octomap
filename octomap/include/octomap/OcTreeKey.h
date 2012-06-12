@@ -167,6 +167,22 @@ namespace octomap {
     return pos;
   }
 
+  /**
+   * Generates a unique key for all keys on a certain level of the tree
+   *
+   * @param level from the bottom (= tree_depth - depth of key)
+   * @param key input indexing key (at lowest resolution / level)
+   * @return key corresponding to the input key at the given level
+   */
+  inline OcTreeKey computeIndexKey(unsigned short int level, const OcTreeKey& key) {
+    unsigned short int mask = 65535 << level;
+    OcTreeKey result = key;
+    result[0] &= mask;
+    result[1] &= mask;
+    result[2] &= mask;
+    return result;
+  }
+
 } // namespace
 
 #endif

@@ -337,12 +337,7 @@ namespace octomap {
 
       /// @return the OcTreeKey of the current node, for nodes with depth != maxDepth
       OcTreeKey getIndexKey() const {
-      	unsigned short int mask = 65535 << (16 - stack.top().depth);
-      	OcTreeKey result = stack.top().key;
-      	result[0] &= mask;
-      	result[1] &= mask;
-      	result[2] &= mask;
-      	return result;
+        return computeIndexKey(tree_depth - stack.top().depth, stack.top().key);
       }
 
 
