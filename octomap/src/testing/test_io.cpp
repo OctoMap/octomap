@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   std::string filenameColor = "test_io_color_file.ot";
   ColorOcTree colorTree(res);
   EXPECT_EQ(colorTree.getTreeType(), "ColorOcTree");
-  ColorOcTreeNode* colorNode = colorTree.updateNode(point3d(0.0, 0.0, 0.0), false);
+  ColorOcTreeNode* colorNode = colorTree.updateNode(point3d(0.0, 0.0, 0.0), true);
   ColorOcTreeNode::Color color_red(255, 0, 0);
   colorNode->setColor(color_red);
   colorTree.setNodeColor(0.0, 0.0, 0.0, 255, 0, 0);
