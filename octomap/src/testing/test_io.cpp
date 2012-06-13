@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string>
 
-#include <octomap/octomap.h>
+#include <octomap/OcTree.h>
+#include <octomap/ColorOcTree.h>
 #include <octomap/math/Utils.h>
 #include "testing.h"
  
@@ -50,6 +51,30 @@ int main(int argc, char** argv) {
     readTreeOt->updateNode(coord, true);
 
   EXPECT_FALSE(tree == *readTreeOt);
+
+  // simple test for tree headers (color)
+  double res = 0.02;
+  std::string filenameColor = "test_io_color_file.ot";
+  ColorOcTree colorTree(res);
+  EXPECT_EQ(colorTree.getTreeType(), "ColorOcTree");
+  ColorOcTreeNode* colorNode = colorTree.updateNode(point3d(0.0, 0.0, 0.0), false);
+  ColorOcTreeNode::Color color_red(255, 0, 0);
+  colorNode->setColor(color_red);
+  colorTree.setNodeColor(0.0, 0.0, 0.0, 255, 0, 0);
+  colorTree.updateNode(point3d(0.1, 0.1, 0.1), true);
+  colorTree.setNodeColor(0.1, 0.1, 0.1, 0, 0, 255);
+
+  EXPECT_TRUE(colorTree.write(filenameColor));
+  readTreeAbstract = AbstractOcTree::read(filenameColor);
+  EXPECT_TRUE(readTreeAbstract);
+  EXPECT_EQ(colorTree.getTreeType(),  readTreeAbstract->getTreeType());
+  ColorOcTree* readColorTree = dynamic_cast<ColorOcTree*>(readTreeAbstract);
+  EXPECT_TRUE(readColorTree);
+  EXPECT_TRUE(colorTree == *readColorTree);
+  colorNode = colorTree.search(0.0, 0.0, 0.0);
+  EXPECT_TRUE(colorNode);
+  EXPECT_EQ(colorNode->getColor(), color_red);
+
 
 
   std::cerr << "Test successful.\n";
