@@ -45,16 +45,38 @@ namespace octomap {
 
 
   template <class NODE>
-  OcTreeBase<NODE>::OcTreeBase(double _resolution) :
+  OcTreeBase<NODE>::OcTreeBase(double resolution) :
     itsRoot(NULL), tree_depth(16), tree_max_val(32768), 
-    resolution(_resolution), tree_size(0) {
+    resolution(resolution), tree_size(0)
+  {
     
-    this->setResolution(_resolution);
+    this->setResolution(resolution);
     for (unsigned i = 0; i< 3; i++){
       maxValue[i] = -(std::numeric_limits<double>::max( ));
       minValue[i] = std::numeric_limits<double>::max( );
     }
     sizeChanged = true;
+
+    // init root node:
+    itsRoot = new NODE();
+    tree_size++;
+  }
+
+  template <class NODE>
+  OcTreeBase<NODE>::OcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val) :
+    itsRoot(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
+    resolution(resolution), tree_size(0)
+  {
+    this->setResolution(resolution);
+    for (unsigned i = 0; i< 3; i++){
+      maxValue[i] = -(std::numeric_limits<double>::max( ));
+      minValue[i] = std::numeric_limits<double>::max( );
+    }
+    sizeChanged = true;
+
+    // init root node:
+    itsRoot = new NODE();
+    tree_size++;
   }
 
 

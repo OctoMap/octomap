@@ -42,8 +42,8 @@
 namespace octomap {
 
   template <class NODE>
-  OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double _resolution)
-    : OcTreeBase<NODE>(_resolution), use_bbx_limit(false), use_change_detection(false) {
+  OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution)
+    : OcTreeBase<NODE>(resolution), use_bbx_limit(false), use_change_detection(false) {
     // some sane default values:
     setOccupancyThres(0.5);   // = 0.0 in logodds
     setProbHit(0.7);          // = 0.85 in logodds
@@ -52,6 +52,18 @@ namespace octomap {
     setClampingThresMin(0.1192); // = -2 in log odds
     setClampingThresMax(0.971); // = 3.5 in log odds
   }
+  
+  template <class NODE>
+  OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val)
+    : OcTreeBase<NODE>(resolution, tree_depth, tree_max_val), use_bbx_limit(false), use_change_detection(false) {
+    // some sane default values:
+    setOccupancyThres(0.5);   // = 0.0 in logodds
+    setProbHit(0.7);          // = 0.85 in logodds
+    setProbMiss(0.4);         // = -0.4 in logodds
+
+    setClampingThresMin(0.1192); // = -2 in log odds
+    setClampingThresMax(0.971); // = 3.5 in log odds
+  }  
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::~OccupancyOcTreeBase(){

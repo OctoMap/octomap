@@ -68,8 +68,8 @@ namespace octomap {
   class OccupancyOcTreeBase : public OcTreeBase<NODE> {
 
   public:
-
-    OccupancyOcTreeBase(double _resolution);
+    /// Default constructor, sets resolution of leafs
+    OccupancyOcTreeBase(double resolution);
     virtual ~OccupancyOcTreeBase();
 
      /**
@@ -460,6 +460,9 @@ namespace octomap {
     virtual void nodeToMaxLikelihood(NODE& occupancyNode) const;
 
   protected:
+    /// Constructor to enable derived classes to change tree constants.
+    /// This usually requires a re-implementation of some core tree-traversal functions as well!
+    OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
 
     /**
      * Traces a ray from origin to end and updates all voxels on the

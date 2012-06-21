@@ -138,12 +138,6 @@ namespace octomap {
 
   // tree implementation  --------------------------------------
 
-  ColorOcTree::ColorOcTree(double _resolution)
-    : OccupancyOcTreeBase<ColorOcTreeNode> (_resolution)  {
-    itsRoot = new ColorOcTreeNode();
-    tree_size++;
-  }
-
   ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key, 
                                              const unsigned char& r, 
                                              const unsigned char& g, 

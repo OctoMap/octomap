@@ -77,13 +77,6 @@ namespace octomap {
 
   /// implementation of CountingOcTree  --------------------------------------
 
-  CountingOcTree::CountingOcTree(double _resolution)
-    : OcTreeBase<CountingOcTreeNode>(_resolution)   {
-
-    itsRoot = new CountingOcTreeNode();
-    tree_size++;
-  }
-
 
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 

@@ -42,17 +42,8 @@
 
 namespace octomap {
 
-  OcTree::OcTree(double _resolution)
-    : OccupancyOcTreeBase<OcTreeNode> (_resolution)  {
-    itsRoot = new OcTreeNode();
-    tree_size++;
-  }
-
   OcTree::OcTree(std::string _filename)
     : OccupancyOcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file
-    itsRoot = new OcTreeNode();
-    tree_size++;
-
     readBinary(_filename);
   }
 

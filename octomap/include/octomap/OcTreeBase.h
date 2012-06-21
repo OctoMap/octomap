@@ -76,7 +76,7 @@ namespace octomap {
     /// Make the templated NODE type available from the outside
     typedef NODE NodeType;
     
-    OcTreeBase(double _resolution);
+    OcTreeBase(double resolution);
     virtual ~OcTreeBase();
 
     /// virtual constructor: creates a new object of same type
@@ -787,6 +787,9 @@ namespace octomap {
     }
 
  protected:
+    /// Constructor to enable derived classes to change tree constants.
+    /// This usually requires a re-implementation of some core tree-traversal functions as well!
+    OcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();

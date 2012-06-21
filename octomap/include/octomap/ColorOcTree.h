@@ -114,8 +114,9 @@ namespace octomap {
   class ColorOcTree : public OccupancyOcTreeBase <ColorOcTreeNode> {
 
   public:
-    ColorOcTree(double _resolution);
-
+    /// Default constructor, sets resolution of leafs
+    ColorOcTree(double resolution) : OccupancyOcTreeBase(resolution) {};  
+      
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)
     ColorOcTree* create() const {return new ColorOcTree(resolution); }

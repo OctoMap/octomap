@@ -94,9 +94,8 @@ namespace octomap {
   class CountingOcTree : public OcTreeBase <CountingOcTreeNode> {
 
   public:
-
-    CountingOcTree(double resolution);
-
+    /// Default constructor, sets resolution of leafs
+    CountingOcTree(double resolution) : OcTreeBase(resolution) {};    
     virtual CountingOcTreeNode* updateNode(const point3d& value);
     CountingOcTreeNode* updateNode(const OcTreeKey& k);
     void getCentersMinHits(point3d_list& node_centers, unsigned int min_hits) const;

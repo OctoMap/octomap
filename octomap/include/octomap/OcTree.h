@@ -54,12 +54,8 @@ namespace octomap {
   class OcTree : public OccupancyOcTreeBase <OcTreeNode> {
 
   public:
-
-    /**
-     * Creates a new (empty) OcTree of a given resolution
-     * @param _resolution
-     */
-    OcTree(double _resolution);
+    /// Default constructor, sets resolution of leafs
+    OcTree(double resolution) : OccupancyOcTreeBase(resolution) {};
 
     /**
      * Reads an OcTree from a binary file 
