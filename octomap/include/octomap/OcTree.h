@@ -55,7 +55,7 @@ namespace octomap {
 
   public:
     /// Default constructor, sets resolution of leafs
-    OcTree(double resolution) : OccupancyOcTreeBase(resolution) {};
+    OcTree(double resolution) : OccupancyOcTreeBase<OcTreeNode>(resolution) {};
 
     /**
      * Reads an OcTree from a binary file 

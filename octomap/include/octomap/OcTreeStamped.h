@@ -86,7 +86,7 @@ namespace octomap {
 
   public:
     /// Default constructor, sets resolution of leafs
-    OcTreeStamped(double resolution) : OccupancyOcTreeBase(resolution) {};    
+    OcTreeStamped(double resolution) : OccupancyOcTreeBase<OcTreeNodeStamped>(resolution) {};    
       
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)
