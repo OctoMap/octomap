@@ -130,6 +130,18 @@ namespace octomap {
     }
   }
 
+  template <class NODE>
+  inline unsigned short int OcTreeBase<NODE>::coordToKey(double coordinate, unsigned depth) const{
+    assert (depth <= tree_depth);
+    int keyval = ((int) floor(resolution_factor * coordinate));
+
+    unsigned int diff = tree_depth - depth;
+    if(!diff) // same as coordToKey without depth
+      return keyval + tree_max_val;
+    else // shift right and left => erase last bits. Then add offset.
+      return ((keyval >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
+  }
+
 
   template <class NODE>
   bool OcTreeBase<NODE>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
@@ -145,6 +157,22 @@ namespace octomap {
     return false;
   }
 
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& keyval) const {
+
+    // scale to resolution and shift center for tree_max_val
+    int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
+
+    // keyval within range of tree?
+    if (( scaled_coord >= 0) && (((unsigned int) scaled_coord) < (2*tree_max_val))) {
+      keyval = scaled_coord;
+      keyval = adjustKeyAtDepth(keyval, depth);
+      return true;
+    }
+    return false;
+  }
+
   template <class NODE>
   bool OcTreeBase<NODE>::coordToKeyChecked(const point3d& point, OcTreeKey& key) const{
 
@@ -152,6 +180,25 @@ namespace octomap {
       if (!coordToKeyChecked( point(i), key[i])) return false;
     }
     return true;
+  }
+
+  template <class NODE>
+  bool OcTreeBase<NODE>::coordToKeyChecked(const point3d& point, unsigned depth, OcTreeKey& key) const{
+
+    for (unsigned int i=0;i<3;i++) {
+      if (!coordToKeyChecked( point(i), depth, key[i])) return false;
+    }
+    return true;
+  }
+
+  template <class NODE>
+  unsigned short int OcTreeBase<NODE>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
+    unsigned int diff = tree_depth - depth;
+
+    if(diff == 0)
+      return key;
+    else
+      return (((key-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
   }
 
   template <class NODE>
@@ -193,7 +240,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::search(const point3d& value) const {
+  NODE* OcTreeBase<NODE>::search(const point3d& value, unsigned int depth) const {
 
     // Search is a variant of insert which aborts if
     // it had to insert nodes
@@ -204,26 +251,38 @@ namespace octomap {
       return NULL;
     }
     else {
-      return this->search(key);
+      return this->search(key, depth);
     }
 
   }
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::search(float x, float y, float z) const {
-    return this->search(point3d(x,y,z));
+  NODE* OcTreeBase<NODE>::search(float x, float y, float z, unsigned int depth) const {
+    return this->search(point3d(x,y,z), depth);
   }
 
 
   template <class NODE>
-  NODE* OcTreeBase<NODE>::search (const OcTreeKey& key) const {
+  NODE* OcTreeBase<NODE>::search (const OcTreeKey& key, unsigned int depth) const {
+    assert(depth <= tree_depth);
+
+    if (depth == 0)
+      depth = tree_depth;
+
+
+
+    // generate appropriate key_at_depth for queried depth
+    OcTreeKey key_at_depth = key;
+    if (depth != tree_depth)
+      key_at_depth = adjustKeyAtDepth(key, depth);
 
     NODE* curNode (itsRoot);
 
-    // follow nodes down to last level...
-    for (int i=(tree_depth-1); i>=0; i--) {
+    unsigned int diff = tree_depth - depth;
 
-      unsigned int pos = computeChildIdx(key, i);
+    // follow nodes down to requested level (for diff = 0 it's the last level)
+    for (unsigned i=(tree_depth-1); i>=diff; --i) {
+      unsigned int pos = computeChildIdx(key_at_depth, i);
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
         curNode = static_cast<NODE*>( curNode->getChild(pos) );

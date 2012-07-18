@@ -102,22 +102,22 @@ namespace octomap {
     inline NODE* getRoot() const { return itsRoot; }
 
     /** 
-     *  Search node given a 3d point
+     *  Search node at specified depth given a 3d point (depth=0: search full tree depth)
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* search(float x, float y, float z) const;
+    NODE* search(float x, float y, float z, unsigned int depth = 0) const;
 
     /**
-     *  Search node given a 3d point
+     *  Search node at specified depth given a 3d point (depth=0: search full tree depth)
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* search(const point3d& value) const;
+    NODE* search(const point3d& value, unsigned int depth = 0) const;
 
     /**
-     *  Search a node given an addressing key
+     *  Search a node at specified depth given an addressing key (depth=0: search full tree depth)
      *  @return pointer to node if found, NULL otherwise
      */
-    NODE* search(const OcTreeKey& key) const;
+    NODE* search(const OcTreeKey& key, unsigned int depth = 0) const;
 
     /**
      *  Delete a node (if exists) given a 3d point. Will always
@@ -680,10 +680,48 @@ namespace octomap {
       return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
     }
 
+    /// Converts from a single coordinate into a discrete key at a given depth
+    unsigned short int coordToKey(double coordinate, unsigned depth) const;
+
+
     /// Converts from a 3D coordinate into a 3D addressing key
     inline OcTreeKey coordToKey(const point3d& coord) const{
       return OcTreeKey(coordToKey(coord(0)), coordToKey(coord(1)), coordToKey(coord(2)));
     }
+
+    /// Converts from a 3D coordinate into a 3D addressing key at a given depth
+    inline OcTreeKey coordToKey(const point3d& coord, unsigned depth) const{
+      if (depth == tree_depth)
+        return coordToKey(coord);
+      else
+        return OcTreeKey(coordToKey(coord(0), depth), coordToKey(coord(1), depth), coordToKey(coord(2), depth));
+    }
+
+    /**
+     * Adjusts a 3D key from the lowest level to correspond to a higher depth (by
+     * shifting the key values)
+     *
+     * @param key Input key, at the lowest tree level
+     * @param depth Target depth level for the new key
+     * @return Key for the new depth level
+     */
+    inline OcTreeKey adjustKeyAtDepth(const OcTreeKey& key, unsigned int depth) const{
+      if (depth == tree_depth)
+        return key;
+
+      assert(depth <= tree_depth);
+      return OcTreeKey(adjustKeyAtDepth(key[0], depth), adjustKeyAtDepth(key[1], depth), adjustKeyAtDepth(key[2], depth));
+    }
+
+    /**
+     * Adjusts a single key value from the lowest level to correspond to a higher depth (by
+     * shifting the key value)
+     *
+     * @param key Input key, at the lowest tree level
+     * @param depth Target depth level for the new key
+     * @return Key for the new depth level
+     */
+    unsigned short int adjustKeyAtDepth(unsigned short int key, unsigned int depth) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
@@ -695,13 +733,32 @@ namespace octomap {
     bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
 
     /**
-     * Converts a singl coordinate into a discrete addressing key, with boundary checking.
+     * Converts a 3D coordinate into a 3D OcTreeKey at a certain depth, with boundary checking.
+     *
+     * @param coord 3d coordinate of a point
+     * @param key values that will be computed, an array of fixed size 3.
+     * @return true if point is within the octree (valid), false otherwise
+     */
+    bool coordToKeyChecked(const point3d& coord, unsigned depth, OcTreeKey& key) const;
+
+    /**
+     * Converts a single coordinate into a discrete addressing key, with boundary checking.
      *
      * @param coordinate 3d coordinate of a point
-     * @param key discrete 16 bit adressing key
+     * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
     bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
+
+    /**
+     * Converts a single coordinate into a discrete addressing key, with boundary checking.
+     *
+     * @param coordinate 3d coordinate of a point
+     * @param depth level of the key from the top
+     * @param key discrete 16 bit adressing key, result
+     * @return true if coordinate is within the octree bounds (valid), false otherwise
+     */
+    bool coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
@@ -735,11 +792,10 @@ namespace octomap {
       return coordToKeyChecked(point, key);
     }
 
-    /// @deprecated, will be removed. If needed, we need to re-implement with a cleaner interface.
+    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
     DEPRECATED( bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const );
 
-    /// @deprecated, will be removed. If needed, we need to re-implement with a cleaner interface.
-    /// generates a new key for all three dimensions at a specified depth, calling genKeyValueAtDepth
+    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
     DEPRECATED( bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const );
 
     /// @deprecated, replaced by keyToCoord()
