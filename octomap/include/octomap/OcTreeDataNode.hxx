@@ -54,15 +54,36 @@ namespace octomap {
   }
 
   template <typename T>
+  OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
+   : itsChildren(NULL), value(rhs.value)
+  {
+    if (rhs.hasChildren()){
+      allocChildren();
+      for (unsigned i = 0; i<8; ++i){
+        if (rhs.itsChildren[i])
+          itsChildren[i] = new OcTreeDataNode<T>(*(rhs.itsChildren[i]));
+
+      }
+    }
+  }
+
+
+
+  template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
     if (itsChildren != NULL) {
-      for (unsigned int i=0;i<8;i++) {
+      for (unsigned int i=0; i<8; i++) {
         if (itsChildren[i] != NULL) delete itsChildren[i];
       }
       delete[] itsChildren;
     }
 
+  }
+
+  template <typename T>
+  bool OcTreeDataNode<T>::operator== (const OcTreeDataNode<T>& rhs) const{
+    return rhs.value == value;
   }
 
   // ============================================================

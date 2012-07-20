@@ -12,7 +12,7 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "\nUSAGE: " << self << " input.bt\n\n";
+  std::cerr << "\nUSAGE: " << self << " inputfile.bt [max_depth]  (optional)\n\n";
 
 
   exit(1);
@@ -135,9 +135,11 @@ int main(int argc, char** argv) {
   // test timing:
   timeval start;
   timeval stop;
+  const unsigned char tree_depth(16);
+  const unsigned int tree_max_val(32768);
   double time_it, time_depr;
 
-  if (argc < 1|| argc >3 || strcmp(argv[1], "-h") == 0){
+  if (argc <= 1|| argc >3 || strcmp(argv[1], "-h") == 0){
     printUsage(argv[0]);
   }
 
@@ -146,6 +148,9 @@ int main(int argc, char** argv) {
     maxDepth = (unsigned char)atoi(argv[2]);
   }
   maxDepth = std::min((unsigned char)16,maxDepth);
+
+  if (maxDepth== 0)
+    maxDepth = tree_depth;
 
 
   cout << "\nReading OcTree file\n===========================\n";
@@ -181,19 +186,17 @@ int main(int argc, char** argv) {
   /**
    * get all occupied leafs
    */
-  const unsigned char tree_depth(16);
-  const unsigned int tree_max_val(32768);
   point3d tree_center;
   tree_center(0) = tree_center(1) = tree_center(2)
               = (float) (((double) tree_max_val) * tree->getResolution());
 
   gettimeofday(&start, NULL);  // start timer
-  getLeafNodesRecurs(list_depr,tree_depth,tree->getRoot(), 0, tree_center, tree_center, tree, true);
+  getLeafNodesRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree, true);
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 
   gettimeofday(&start, NULL);  // start timer
-  for(OcTree::iterator it = tree->begin(), end=tree->end(); it!= end; ++it){
+  for(OcTree::iterator it = tree->begin(maxDepth), end=tree->end(); it!= end; ++it){
     if(tree->isNodeOccupied(*it))
     {
       //count ++;
@@ -216,7 +219,7 @@ int main(int argc, char** argv) {
   list_iterator.clear();
   list_depr.clear();
   gettimeofday(&start, NULL);  // start timer
-  for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
+  for(OcTree::leaf_iterator it = tree->begin(maxDepth), end=tree->end(); it!= end; ++it) {
     if(!tree->isNodeOccupied(*it))
       list_iterator.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
   }
@@ -224,7 +227,7 @@ int main(int argc, char** argv) {
   time_it = timediff(start, stop);
 
   gettimeofday(&start, NULL);  // start timer
-  getLeafNodesRecurs(list_depr,tree_depth,tree->getRoot(), 0, tree_center, tree_center, tree, false);
+  getLeafNodesRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree, false);
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 
@@ -242,14 +245,15 @@ int main(int argc, char** argv) {
   list_depr.clear();
 
   gettimeofday(&start, NULL);  // start timer
-  getVoxelsRecurs(list_depr,tree_depth,tree->getRoot(), 0, tree_center, tree_center, tree->getResolution());
+  getVoxelsRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree->getResolution());
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 
   gettimeofday(&start, NULL);  // start timers
-  for(OcTree::tree_iterator it = tree->begin_tree(), end=tree->end_tree();
+  for(OcTree::tree_iterator it = tree->begin_tree(maxDepth), end=tree->end_tree();
       it!= end; ++it){
       //count ++;
+      //std::cout << it.getDepth() << " " << " "<<it.getCoordinate()<< std::endl;
      list_iterator.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
   }
   gettimeofday(&stop, NULL);  // stop timer
@@ -271,6 +275,7 @@ int main(int argc, char** argv) {
     for(OcTree::iterator it = tree->begin(maxDepth), end=tree->end();
         it!= end; ++it){
       // do something:
+      // std::cout << it.getDepth() << " " << " "<<it.getCoordinate()<< std::endl;
       count++;
     }
 
@@ -367,6 +372,13 @@ int main(int argc, char** argv) {
       EXPECT_EQ(it.getSize(), bbxIt->second);
     }
 
+  }
+
+  // test empty tree:
+  OcTree emptyTree(0.01);
+  emptyTree.updateNode(point3d(10, 10, 10), 5.0f);
+  for(OcTree::leaf_iterator it = emptyTree.begin_leafs(maxDepth), end=emptyTree.end_leafs(); it!= end; ++it) {
+    std::cout << it.getDepth() << " " << " "<<it.getCoordinate()<< std::endl;
   }
 
 

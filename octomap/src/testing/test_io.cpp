@@ -21,10 +21,36 @@ int main(int argc, char** argv) {
 
   string filenameOt = "test_io_file.ot";
   string filenameBtOut = "test_io_file.bt";
+  string filenameBtCopyOut = "test_io_file_copy.bt";
 
   // read reference tree from input file
   OcTree tree (0.1);
   EXPECT_TRUE (tree.readBinary(filename));
+
+  // test copy constructor / assignment:
+  OcTree* treeCopy = new OcTree(tree);
+  EXPECT_TRUE(tree == *treeCopy);
+  treeCopy->writeBinary(filenameBtCopyOut);
+
+  // change a tree property, trees must be different afterwards
+  treeCopy->setResolution(tree.getResolution()*2.0);
+  EXPECT_FALSE(tree == *treeCopy);
+  treeCopy->setResolution(tree.getResolution());
+  EXPECT_TRUE(tree == *treeCopy);
+
+  // flip one value, trees must be different afterwards:
+  point3d pt(0.5, 0.5, 0.5);
+  OcTreeNode* node = treeCopy->search(pt);
+  if (node && treeCopy->isNodeOccupied(node))
+    treeCopy->updateNode(pt, false);
+  else
+    treeCopy->updateNode(pt, true);
+
+  EXPECT_FALSE(tree == *treeCopy);
+
+
+  delete treeCopy;
+
 
   // write again to bt, read & compare
   EXPECT_TRUE(tree.writeBinary(filenameBtOut));
@@ -44,7 +70,7 @@ int main(int argc, char** argv) {
 
   // sanity test for "==": flip one node, compare again
   point3d coord(0.1, 0.1, 0.1);
-  OcTreeNode* node = readTreeOt->search(coord);
+  node = readTreeOt->search(coord);
   if (node && readTreeOt->isNodeOccupied(node))
     readTreeOt->updateNode(coord, false);
   else

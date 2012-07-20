@@ -69,6 +69,19 @@ namespace octomap {
   OccupancyOcTreeBase<NODE>::~OccupancyOcTreeBase(){
   }
 
+  template <class NODE>
+  OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs) :
+    OcTreeBase<NODE>(rhs), use_bbx_limit(rhs.use_bbx_limit),
+    bbx_min(rhs.bbx_min), bbx_max(rhs.bbx_max),
+    bbx_min_key(rhs.bbx_min_key), bbx_max_key(rhs.bbx_max_key),
+    use_change_detection(rhs.use_change_detection), changedKeys(rhs.changedKeys),
+    clampingThresMin(rhs.clampingThresMin), clampingThresMax(rhs.clampingThresMax),
+    probHitLog(rhs.probHitLog), probMissLog(rhs.probMissLog),
+    occProbThresLog(rhs.occProbThresLog)
+  {
+
+  }
+
   // performs transformation to data and sensor origin first
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertScan(const ScanNode& scan, double maxrange, bool pruning, bool lazy_eval) {

@@ -72,6 +72,9 @@ namespace octomap {
     OccupancyOcTreeBase(double resolution);
     virtual ~OccupancyOcTreeBase();
 
+    /// Copy constructor
+    OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs);
+
      /**
      * Integrate a Pointcloud (in global reference frame)
      *

@@ -58,7 +58,13 @@ namespace octomap {
 
     OcTreeDataNode();
     OcTreeDataNode(T initVal);
+    /// Copy constructor, performs a recursive deep-copy of all children
+    OcTreeDataNode(const OcTreeDataNode& rhs);
+
     ~OcTreeDataNode();
+
+    /// Equals operator, compares if the stored value is identical
+    bool operator==(const OcTreeDataNode& rhs) const;
 
 
     // -- children  ----------------------------------
@@ -141,7 +147,7 @@ namespace octomap {
 
     /// pointer to array of children, may be NULL
     OcTreeDataNode<T>** itsChildren;
-    /// stored data
+    /// stored data (payload)
     T value;
 
   };

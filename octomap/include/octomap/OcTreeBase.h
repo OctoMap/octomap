@@ -83,10 +83,14 @@ namespace octomap {
     /// (Covariant return type requires an up-to-date compiler)
     OcTreeBase<NODE>* create() const {return new OcTreeBase<NODE>(resolution); }
 
-    bool operator== (const OcTreeBase& other) const;
+    OcTreeBase(const OcTreeBase<NODE>& rhs);
+
+    bool operator== (const OcTreeBase<NODE>& rhs) const;
 
     std::string getTreeType() const {return "OcTreeBase";}
 
+    /// Change the resolution of the octree, scaling all voxels.
+    /// This will not preserve the (metric) scale!
     void setResolution(double r);
     inline double getResolution() const { return resolution; }
 
@@ -142,6 +146,8 @@ namespace octomap {
 
     /// Deletes the complete tree structure (only the root node will remain)
     void clear();
+
+    OcTreeBase deepCopy() const;
 
 
     /// Lossless compression of OcTree: merge children to parent when there are

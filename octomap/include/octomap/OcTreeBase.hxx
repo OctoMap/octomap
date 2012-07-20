@@ -85,6 +85,24 @@ namespace octomap {
     delete itsRoot;
   }
 
+
+  template <class NODE>
+  OcTreeBase<NODE>::OcTreeBase(const OcTreeBase<NODE>& rhs) :
+    itsRoot(NULL), tree_depth(rhs.tree_depth), tree_max_val(rhs.tree_max_val),
+    resolution(rhs.resolution), tree_size(rhs.tree_size)
+  {
+    this->setResolution(resolution);
+    for (unsigned i = 0; i< 3; i++){
+      maxValue[i] = rhs.maxValue[i];
+      minValue[i] = rhs.minValue[i];
+    }
+
+    // copy nodes recursively:
+    itsRoot = new NODE(*(rhs.itsRoot));
+
+
+  }
+
   template <class NODE>
   bool OcTreeBase<NODE>::operator== (const OcTreeBase<NODE>& other) const{
     if (tree_depth != other.tree_depth || tree_max_val != other.tree_max_val
@@ -104,11 +122,12 @@ namespace octomap {
 
       if (it.getDepth() != other_it.getDepth()
           || it.getKey() != other_it.getKey()
-          || it->getValue() != other_it->getValue())
+          || !(*it == *other_it))
       {
         return false;
       }
     }
+
     if (other_it != other_end)
       return false;
 
