@@ -869,6 +869,11 @@ namespace octomap {
     
     size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
+ private:
+    /// Assignment operator is private: don't (re-)assign octrees
+    /// (const-parameters can't be changed) -  use the copy constructor instead.
+    OcTreeBase<NODE>& operator=(const OcTreeBase<NODE>&);
+
   protected:
 
     NODE* itsRoot;
