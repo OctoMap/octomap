@@ -65,7 +65,13 @@ namespace octomap {
     };
 
   public:
-    ColorOcTreeNode() : OcTreeNode() {}     
+    ColorOcTreeNode() : OcTreeNode() {}
+
+    ColorOcTreeNode(const ColorOcTreeNode& rhs) : OcTreeNode(rhs), color(rhs.color) {}
+
+    bool operator==(const ColorOcTreeNode& rhs) const{
+      return (rhs.value == value && rhs.color == color);
+    }
     
     // children
     inline ColorOcTreeNode* getChild(unsigned int i) {
@@ -74,6 +80,7 @@ namespace octomap {
     inline const ColorOcTreeNode* getChild(unsigned int i) const {
       return static_cast<const ColorOcTreeNode*> (OcTreeNode::getChild(i));
     }
+
     bool createChild(unsigned int i) {
       if (itsChildren == NULL) allocChildren();      
       itsChildren[i] = new ColorOcTreeNode();

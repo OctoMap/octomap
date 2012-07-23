@@ -43,7 +43,6 @@ namespace octomap {
 
 
   // node implementation  --------------------------------------
-
   std::ostream& ColorOcTreeNode::writeValue (std::ostream &s) const {
     // 1 bit for each children; 0: empty, 1: allocated
     std::bitset<8> children;

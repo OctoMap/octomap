@@ -50,7 +50,13 @@ namespace octomap {
   class OcTreeNodeStamped : public OcTreeNode {    
 
   public:
-    OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}     
+    OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}
+
+    OcTreeNodeStamped(const OcTreeNodeStamped& rhs) : OcTreeNode(rhs), timestamp(rhs.timestamp) {}
+
+    bool operator==(const OcTreeNodeStamped& rhs) const{
+      return (rhs.value == value && rhs.timestamp == timestamp);
+    }
     
     // children
     inline OcTreeNodeStamped* getChild(unsigned int i) {
@@ -59,6 +65,7 @@ namespace octomap {
     inline const OcTreeNodeStamped* getChild(unsigned int i) const {
       return static_cast<const OcTreeNodeStamped*> (OcTreeNode::getChild(i));
     }
+
     bool createChild(unsigned int i) {
       if (itsChildren == NULL) allocChildren();      
       itsChildren[i] = new OcTreeNodeStamped();
