@@ -1,3 +1,17 @@
+v1.5.0: (in trunk, release forthcoming)
+===================
+- delete functionality added to octrees and nodes
+- octovis inside or outside of a selection box
+- operator== and copy constructor for octree nodes and octrees
+- key / coordinate conversion functions are now clearly named and documented.
+	genPos/genKey deprecated in favor of coordToKey, keyToCoord
+- added limited-depth search
+- deep-copy constructor for octrees and nodes, assignment op. is private
+- improved compatibility with MSVC (thx to J. Aguado)
+- internal QGLViewer version increased to 2.3.17
+- cleanup: functions removed /deprecated in favor or iterator-base node traversal
+- cleanup: private members renamed (tree root / node children)
+
 v1.4.2: 2012-04-24
 ===================
 - extended graph2tree with more verbose logging / statistics
