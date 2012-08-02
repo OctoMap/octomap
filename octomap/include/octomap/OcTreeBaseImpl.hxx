@@ -44,8 +44,8 @@
 namespace octomap {
 
 
-  template <class NODE>
-  OcTreeBase<NODE>::OcTreeBase(double resolution) :
+  template <class NODE,class I>
+  OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(double resolution) :
     root(NULL), tree_depth(16), tree_max_val(32768), 
     resolution(resolution), tree_size(0)
   {
@@ -62,8 +62,8 @@ namespace octomap {
     tree_size++;
   }
 
-  template <class NODE>
-  OcTreeBase<NODE>::OcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val) :
+  template <class NODE,class I>
+  OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val) :
     root(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
     resolution(resolution), tree_size(0)
   {
@@ -80,14 +80,14 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  OcTreeBase<NODE>::~OcTreeBase(){
+  template <class NODE,class I>
+  OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){
     delete root;
   }
 
 
-  template <class NODE>
-  OcTreeBase<NODE>::OcTreeBase(const OcTreeBase<NODE>& rhs) :
+  template <class NODE,class I>
+  OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(const OcTreeBaseImpl<NODE,I>& rhs) :
     root(NULL), tree_depth(rhs.tree_depth), tree_max_val(rhs.tree_max_val),
     resolution(rhs.resolution), tree_size(rhs.tree_size)
   {
@@ -103,18 +103,18 @@ namespace octomap {
 
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::operator== (const OcTreeBase<NODE>& other) const{
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::operator== (const OcTreeBaseImpl<NODE,I>& other) const{
     if (tree_depth != other.tree_depth || tree_max_val != other.tree_max_val
         || resolution != other.resolution || tree_size != other.tree_size){
       return false;
     }
 
     // traverse all nodes, check if structure the same
-    OcTreeBase<NODE>::tree_iterator it = this->begin_tree();
-    OcTreeBase<NODE>::tree_iterator end = this->end_tree();
-    OcTreeBase<NODE>::tree_iterator other_it = other.begin_tree();
-    OcTreeBase<NODE>::tree_iterator other_end = other.end_tree();
+    OcTreeBaseImpl<NODE,I>::tree_iterator it = this->begin_tree();
+    OcTreeBaseImpl<NODE,I>::tree_iterator end = this->end_tree();
+    OcTreeBaseImpl<NODE,I>::tree_iterator other_it = other.begin_tree();
+    OcTreeBaseImpl<NODE,I>::tree_iterator other_end = other.end_tree();
 
     for (; it != end; ++it, ++other_it){
       if (other_it == other_end)
@@ -134,8 +134,8 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::setResolution(double r) {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::setResolution(double r) {
     resolution = r;
     resolution_factor = 1. / resolution;
 
@@ -149,8 +149,8 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  inline unsigned short int OcTreeBase<NODE>::coordToKey(double coordinate, unsigned depth) const{
+  template <class NODE,class I>
+  inline unsigned short int OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
     assert (depth <= tree_depth);
     int keyval = ((int) floor(resolution_factor * coordinate));
 
@@ -162,8 +162,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -177,8 +177,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& keyval) const {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -192,8 +192,8 @@ namespace octomap {
     return false;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::coordToKeyChecked(const point3d& point, OcTreeKey& key) const{
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(const point3d& point, OcTreeKey& key) const{
 
     for (unsigned int i=0;i<3;i++) {
       if (!coordToKeyChecked( point(i), key[i])) return false;
@@ -201,8 +201,8 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::coordToKeyChecked(const point3d& point, unsigned depth, OcTreeKey& key) const{
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(const point3d& point, unsigned depth, OcTreeKey& key) const{
 
     for (unsigned int i=0;i<3;i++) {
       if (!coordToKeyChecked( point(i), depth, key[i])) return false;
@@ -210,8 +210,8 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  unsigned short int OcTreeBase<NODE>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
+  template <class NODE,class I>
+  unsigned short int OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
     unsigned int diff = tree_depth - depth;
 
     if(diff == 0)
@@ -220,8 +220,8 @@ namespace octomap {
       return (((key-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
   }
 
-  template <class NODE>
-  double OcTreeBase<NODE>::keyToCoord(unsigned short int key, unsigned depth) const{
+  template <class NODE,class I>
+  double OcTreeBaseImpl<NODE,I>::keyToCoord(unsigned short int key, unsigned depth) const{
     assert(depth <= tree_depth);
 
     // root is centered on 0 = 0.0
@@ -234,8 +234,8 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
 
     if (keyval >= 2*tree_max_val)
       return false;
@@ -250,16 +250,16 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
     for (unsigned int i=0;i<3;i++) {
       if (!genKeyValueAtDepth( key[i], depth, out_key[i])) return false;
     }
     return true;
   }
 
-  template <class NODE>
-  NODE* OcTreeBase<NODE>::search(const point3d& value, unsigned int depth) const {
+  template <class NODE,class I>
+  NODE* OcTreeBaseImpl<NODE,I>::search(const point3d& value, unsigned int depth) const {
 
     // Search is a variant of insert which aborts if
     // it had to insert nodes
@@ -275,14 +275,14 @@ namespace octomap {
 
   }
 
-  template <class NODE>
-  NODE* OcTreeBase<NODE>::search(float x, float y, float z, unsigned int depth) const {
+  template <class NODE,class I>
+  NODE* OcTreeBaseImpl<NODE,I>::search(float x, float y, float z, unsigned int depth) const {
     return this->search(point3d(x,y,z), depth);
   }
 
 
-  template <class NODE>
-  NODE* OcTreeBase<NODE>::search (const OcTreeKey& key, unsigned int depth) const {
+  template <class NODE,class I>
+  NODE* OcTreeBaseImpl<NODE,I>::search (const OcTreeKey& key, unsigned int depth) const {
     assert(depth <= tree_depth);
 
     if (depth == 0)
@@ -320,8 +320,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::deleteNode(const point3d& value, unsigned int depth) {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::deleteNode(const point3d& value, unsigned int depth) {
     OcTreeKey key;
     if (!coordToKeyChecked(value, key)){
       OCTOMAP_ERROR_STR("Error in deleteNode: ["<< value <<"] is out of OcTree bounds!");
@@ -333,22 +333,22 @@ namespace octomap {
 
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::deleteNode(float x, float y, float z, unsigned int depth) {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::deleteNode(float x, float y, float z, unsigned int depth) {
     return this->deleteNode(point3d(x,y,z), depth);
   }
 
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::deleteNode(const OcTreeKey& key, unsigned int depth) {
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::deleteNode(const OcTreeKey& key, unsigned int depth) {
     if (depth == 0)
       depth = tree_depth;
 
     return deleteNodeRecurs(root, 0, depth, key);
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::clear() {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::clear() {
     // don't clear if the tree is empty:
     if (this->root->hasChildren()) {
       delete this->root;
@@ -360,8 +360,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  void OcTreeBase<NODE>::prune() {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::prune() {
     for (unsigned int depth=tree_depth-1; depth>0; depth--) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
@@ -369,13 +369,13 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::expand() {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::expand() {
     expandRecurs(root,0, tree_depth);
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::computeRayKeys(const point3d& origin, 
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::computeRayKeys(const point3d& origin,
                                           const point3d& end, 
                                           KeyRay& ray) const {
 
@@ -385,8 +385,8 @@ namespace octomap {
     ray.reset();
 
     OcTreeKey key_origin, key_end;
-    if ( !OcTreeBase<NODE>::coordToKeyChecked(origin, key_origin) ||
-         !OcTreeBase<NODE>::coordToKeyChecked(end, key_end) ) {
+    if ( !OcTreeBaseImpl<NODE,I>::coordToKeyChecked(origin, key_origin) ||
+         !OcTreeBaseImpl<NODE,I>::coordToKeyChecked(end, key_end) ) {
       OCTOMAP_WARNING_STR("coordinates ( "
                 << origin << " -> " << end << ") out of bounds in computeRayKeys");
       return false;
@@ -490,8 +490,8 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::computeRay(const point3d& origin, const point3d& end, 
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::computeRay(const point3d& origin, const point3d& end,
                                     std::vector<point3d>& _ray) {
     _ray.clear();
     if (!computeRayKeys(origin, end, keyray)) return false;
@@ -501,8 +501,8 @@ namespace octomap {
     return true;
   }
 
-  template <class NODE>
-  bool OcTreeBase<NODE>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
     if (depth >= max_depth) // on last level: delete child when going up
       return true;
 
@@ -539,8 +539,8 @@ namespace octomap {
 
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::pruneRecurs(NODE* node, unsigned int depth,
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::pruneRecurs(NODE* node, unsigned int depth,
          unsigned int max_depth, unsigned int& num_pruned) {
 
     if (depth < max_depth) {
@@ -562,8 +562,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  void OcTreeBase<NODE>::expandRecurs(NODE* node, unsigned int depth,
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::expandRecurs(NODE* node, unsigned int depth,
                                       unsigned int max_depth) {
     if (depth >= max_depth) return;
 
@@ -582,20 +582,20 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  std::ostream& OcTreeBase<NODE>::writeData(std::ostream &s){
+  template <class NODE,class I>
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s){
     this->prune();
     return this->writeDataConst(s);
   }
 
-  template <class NODE>
-  std::ostream& OcTreeBase<NODE>::writeDataConst(std::ostream &s) const{
+  template <class NODE,class I>
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeDataConst(std::ostream &s) const{
     root->writeValue(s);
     return s;
   }
 
-  template <class NODE>
-  std::istream& OcTreeBase<NODE>::readData(std::istream &s) {
+  template <class NODE,class I>
+  std::istream& OcTreeBaseImpl<NODE,I>::readData(std::istream &s) {
 
     if (!s.good()){
       OCTOMAP_WARNING_STR(__FILE__ << ":" << __LINE__ << "Warning: Input filestream not \"good\"");
@@ -618,8 +618,8 @@ namespace octomap {
 
 
 
-  template <class NODE>
-  size_t OcTreeBase<NODE>::memoryFullGrid() {
+  template <class NODE,class I>
+  size_t OcTreeBaseImpl<NODE,I>::memoryFullGrid() {
     double size_x, size_y, size_z;
     getMetricSize(size_x, size_y,size_z);
     
@@ -635,8 +635,8 @@ namespace octomap {
   // non-const versions, 
   // change min/max/size_changed members
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getMetricSize(double& x, double& y, double& z){
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricSize(double& x, double& y, double& z){
 
     double minX, minY, minZ;
     double maxX, maxY, maxZ;
@@ -649,8 +649,8 @@ namespace octomap {
     z = maxZ - minZ;
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::calcMinMax() {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::calcMinMax() {
     if (!size_changed)
       return;
 
@@ -659,7 +659,7 @@ namespace octomap {
       min_value[i] = std::numeric_limits<double>::max();
     }
 
-    for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+    for(typename OcTreeBaseImpl<NODE,I>::leaf_iterator it = this->begin(),
         end=this->end(); it!= end; ++it)
     {
       double size = it.getSize();
@@ -683,16 +683,16 @@ namespace octomap {
     size_changed = false;
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getMetricMin(double& x, double& y, double& z){
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricMin(double& x, double& y, double& z){
     calcMinMax();
     x = min_value[0];
     y = min_value[1];
     z = min_value[2];
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getMetricMax(double& x, double& y, double& z){
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricMax(double& x, double& y, double& z){
 
     calcMinMax();
     
@@ -703,11 +703,11 @@ namespace octomap {
 
   // const versions
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getMetricMin(double& mx, double& my, double& mz) const {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricMin(double& mx, double& my, double& mz) const {
     mx = my = mz = std::numeric_limits<double>::max( );
     if (size_changed) {
-      for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+      for(typename OcTreeBaseImpl<NODE,I>::leaf_iterator it = this->begin(),
               end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;
         double x = it.getX() - halfSize;
@@ -725,11 +725,11 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getMetricMax(double& mx, double& my, double& mz) const {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricMax(double& mx, double& my, double& mz) const {
     mx = my = mz = -std::numeric_limits<double>::max( );
     if (size_changed) {
-      for(typename OcTreeBase<NODE>::leaf_iterator it = this->begin(),
+      for(typename OcTreeBaseImpl<NODE,I>::leaf_iterator it = this->begin(),
             end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;
         double x = it.getX() + halfSize;
@@ -747,15 +747,15 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  size_t OcTreeBase<NODE>::calcNumNodes() const {
+  template <class NODE,class I>
+  size_t OcTreeBaseImpl<NODE,I>::calcNumNodes() const {
     size_t retval = 1; // root node
     calcNumNodesRecurs(root, retval);
     return retval;
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::calcNumNodesRecurs(NODE* node, size_t& num_nodes) const {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::calcNumNodesRecurs(NODE* node, size_t& num_nodes) const {
     assert (node != NULL);
     if (node->hasChildren()) {
       for (unsigned int i=0; i<8; ++i) {
@@ -767,15 +767,15 @@ namespace octomap {
     }
   }
 
-  template <class NODE>
-  size_t OcTreeBase<NODE>::memoryUsage() const{
+  template <class NODE,class I>
+  size_t OcTreeBaseImpl<NODE,I>::memoryUsage() const{
     size_t num_leaf_nodes = this->getNumLeafNodes();
     size_t num_inner_nodes = tree_size - num_leaf_nodes;
-    return (sizeof(OcTreeBase<NODE>) + memoryUsageNode() * tree_size + num_inner_nodes * sizeof(NODE*[8]));
+    return (sizeof(OcTreeBaseImpl<NODE,I>) + memoryUsageNode() * tree_size + num_inner_nodes * sizeof(NODE*[8]));
   }
 
-  template <class NODE>
-  void OcTreeBase<NODE>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const {
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const {
 
     float diff[3];
     unsigned int steps[3];
@@ -806,14 +806,14 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  size_t OcTreeBase<NODE>::getNumLeafNodes() const {
+  template <class NODE,class I>
+  size_t OcTreeBaseImpl<NODE,I>::getNumLeafNodes() const {
     return getNumLeafNodesRecurs(root);
   }
 
 
-  template <class NODE>
-  size_t OcTreeBase<NODE>::getNumLeafNodesRecurs(const NODE* parent) const {
+  template <class NODE,class I>
+  size_t OcTreeBaseImpl<NODE,I>::getNumLeafNodesRecurs(const NODE* parent) const {
 
     if (!parent->hasChildren()) return 1;  // this is a leaf -> terminate
     
@@ -827,8 +827,8 @@ namespace octomap {
   }
 
 
-  template <class NODE>
-  double OcTreeBase<NODE>::volume() {
+  template <class NODE,class I>
+  double OcTreeBaseImpl<NODE,I>::volume() {
     double x,  y,  z;
     getMetricSize(x, y, z);
     return x*y*z;

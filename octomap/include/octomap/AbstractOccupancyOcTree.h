@@ -1,5 +1,5 @@
-#ifndef OCTOMAP_OCTREE_BASE_H
-#define OCTOMAP_OCTREE_BASE_H
+#ifndef OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE
+#define OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE
 
 // $Id$
 
@@ -40,18 +40,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "OcTreeBaseImpl.h"
 #include "AbstractOcTree.h"
 
-
 namespace octomap {
-  template <class NODE>
-  class OcTreeBase : public OcTreeBaseImpl<NODE,AbstractOcTree> {
+
+  /**
+   * Interface class for all octree types that store occupancy. This serves
+   * as a common base class e.g. for Polymorphism.
+   */
+  class AbstractOccupancyOcTree : public AbstractOcTree {
   public:
-    OcTreeBase<NODE>(double res) : OcTreeBaseImpl<NODE,AbstractOcTree>(res) {};
+    AbstractOccupancyOcTree() {};
+    virtual ~AbstractOccupancyOcTree() {};
   };
 
-  };
+}; // end namespace
 
 
 #endif

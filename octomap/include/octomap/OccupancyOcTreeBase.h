@@ -46,15 +46,18 @@
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
-#include "OcTreeBase.h"
+#include "OcTreeBaseImpl.h"
+#include "AbstractOccupancyOcTree.h"
 
 
 namespace octomap {
 
   /**
-   * Base class for Occupancy Octrees (e.g. for mapping).
+   * Base implementation for Occupancy Octrees (e.g. for mapping).
+   * AbstractOccupancyOcTree serves as a common
+   * base interface for all these classes.
    * Each class used as NODE type needs to be derived from
-   * OccupancyOcTreeNode
+   * OccupancyOcTreeNode.
    *
    * This tree implementation has a maximum depth of 16. 
    * At a resolution of 1 cm, values have to be < +/- 327.68 meters (2^15)
@@ -63,9 +66,12 @@ namespace octomap {
    * method which uses the binary representation of the data.
    *
    * \note The tree does not save individual points.
+   *
+   * \tparam NODE Node class to be used in tree (usually derived from
+   *    OcTreeDataNode)
    */
   template <class NODE>
-  class OccupancyOcTreeBase : public OcTreeBase<NODE> {
+  class OccupancyOcTreeBase : public OcTreeBaseImpl<NODE,AbstractOccupancyOcTree> {
 
   public:
     /// Default constructor, sets resolution of leafs

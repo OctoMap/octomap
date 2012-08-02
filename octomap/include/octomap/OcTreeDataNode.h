@@ -49,7 +49,8 @@ namespace octomap {
   /**
    * Basic node in the OcTree that can hold arbitrary data of type T in value.
    * This is the base class for nodes used in an OcTree. The used implementation
-   * for occupancy mapping is in OcTreeNode.
+   * for occupancy mapping is in OcTreeNode.#
+   * \tparam T data to be stored in the node (e.g. a float for probabilities)
    *
    */
   template<typename T> class OcTreeDataNode {

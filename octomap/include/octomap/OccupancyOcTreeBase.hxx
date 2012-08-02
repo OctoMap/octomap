@@ -43,7 +43,7 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution)
-    : OcTreeBase<NODE>(resolution), use_bbx_limit(false), use_change_detection(false) {
+    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution), use_bbx_limit(false), use_change_detection(false) {
     // some sane default values:
     setOccupancyThres(0.5);   // = 0.0 in logodds
     setProbHit(0.7);          // = 0.85 in logodds
@@ -55,7 +55,7 @@ namespace octomap {
   
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val)
-    : OcTreeBase<NODE>(resolution, tree_depth, tree_max_val), use_bbx_limit(false), use_change_detection(false) {
+    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution, tree_depth, tree_max_val), use_bbx_limit(false), use_change_detection(false) {
     // some sane default values:
     setOccupancyThres(0.5);   // = 0.0 in logodds
     setProbHit(0.7);          // = 0.85 in logodds
@@ -71,7 +71,7 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs) :
-    OcTreeBase<NODE>(rhs), use_bbx_limit(rhs.use_bbx_limit),
+  OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(rhs), use_bbx_limit(rhs.use_bbx_limit),
     bbx_min(rhs.bbx_min), bbx_max(rhs.bbx_max),
     bbx_min_key(rhs.bbx_min_key), bbx_max_key(rhs.bbx_max_key),
     use_change_detection(rhs.use_change_detection), changed_keys(rhs.changed_keys),
@@ -377,7 +377,7 @@ namespace octomap {
 
     // Initialization phase -------------------------------------------------------
     OcTreeKey current_key;
-    if ( !OcTreeBase<NODE>::coordToKeyChecked(origin, current_key) ) {
+    if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(origin, current_key) ) {
       OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
@@ -792,7 +792,7 @@ namespace octomap {
 
     this->readBinaryNode(s, this->root);
     this->size_changed = true;
-    this->tree_size = OcTreeBase<NODE>::calcNumNodes();  // compute number of nodes
+    this->tree_size = OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::calcNumNodes();  // compute number of nodes
 
     if (size != this->tree_size){
       OCTOMAP_ERROR("Tree size mismatch: # read nodes (%zu) != # expected nodes (%d)\n",this->tree_size, size);
