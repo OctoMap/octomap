@@ -119,10 +119,10 @@ namespace octomap {
     if (isColorSet()) color = getAverageChildColor();
     // delete children
     for (unsigned int i=0;i<8;i++) {
-      delete itsChildren[i];
+      delete children[i];
     }
-    delete[] itsChildren;
-    itsChildren = NULL;
+    delete[] children;
+    children = NULL;
     return true;
   }
 
@@ -130,7 +130,7 @@ namespace octomap {
     assert(!hasChildren());
     for (unsigned int k=0; k<8; k++) {
       createChild(k);
-      itsChildren[k]->setValue(value);
+      children[k]->setValue(value);
       getChild(k)->setColor(color);
     }
   }
@@ -191,7 +191,7 @@ namespace octomap {
   
   
   void ColorOcTree::updateInnerOccupancy() {
-    this->updateInnerOccupancyRecurs(this->itsRoot, 0);
+    this->updateInnerOccupancyRecurs(this->root, 0);
   }
 
   void ColorOcTree::updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth) {

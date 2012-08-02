@@ -44,7 +44,7 @@ namespace octomap {
   unsigned int OcTreeStamped::getLastUpdateTime() {
     // this value is updated whenever inner nodes are 
     // updated using updateOccupancyChildren()
-    return itsRoot->getTimestamp();
+    return root->getTimestamp();
   }
 
   void OcTreeStamped::degradeOutdatedNodes(unsigned int time_thres) {
@@ -65,7 +65,7 @@ namespace octomap {
   }
 
   void OcTreeStamped::integrateMissNoTime(OcTreeNodeStamped* node) const{
-    OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, probMissLog);
+    OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, prob_miss_log);
   }
 
   OcTreeStamped::StaticMemberInitializer OcTreeStamped::ocTreeStampedMemberInit;

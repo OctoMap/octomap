@@ -58,11 +58,11 @@ namespace octomap {
   // TODO: Use Curiously Recurring Template Pattern instead of copying full function
   // (same for getChild)
   bool OcTreeNode::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
+    if (children == NULL) {
       allocChildren();
     }
-    assert (itsChildren[i] == NULL);
-    itsChildren[i] = new OcTreeNode();
+    assert (children[i] == NULL);
+    children[i] = new OcTreeNode();
     return true;
   }
 

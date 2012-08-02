@@ -67,8 +67,8 @@ namespace octomap {
     }
 
     bool createChild(unsigned int i) {
-      if (itsChildren == NULL) allocChildren();      
-      itsChildren[i] = new OcTreeNodeStamped();
+      if (children == NULL) allocChildren();
+      children[i] = new OcTreeNodeStamped();
       return true;
     }
     

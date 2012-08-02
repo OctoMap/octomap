@@ -41,27 +41,27 @@ namespace octomap {
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode()
-   : itsChildren(NULL)
+   : children(NULL)
   {
 
   }
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode(T initVal)
-   : itsChildren(NULL), value(initVal)
+   : children(NULL), value(initVal)
   {
 
   }
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
-   : itsChildren(NULL), value(rhs.value)
+   : children(NULL), value(rhs.value)
   {
     if (rhs.hasChildren()){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){
-        if (rhs.itsChildren[i])
-          itsChildren[i] = new OcTreeDataNode<T>(*(rhs.itsChildren[i]));
+        if (rhs.children[i])
+          children[i] = new OcTreeDataNode<T>(*(rhs.children[i]));
 
       }
     }
@@ -72,11 +72,11 @@ namespace octomap {
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
-    if (itsChildren != NULL) {
+    if (children != NULL) {
       for (unsigned int i=0; i<8; i++) {
-        if (itsChildren[i] != NULL) delete itsChildren[i];
+        if (children[i] != NULL) delete children[i];
       }
-      delete[] itsChildren;
+      delete[] children;
     }
 
   }
@@ -92,18 +92,18 @@ namespace octomap {
 
   template <typename T>
   bool OcTreeDataNode<T>::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
+    if (children == NULL) {
       allocChildren();
     }
-    assert (itsChildren[i] == NULL);
-    itsChildren[i] = new OcTreeDataNode<T>();
+    assert (children[i] == NULL);
+    children[i] = new OcTreeDataNode<T>();
     return true;
   }
 
   template <typename T>
   bool OcTreeDataNode<T>::childExists(unsigned int i) const {
     assert(i < 8);
-    if ((itsChildren != NULL) && (itsChildren[i] != NULL))
+    if ((children != NULL) && (children[i] != NULL))
       return true;
     else
       return false;
@@ -111,29 +111,29 @@ namespace octomap {
 
   template <typename T>
   void OcTreeDataNode<T>::deleteChild(unsigned int i) {
-    assert((i < 8) && (itsChildren != NULL));
-    assert(itsChildren[i] != NULL);
-    delete itsChildren[i];
-    itsChildren[i] = NULL;
+    assert((i < 8) && (children != NULL));
+    assert(children[i] != NULL);
+    delete children[i];
+    children[i] = NULL;
   }
 
   template <typename T>
   OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) {
-    assert((i < 8) && (itsChildren != NULL));
-    assert(itsChildren[i] != NULL);
-    return itsChildren[i];
+    assert((i < 8) && (children != NULL));
+    assert(children[i] != NULL);
+    return children[i];
   }
 
   template <typename T>
   const OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) const {
-    assert((i < 8) && (itsChildren != NULL));
-    assert(itsChildren[i] != NULL);
-    return itsChildren[i];
+    assert((i < 8) && (children != NULL));
+    assert(children[i] != NULL);
+    return children[i];
   }
 
   template <typename T>
   bool OcTreeDataNode<T>::hasChildren() const {
-    if (itsChildren == NULL) return false;
+    if (children == NULL) return false;
     for (unsigned int i = 0; i<8; i++)
       if (childExists(i)) return true;
     return false;
@@ -172,10 +172,10 @@ namespace octomap {
 
     // delete children
     for (unsigned int i=0;i<8;i++) {
-      delete itsChildren[i];
+      delete children[i];
     }
-    delete[] itsChildren;
-    itsChildren = NULL;
+    delete[] children;
+    children = NULL;
 
     return true;
   }
@@ -186,7 +186,7 @@ namespace octomap {
 
     for (unsigned int k=0; k<8; k++) {
       createChild(k);
-      itsChildren[k]->setValue(value);
+      children[k]->setValue(value);
     }
   }
 
@@ -254,9 +254,9 @@ namespace octomap {
   // ============================================================
   template <typename T>
   void OcTreeDataNode<T>::allocChildren() {
-    itsChildren = new OcTreeDataNode<T>*[8];
+    children = new OcTreeDataNode<T>*[8];
     for (unsigned int i=0; i<8; i++) {
-      itsChildren[i] = NULL;
+      children[i] = NULL;
     }
   }
 

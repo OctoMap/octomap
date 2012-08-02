@@ -70,7 +70,7 @@ namespace octomap {
    * \note The tree does not store individual data points.
    */
   template <class NODE>
-    class OcTreeBase : public AbstractOcTree {
+  class OcTreeBase : public AbstractOcTree {
 
   public:
     /// Make the templated NODE type available from the outside
@@ -103,7 +103,7 @@ namespace octomap {
      * should not be modified or deleted externally, the OcTree
      * manages its memory itself.
      */
-    inline NODE* getRoot() const { return itsRoot; }
+    inline NODE* getRoot() const { return root; }
 
     /** 
      *  Search node at specified depth given a 3d point (depth=0: search full tree depth)
@@ -265,7 +265,7 @@ namespace octomap {
           maxDepth = tree->getTreeDepth();
 
         StackElement s;
-        s.node = tree->itsRoot;
+        s.node = tree->root;
         s.depth = 0;
         s.key[0] = s.key[1] = s.key[2] = tree->tree_max_val;
         stack.push(s);
@@ -876,7 +876,7 @@ namespace octomap {
 
   protected:
 
-    NODE* itsRoot;
+    NODE* root;
 
     // constants of the tree
     const unsigned int tree_depth; ///< Maximum tree depth is fixed to 16 currently
@@ -886,12 +886,12 @@ namespace octomap {
   
     size_t tree_size; ///< number of nodes in tree
     /// flag to denote whether the octree extent changed (for lazy min/max eval)
-    bool sizeChanged;
+    bool size_changed;
 
     point3d tree_center;  // coordinate offset of tree
 
-    double maxValue[3]; ///< max in x, y, z
-    double minValue[3]; ///< min in x, y, z
+    double max_value[3]; ///< max in x, y, z
+    double min_value[3]; ///< min in x, y, z
     /// contains the size of a voxel at level i (0: root node). tree_depth+1 levels (incl. 0)
     std::vector<double> sizeLookupTable;
 

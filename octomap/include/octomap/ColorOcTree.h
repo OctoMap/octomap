@@ -82,8 +82,8 @@ namespace octomap {
     }
 
     bool createChild(unsigned int i) {
-      if (itsChildren == NULL) allocChildren();      
-      itsChildren[i] = new ColorOcTreeNode();
+      if (children == NULL) allocChildren();
+      children[i] = new ColorOcTreeNode();
       return true;
     }
 

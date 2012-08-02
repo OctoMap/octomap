@@ -291,53 +291,53 @@ namespace octomap {
     /// track or ignore changes while inserting scans (default: ignore)
     void enableChangeDetection(bool enable) { use_change_detection = enable; }
     /// Reset the set of changed keys. Call this after you obtained all changed nodes.
-    void resetChangeDetection() { changedKeys.clear(); }
+    void resetChangeDetection() { changed_keys.clear(); }
 
     /**
      * Iterator to traverse all keys of changed nodes.
      * you need to enableChangeDetection() first. Here, an OcTreeKey always
      * refers to a node at the lowest tree level (its size is the minimum tree resolution)
      */
-    KeyBoolMap::const_iterator changedKeysBegin() {return changedKeys.begin();}
+    KeyBoolMap::const_iterator changedKeysBegin() {return changed_keys.begin();}
 
     /// Iterator to traverse all keys of changed nodes.
-    KeyBoolMap::const_iterator changedKeysEnd() {return changedKeys.end();}
+    KeyBoolMap::const_iterator changedKeysEnd() {return changed_keys.end();}
 
     //-- parameters for occupancy and sensor model:
 
     /// sets the threshold for occupancy (sensor model)
-    void setOccupancyThres(double prob){occProbThresLog = logodds(prob); }
+    void setOccupancyThres(double prob){occ_prob_thres_log = logodds(prob); }
     /// sets the probablility for a "hit" (will be converted to logodds) - sensor model
-    void setProbHit(double prob){probHitLog = logodds(prob); assert(probHitLog >= 0.0);}
+    void setProbHit(double prob){prob_hit_log = logodds(prob); assert(prob_hit_log >= 0.0);}
     /// sets the probablility for a "miss" (will be converted to logodds) - sensor model
-    void setProbMiss(double prob){probMissLog = logodds(prob); assert(probMissLog <= 0.0);}
+    void setProbMiss(double prob){prob_miss_log = logodds(prob); assert(prob_miss_log <= 0.0);}
     /// sets the minimum threshold for occupancy clamping (sensor model)
-    void setClampingThresMin(double thresProb){clampingThresMin = logodds(thresProb); }
+    void setClampingThresMin(double thresProb){clamping_thres_min = logodds(thresProb); }
     /// sets the maximum threshold for occupancy clamping (sensor model)
-    void setClampingThresMax(double thresProb){clampingThresMax = logodds(thresProb); }
+    void setClampingThresMax(double thresProb){clamping_thres_max = logodds(thresProb); }
 
     /// @return threshold (probability) for occupancy - sensor model
-    double getOccupancyThres() const {return probability(occProbThresLog); }
+    double getOccupancyThres() const {return probability(occ_prob_thres_log); }
     /// @return threshold (logodds) for occupancy - sensor model
-    float getOccupancyThresLog() const {return occProbThresLog; }
+    float getOccupancyThresLog() const {return occ_prob_thres_log; }
 
     /// @return probablility for a "hit" in the sensor model (probability)
-    double getProbHit() const {return probability(probHitLog); }
+    double getProbHit() const {return probability(prob_hit_log); }
     /// @return probablility for a "hit" in the sensor model (logodds)
-    float getProbHitLog() const {return probHitLog; }
+    float getProbHitLog() const {return prob_hit_log; }
     /// @return probablility for a "miss"  in the sensor model (probability)
-    double getProbMiss() const {return probability(probMissLog); }
+    double getProbMiss() const {return probability(prob_miss_log); }
     /// @return probablility for a "miss"  in the sensor model (logodds)
-    float getProbMissLog() const {return probMissLog; }
+    float getProbMissLog() const {return prob_miss_log; }
 
     /// @return minimum threshold for occupancy clamping in the sensor model (probability)
-    double getClampingThresMin() const {return probability(clampingThresMin); }
+    double getClampingThresMin() const {return probability(clamping_thres_min); }
     /// @return minimum threshold for occupancy clamping in the sensor model (logodds)
-    float getClampingThresMinLog() const {return clampingThresMin; }
+    float getClampingThresMinLog() const {return clamping_thres_min; }
     /// @return maximum threshold for occupancy clamping in the sensor model (probability)
-    double getClampingThresMax() const {return probability(clampingThresMax); }
+    double getClampingThresMax() const {return probability(clamping_thres_max); }
     /// @return maximum threshold for occupancy clamping in the sensor model (logodds)
-    float getClampingThresMaxLog() const {return clampingThresMax; }
+    float getClampingThresMaxLog() const {return clamping_thres_max; }
 
 
 
@@ -504,14 +504,14 @@ namespace octomap {
 
     bool use_change_detection;
     /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
-    KeyBoolMap changedKeys;
+    KeyBoolMap changed_keys;
     
     // occupancy parameters of tree, stored in logodds:
-    float clampingThresMin;
-    float clampingThresMax;
-    float probHitLog;
-    float probMissLog;
-    float occProbThresLog;
+    float clamping_thres_min;
+    float clamping_thres_max;
+    float prob_hit_log;
+    float prob_miss_log;
+    float occ_prob_thres_log;
   };
 
 } // namespace

@@ -146,7 +146,7 @@ namespace octomap {
     void allocChildren();
 
     /// pointer to array of children, may be NULL
-    OcTreeDataNode<T>** itsChildren;
+    OcTreeDataNode<T>** children;
     /// stored data (payload)
     T value;
 

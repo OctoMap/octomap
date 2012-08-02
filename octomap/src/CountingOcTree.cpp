@@ -61,16 +61,16 @@ namespace octomap {
     unsigned int childCount = (unsigned int)(value/ 8.0 +0.5);
     for (unsigned int k=0; k<8; k++) {
       createChild(k);
-      itsChildren[k]->setValue(childCount);
+      children[k]->setValue(childCount);
     }
   }
 
   bool CountingOcTreeNode::createChild(unsigned int i) {
-    if (itsChildren == NULL) {
+    if (children == NULL) {
       allocChildren();
     }
-    assert (itsChildren[i] == NULL);
-    itsChildren[i] = new CountingOcTreeNode();
+    assert (children[i] == NULL);
+    children[i] = new CountingOcTreeNode();
     return true;
   }
 
@@ -89,7 +89,7 @@ namespace octomap {
   // Note: do not inline this method, will decrease speed (KMW)
   CountingOcTreeNode* CountingOcTree::updateNode(const OcTreeKey& k) {
 
-    CountingOcTreeNode* curNode (itsRoot);
+    CountingOcTreeNode* curNode (root);
     curNode->increaseCount();
 
 
@@ -116,7 +116,7 @@ namespace octomap {
 
     OcTreeKey root_key;
     root_key[0] = root_key[1] = root_key[2] = this->tree_max_val;
-    getCentersMinHitsRecurs(node_centers, min_hits, this->tree_depth, this->itsRoot, 0, root_key);    
+    getCentersMinHitsRecurs(node_centers, min_hits, this->tree_depth, this->root, 0, root_key);
   }
 
 
