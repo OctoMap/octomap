@@ -43,26 +43,16 @@ namespace octomap {
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution)
-    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution), use_bbx_limit(false), use_change_detection(false) {
-    // some sane default values:
-    setOccupancyThres(0.5);   // = 0.0 in logodds
-    setProbHit(0.7);          // = 0.85 in logodds
-    setProbMiss(0.4);         // = -0.4 in logodds
+    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution), use_bbx_limit(false), use_change_detection(false)
+  {
 
-    setClampingThresMin(0.1192); // = -2 in log odds
-    setClampingThresMax(0.971); // = 3.5 in log odds
   }
   
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val)
-    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution, tree_depth, tree_max_val), use_bbx_limit(false), use_change_detection(false) {
-    // some sane default values:
-    setOccupancyThres(0.5);   // = 0.0 in logodds
-    setProbHit(0.7);          // = 0.85 in logodds
-    setProbMiss(0.4);         // = -0.4 in logodds
+    : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(resolution, tree_depth, tree_max_val), use_bbx_limit(false), use_change_detection(false)
+  {
 
-    setClampingThresMin(0.1192); // = -2 in log odds
-    setClampingThresMax(0.971); // = 3.5 in log odds
   }  
 
   template <class NODE>
@@ -74,11 +64,14 @@ namespace octomap {
   OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(rhs), use_bbx_limit(rhs.use_bbx_limit),
     bbx_min(rhs.bbx_min), bbx_max(rhs.bbx_max),
     bbx_min_key(rhs.bbx_min_key), bbx_max_key(rhs.bbx_max_key),
-    use_change_detection(rhs.use_change_detection), changed_keys(rhs.changed_keys),
-    clamping_thres_min(rhs.clamping_thres_min), clamping_thres_max(rhs.clamping_thres_max),
-    prob_hit_log(rhs.prob_hit_log), prob_miss_log(rhs.prob_miss_log),
-    occ_prob_thres_log(rhs.occ_prob_thres_log)
+    use_change_detection(rhs.use_change_detection), changed_keys(rhs.changed_keys)
   {
+    this->clamping_thres_min = rhs.clamping_thres_min;
+    this->clamping_thres_max = rhs.clamping_thres_max;
+    this->prob_hit_log = rhs.prob_hit_log;
+    this->prob_miss_log = rhs.prob_miss_log;
+    this->occ_prob_thres_log = rhs.occ_prob_thres_log;
+
 
   }
 
@@ -222,8 +215,8 @@ namespace octomap {
     if (leaf && (isNodeAtThreshold(leaf)) && (isNodeOccupied(leaf) == occupied)) {
       return leaf;
     }
-    if (occupied) return updateNodeRecurs(this->root, false, key, 0, prob_hit_log,  lazy_eval);
-    else          return updateNodeRecurs(this->root, false, key, 0, prob_miss_log, lazy_eval);
+    if (occupied) return updateNodeRecurs(this->root, false, key, 0, this->prob_hit_log,  lazy_eval);
+    else          return updateNodeRecurs(this->root, false, key, 0, this->prob_miss_log, lazy_eval);
   }
 
   template <class NODE>
@@ -574,7 +567,7 @@ namespace octomap {
             end=this->end(); it!= end; ++it)
     {
       if(this->isNodeOccupied(*it)){
-        if (it->getLogOdds() >= clamping_thres_max)
+        if (it->getLogOdds() >= this->clamping_thres_max)
           binary_nodes.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
         else
           delta_nodes.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
@@ -609,7 +602,7 @@ namespace octomap {
             end=this->end(); it!= end; ++it)
     {
       if(!this->isNodeOccupied(*it)){
-        if (it->getLogOdds() <= clamping_thres_min)
+        if (it->getLogOdds() <= this->clamping_thres_min)
           binary_nodes.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
         else
           delta_nodes.push_back(OcTreeVolume(it.getCoordinate(), it.getSize()));
@@ -765,7 +758,7 @@ namespace octomap {
     std::getline(s, line);
     unsigned size;
     double res;
-    if (line.compare(0,AbstractOcTree::binaryFileHeader.length(), AbstractOcTree::binaryFileHeader) ==0){
+    if (line.compare(0,AbstractOccupancyOcTree::binaryFileHeader.length(), AbstractOccupancyOcTree::binaryFileHeader) ==0){
       std::string id;
       if (!AbstractOcTree::readHeader(s, id, size, res))
         return false;
@@ -782,7 +775,7 @@ namespace octomap {
 
       }
       else {
-        OCTOMAP_ERROR_STR("First line of OcTree file header does not start with \""<< AbstractOcTree::binaryFileHeader<<"\"");
+        OCTOMAP_ERROR_STR("First line of OcTree file header does not start with \""<< AbstractOccupancyOcTree::binaryFileHeader<<"\"");
         return false;
       }
     }
@@ -803,56 +796,10 @@ namespace octomap {
   }
 
   template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::writeBinary(const std::string& filename){
-    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-
-    if (!binary_outfile.is_open()){
-      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
-      return false;
-    }    
-    return writeBinary(binary_outfile);
-  }
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::writeBinaryConst(const std::string& filename) const{
-    std::ofstream binary_outfile( filename.c_str(), std::ios_base::binary);
-
-    if (!binary_outfile.is_open()){
-      OCTOMAP_ERROR_STR("Filestream to "<< filename << " not open, nothing written.");
-      return false;
-    }    
-    writeBinaryConst(binary_outfile);
-    binary_outfile.close();
-    return true;
-  }
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::writeBinary(std::ostream &s){
-
-    // convert to max likelihood first, this makes efficient pruning on binary data possible
-    this->toMaxLikelihood();
-    this->prune();
-    return writeBinaryConst(s);
-  }
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::writeBinaryConst(std::ostream &s) const{
-    // write new header first:
-    s << AbstractOcTree::binaryFileHeader <<"\n# (feel free to add / change comments, but leave the first line as it is!)\n#\n";
-    s << "id " << this->getTreeType() << std::endl;
-    s << "size "<< this->size() << std::endl;
-    s << "res " << this->getResolution() << std::endl;
-    s << "data" << std::endl;
-
+  std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryData(std::ostream &s) const{
     OCTOMAP_DEBUG("Writing %zu nodes to output stream...", this->size());
     this->writeBinaryNode(s, this->root);
-    if (s.good()){
-      OCTOMAP_DEBUG(" done.\n");
-      return true;
-    } else {
-      OCTOMAP_WARNING_STR("Output stream not \"good\" after writing tree");
-      return false;
-    }
+    return s;
   }
 
   template <class NODE>
@@ -872,18 +819,18 @@ namespace octomap {
 
 
     // inner nodes default to occupied
-    node->setLogOdds(clamping_thres_max);
+    node->setLogOdds(this->clamping_thres_max);
 
     for (unsigned int i=0; i<4; i++) {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
         // child is free leaf
         node->createChild(i);
-        node->getChild(i)->setLogOdds(clamping_thres_min);
+        node->getChild(i)->setLogOdds(this->clamping_thres_min);
       }
       else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
         // child is occupied leaf
         node->createChild(i);
-        node->getChild(i)->setLogOdds(clamping_thres_max);
+        node->getChild(i)->setLogOdds(this->clamping_thres_max);
       }
       else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
         // child has children
@@ -895,12 +842,12 @@ namespace octomap {
       if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 0)) {
         // child is free leaf
         node->createChild(i+4);
-        node->getChild(i+4)->setLogOdds(clamping_thres_min);
+        node->getChild(i+4)->setLogOdds(this->clamping_thres_min);
       }
       else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
         // child is occupied leaf
         node->createChild(i+4);
-        node->getChild(i+4)->setLogOdds(clamping_thres_max);
+        node->getChild(i+4)->setLogOdds(this->clamping_thres_max);
       }
       else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
         // child has children
@@ -990,61 +937,61 @@ namespace octomap {
 
   template <class NODE>
   bool OccupancyOcTreeBase<NODE>::isNodeOccupied(const NODE* occupancyNode) const{
-    return (occupancyNode->getLogOdds() >= occ_prob_thres_log);
+    return (occupancyNode->getLogOdds() >= this->occ_prob_thres_log);
   }
   template <class NODE>
   bool OccupancyOcTreeBase<NODE>::isNodeOccupied(const NODE& occupancyNode) const{
-    return (occupancyNode.getLogOdds() >= occ_prob_thres_log);
+    return (occupancyNode.getLogOdds() >= this->occ_prob_thres_log);
   }
 
   template <class NODE>
   bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE* occupancyNode) const{
-    return (occupancyNode->getLogOdds() >= clamping_thres_max
-            || occupancyNode->getLogOdds() <= clamping_thres_min);
+    return (occupancyNode->getLogOdds() >= this->clamping_thres_max
+            || occupancyNode->getLogOdds() <= this->clamping_thres_min);
   }
 
   template <class NODE>
   bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE& occupancyNode) const{
-    return (occupancyNode.getLogOdds() >= clamping_thres_max
-            || occupancyNode.getLogOdds() <= clamping_thres_min);
+    return (occupancyNode.getLogOdds() >= this->clamping_thres_max
+            || occupancyNode.getLogOdds() <= this->clamping_thres_min);
   }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateNodeLogOdds(NODE* occupancyNode, const float& update) const {
     occupancyNode->addValue(update);
-    if (occupancyNode->getLogOdds() < clamping_thres_min) {
-      occupancyNode->setLogOdds(clamping_thres_min);
+    if (occupancyNode->getLogOdds() < this->clamping_thres_min) {
+      occupancyNode->setLogOdds(this->clamping_thres_min);
       return;
     }
-    if (occupancyNode->getLogOdds() > clamping_thres_max) {
-      occupancyNode->setLogOdds(clamping_thres_max);
+    if (occupancyNode->getLogOdds() > this->clamping_thres_max) {
+      occupancyNode->setLogOdds(this->clamping_thres_max);
     }
   }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::integrateHit(NODE* occupancyNode) const {
-    updateNodeLogOdds(occupancyNode, prob_hit_log);
+    updateNodeLogOdds(occupancyNode, this->prob_hit_log);
   }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::integrateMiss(NODE* occupancyNode) const {
-    updateNodeLogOdds(occupancyNode, prob_miss_log);
+    updateNodeLogOdds(occupancyNode, this->prob_miss_log);
   }
   
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE* occupancyNode) const{
     if (isNodeOccupied(occupancyNode))
-      occupancyNode->setLogOdds(clamping_thres_max);
+      occupancyNode->setLogOdds(this->clamping_thres_max);
     else
-      occupancyNode->setLogOdds(clamping_thres_min);
+      occupancyNode->setLogOdds(this->clamping_thres_min);
   }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE& occupancyNode) const{
     if (isNodeOccupied(occupancyNode))
-      occupancyNode.setLogOdds(clamping_thres_max);
+      occupancyNode.setLogOdds(this->clamping_thres_max);
     else
-      occupancyNode.setLogOdds(clamping_thres_min);
+      occupancyNode.setLogOdds(this->clamping_thres_min);
   }
 
 } // namespace

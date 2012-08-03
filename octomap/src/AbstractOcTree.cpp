@@ -72,7 +72,7 @@ namespace octomap {
     s << "data" << std::endl;
 
     // write the actual data:
-    writeDataConst(s);
+    writeData(s);
     // TODO: ret.val, checks stream?
     return true;
   }
@@ -212,5 +212,4 @@ namespace octomap {
 
 
   const std::string AbstractOcTree::fileHeader = "# Octomap OcTree file";
-  const std::string AbstractOcTree::binaryFileHeader = "# Octomap OcTree binary file";
 }

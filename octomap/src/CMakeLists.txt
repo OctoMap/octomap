@@ -1,8 +1,9 @@
 SET (octomap_SRCS
+  AbstractOcTree.cpp
+  AbstractOccupancyOcTree.cpp
   Pointcloud.cpp
   ScanGraph.cpp
   CountingOcTree.cpp
-  AbstractOcTree.cpp
   OcTree.cpp
   OcTreeNode.cpp
   OcTreeStamped.cpp

@@ -42,10 +42,9 @@
 
 #include <list>
 #include <limits>
-#include <math.h>
 #include <iterator>
 #include <stack>
-#include <cassert>
+
 
 #include "octomap_types.h"
 #include "OcTreeKey.h"
@@ -66,7 +65,9 @@ namespace octomap {
    * method which uses the binary representation of the data point
    * coordinates.
    *
-   * \note The tree does not store individual data points.
+   * \note You should probably not use this class directly, but
+   * OcTreeBase or OccupancyOcTreeBase instead
+   *
    * \tparam NODE Node class to be used in tree (usually derived from
    *    OcTreeDataNode)
    * \tparam INTERFACE Interface to be derived from, should be either
@@ -81,10 +82,6 @@ namespace octomap {
     
     OcTreeBaseImpl(double resolution);
     virtual ~OcTreeBaseImpl();
-
-    /// virtual constructor: creates a new object of same type
-    /// (Covariant return type requires an up-to-date compiler)
-    OcTreeBaseImpl<NODE,INTERFACE>* create() const {return new OcTreeBaseImpl<NODE,INTERFACE>(resolution); }
 
     OcTreeBaseImpl(const OcTreeBaseImpl<NODE,INTERFACE>& rhs);
 
@@ -238,12 +235,9 @@ namespace octomap {
      */
     std::istream& readData(std::istream &s);
 
-    /// Write complete state of tree to stream (without file header), prune tree first (lossless compression)
-    std::ostream& writeData(std::ostream &s);
-
-    /// Write complete state of tree to stream (without file header), no pruning (const version)
-    std::ostream& writeDataConst(std::ostream &s) const;
-
+    /// Write complete state of tree to stream (without file header) unmodified.
+    /// Pruning the tree first produces smaller files (lossless compression)
+    std::ostream& writeData(std::ostream &s) const;
 
     /**
      * Base class for OcTree iterators. So far, all iterator's are

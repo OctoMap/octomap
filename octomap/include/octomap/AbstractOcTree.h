@@ -78,6 +78,7 @@ namespace octomap {
 
     virtual void prune() = 0;
     virtual void expand() = 0;
+    virtual void clear() = 0;
 
     /// Write file header and complete tree to file (serialization)
     bool write(const std::string& filename) const;
@@ -115,10 +116,10 @@ namespace octomap {
      * should probably use AbstractOcTree::read() instead.
      */
     virtual std::istream& readData(std::istream &s) = 0;
-    /// Write complete state of tree to stream (without file header), prune tree first (lossless compression)
-    virtual std::ostream& writeData(std::ostream &s) = 0;
-    /// Write complete state of tree to stream (without file header), no pruning (const version)
-    virtual std::ostream& writeDataConst(std::ostream &s) const = 0;
+
+    /// Write complete state of tree to stream (without file header) unmodified.
+    /// Pruning the tree first produces smaller files (lossless compression)
+    virtual std::ostream& writeData(std::ostream &s) const = 0;
   private:
     /// create private store, Construct on first use
     static std::map<std::string, AbstractOcTree*>& classIDMapping();
@@ -128,7 +129,6 @@ namespace octomap {
     static void registerTreeType(AbstractOcTree* tree);
 
     static const std::string fileHeader;
-    static const std::string binaryFileHeader;
   };
 
 

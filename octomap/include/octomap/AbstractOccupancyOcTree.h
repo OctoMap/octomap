@@ -41,17 +41,115 @@
  */
 
 #include "AbstractOcTree.h"
+#include "octomap_utils.h"
+#include <cassert>
+#include <fstream>
 
 namespace octomap {
 
   /**
    * Interface class for all octree types that store occupancy. This serves
-   * as a common base class e.g. for Polymorphism.
+   * as a common base class e.g. for polymorphism and contains common code
+   * for reading and writing binary trees.
    */
   class AbstractOccupancyOcTree : public AbstractOcTree {
   public:
-    AbstractOccupancyOcTree() {};
+    AbstractOccupancyOcTree();
     virtual ~AbstractOccupancyOcTree() {};
+
+    virtual void toMaxLikelihood() = 0;
+
+    //-- IO
+
+    /**
+     * Writes OcTree to a binary file using writeBinary().
+     * The OcTree is first converted to the maximum likelihood estimate and pruned.
+     * @return success of operation
+     */
+    bool writeBinary(const std::string& filename);
+
+    /**
+     * Writes compressed maximum likelihood OcTree to a binary stream.
+     * The OcTree is first converted to the maximum likelihood estimate and pruned
+     * for maximum compression.
+     * @return success of operation
+     */
+    bool writeBinary(std::ostream &s);
+
+    /**
+     * Writes OcTree to a binary file using writeBinaryConst().
+     * The OcTree is not changed, in particular not pruned first.
+     * Files will be smaller when the tree is pruned first or by using
+     * writeBinary() instead.
+     * @return success of operation
+     */
+    bool writeBinaryConst(const std::string& filename) const;
+
+    /**
+     * Writes the maximum likelihood OcTree to a binary stream (const variant).
+     * Files will be smaller when the tree is pruned first or by using
+     * writeBinary() instead.
+     * @return success of operation
+     */
+    bool writeBinaryConst(std::ostream &s) const;
+
+    /// Writes the acutal data, implemented in OccupancyOcTreeBase::writeBinaryData()
+    virtual std::ostream& writeBinaryData(std::ostream &s) const = 0;
+
+
+    // TODO interface occupancy query fct => need OcTreeNode as common Node type
+    // instead of template parameter, also in OccupancyOcTreeBase
+    //virtual bool isNodeOccupied(const OcTreeNode* occupancyNode) const =0;
+
+
+    //-- parameters for occupancy and sensor model:
+
+    /// sets the threshold for occupancy (sensor model)
+    void setOccupancyThres(double prob){occ_prob_thres_log = logodds(prob); }
+    /// sets the probablility for a "hit" (will be converted to logodds) - sensor model
+    void setProbHit(double prob){prob_hit_log = logodds(prob); assert(prob_hit_log >= 0.0);}
+    /// sets the probablility for a "miss" (will be converted to logodds) - sensor model
+    void setProbMiss(double prob){prob_miss_log = logodds(prob); assert(prob_miss_log <= 0.0);}
+    /// sets the minimum threshold for occupancy clamping (sensor model)
+    void setClampingThresMin(double thresProb){clamping_thres_min = logodds(thresProb); }
+    /// sets the maximum threshold for occupancy clamping (sensor model)
+    void setClampingThresMax(double thresProb){clamping_thres_max = logodds(thresProb); }
+
+    /// @return threshold (probability) for occupancy - sensor model
+    double getOccupancyThres() const {return probability(occ_prob_thres_log); }
+    /// @return threshold (logodds) for occupancy - sensor model
+    float getOccupancyThresLog() const {return occ_prob_thres_log; }
+
+    /// @return probablility for a "hit" in the sensor model (probability)
+    double getProbHit() const {return probability(prob_hit_log); }
+    /// @return probablility for a "hit" in the sensor model (logodds)
+    float getProbHitLog() const {return prob_hit_log; }
+    /// @return probablility for a "miss"  in the sensor model (probability)
+    double getProbMiss() const {return probability(prob_miss_log); }
+    /// @return probablility for a "miss"  in the sensor model (logodds)
+    float getProbMissLog() const {return prob_miss_log; }
+
+    /// @return minimum threshold for occupancy clamping in the sensor model (probability)
+    double getClampingThresMin() const {return probability(clamping_thres_min); }
+    /// @return minimum threshold for occupancy clamping in the sensor model (logodds)
+    float getClampingThresMinLog() const {return clamping_thres_min; }
+    /// @return maximum threshold for occupancy clamping in the sensor model (probability)
+    double getClampingThresMax() const {return probability(clamping_thres_max); }
+    /// @return maximum threshold for occupancy clamping in the sensor model (logodds)
+    float getClampingThresMaxLog() const {return clamping_thres_max; }
+
+
+
+
+  protected:
+    // occupancy parameters of tree, stored in logodds:
+    float clamping_thres_min;
+    float clamping_thres_max;
+    float prob_hit_log;
+    float prob_miss_log;
+    float occ_prob_thres_log;
+
+    static const std::string binaryFileHeader;
   };
 
 }; // end namespace

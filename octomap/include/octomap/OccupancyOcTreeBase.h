@@ -41,13 +41,13 @@
  */
 
 #include <list>
-#include <fstream>
 #include <stdlib.h>
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
 #include "OcTreeBaseImpl.h"
 #include "AbstractOccupancyOcTree.h"
+//#include "OcTreeNode.h"
 
 
 namespace octomap {
@@ -309,45 +309,6 @@ namespace octomap {
     /// Iterator to traverse all keys of changed nodes.
     KeyBoolMap::const_iterator changedKeysEnd() {return changed_keys.end();}
 
-    //-- parameters for occupancy and sensor model:
-
-    /// sets the threshold for occupancy (sensor model)
-    void setOccupancyThres(double prob){occ_prob_thres_log = logodds(prob); }
-    /// sets the probablility for a "hit" (will be converted to logodds) - sensor model
-    void setProbHit(double prob){prob_hit_log = logodds(prob); assert(prob_hit_log >= 0.0);}
-    /// sets the probablility for a "miss" (will be converted to logodds) - sensor model
-    void setProbMiss(double prob){prob_miss_log = logodds(prob); assert(prob_miss_log <= 0.0);}
-    /// sets the minimum threshold for occupancy clamping (sensor model)
-    void setClampingThresMin(double thresProb){clamping_thres_min = logodds(thresProb); }
-    /// sets the maximum threshold for occupancy clamping (sensor model)
-    void setClampingThresMax(double thresProb){clamping_thres_max = logodds(thresProb); }
-
-    /// @return threshold (probability) for occupancy - sensor model
-    double getOccupancyThres() const {return probability(occ_prob_thres_log); }
-    /// @return threshold (logodds) for occupancy - sensor model
-    float getOccupancyThresLog() const {return occ_prob_thres_log; }
-
-    /// @return probablility for a "hit" in the sensor model (probability)
-    double getProbHit() const {return probability(prob_hit_log); }
-    /// @return probablility for a "hit" in the sensor model (logodds)
-    float getProbHitLog() const {return prob_hit_log; }
-    /// @return probablility for a "miss"  in the sensor model (probability)
-    double getProbMiss() const {return probability(prob_miss_log); }
-    /// @return probablility for a "miss"  in the sensor model (logodds)
-    float getProbMissLog() const {return prob_miss_log; }
-
-    /// @return minimum threshold for occupancy clamping in the sensor model (probability)
-    double getClampingThresMin() const {return probability(clamping_thres_min); }
-    /// @return minimum threshold for occupancy clamping in the sensor model (logodds)
-    float getClampingThresMinLog() const {return clamping_thres_min; }
-    /// @return maximum threshold for occupancy clamping in the sensor model (probability)
-    double getClampingThresMax() const {return probability(clamping_thres_max); }
-    /// @return maximum threshold for occupancy clamping in the sensor model (logodds)
-    float getClampingThresMaxLog() const {return clamping_thres_max; }
-
-
-
-
 
     /**
      * Helper for insertScan. Computes all octree nodes affected by the point cloud
@@ -375,41 +336,12 @@ namespace octomap {
     bool readBinary(std::istream &s);
 
     /**
-     * Writes compressed maximum likelihood OcTree to a binary stream.
-     * The OcTree is first converted to the maximum likelihood estimate and pruned
-     * for maximum compression.
-     * @return success of operation
-     */
-    bool writeBinary(std::ostream &s);
-
-    /**
-     * Writes the maximum likelihood OcTree to a binary stream (const variant).
-     * Files will be smaller when the tree is pruned first or by using
-     * writeBinary() instead.
-     * @return success of operation
-     */
-    bool writeBinaryConst(std::ostream &s) const;
-
-    /**
      * Reads OcTree from a binary file.
      * Existing nodes of the tree are deleted before the tree is read.
      * @return success of operation
      */
     bool readBinary(const std::string& filename);
 
-    /**
-     * Writes OcTree to a binary file using writeBinary().
-     * The OcTree is first converted to the maximum likelihood estimate and pruned.
-     * @return success of operation
-     */
-    bool writeBinary(const std::string& filename);
-
-    /**
-     * Writes OcTree to a binary file using writeBinaryConst().
-     * The OcTree is not changed, in particular not pruned first.
-     * @return success of operation
-     */
-    bool writeBinaryConst(const std::string& filename) const;
 
     /**
      * Read node from binary stream (max-likelihood value), recursively
@@ -435,6 +367,12 @@ namespace octomap {
      * @return
      */
     std::ostream& writeBinaryNode(std::ostream &s, const NODE* node) const;
+
+    /**
+     * Writes the data of the tree (without header) to the stream, recursively
+     * calling writeBinaryNode (starting with root)
+     */
+    std::ostream& writeBinaryData(std::ostream &s) const;
 
 
     void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const;
@@ -501,7 +439,6 @@ namespace octomap {
     bool readBinaryLegacyHeader(std::istream &s, unsigned int& size, double& res);
 
   protected:
-    const static std::string binaryFileHeader;
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
     point3d bbx_min;
     point3d bbx_max;
@@ -512,12 +449,7 @@ namespace octomap {
     /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
     KeyBoolMap changed_keys;
     
-    // occupancy parameters of tree, stored in logodds:
-    float clamping_thres_min;
-    float clamping_thres_max;
-    float prob_hit_log;
-    float prob_miss_log;
-    float occ_prob_thres_log;
+
   };
 
 } // namespace

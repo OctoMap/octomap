@@ -40,6 +40,8 @@
 #ifndef OCTOMAP_UTILS_H_
 #define OCTOMAP_UTILS_H_
 
+#include <math.h>
+
 namespace octomap{
 
   /// compute log-odds from probability:

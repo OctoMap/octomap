@@ -46,6 +46,11 @@
 
 namespace octomap {
 
+  class AbstractOcTreeNode {
+
+
+  };
+
   /**
    * Basic node in the OcTree that can hold arbitrary data of type T in value.
    * This is the base class for nodes used in an OcTree. The used implementation
@@ -53,7 +58,7 @@ namespace octomap {
    * \tparam T data to be stored in the node (e.g. a float for probabilities)
    *
    */
-  template<typename T> class OcTreeDataNode {
+  template<typename T> class OcTreeDataNode: public AbstractOcTreeNode {
 
   public:
 

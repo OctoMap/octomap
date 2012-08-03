@@ -46,7 +46,7 @@ namespace octomap {
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(double resolution) :
-    root(NULL), tree_depth(16), tree_max_val(32768), 
+    I(), root(NULL), tree_depth(16), tree_max_val(32768),
     resolution(resolution), tree_size(0)
   {
     
@@ -64,7 +64,7 @@ namespace octomap {
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val) :
-    root(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
+    I(), root(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
     resolution(resolution), tree_size(0)
   {
     this->setResolution(resolution);
@@ -583,13 +583,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s){
-    this->prune();
-    return this->writeDataConst(s);
-  }
-
-  template <class NODE,class I>
-  std::ostream& OcTreeBaseImpl<NODE,I>::writeDataConst(std::ostream &s) const{
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s) const{
     root->writeValue(s);
     return s;
   }
