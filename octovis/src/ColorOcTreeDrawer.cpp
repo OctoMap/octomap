@@ -9,11 +9,11 @@ namespace octomap {
   ColorOcTreeDrawer::~ColorOcTreeDrawer() {
   }
 
-  void ColorOcTreeDrawer::setOcTree(const AbstractOcTree* tree_pnt,
-                                    octomap::pose6d origin_, 
+  void ColorOcTreeDrawer::setOcTree(const AbstractOcTree& tree_pnt,
+                                    const octomap::pose6d& origin_,
                                     int map_id_) {
 
-    ColorOcTree& tree = *((ColorOcTree*) tree_pnt);
+    const ColorOcTree& tree = ((const ColorOcTree&) tree_pnt);
 
     this->map_id = map_id_;
 

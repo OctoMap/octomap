@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_MAP_NODE_H
 #define OCTOMAP_MAP_NODE_H
 
-// $Id:  $
+// $Id$
 
 /**
  * OctoMap:

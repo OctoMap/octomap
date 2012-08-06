@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_MAP_COLLECTION_H
 #define OCTOMAP_MAP_COLLECTION_H
 
-// $Id:  $
+// $Id$
 
 /**
  * OctoMap:

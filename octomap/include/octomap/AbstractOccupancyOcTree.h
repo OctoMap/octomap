@@ -42,8 +42,11 @@
 
 #include "AbstractOcTree.h"
 #include "octomap_utils.h"
+#include "OcTreeNode.h"
+#include "OcTreeKey.h"
 #include <cassert>
 #include <fstream>
+
 
 namespace octomap {
 
@@ -56,8 +59,6 @@ namespace octomap {
   public:
     AbstractOccupancyOcTree();
     virtual ~AbstractOccupancyOcTree() {};
-
-    virtual void toMaxLikelihood() = 0;
 
     //-- IO
 
@@ -97,10 +98,79 @@ namespace octomap {
     virtual std::ostream& writeBinaryData(std::ostream &s) const = 0;
 
 
-    // TODO interface occupancy query fct => need OcTreeNode as common Node type
-    // instead of template parameter, also in OccupancyOcTreeBase
-    //virtual bool isNodeOccupied(const OcTreeNode* occupancyNode) const =0;
+    // -- occupancy queries
 
+    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
+    inline bool isNodeOccupied(const OcTreeNode* occupancyNode) const{
+      return (occupancyNode->getLogOdds() >= this->occ_prob_thres_log);
+    }
+
+    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
+    inline bool isNodeOccupied(const OcTreeNode& occupancyNode) const{
+      return (occupancyNode.getLogOdds() >= this->occ_prob_thres_log);
+    }
+
+    /// queries whether a node is at the clamping threshold according to the tree's parameter
+    inline bool isNodeAtThreshold(const OcTreeNode* occupancyNode) const{
+      return (occupancyNode->getLogOdds() >= this->clamping_thres_max
+          || occupancyNode->getLogOdds() <= this->clamping_thres_min);
+    }
+
+    /// queries whether a node is at the clamping threshold according to the tree's parameter
+    inline bool isNodeAtThreshold(const OcTreeNode& occupancyNode) const{
+      return (occupancyNode.getLogOdds() >= this->clamping_thres_max
+          || occupancyNode.getLogOdds() <= this->clamping_thres_min);
+    }
+
+    // - update functions
+
+    /**
+     * Manipulate log_odds value of voxel directly
+     *
+     * @param OcTreeKey of the NODE that is to be updated
+     * @param log_odds_update value to be added (+) to log_odds value of node
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual OcTreeNode* updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval = false) = 0;
+
+    /**
+     * Manipulate log_odds value of voxel directly.
+     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+     *
+     * @param value 3d coordinate of the NODE that is to be updated
+     * @param log_odds_update value to be added (+) to log_odds value of node
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual OcTreeNode* updateNode(const point3d& value, float log_odds_update, bool lazy_eval = false) = 0;
+
+    /**
+     * Integrate occupancy measurement.
+     *
+     * @param OcTreeKey of the NODE that is to be updated
+     * @param occupied true if the node was measured occupied, else false
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual OcTreeNode* updateNode(const OcTreeKey& key, bool occupied, bool lazy_eval = false) = 0;
+
+    /**
+     * Integrate occupancy measurement.
+     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+     *
+     * @param value 3d coordinate of the NODE that is to be updated
+     * @param occupied true if the node was measured occupied, else false
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual OcTreeNode* updateNode(const point3d& value, bool occupied, bool lazy_eval = false) = 0;
+
+    virtual void toMaxLikelihood() = 0;
 
     //-- parameters for occupancy and sensor model:
 

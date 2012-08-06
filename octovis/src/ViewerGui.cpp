@@ -286,7 +286,7 @@ namespace octomap{
    // gettimeofday(&start, NULL);  // start timer    
     for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
       it->second.octree_drawer->setMax_tree_depth(m_max_tree_depth);
-      it->second.octree_drawer->setOcTree(it->second.octree, it->second.origin, it->second.id);
+      it->second.octree_drawer->setOcTree(*it->second.octree, it->second.origin, it->second.id);
     }
 //    gettimeofday(&stop, NULL);  // stop timer
 //    double time_to_generate = (stop.tv_sec - start.tv_sec) + 1.0e-6 *(stop.tv_usec - start.tv_usec);

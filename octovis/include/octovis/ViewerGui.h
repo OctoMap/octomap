@@ -214,7 +214,7 @@ namespace octomap {
     QLabel* m_mapSizeStatus;
     QLabel* m_mapMemoryStatus;
 
-    //! Filename of last loaded file, in case it is necessary to reload it
+    /// Filename of last loaded file, in case it is necessary to reload it
     std::string m_filename;
   };
 

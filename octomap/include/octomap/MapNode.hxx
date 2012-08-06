@@ -1,4 +1,4 @@
-// $Id: OcTree.cpp 252 2011-08-15 13:10:00Z ahornung $
+// $Id$
 
 /**
 * OctoMap:

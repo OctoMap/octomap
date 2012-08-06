@@ -108,22 +108,21 @@ namespace octomap {
   }
 
 
-  void OcTreeDrawer::setOcTree(const AbstractOcTree* tree_pnt, octomap::pose6d origin_, int map_id_) {
-
-    OcTree& octree = *((OcTree*) tree_pnt);
+  void OcTreeDrawer::setOcTree(const AbstractOcTree& tree, const pose6d& origin, int map_id_) {
       
+    const OcTree& octree = (const OcTree&) tree;
     this->map_id = map_id_;
 
     // save origin used during cube generation
-    this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), origin_.rot());
+    this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), origin.rot());
 
     // origin is in global coords
-    this->origin = origin_;
+    this->origin = origin;
     
     // maximum size to prevent crashes on large maps: (should be checked in a better way than a constant)
     bool showAll = (octree.size() < 5 * 1e6);
-    bool uses_origin = ( (origin_.rot().x() != 0.) && (origin_.rot().y() != 0.)
-        && (origin_.rot().z() != 0.) && (origin_.rot().u() != 1.) );
+    bool uses_origin = ( (origin.rot().x() != 0.) && (origin.rot().y() != 0.)
+        && (origin.rot().z() != 0.) && (origin.rot().u() != 1.) );
 
     // walk the tree one to find the number of nodes in each category
     // (this is used to set up the OpenGL arrays)

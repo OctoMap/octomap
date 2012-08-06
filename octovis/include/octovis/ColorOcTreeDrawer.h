@@ -11,7 +11,7 @@ namespace octomap {
     ColorOcTreeDrawer();
     virtual ~ColorOcTreeDrawer();
 
-    virtual void setOcTree(const AbstractOcTree* tree_pnt, octomap::pose6d origin, int map_id_);
+    virtual void setOcTree(const AbstractOcTree& tree_pnt, const pose6d& origin, int map_id_);
 
   protected:
     

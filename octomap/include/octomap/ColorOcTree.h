@@ -1,7 +1,7 @@
 #ifndef OCTOMAP_COLOR_OCTREE_H
 #define OCTOMAP_COLOR_OCTREE_H
 
-// $Id:  $
+// $Id$
 
 /**
  * OctoMap:

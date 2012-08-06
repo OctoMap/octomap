@@ -47,7 +47,6 @@
 #include "octomap_utils.h"
 #include "OcTreeBaseImpl.h"
 #include "AbstractOccupancyOcTree.h"
-//#include "OcTreeNode.h"
 
 
 namespace octomap {
@@ -384,15 +383,6 @@ namespace octomap {
      **/
     void updateInnerOccupancy();
 
-    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
-    virtual bool isNodeOccupied(const NODE* occupancyNode) const;
-    /// queries whether a node is occupied according to the tree's parameter for "occupancy"
-    virtual bool isNodeOccupied(const NODE& occupancyNode) const;
-
-    /// queries whether a node is at the clamping threshold according to the tree's parameter
-    virtual bool isNodeAtThreshold(const NODE* occupancyNode) const;
-    /// queries whether a node is at the clamping threshold according to the tree's parameter
-    virtual bool isNodeAtThreshold(const NODE& occupancyNode) const;
 
     /// integrate a "hit" measurement according to the tree's sensor model
     virtual void integrateHit(NODE* occupancyNode) const;

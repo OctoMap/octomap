@@ -212,7 +212,7 @@ namespace octomap {
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, bool occupied, bool lazy_eval) {
     NODE* leaf = this->search(key);
     // no change: node already at threshold
-    if (leaf && (isNodeAtThreshold(leaf)) && (isNodeOccupied(leaf) == occupied)) {
+    if (leaf && (this->isNodeAtThreshold(leaf)) && (this->isNodeOccupied(leaf) == occupied)) {
       return leaf;
     }
     if (occupied) return updateNodeRecurs(this->root, false, key, 0, this->prob_hit_log,  lazy_eval);
@@ -934,27 +934,6 @@ namespace octomap {
   }
 
   //-- Occupancy queries on nodes:
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeOccupied(const NODE* occupancyNode) const{
-    return (occupancyNode->getLogOdds() >= this->occ_prob_thres_log);
-  }
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeOccupied(const NODE& occupancyNode) const{
-    return (occupancyNode.getLogOdds() >= this->occ_prob_thres_log);
-  }
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE* occupancyNode) const{
-    return (occupancyNode->getLogOdds() >= this->clamping_thres_max
-            || occupancyNode->getLogOdds() <= this->clamping_thres_min);
-  }
-
-  template <class NODE>
-  bool OccupancyOcTreeBase<NODE>::isNodeAtThreshold(const NODE& occupancyNode) const{
-    return (occupancyNode.getLogOdds() >= this->clamping_thres_max
-            || occupancyNode.getLogOdds() <= this->clamping_thres_min);
-  }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateNodeLogOdds(NODE* occupancyNode, const float& update) const {
