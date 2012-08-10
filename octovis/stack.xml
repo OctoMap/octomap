@@ -10,7 +10,7 @@
 
   <url>http://octomap.sf.net</url>
 
-  <build_depends>catkin</build_depends>
+  <build_depends>cmake</build_depends>
   <build_depends>octomap</build_depends>
   <build_depends>libqglviewer-qt4-dev</build_depends>
   <build_depends>libqt4-dev</build_depends>

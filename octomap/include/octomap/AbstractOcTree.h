@@ -89,8 +89,9 @@ namespace octomap {
 //    class tree_iterator;
 //    class leaf_bbx_iterator;
 //    typedef leaf_iterator iterator;
+      class iterator_base;
 //    /// @return beginning of the tree as leaf iterator
-//    virtual iterator begin(unsigned char maxDepth=0) const = 0;
+      //virtual iterator_base begin(unsigned char maxDepth=0) const = 0;
 //    /// @return end of the tree as leaf iterator
 //    virtual const iterator end() const = 0;
 //    /// @return beginning of the tree as leaf iterator

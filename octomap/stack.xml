@@ -10,5 +10,5 @@
 
   <url>http://octomap.sf.net</url>
 
-  <build_depends>catkin</build_depends>
+  <build_depends>cmake</build_depends>
 </stack>
