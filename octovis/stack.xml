@@ -18,6 +18,6 @@
   
   <depends>octomap</depends>
   <depends>libqglviewer-qt4</depends>
-  <depends>libqt4</depends>
+  <depends>libqtgui4</depends>
   <depends>libqt4-opengl</depends>
 </stack>
