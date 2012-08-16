@@ -50,10 +50,11 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "\nUSAGE: " << self << " input.ot [output.bt]\n\n";
+  std::cerr << "\nUSAGE: " << self << " input.(ot|bt|cot) [output.ot]\n\n";
 
   std::cerr << "This tool converts between OctoMap octree file formats, \n"
-      "e.g. to convert old legacy files to the new .ot format.\n\n";
+      "e.g. to convert old legacy files to the new .ot format or to convert \n"
+      "between .bt and .ot files. The default output format is .ot.\n\n";
 
   exit(0);
 }

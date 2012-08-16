@@ -75,19 +75,18 @@ int main(int argc, char** argv) {
   // -----------------------------------------------
 
   cout << "generating single rays..." << endl;
-  OcTree single_beams(0.05);
-  int num_beams = 1;
-  float beamLength = 1.0f;
+  OcTree single_beams(0.03333);
+  int num_beams = 17;
+  float beamLength = 10.0f;
   point3d single_origin (1.0f, 0.45f, 0.45f);
   point3d single_endpoint(beamLength, 0.0f, 0.0f);
 	
 	
-  for (int i=0; i<num_beams; i++) {
-    single_endpoint.rotate_IP (0,0,DEG2RAD(30));
+  for (int i=0; i<num_beams; i++) {    
     if (!single_beams.insertRay(single_origin, single_origin+single_endpoint)) {
       cout << "ERROR while inserting ray from " << single_origin << " to " << single_endpoint << endl;
     }
-    
+    single_endpoint.rotate_IP (0,0,DEG2RAD(360.0/num_beams));
   }
 	
   cout << "done." << endl;
