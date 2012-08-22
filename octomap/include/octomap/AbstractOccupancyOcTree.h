@@ -1,5 +1,5 @@
-#ifndef OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE
-#define OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE
+#ifndef OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE_H
+#define OCTOMAP_ABSTRACT_OCCUPANCY_OCTREE_H
 
 // $Id$
 
@@ -94,9 +94,25 @@ namespace octomap {
      */
     bool writeBinaryConst(std::ostream &s) const;
 
-    /// Writes the acutal data, implemented in OccupancyOcTreeBase::writeBinaryData()
+    /// Writes the actual data, implemented in OccupancyOcTreeBase::writeBinaryData()
     virtual std::ostream& writeBinaryData(std::ostream &s) const = 0;
+    
+    /**
+     * Reads an OcTree from an input stream.
+     * Existing nodes of the tree are deleted before the tree is read.
+     * @return success of operation
+     */
+    bool readBinary(std::istream &s);
+    
+    /**
+     * Reads OcTree from a binary file.
+     * Existing nodes of the tree are deleted before the tree is read.
+     * @return success of operation
+     */
+    bool readBinary(const std::string& filename);
 
+    /// Reads the actual data, implemented in OccupancyOcTreeBase::readBinaryData()
+    virtual std::istream& readBinaryData(std::istream &s) = 0;
 
     // -- occupancy queries
 
@@ -212,6 +228,9 @@ namespace octomap {
 
 
   protected:
+    /// Try to read the old binary format for conversion, will be removed in the future
+    bool readBinaryLegacyHeader(std::istream &s, unsigned int& size, double& res);
+    
     // occupancy parameters of tree, stored in logodds:
     float clamping_thres_min;
     float clamping_thres_max;

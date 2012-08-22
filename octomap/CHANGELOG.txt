@@ -1,7 +1,8 @@
 v1.5.0: (in trunk, release forthcoming)
 ===================
+- added AbstractOccupancyOcTree interface class, moved binary file IO
 - delete functionality added to octrees and nodes
-- octovis inside or outside of a selection box
+- octovis can now delete nodes inside or outside of a selection box
 - operator== and copy constructor for octree nodes and octrees
 - key / coordinate conversion functions are now clearly named and documented.
 	genPos/genKey deprecated in favor of coordToKey, keyToCoord

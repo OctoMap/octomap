@@ -328,19 +328,11 @@ namespace octomap {
     // -- I/O  -----------------------------------------
 
     /**
-     * Reads an OcTree from an input stream.
-     * Existing nodes of the tree are deleted before the tree is read.
-     * @return success of operation
+     * Reads only the data (=tree structure) from the input stream.
+     * The tree needs to be constructed with the proper header information
+     * beforehand, see readBinary().
      */
-    bool readBinary(std::istream &s);
-
-    /**
-     * Reads OcTree from a binary file.
-     * Existing nodes of the tree are deleted before the tree is read.
-     * @return success of operation
-     */
-    bool readBinary(const std::string& filename);
-
+    std::istream& readBinaryData(std::istream &s);
 
     /**
      * Read node from binary stream (max-likelihood value), recursively
@@ -424,9 +416,6 @@ namespace octomap {
     void calcNumThresholdedNodesRecurs (NODE* node,
                                         unsigned int& num_thresholded,
                                         unsigned int& num_other) const;
-
-    /// Try to read the old binary format for conversion, will be removed in the future
-    bool readBinaryLegacyHeader(std::istream &s, unsigned int& size, double& res);
 
   protected:
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?
