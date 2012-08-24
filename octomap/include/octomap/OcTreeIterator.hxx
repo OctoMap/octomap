@@ -45,7 +45,7 @@
      * const with respect to the tree. This file is included within
      * OcTreeBaseImpl.h, you should probably not include this directly.
      */
-    class iterator_base : std::iterator<std::forward_iterator_tag, NodeType>{
+    class iterator_base : public std::iterator<std::forward_iterator_tag, NodeType>{
     public:
       struct StackElement;
       /// Default ctor, only used for the end-iterator
