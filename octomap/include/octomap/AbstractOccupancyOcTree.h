@@ -143,7 +143,7 @@ namespace octomap {
     /**
      * Manipulate log_odds value of voxel directly
      *
-     * @param OcTreeKey of the NODE that is to be updated
+     * @param key of the NODE that is to be updated
      * @param log_odds_update value to be added (+) to log_odds value of node
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
@@ -166,7 +166,7 @@ namespace octomap {
     /**
      * Integrate occupancy measurement.
      *
-     * @param OcTreeKey of the NODE that is to be updated
+     * @param key of the NODE that is to be updated
      * @param occupied true if the node was measured occupied, else false
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.

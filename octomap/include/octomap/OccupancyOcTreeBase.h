@@ -83,8 +83,8 @@ namespace octomap {
      /**
      * Integrate a Pointcloud (in global reference frame)
      *
-     * @param pc Pointcloud (measurement endpoints), in global reference frame
-     * @param measurement origin in global reference frame
+     * @param scan Pointcloud (measurement endpoints), in global reference frame
+     * @param sensor_origin measurement origin in global reference frame
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
@@ -96,7 +96,7 @@ namespace octomap {
      /**
      * Integrate a 3d scan, transform scan before tree update
      *
-     * @param pc Pointcloud (measurement endpoints) relative to frame origin
+     * @param scan Pointcloud (measurement endpoints) relative to frame origin
      * @param sensor_origin origin of sensor relative to frame origin
      * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
@@ -104,7 +104,7 @@ namespace octomap {
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      */
-    virtual void insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
+    virtual void insertScan(const Pointcloud& scan, const point3d& sensor_origin, const pose6d& frame_origin,
                     double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /**
@@ -124,7 +124,7 @@ namespace octomap {
     /**
      * Manipulate log_odds value of voxel directly
      *
-     * @param OcTreeKey of the NODE that is to be updated
+     * @param key OcTreeKey of the NODE that is to be updated
      * @param log_odds_update value to be added (+) to log_odds value of node
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
@@ -147,7 +147,7 @@ namespace octomap {
     /**
      * Integrate occupancy measurement.
      *
-     * @param OcTreeKey of the NODE that is to be updated
+     * @param key OcTreeKey of the NODE that is to be updated
      * @param occupied true if the node was measured occupied, else false
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.

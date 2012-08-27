@@ -337,6 +337,7 @@ namespace octomap {
      * Converts a 3D coordinate into a 3D OcTreeKey at a certain depth, with boundary checking.
      *
      * @param coord 3d coordinate of a point
+     * @param depth level of the key from the top
      * @param key values that will be computed, an array of fixed size 3.
      * @return true if point is within the octree (valid), false otherwise
      */

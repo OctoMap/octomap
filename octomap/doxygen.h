@@ -57,10 +57,10 @@ convenient exchange between robots even under bandwidth constraints.
 </li>
 </ul>
 
-<p> Octomap is actively maintained by <a
+<p> Octomap was developed by <a
 href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and
 <a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin
-Hornung</a>. Feel free to contact us. A tracker for bug reports and
+Hornung</a>, and is currently maintained by Armin Hornung. A tracker for bug reports and
 feature requests is available available at <a href="https://sourceforge.net/apps/trac/octomap">https://sourceforge.net/apps/trac/octomap</a></p>
 
   \section install_sec Installation
@@ -80,7 +80,7 @@ feature requests is available available at <a href="https://sourceforge.net/apps
   octomap::OcTree::insertRay(...), to insert full 3D scans (pointclouds) please have a look at
   octomap::OcTree::insertScan(...). Queries can be performed e.g. with octomap::OcTree::search(...) or
   octomap::OcTree::castRay(...). The preferred way to batch-access or process nodes in an Octree is with the iterators
-  \ref octomap::OcTreeBase::leaf_iterator "leaf_iterator",  \ref octomap::OcTreeBase::tree_iterator "tree_iterator", or \ref octomap::OcTreeBase::leaf_bbx_iterator "leaf_bbx_iterator".</p>
+  \ref leaf_iterator "leaf_iterator",  \ref tree_iterator "tree_iterator", or \ref leaf_bbx_iterator "leaf_bbx_iterator".</p>
   <p>The \ref octomap::OcTree "OcTree" class is derived from \ref octomap::OccupancyOcTreeBase "OccupancyOcTreeBase", with most
   functionality in the parent class. Also derive from OccupancyOcTreeBase if you you want to implement
   your own Octree and node classes. You can have a look at the classes octomap::OcTreeStamped and octomap::OcTreeNodeStamped as examples.
