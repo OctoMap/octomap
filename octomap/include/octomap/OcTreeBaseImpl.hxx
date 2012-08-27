@@ -650,6 +650,14 @@ namespace octomap {
     if (!size_changed)
       return;
 
+    // workaround for "empty" tree (only root)
+    if (!this->root->hasChildren()){
+      min_value[0] = min_value[1] = min_value[2] = 0.0;
+      max_value[0] = max_value[1] = max_value[2] = 0.0;
+      size_changed = false;
+      return;
+    }
+
     for (unsigned i = 0; i< 3; i++){
       max_value[i] = -std::numeric_limits<double>::max();
       min_value[i] = std::numeric_limits<double>::max();
@@ -689,9 +697,7 @@ namespace octomap {
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::getMetricMax(double& x, double& y, double& z){
-
     calcMinMax();
-    
     x = max_value[0];
     y = max_value[1];
     z = max_value[2];
@@ -703,6 +709,12 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::getMetricMin(double& mx, double& my, double& mz) const {
     mx = my = mz = std::numeric_limits<double>::max( );
     if (size_changed) {
+      // workaround for "empty" tree (only root)
+      if (!this->root->hasChildren()){
+        mx = my = mz = 0.0;
+        return;
+      }
+
       for(typename OcTreeBaseImpl<NODE,I>::leaf_iterator it = this->begin(),
               end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;
@@ -725,6 +737,12 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::getMetricMax(double& mx, double& my, double& mz) const {
     mx = my = mz = -std::numeric_limits<double>::max( );
     if (size_changed) {
+      // workaround for "empty" tree (only root)
+      if (!this->root->hasChildren()){
+        mx = my = mz = 0.0;
+        return;
+      }
+
       for(typename OcTreeBaseImpl<NODE,I>::leaf_iterator it = this->begin(),
             end=this->end(); it!= end; ++it) {
         double halfSize = it.getSize()/2.0;

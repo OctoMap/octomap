@@ -274,13 +274,13 @@ namespace octomap{
 
       m_glwidget->setSceneBoundingBox(qglviewer::Vec(minX, minY, minZ), qglviewer::Vec(maxX, maxY, maxZ));
 
-    if (m_octrees.size()) {
+    //if (m_octrees.size()) {
       QString size = QString("%L1 x %L2 x %L3 m^3; %L4 nodes").arg(sizeX).arg(sizeY).arg(sizeZ).arg(unsigned(num_nodes));
       QString memory = QString("Single node: %L1 B; ").arg(memorySingleNode)
         + QString ("Octree: %L1 B (%L2 MB)").arg(memoryUsage).arg((double) memoryUsage/(1024.*1024.), 0, 'f', 3);
       m_mapMemoryStatus->setText(memory);
       m_mapSizeStatus->setText(size);
-    }
+    //}
 
     m_glwidget->updateGL();
 
@@ -1134,6 +1134,7 @@ namespace octomap{
       delete (it->second.octree);
     }
     m_octrees.clear();
+    showOcTree();
   }
 
   void ViewerGui::on_actionTest_triggered(){
