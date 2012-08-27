@@ -147,6 +147,8 @@ namespace octomap {
     for(unsigned i = 0; i <= tree_depth; ++i){
       sizeLookupTable[i] = resolution * double(1 << (tree_depth - i));
     }
+
+    size_changed = true;
   }
 
   template <class NODE,class I>

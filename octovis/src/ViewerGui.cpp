@@ -190,6 +190,8 @@ namespace octomap{
       }
       else if (dynamic_cast<ColorOcTree*>(tree)) {
         r->octree_drawer = new ColorOcTreeDrawer();
+      } else{
+        OCTOMAP_ERROR("Could not create drawer for tree type %s\n", tree->getTreeType().c_str());
       }
 
       delete r->octree;
@@ -212,6 +214,8 @@ namespace octomap{
       }
       else if (dynamic_cast<ColorOcTree*>(tree)) {      
         otr.octree_drawer = new ColorOcTreeDrawer();
+      } else{
+        OCTOMAP_ERROR("Could not create drawer for tree type %s\n", tree->getTreeType().c_str());
       }
       otr.octree = tree;
       otr.origin = origin;
@@ -806,11 +810,13 @@ namespace octomap{
 
       // TODO: get rid of casts (requires occupancy tree interface)
       if (fileinfo.suffix() == "bt") {
-        if (dynamic_cast<OcTree*>(t)) {
-          ((OcTree*) t)->writeBinaryConst(std_filename);
-        }
-        else if (dynamic_cast<ColorOcTree*>(t)) {
-          ((ColorOcTree*) t)->writeBinaryConst(std_filename);
+        AbstractOccupancyOcTree* ot = dynamic_cast<AbstractOccupancyOcTree*> (t);
+        if (ot)
+          ot->writeBinaryConst(std_filename);
+        else{
+          QMessageBox::warning(this, "Unknown tree type",
+                                       "Could not convert to occupancy tree for writing .bt file",
+                                       QMessageBox::Ok);
         }
       }
       else if (fileinfo.suffix() == "ot"){
