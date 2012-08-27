@@ -1,6 +1,6 @@
 <stack>
   <name>octovis</name>
-  <version>1.4.92</version>
+  <version>1.5.0</version>
   <description brief="Visualization for OctoMap">octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See http://octomap.sf.net for details.</description>
   <author>Kai M. Wurm</author>
   <author>Armin Hornung</author>

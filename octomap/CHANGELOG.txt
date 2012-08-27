@@ -1,5 +1,7 @@
-v1.5.0: (in trunk, release forthcoming)
+v1.5.0: 2012-08-28
 ===================
+- dynamicEDT3D, a library for dynamically updatable distance maps by C. Sprunk, 
+	B. Lau, and W. Burgard is now available as part of the OctoMap distribution
 - added AbstractOccupancyOcTree interface class, moved binary file IO
 - delete functionality added to octrees and nodes
 - octovis can now delete nodes inside or outside of a selection box
