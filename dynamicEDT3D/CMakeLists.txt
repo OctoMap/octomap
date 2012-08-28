@@ -83,7 +83,7 @@ set(DYNAMICEDT3D_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 # not used right now (export depends?)
 #set(DYNEDT3D_CMAKE_DIR "${PROJECT_BINARY_DIR}")
 configure_file(dynamicEDT3DConfig.cmake.in
-  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDt3D/dynamicEDT3DConfig.cmake" @ONLY)
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig.cmake" @ONLY)
 configure_file(dynamicEDT3DConfig-version.cmake.in
   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig-version.cmake" @ONLY)
 

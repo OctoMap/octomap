@@ -12,6 +12,6 @@ set(DYNAMICEDT3D_LIBRARY_DIRS @DYNAMICEDT3D_LIB_DIR@)
 # Our library dependencies (contains definitions for IMPORTED targets)
 # include("@FOOBAR_CMAKE_DIR@/FooBarLibraryDepends.cmake")
  
-set(DYNAMICEDT3D_LIBRARIES dynamicEDT3D)
+set(DYNAMICEDT3D_LIBRARIES dynamicedt3d)
 
 #set(FOOBAR_EXECUTABLE bar)
