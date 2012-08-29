@@ -61,23 +61,23 @@ public:
 
 	///retrieves distance and closestObstacle (closestObstacle is to be discarded if distance is maximum distance, the method does not write closestObstacle in this case).
 	///Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
-	void getDistanceAndClosestObstacle(octomap::point3d& p, float &distance, octomap::point3d& closestObstacle);
+	void getDistanceAndClosestObstacle(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const;
 
     ///retrieves distance at point. Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
-    float getDistance(octomap::point3d& p);
+    float getDistance(const octomap::point3d& p) const;
     ///retrieves distance at key. Returns DynamicEDTOctomap::distanceValue_Error if key is outside the map.
-    float getDistance(octomap::OcTreeKey& k);
+    float getDistance(const octomap::OcTreeKey& k) const;
 
     ///retrieves squared distance in cells at point. Returns DynamicEDTOctomap::distanceInCellsValue_Error if point is outside the map.
-    int getSquaredDistanceInCells(octomap::point3d& p);
+    int getSquaredDistanceInCells(const octomap::point3d& p) const;
 
 	///retrieve maximum distance value
-	float getMaxDist(){
+	float getMaxDist() const {
 	  return maxDist*octree->getResolution();
 	}
 
 	///retrieve squared maximum distance value in grid cells
-	int getSquaredMaxDistCells(){
+	int getSquaredMaxDistCells() const {
 	  return maxDist_squared;
 	}
 
@@ -88,12 +88,12 @@ public:
 
 private:
 	void initializeOcTree(octomap::point3d bbxMin, octomap::point3d bbxMax);
-	inline void insertMaxDepthLeafAtInitialize(octomap::OcTreeKey key);
-	inline void updateMaxDepthLeaf(octomap::OcTreeKey& key, bool occupied);
+	void insertMaxDepthLeafAtInitialize(octomap::OcTreeKey key);
+	void updateMaxDepthLeaf(octomap::OcTreeKey& key, bool occupied);
 
-	inline void worldToMap(octomap::point3d &p, int &x, int &y, int &z);
-	inline void mapToWorld(int &x, int &y, int &z, octomap::point3d &p);
-	inline void mapToWorld(int &x, int &y, int &z, octomap::OcTreeKey &key);
+	void worldToMap(const octomap::point3d &p, int &x, int &y, int &z) const;
+	void mapToWorld(int x, int y, int z, octomap::point3d &p) const;
+	void mapToWorld(int x, int y, int z, octomap::OcTreeKey &key) const;
 
 	octomap::OcTree* octree;
 	bool unknownOccupied;

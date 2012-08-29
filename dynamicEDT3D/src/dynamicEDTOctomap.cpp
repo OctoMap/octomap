@@ -185,24 +185,22 @@ void DynamicEDTOctomap::updateMaxDepthLeaf(octomap::OcTreeKey& key, bool occupie
 		removeObstacle(key[0]+offsetX, key[1]+offsetY, key[2]+offsetZ);
 }
 
-void DynamicEDTOctomap::worldToMap(octomap::point3d &p, int &x, int &y, int &z){
+void DynamicEDTOctomap::worldToMap(const octomap::point3d &p, int &x, int &y, int &z) const {
 	octomap::OcTreeKey key = octree->coordToKey(p);
 	x = key[0] + offsetX;
 	y = key[1] + offsetY;
 	z = key[2] + offsetZ;
 }
 
-void DynamicEDTOctomap::mapToWorld(int &x, int &y, int &z, octomap::point3d &p){
-	octomap::OcTreeKey key(x-offsetX, y-offsetY, z-offsetZ);
-
-	p = octree->keyToCoord(key);
+void DynamicEDTOctomap::mapToWorld(int x, int y, int z, octomap::point3d &p) const {
+	p = octree->keyToCoord(octomap::OcTreeKey(x-offsetX, y-offsetY, z-offsetZ));
 }
 
-void DynamicEDTOctomap::mapToWorld(int &x, int &y, int &z, octomap::OcTreeKey &key){
+void DynamicEDTOctomap::mapToWorld(int x, int y, int z, octomap::OcTreeKey &key) const {
 	key = octomap::OcTreeKey(x-offsetX, y-offsetY, z-offsetZ);
 }
 
-void DynamicEDTOctomap::getDistanceAndClosestObstacle(octomap::point3d& p, float &distance, octomap::point3d& closestObstacle){
+void DynamicEDTOctomap::getDistanceAndClosestObstacle(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const {
     distance = maxDist;
 	int x,y,z;
 	worldToMap(p, x, y, z);
@@ -221,7 +219,7 @@ void DynamicEDTOctomap::getDistanceAndClosestObstacle(octomap::point3d& p, float
 	}
 }
 
-float DynamicEDTOctomap::getDistance(octomap::point3d& p){
+float DynamicEDTOctomap::getDistance(const octomap::point3d& p) const {
   int x,y,z;
   worldToMap(p, x, y, z);
   if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){
@@ -232,7 +230,7 @@ float DynamicEDTOctomap::getDistance(octomap::point3d& p){
   }
 }
 
-float DynamicEDTOctomap::getDistance(octomap::OcTreeKey& k){
+float DynamicEDTOctomap::getDistance(const octomap::OcTreeKey& k) const {
   int x = k[0] + offsetX;
   int y = k[1] + offsetY;
   int z = k[2] + offsetZ;
@@ -245,7 +243,7 @@ float DynamicEDTOctomap::getDistance(octomap::OcTreeKey& k){
   }
 }
 
-int DynamicEDTOctomap::getSquaredDistanceInCells(octomap::point3d& p){
+int DynamicEDTOctomap::getSquaredDistanceInCells(const octomap::point3d& p) const {
   int x,y,z;
   worldToMap(p, x, y, z);
   if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){

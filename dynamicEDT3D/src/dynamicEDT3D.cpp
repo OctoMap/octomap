@@ -517,14 +517,14 @@ void DynamicEDT3D::inspectCellPropagate(int &nx, int &ny, int &nz, dataCell &c, 
 }
 
 
-float DynamicEDT3D::getDistance( int x, int y, int z ) {
+float DynamicEDT3D::getDistance( int x, int y, int z ) const {
 	if( (x>=0) && (x<sizeX) && (y>=0) && (y<sizeY) && (z>=0) && (z<sizeZ)){
 		return data[x][y][z].dist;
 	}
 	else return -INFINITY;
 }
 
-INTPOINT3D DynamicEDT3D::getClosestObstacle( int x, int y, int z ) {
+INTPOINT3D DynamicEDT3D::getClosestObstacle( int x, int y, int z ) const {
 	if( (x>=0) && (x<sizeX) && (y>=0) && (y<sizeY) && (z>=0) && (z<sizeZ)){
 	  dataCell c = data[x][y][z];
 	  return INTPOINT3D(c.obstX, c.obstY, c.obstZ);
@@ -532,7 +532,7 @@ INTPOINT3D DynamicEDT3D::getClosestObstacle( int x, int y, int z ) {
 	else return INTPOINT3D(invalidObstData, invalidObstData, invalidObstData);
 }
 
-int DynamicEDT3D::getSQCellDistance( int x, int y, int z ){
+int DynamicEDT3D::getSQCellDistance( int x, int y, int z ) const {
 	if( (x>=0) && (x<sizeX) && (y>=0) && (y<sizeY) && (z>=0) && (z<sizeZ)){
 		return data[x][y][z].sqdist;
 	}
@@ -580,7 +580,7 @@ void DynamicEDT3D::commitAndColorize(bool updateRealDist) {
 	addList.clear();
 }
 
-bool DynamicEDT3D::isOccupied(int x, int y, int z) {
+bool DynamicEDT3D::isOccupied(int x, int y, int z) const {
 	dataCell c = data[x][y][z];
 	return (c.obstX==x && c.obstY==y && c.obstZ==z);
 }

@@ -72,21 +72,21 @@ public:
   virtual void update(bool updateRealDist=true);
 
   //! returns the obstacle distance at the specified location
-  float getDistance( int x, int y, int z );
+  float getDistance( int x, int y, int z ) const;
   //! gets the closest occupied cell for that location
-  INTPOINT3D getClosestObstacle( int x, int y, int z );
+  INTPOINT3D getClosestObstacle( int x, int y, int z ) const;
 
   //! returns the squared obstacle distance in cell units at the specified location
-  int getSQCellDistance( int x, int y, int z );
+  int getSQCellDistance( int x, int y, int z ) const;
   //! checks whether the specficied location is occupied
-  bool isOccupied(int x, int y, int z);
+  bool isOccupied(int x, int y, int z) const;
 
   //! returns the x size of the workspace/map
-  unsigned int getSizeX() {return sizeX;}
+  unsigned int getSizeX() const {return sizeX;}
   //! returns the y size of the workspace/map
-  unsigned int getSizeY() {return sizeY;}
+  unsigned int getSizeY() const {return sizeY;}
   //! returns the z size of the workspace/map
-  unsigned int getSizeZ() {return sizeZ;}
+  unsigned int getSizeZ() const {return sizeZ;}
 
   typedef enum {invalidObstData = INT_MAX} ObstDataState;
 
