@@ -59,15 +59,16 @@ public:
 	///If you set updateRealDist to false, computations will be faster (square root will be omitted), but you can only retrieve squared distances
 	virtual void update(bool updateRealDist=true);
 
-	///retrieves distance and closestObstacle (closestObstacle is to be discarded if distance is maximum distance, the method does not write closestObstacle in this case)
+	///retrieves distance and closestObstacle (closestObstacle is to be discarded if distance is maximum distance, the method does not write closestObstacle in this case).
+	///Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
 	void getDistanceAndClosestObstacle(octomap::point3d& p, float &distance, octomap::point3d& closestObstacle);
 
-    ///retrieves distance at point
+    ///retrieves distance at point. Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
     float getDistance(octomap::point3d& p);
-    ///retrieves distance at key
+    ///retrieves distance at key. Returns DynamicEDTOctomap::distanceValue_Error if key is outside the map.
     float getDistance(octomap::OcTreeKey& k);
 
-    ///retrieves squared distance in cells at point
+    ///retrieves squared distance in cells at point. Returns DynamicEDTOctomap::distanceInCellsValue_Error if point is outside the map.
     int getSquaredDistanceInCells(octomap::point3d& p);
 
 	///retrieve maximum distance value
