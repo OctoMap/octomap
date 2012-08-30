@@ -215,7 +215,6 @@ void DynamicEDTOctomap::getDistanceAndClosestObstacle(const octomap::point3d& p,
 		}
 	} else {
 	  distance = distanceValue_Error;
-		std::cerr<<"Point outside map! "<<p.x()<<","<<p.y()<<","<<p.z()<<std::endl;
 	}
 }
 
@@ -225,7 +224,6 @@ float DynamicEDTOctomap::getDistance(const octomap::point3d& p) const {
   if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){
       return data[x][y][z].dist*treeResolution;
   } else {
-      std::cerr<<"Point outside map! "<<p.x()<<","<<p.y()<<","<<p.z()<<std::endl;
       return distanceValue_Error;
   }
 }
@@ -238,7 +236,6 @@ float DynamicEDTOctomap::getDistance(const octomap::OcTreeKey& k) const {
   if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){
       return data[x][y][z].dist*treeResolution;
   } else {
-      std::cerr<<"Key outside map! "<<k[0]<<","<<k[1]<<","<<k[2]<<std::endl;
       return distanceValue_Error;
   }
 }
@@ -249,7 +246,6 @@ int DynamicEDTOctomap::getSquaredDistanceInCells(const octomap::point3d& p) cons
   if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){
     return data[x][y][z].sqdist;
   } else {
-    std::cerr<<"Point outside map! "<<p.x()<<","<<p.y()<<","<<p.z()<<std::endl;
     return distanceInCellsValue_Error;
   }
 }
