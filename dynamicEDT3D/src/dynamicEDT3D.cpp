@@ -40,7 +40,7 @@
 #include <dynamicEDT3D/dynamicEDT3D.h>
 
 #include <math.h>
-#include <iostream>
+#include <stdlib.h>
 
 #define FOR_EACH_NEIGHBOR_WITH_CHECK(function, p, ...) \
 	int x=p.x;\

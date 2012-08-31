@@ -40,8 +40,6 @@
 #include "bucketedqueue.h"
 
 #include "limits.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 template <class T>
 BucketPrioQueue<T>::BucketPrioQueue() {

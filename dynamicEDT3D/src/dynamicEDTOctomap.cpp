@@ -200,8 +200,8 @@ void DynamicEDTOctomap::mapToWorld(int x, int y, int z, octomap::OcTreeKey &key)
 	key = octomap::OcTreeKey(x-offsetX, y-offsetY, z-offsetZ);
 }
 
+
 void DynamicEDTOctomap::getDistanceAndClosestObstacle(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const {
-    distance = maxDist;
 	int x,y,z;
 	worldToMap(p, x, y, z);
 	if(x>=0 && x<sizeX && y>=0 && y<sizeY && z>=0 && z<sizeZ){
@@ -218,6 +218,22 @@ void DynamicEDTOctomap::getDistanceAndClosestObstacle(const octomap::point3d& p,
 	}
 }
 
+
+void DynamicEDTOctomap::getDistanceAndClosestObstacle_unsafe(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const {
+	int x,y,z;
+	worldToMap(p, x, y, z);
+
+	dataCell c= data[x][y][z];
+
+	distance = c.dist*treeResolution;
+	if(c.obstX != invalidObstData){
+		mapToWorld(c.obstX, c.obstY, c.obstZ, closestObstacle);
+	} else {
+		//If we are at maxDist, it can very well be that there is no valid closest obstacle data for this cell, this is not an error.
+	}
+}
+
+
 float DynamicEDTOctomap::getDistance(const octomap::point3d& p) const {
   int x,y,z;
   worldToMap(p, x, y, z);
@@ -227,6 +243,13 @@ float DynamicEDTOctomap::getDistance(const octomap::point3d& p) const {
       return distanceValue_Error;
   }
 }
+
+float DynamicEDTOctomap::getDistance_unsafe(const octomap::point3d& p) const {
+  int x,y,z;
+  worldToMap(p, x, y, z);
+  return data[x][y][z].dist*treeResolution;
+}
+
 
 float DynamicEDTOctomap::getDistance(const octomap::OcTreeKey& k) const {
   int x = k[0] + offsetX;
@@ -240,6 +263,16 @@ float DynamicEDTOctomap::getDistance(const octomap::OcTreeKey& k) const {
   }
 }
 
+
+float DynamicEDTOctomap::getDistance_unsafe(const octomap::OcTreeKey& k) const {
+  int x = k[0] + offsetX;
+  int y = k[1] + offsetY;
+  int z = k[2] + offsetZ;
+
+  return data[x][y][z].dist*treeResolution;
+}
+
+
 int DynamicEDTOctomap::getSquaredDistanceInCells(const octomap::point3d& p) const {
   int x,y,z;
   worldToMap(p, x, y, z);
@@ -249,4 +282,50 @@ int DynamicEDTOctomap::getSquaredDistanceInCells(const octomap::point3d& p) cons
     return distanceInCellsValue_Error;
   }
 }
+
+int DynamicEDTOctomap::getSquaredDistanceInCells_unsafe(const octomap::point3d& p) const {
+  int x,y,z;
+  worldToMap(p, x, y, z);
+  return data[x][y][z].sqdist;
+}
+
+
+bool DynamicEDTOctomap::checkConsistency() const {
+
+	for(octomap::KeyBoolMap::const_iterator it = octree->changedKeysBegin(), end=octree->changedKeysEnd(); it!=end; ++it){
+		//std::cerr<<"Cannot check consistency, you must execute the update() method first."<<std::endl;
+		return false;
+	}
+
+	for(int x=0; x<sizeX; x++){
+		for(int y=0; y<sizeY; y++){
+			for(int z=0; z<sizeZ; z++){
+
+				octomap::point3d point;
+				mapToWorld(x,y,z,point);
+				octomap::OcTreeNode* node = octree->search(point);
+
+				bool mapOccupied = isOccupied(x,y,z);
+				bool treeOccupied = false;
+				if(node){
+					treeOccupied = octree->isNodeOccupied(node);
+				} else {
+					if(unknownOccupied)
+						treeOccupied = true;
+				}
+
+				if(mapOccupied != treeOccupied){
+					//std::cerr<<"OCCUPANCY MISMATCH BETWEEN TREE AND MAP at "<<x<<","<<y<<","<<z<<std::endl;
+					//std::cerr<<"Tree "<<treeOccupied<<std::endl;
+					//std::cerr<<"Map "<<mapOccupied<<std::endl;
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+
 

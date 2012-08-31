@@ -55,8 +55,6 @@
  */
 
 
-#include <sys/time.h>
-
 template <typename T>
 class BucketPrioQueue {
 

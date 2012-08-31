@@ -50,6 +50,8 @@ public:
      *  treatUnknownAsOccupied configures the treatment of unknown cells in the distance computation.
      *
      *  The constructor copies occupancy data but does not yet compute the distance map. You need to call udpate to do this.
+     *
+     *  The distance map is maintained in a full three-dimensional array, i.e., there exists a float field in memory for every voxel inside the bounding box given by bbxMin and bbxMax. Consider this when computing distance maps for large octomaps, they will use much more memory than the octomap itself!
      */
 	DynamicEDTOctomap(float maxdist, octomap::OcTree* _octree, octomap::point3d bbxMin, octomap::point3d bbxMax, bool treatUnknownAsOccupied);
 
@@ -63,13 +65,26 @@ public:
 	///Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
 	void getDistanceAndClosestObstacle(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const;
 
-    ///retrieves distance at point. Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
-    float getDistance(const octomap::point3d& p) const;
-    ///retrieves distance at key. Returns DynamicEDTOctomap::distanceValue_Error if key is outside the map.
-    float getDistance(const octomap::OcTreeKey& k) const;
+	///retrieves distance at point. Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
+	float getDistance(const octomap::point3d& p) const;
 
-    ///retrieves squared distance in cells at point. Returns DynamicEDTOctomap::distanceInCellsValue_Error if point is outside the map.
-    int getSquaredDistanceInCells(const octomap::point3d& p) const;
+	///retrieves distance at key. Returns DynamicEDTOctomap::distanceValue_Error if key is outside the map.
+	float getDistance(const octomap::OcTreeKey& k) const;
+
+	///retrieves squared distance in cells at point. Returns DynamicEDTOctomap::distanceInCellsValue_Error if point is outside the map.
+	int getSquaredDistanceInCells(const octomap::point3d& p) const;
+
+	//variant of getDistanceAndClosestObstacle that ommits the check whether p is inside the area of the distance map. Use only if you are certain that p is covered by the distance map and if you need to save the time of the check.
+	void getDistanceAndClosestObstacle_unsafe(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const;
+
+	//variant of getDistance that ommits the check whether p is inside the area of the distance map. Use only if you are certain that p is covered by the distance map and if you need to save the time of the check.
+	float getDistance_unsafe(const octomap::point3d& p) const;
+
+	//variant of getDistance that ommits the check whether p is inside the area of the distance map. Use only if you are certain that p is covered by the distance map and if you need to save the time of the check.
+	float getDistance_unsafe(const octomap::OcTreeKey& k) const;
+
+	//variant of getSquaredDistanceInCells that ommits the check whether p is inside the area of the distance map. Use only if you are certain that p is covered by the distance map and if you need to save the time of the check.
+	int getSquaredDistanceInCells_unsafe(const octomap::point3d& p) const;
 
 	///retrieve maximum distance value
 	float getMaxDist() const {
@@ -80,6 +95,9 @@ public:
 	int getSquaredMaxDistCells() const {
 	  return maxDist_squared;
 	}
+
+	///Brute force method used for debug purposes. Checks occupancy state consistency between octomap and internal representation.
+	bool checkConsistency() const;
 
 	///distance value returned when requesting distance for a cell outside the map
 	static float distanceValue_Error;

@@ -40,9 +40,6 @@
 #ifndef _DYNAMICEDT3D_H_
 #define _DYNAMICEDT3D_H_
 
-
-#include <stdlib.h>
-#include <stdio.h>
 #include <limits.h>
 #include <queue>
 
