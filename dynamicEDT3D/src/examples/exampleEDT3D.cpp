@@ -40,6 +40,7 @@
 #include <dynamicEDT3D/dynamicEDT3D.h>
 
 #include <iostream>
+#include <stdlib.h>
 
 int main( int , char** ) {
 
