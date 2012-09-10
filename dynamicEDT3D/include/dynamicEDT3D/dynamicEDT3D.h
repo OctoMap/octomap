@@ -87,6 +87,10 @@ public:
 
   typedef enum {invalidObstData = INT_MAX} ObstDataState;
 
+  ///distance value returned when requesting distance for a cell outside the map
+  static float distanceValue_Error;
+  ///distance value returned when requesting distance in cell units for a cell outside the map
+  static int distanceInCellsValue_Error;
 
 protected: 
   struct dataCell {

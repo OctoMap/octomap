@@ -105,6 +105,9 @@
 		}\
 	}
 
+float DynamicEDT3D::distanceValue_Error = -1.0;
+int DynamicEDT3D::distanceInCellsValue_Error = -1;
+
 DynamicEDT3D::DynamicEDT3D(int _maxdist_squared) {
 	sqrt2 = sqrt(2.0);
 	maxDist_squared = _maxdist_squared;
@@ -521,7 +524,7 @@ float DynamicEDT3D::getDistance( int x, int y, int z ) const {
 	if( (x>=0) && (x<sizeX) && (y>=0) && (y<sizeY) && (z>=0) && (z<sizeZ)){
 		return data[x][y][z].dist;
 	}
-	else return -INFINITY;
+	else return distanceValue_Error;
 }
 
 INTPOINT3D DynamicEDT3D::getClosestObstacle( int x, int y, int z ) const {
@@ -536,7 +539,7 @@ int DynamicEDT3D::getSQCellDistance( int x, int y, int z ) const {
 	if( (x>=0) && (x<sizeX) && (y>=0) && (y<sizeY) && (z>=0) && (z<sizeZ)){
 		return data[x][y][z].sqdist;
 	}
-	else return -maxDist_squared;
+	else return distanceInCellsValue_Error;
 }
 
 
