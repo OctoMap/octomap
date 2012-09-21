@@ -77,6 +77,10 @@ namespace octomap {
   class OcTreeBaseImpl : public INTERFACE {
 
   public:
+    // the actual iterator implementation is included here
+    // as a member from this file
+    #include <octomap/OcTreeIterator.hxx>
+
     /// Make the templated NODE type available from the outside
     typedef NODE NodeType;
     
@@ -465,16 +469,10 @@ namespace octomap {
     
     size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
- private:
+  private:
     /// Assignment operator is private: don't (re-)assign octrees
     /// (const-parameters can't be changed) -  use the copy constructor instead.
     OcTreeBaseImpl<NODE,INTERFACE>& operator=(const OcTreeBaseImpl<NODE,INTERFACE>&);
-
-//START CS: Quickfix: moved this here, Visual Studio has problems if this is at end of file as leaf_iterator etc. are defined in here. Nicer solution would be forward declarations of these classes.
-  public:
-    // the actual iterator implementation within this class:
-    #include <octomap/OcTreeIterator.hxx>
-//END CS: Quickfix
 
   protected:
 
