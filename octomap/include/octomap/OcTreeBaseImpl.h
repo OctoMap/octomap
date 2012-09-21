@@ -77,12 +77,12 @@ namespace octomap {
   class OcTreeBaseImpl : public INTERFACE {
 
   public:
+    /// Make the templated NODE type available from the outside
+    typedef NODE NodeType;
+
     // the actual iterator implementation is included here
     // as a member from this file
     #include <octomap/OcTreeIterator.hxx>
-
-    /// Make the templated NODE type available from the outside
-    typedef NODE NodeType;
     
     OcTreeBaseImpl(double resolution);
     virtual ~OcTreeBaseImpl();
