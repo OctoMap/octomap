@@ -167,6 +167,12 @@ int main(int argc, char** argv) {
       }
     }
 
+    // fill some "floor":
+    EXPECT_TRUE(cubeTree.updateNode(point3d(res_2,res_2,-res_2), true));
+    EXPECT_TRUE(cubeTree.updateNode(point3d(3*res_2,res_2,-res_2), true));
+    EXPECT_TRUE(cubeTree.updateNode(point3d(-res_2,res_2,-res_2), true));
+    EXPECT_TRUE(cubeTree.updateNode(point3d(-3*res_2,res_2,-res_2), true));
+
     cubeTree.writeBinary("raycasting_cube.bt");
     origin = point3d(0.0f, 0.0f, 0.0f);
     point3d end;
@@ -174,11 +180,30 @@ int main(int argc, char** argv) {
     direction = point3d(0.95f, 0.95f, 0.95f);
     EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
     EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
+    std::cout << "Hit occupied voxel: " << end << std::endl;
+    direction = point3d(1.0, 0.0, 0.0);
+    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
+    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
+    std::cout << "Hit occupied voxel: " << end << std::endl;
+    EXPECT_NEAR(1.0, (origin - end).norm(), res_2);
+
+    // hit bottom:
+    origin = point3d(res_2, res_2, 0.5f);
+    direction = point3d(0.0, 0.0, -1.0f);
+    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
+    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
+    std::cout << "Hit voxel: " << end << std::endl;
+    EXPECT_FLOAT_EQ(origin(0), end(0));
+    EXPECT_FLOAT_EQ(origin(1), end(1));
+    EXPECT_FLOAT_EQ(-res_2, end(2));
+
 
     // hit boundary of unknown:
+    origin = point3d(0.0f, 0.0f, 0.0f);
     direction = point3d(0.0f, 1.0f, 0.0f);
     EXPECT_FALSE(cubeTree.castRay(origin, direction, end, false));
     EXPECT_FALSE(cubeTree.search(end));
+    std::cout << "Boundary unknown hit: " << end << std::endl;
 
     // hit boundary of octree:
     EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true));
@@ -195,6 +220,7 @@ int main(int argc, char** argv) {
 
     // test maxrange:
     EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true, 0.9));
+    std::cout << "Max range endpoint: " << end << std::endl;
     OcTreeNode* endPt = cubeTree.search(end);
     EXPECT_TRUE(endPt);
     EXPECT_FALSE(cubeTree.isNodeOccupied(endPt));

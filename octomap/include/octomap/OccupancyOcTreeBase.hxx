@@ -423,11 +423,8 @@ namespace octomap {
     }
 
     // for speedup:
-    point3d origin_scaled = origin;  
-    origin_scaled /= (float) this->resolution;  
-    double maxrange_2 = maxRange / this->resolution;  // scale
-    maxrange_2 = maxrange_2*maxrange_2; // squared dist
-    double res_2 = this->resolution/2.;
+    double maxrange_sq = maxRange *maxRange;
+
     // Incremental phase  ---------------------------------------------------------
 
     bool done = false;
@@ -461,15 +458,17 @@ namespace octomap {
 
 
       // generate world coords from key
-      double dist_from_origin(0);
-      for (unsigned int j = 0; j < 3; j++) {
-        double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
-        dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
-        end(j) = (float) (coord * this->resolution);
-      }
+      end = this->keyToCoord(current_key);
 
-      if (max_range_set && (dist_from_origin > maxrange_2) ) { // reached user specified maxrange
-        return false;
+      // check for maxrange:
+      if (max_range_set){
+        double dist_from_origin_sq(0.0);
+        for (unsigned int j = 0; j < 3; j++) {
+          dist_from_origin_sq += ((end(j) - origin(j)) * (end(j) - origin(j)));
+        }
+        if (dist_from_origin_sq > maxrange_sq)
+          return false;
+
       }
 
       NODE* currentNode = this->search(current_key);
@@ -479,9 +478,7 @@ namespace octomap {
           break;
         }
         // otherwise: node is free and valid, raycasting continues
-      }
-      
-      else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
+      } else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
         OCTOMAP_WARNING_STR("Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end);
         return false;
       }
