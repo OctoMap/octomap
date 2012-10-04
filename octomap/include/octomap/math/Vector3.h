@@ -43,8 +43,6 @@
 #include <iostream>
 #include <math.h>
 
-#include <octomap/octomap_deprecated.h>
-
 
 namespace octomath {
 
@@ -271,10 +269,6 @@ namespace octomath {
       return sqrt(n);
     }
 
-    DEPRECATED( double norm2 () const ) { // replaced by norm()
-      return norm();
-    }
-
     inline Vector3& normalize () {
       double len = norm ();
       if (len > 0)
@@ -287,11 +281,6 @@ namespace octomath {
       result.normalize ();
       return result;
     }
-
-    DEPRECATED( inline Vector3 unit () const ) { // replaced by normalized()
-      return normalized();
-    }
-
 
     inline double angleTo(const Vector3& other) const { 
       double dot_prod = this->dot(other);
