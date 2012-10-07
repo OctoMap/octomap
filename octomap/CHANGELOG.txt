@@ -1,3 +1,8 @@
+v1.4.3: 2012-10-07
+==================
+- Fixed raycasting corner cases, expanded unit tests
+- iterator_base derives public for boost::filter
+
 v1.4.2: 2012-04-24
 ===================
 - extended graph2tree with more verbose logging / statistics

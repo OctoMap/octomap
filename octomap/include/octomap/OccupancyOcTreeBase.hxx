@@ -352,12 +352,13 @@ namespace octomap {
     /// ----------  see OcTreeBase::computeRayKeys  -----------
 
     // Initialization phase -------------------------------------------------------
+    // Initialization phase -------------------------------------------------------
     OcTreeKey current_key;
     if ( !OcTreeBase<NODE>::genKey(origin, current_key) ) {
       OCTOMAP_WARNING_STR("Coordinates out of bounds during ray casting");
       return false;
     }
-
+    
     NODE* startingNode = this->search(current_key);
     if (startingNode){
       if (isNodeOccupied(startingNode)){
@@ -371,27 +372,27 @@ namespace octomap {
       genCoords(current_key, this->tree_depth, end);
       return false;
     }
-
+    
     point3d direction = directionP.normalized();
     bool max_range_set = (maxRange > 0.);
-
+    
     int step[3]; 
     double tMax[3];
     double tDelta[3];
-
+    
     for(unsigned int i=0; i < 3; ++i) {
       // compute step direction
       if (direction(i) > 0.0) step[i] =  1;
       else if (direction(i) < 0.0)   step[i] = -1;
       else step[i] = 0;
-
+      
       // compute tMax, tDelta
       if (step[i] != 0) {
         // corner point of voxel (in direction of ray)
         float voxelBorder(0);
         this->genCoordFromKey(current_key[i], voxelBorder); 
         voxelBorder += float (step[i] * this->resolution * 0.5);
-
+        
         tMax[i] = ( voxelBorder - origin(i) ) / direction(i);
         tDelta[i] = this->resolution / fabs( direction(i) );
       }
@@ -400,25 +401,22 @@ namespace octomap {
         tDelta[i] = std::numeric_limits<double>::max();
       }
     }
-
+    
     if (step[0] == 0 && step[1] == 0 && step[2] == 0){
-    	OCTOMAP_ERROR("Raycasting in direction (0,0,0) is not possible!");
-    	return false;
+      OCTOMAP_ERROR("Raycasting in direction (0,0,0) is not possible!");
+      return false;
     }
-
+    
     // for speedup:
-    point3d origin_scaled = origin;  
-    origin_scaled /= (float) this->resolution;  
-    double maxrange_2 = maxRange / this->resolution;  // scale
-    maxrange_2 = maxrange_2*maxrange_2; // squared dist
-    double res_2 = this->resolution/2.;
+    double maxrange_sq = maxRange * maxRange;
+    
     // Incremental phase  ---------------------------------------------------------
-
+    
     bool done = false;
-
+    
     while (!done) {
       unsigned int dim;
-
+      
       // find minimum tMax:
       if (tMax[0] < tMax[1]){
         if (tMax[0] < tMax[2]) dim = 0;
@@ -428,34 +426,36 @@ namespace octomap {
         if (tMax[1] < tMax[2]) dim = 1;
         else                   dim = 2;
       }
-
+      
       // check for overflow:
       if ((step[dim] < 0 && current_key[dim] == 0)
-    		  || (step[dim] > 0 && current_key[dim] == 2* this->tree_max_val-1))
+        || (step[dim] > 0 && current_key[dim] == 2* this->tree_max_val-1))
       {
-    	  OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
-    	  // return border point nevertheless:
-    	  genCoords(current_key, this->tree_depth, end);
-    	  return false;
+        OCTOMAP_WARNING("Coordinate hit bounds in dim %d, aborting raycast\n", dim);
+        // return border point nevertheless:
+        genCoords(current_key, this->tree_depth, end);
+        return false;
       }
-
+      
       // advance in direction "dim"
       current_key[dim] += step[dim];
       tMax[dim] += tDelta[dim];
-
-
+      
+      
       // generate world coords from key
-      double dist_from_origin(0);
-      for (unsigned int j = 0; j < 3; j++) {
-        double coord = (double) current_key[j] - (double) this->tree_max_val + res_2; // center of voxel
-        dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
-        end(j) = (float) (coord * this->resolution);
+      genCoords(current_key, this->tree_depth, end);
+      
+      // check for maxrange:
+      if (max_range_set){
+        double dist_from_origin_sq(0.0);
+        for (unsigned int j = 0; j < 3; j++) {
+          dist_from_origin_sq += ((end(j) - origin(j)) * (end(j) - origin(j)));
+        }
+        if (dist_from_origin_sq > maxrange_sq)
+          return false;
+        
       }
-
-      if (max_range_set && (dist_from_origin > maxrange_2) ) { // reached user specified maxrange
-        return false;
-      }
-
+      
       NODE* currentNode = this->search(current_key);
       if (currentNode){
         if (isNodeOccupied(currentNode)) {
@@ -470,7 +470,7 @@ namespace octomap {
         return false;
       }
     } // end while
-
+    
     return true;
   }
 
