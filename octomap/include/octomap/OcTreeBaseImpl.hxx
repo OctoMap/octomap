@@ -213,6 +213,32 @@ namespace octomap {
   }
 
   template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double x, double y, double z, OcTreeKey& key) const{
+
+    if (!(coordToKeyChecked(x, key[0])
+       && coordToKeyChecked(y, key[1])
+       && coordToKeyChecked(z, key[2])))
+    {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double x, double y, double z, unsigned depth, OcTreeKey& key) const{
+
+    if (!(coordToKeyChecked(x, depth, key[0])
+       && coordToKeyChecked(y, depth, key[1])
+       && coordToKeyChecked(z, depth, key[2])))
+    {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  template <class NODE,class I>
   unsigned short int OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
     unsigned int diff = tree_depth - depth;
 
@@ -262,10 +288,6 @@ namespace octomap {
 
   template <class NODE,class I>
   NODE* OcTreeBaseImpl<NODE,I>::search(const point3d& value, unsigned int depth) const {
-
-    // Search is a variant of insert which aborts if
-    // it had to insert nodes
-
     OcTreeKey key;
     if (!coordToKeyChecked(value, key)){
       OCTOMAP_ERROR_STR("Error in search: ["<< value <<"] is out of OcTree bounds!");
@@ -278,8 +300,15 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  NODE* OcTreeBaseImpl<NODE,I>::search(float x, float y, float z, unsigned int depth) const {
-    return this->search(point3d(x,y,z), depth);
+  NODE* OcTreeBaseImpl<NODE,I>::search(double x, double y, double z, unsigned int depth) const {
+    OcTreeKey key;
+    if (!coordToKeyChecked(x, y, z, key)){
+      OCTOMAP_ERROR_STR("Error in search: ["<< x <<" "<< y << " " << z << "] is out of OcTree bounds!");
+      return NULL;
+    }
+    else {
+      return this->search(key, depth);
+    }
   }
 
 
@@ -336,8 +365,15 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::deleteNode(float x, float y, float z, unsigned int depth) {
-    return this->deleteNode(point3d(x,y,z), depth);
+  bool OcTreeBaseImpl<NODE,I>::deleteNode(double x, double y, double z, unsigned int depth) {
+    OcTreeKey key;
+    if (!coordToKeyChecked(x, y, z, key)){
+      OCTOMAP_ERROR_STR("Error in deleteNode: ["<< x <<" "<< y << " " << z << "] is out of OcTree bounds!");
+      return false;
+    }
+    else {
+      return this->deleteNode(key, depth);
+    }
   }
 
 

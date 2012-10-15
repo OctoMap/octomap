@@ -204,7 +204,16 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, float log_odds_update, bool lazy_eval) {
     OcTreeKey key;
-    if (!this->coordToKeyChecked(value, key)) return NULL;
+    if (!this->coordToKeyChecked(value, key))
+      return NULL;
+    return updateNode(key, log_odds_update, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::updateNode(double x, double y, double z, float log_odds_update, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(x, y, z, key))
+      return NULL;
     return updateNode(key, log_odds_update, lazy_eval);
   }
 
@@ -222,7 +231,16 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const point3d& value, bool occupied, bool lazy_eval) {
     OcTreeKey key;
-    if (!this->coordToKeyChecked(value, key)) return NULL;
+    if (!this->coordToKeyChecked(value, key))
+      return NULL;
+    return updateNode(key, occupied, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::updateNode(double x, double y, double z, bool occupied, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(x, y, z, key))
+      return NULL;
     return updateNode(key, occupied, lazy_eval);
   }
 

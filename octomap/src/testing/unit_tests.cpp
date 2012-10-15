@@ -168,10 +168,10 @@ int main(int argc, char** argv) {
     }
 
     // fill some "floor":
-    EXPECT_TRUE(cubeTree.updateNode(point3d(res_2,res_2,-res_2), true));
-    EXPECT_TRUE(cubeTree.updateNode(point3d(3*res_2,res_2,-res_2), true));
-    EXPECT_TRUE(cubeTree.updateNode(point3d(-res_2,res_2,-res_2), true));
-    EXPECT_TRUE(cubeTree.updateNode(point3d(-3*res_2,res_2,-res_2), true));
+    EXPECT_TRUE(cubeTree.updateNode(res_2,res_2,-res_2, true));
+    EXPECT_TRUE(cubeTree.updateNode(3*res_2,res_2,-res_2, true));
+    EXPECT_TRUE(cubeTree.updateNode(-res_2,res_2,-res_2, true));
+    EXPECT_TRUE(cubeTree.updateNode(-3*res_2,res_2,-res_2, true));
 
     cubeTree.writeBinary("raycasting_cube.bt");
     origin = point3d(0.0f, 0.0f, 0.0f);

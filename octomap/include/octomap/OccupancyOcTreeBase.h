@@ -145,6 +145,20 @@ namespace octomap {
     virtual NODE* updateNode(const point3d& value, float log_odds_update, bool lazy_eval = false);
 
     /**
+     * Manipulate log_odds value of voxel directly.
+     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param log_odds_update value to be added (+) to log_odds value of node
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual NODE* updateNode(double x, double y, double z, float log_odds_update, bool lazy_eval = false);
+
+    /**
      * Integrate occupancy measurement.
      *
      * @param key OcTreeKey of the NODE that is to be updated
@@ -166,6 +180,20 @@ namespace octomap {
      * @return pointer to the updated NODE
      */
     virtual NODE* updateNode(const point3d& value, bool occupied, bool lazy_eval = false);
+
+    /**
+     * Integrate occupancy measurement.
+     * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param occupied true if the node was measured occupied, else false
+     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @return pointer to the updated NODE
+     */
+    virtual NODE* updateNode(double x, double y, double z, bool occupied, bool lazy_eval = false);
 
 
     /**
