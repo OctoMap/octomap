@@ -15,6 +15,11 @@ v1.5.0: 2012-08-28
 - cleanup: functions removed /deprecated in favor or iterator-base node traversal
 - cleanup: private members renamed (tree root / node children)
 
+v1.4.3: 2012-10-07
+==================
+- Fixed raycasting corner cases, expanded unit tests
+- iterator_base derives public for boost::filter
+
 v1.4.2: 2012-04-24
 ===================
 - extended graph2tree with more verbose logging / statistics
