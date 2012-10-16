@@ -4,7 +4,7 @@ PROJECT( octovis )
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
 set(OCTOVIS_MINOR_VERSION 5)
-set(OCTOVIS_PATCH_VERSION 0)
+set(OCTOVIS_PATCH_VERSION 1)
 set(OCTOVIS_VERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION}.${OCTOVIS_PATCH_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
@@ -15,18 +15,6 @@ SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
-
-#If we are compiling with ROS support, we need to get the appropriate includes and link flags and such
-# (thx to E.Perko for patch!)
-if(WITH_ROS)
-       include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-       set(ROSBUILD_DONT_REDEFINE_PROJECT true)
-       set(PROJECT_SOURCE_DIR_BACKUP ${PROJECT_SOURCE_DIR})
-       set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../..")
-       rosbuild_init()
-       set(PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR_BACKUP})
-       add_definitions(-DOCTOMAP_ROS)
-endif(WITH_ROS)
 
 # Set output directories for libraries and executables
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
