@@ -1,6 +1,6 @@
 <package>
   <name>octomap</name>
-  <version>1.5.1</version>
+  <version>1.5.2</version>
   <description brief="3D occupancy grid mapping based on octrees.">The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++. The map implementation is based on an octree. See http://octomap.sf.net for details.</description>
   <author>Kai M. Wurm</author>
   <author>Armin Hornung</author>

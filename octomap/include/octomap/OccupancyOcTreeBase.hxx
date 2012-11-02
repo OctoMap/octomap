@@ -284,11 +284,11 @@ namespace octomap {
     // at last level, update node, end of recursion
     else {
       if (use_change_detection) {
-        bool occBefore = isNodeOccupied(node);
+        bool occBefore = this->isNodeOccupied(node);
         updateNodeLogOdds(node, log_odds_update); 
         if (node_just_created){  // new node
           changed_keys.insert(std::pair<OcTreeKey,bool>(key, true));
-        } else if (occBefore != isNodeOccupied(node)) {  // occupancy changed, track it
+        } else if (occBefore != this->isNodeOccupied(node)) {  // occupancy changed, track it
           KeyBoolMap::iterator it = changed_keys.find(key);
           if (it == changed_keys.end())
             changed_keys.insert(std::pair<OcTreeKey,bool>(key, false));
@@ -321,7 +321,7 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (node->childExists(i)) {
         NODE* child_node = node->getChild(i);
-        if (isNodeAtThreshold(child_node))
+        if (this->isNodeAtThreshold(child_node))
           num_thresholded++;
         else
           num_other++;
@@ -395,7 +395,7 @@ namespace octomap {
 
     NODE* startingNode = this->search(current_key);
     if (startingNode){
-      if (isNodeOccupied(startingNode)){
+      if (this->isNodeOccupied(startingNode)){
         // Occupied node found at origin 
         // (need to convert from key, since origin does not need to be a voxel center)
         end = this->keyToCoord(current_key);
@@ -491,7 +491,7 @@ namespace octomap {
 
       NODE* currentNode = this->search(current_key);
       if (currentNode){
-        if (isNodeOccupied(currentNode)) {
+        if (this->isNodeOccupied(currentNode)) {
           done = true;
           break;
         }
@@ -687,7 +687,7 @@ namespace octomap {
                                                              NODE* node, unsigned int depth, const OcTreeKey& parent_key, 
                                                              const OcTreeKey& min, const OcTreeKey& max) const {
     if (depth == max_depth) { // max level reached
-      if (isNodeOccupied(node)) {
+      if (this->isNodeOccupied(node)) {
         node_centers.push_back(this->keyToCoords(parent_key, depth));
       }
     }
@@ -824,7 +824,7 @@ namespace octomap {
       if (node->childExists(i)) {
         const NODE* child = node->getChild(i);
         if      (child->hasChildren())  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
-        else if (isNodeOccupied(child)) { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
+        else if (this->isNodeOccupied(child)) { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
         else                            { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
       }
       else {
@@ -836,7 +836,7 @@ namespace octomap {
       if (node->childExists(i+4)) {
         const NODE* child = node->getChild(i+4);
         if      (child->hasChildren())  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
-        else if (isNodeOccupied(child)) { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
+        else if (this->isNodeOccupied(child)) { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
         else                            { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
       }
       else {
@@ -892,7 +892,7 @@ namespace octomap {
   
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE* occupancyNode) const{
-    if (isNodeOccupied(occupancyNode))
+    if (this->isNodeOccupied(occupancyNode))
       occupancyNode->setLogOdds(this->clamping_thres_max);
     else
       occupancyNode->setLogOdds(this->clamping_thres_min);
@@ -900,7 +900,7 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::nodeToMaxLikelihood(NODE& occupancyNode) const{
-    if (isNodeOccupied(occupancyNode))
+    if (this->isNodeOccupied(occupancyNode))
       occupancyNode.setLogOdds(this->clamping_thres_max);
     else
       occupancyNode.setLogOdds(this->clamping_thres_min);
