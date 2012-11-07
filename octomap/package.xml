@@ -1,14 +1,16 @@
 <package>
   <name>octomap</name>
   <version>1.5.2</version>
-  <description brief="3D occupancy grid mapping based on octrees.">The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++. The map implementation is based on an octree. See http://octomap.sf.net for details.</description>
+  <description>The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++. The map implementation is based on an octree. See http://octomap.sf.net for details.</description>
   <author>Kai M. Wurm</author>
-  <author>Armin Hornung</author>
+  <author  email="hornunga@informatik.uni-freiburg.de">Armin Hornung</author>
   <maintainer email="hornunga@informatik.uni-freiburg.de">Armin Hornung</maintainer>
   <license>BSD</license>
-  <copyright>Copyright (c) 2009-2012, K. M. Wurm, A. Hornung, University of Freiburg</copyright>
 
-  <url>http://octomap.sf.net</url>
+  <url type="website">http://octomap.sf.net</url>
+  <url type="bugtracker">https://sourceforge.net/apps/trac/octomap</url>
+  
 
-  <build_depend>cmake</build_depend>
+  <buildtool_depend>cmake</buildtool_depend>
+  
 </package>
