@@ -651,7 +651,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  size_t OcTreeBaseImpl<NODE,I>::memoryFullGrid() {
+  size_t OcTreeBaseImpl<NODE,I>::memoryFullGrid() const{
     double size_x, size_y, size_z;
     getMetricSize(size_x, size_y,size_z);
     
@@ -669,6 +669,20 @@ namespace octomap {
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::getMetricSize(double& x, double& y, double& z){
+
+    double minX, minY, minZ;
+    double maxX, maxY, maxZ;
+
+    getMetricMax(maxX, maxY, maxZ);
+    getMetricMin(minX, minY, minZ);
+
+    x = maxX - minX;
+    y = maxY - minY;
+    z = maxZ - minZ;
+  }
+
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::getMetricSize(double& x, double& y, double& z) const{
 
     double minX, minY, minZ;
     double maxX, maxY, maxZ;

@@ -49,24 +49,44 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "\nUSAGE: " << self << " [options]\n\n"
-            "OPTIONS:\n-i <InputFile.graph> (required)\n"
-            "-o <OutputFile.bt> (required) \n"
-            "-res <resolution> (default: 0.1 m)\n\n"
-            "-m <maxrange> (optional) \n"
-            "-n <max scan no.> (optional) \n"
-            "-log (output a detailed log file with statistics) \n"
-            "-compress (enable lossless compression after every scan)\n"
-            "-compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
+  std::cerr << "USAGE: " << self << " [options]\n";
+  std::cerr << "This tool is part of OctoMap and inserts the data of a scan graph\n"
+               "file (point clouds with poses) into an octree.\n"
+               "The output is a compact maximum-likelihood binary octree file \n"
+               "(.bt, bonsai tree) and general octree files (.ot) with the full\n"
+               "information.\n\n";
+
+
+  std::cerr << "OPTIONS:\n  -i <InputFile.graph> (required)\n"
+            "  -o <OutputFile.bt> (required) \n"
+            "  -res <resolution> (default: 0.1 m)\n\n"
+            "  -m <maxrange> (optional) \n"
+            "  -n <max scan no.> (optional) \n"
+            "  -log (output a detailed log file with statistics) \n"
+            "  -compress (enable lossless compression after every scan)\n"
+            "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
   "\n";
 
 
-  std::cerr << "This tool inserts the data of a binary graph file into an octree.\n"
-               "The output is a compact maximum-likelihood binary octree file \n"
-               "(.bt, bonsai tree)  and general octree files (.ot) with the full\n"
-               "information.\n\n";
+
 
   exit(0);
+}
+
+void outputStatistics(const OcTree* tree){
+  unsigned int numThresholded, numOther;
+  tree->calcNumThresholdedNodes(numThresholded, numOther);
+  size_t memUsage = tree->memoryUsage();
+  size_t memFullGrid = tree->memoryFullGrid();
+  size_t numLeafNodes = tree->getNumLeafNodes();
+
+  cout << "Tree size: " << tree->size() <<" nodes (" << numLeafNodes<< " leafs). " <<numThresholded <<" nodes thresholded, "<< numOther << " other\n";
+  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
+  cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
+  double x, y, z;
+  tree->getMetricSize(x, y, z);
+  cout << "Size: " << x << " x " << y << " x " << z << " m^3\n";
+  cout << endl;
 }
 
 int main(int argc, char** argv) {
@@ -172,47 +192,26 @@ int main(int argc, char** argv) {
   cout << "time to insert scans: " << time_to_insert << " sec" << endl;
   cout << "time to insert 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (avg)" << endl << endl;
 
-  unsigned int numThresholded, numOther;
-  tree->calcNumThresholdedNodes(numThresholded, numOther);
 
   std::cout << "Full tree\n" << "===========================\n";
-  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded <<" thresholded, "<< numOther << " other)\n";
-
-  unsigned int memUsage = tree->memoryUsage();
-  unsigned int memFullGrid = tree->memoryFullGrid();
-  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
-  cout << "Full grid: "<< memFullGrid << " byte (" << memFullGrid/(1024.*1024.) << " MB)" << endl;
-  double x, y, z;
-  tree->getMetricSize(x, y, z);
-  cout << "Size: " << x << " x " << y << " x " << z << " m^3\n";
-  cout << endl;
+  outputStatistics(tree);
 
   std::cout << "Pruned tree (lossless compression)\n" << "===========================\n";
   tree->prune();
-  tree->calcNumThresholdedNodes(numThresholded, numOther);
-  memUsage = tree->memoryUsage();
-
-  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
-  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
-  cout << endl;
+  outputStatistics(tree);
 
   tree->write(treeFilenameOT);
 
   std::cout << "Pruned max-likelihood tree (lossy compression)\n" << "===========================\n";
   tree->toMaxLikelihood();
   tree->prune();
-  tree->calcNumThresholdedNodes(numThresholded, numOther);
-  memUsage = tree->memoryUsage();
-  cout << "Tree size: " << tree->size() <<" nodes (" <<numThresholded<<" thresholded, "<< numOther << " other)\n";
-  cout << "Memory: " << memUsage << " byte (" << memUsage/(1024.*1024.) << " MB)" << endl;
-  cout << endl;
-
+  outputStatistics(tree);
 
 
   cout << "\nWriting tree files\n===========================\n";
   tree->write(treeFilenameMLOT);
   std::cout << "Full Octree (pruned) written to "<< treeFilenameOT << std::endl;
-  std::cout << "Full Octree (max.likelihood, pruned) written to "<< treeFilenameOT << std::endl;
+  std::cout << "Full Octree (max.likelihood, pruned) written to "<< treeFilenameMLOT << std::endl;
   tree->writeBinary(treeFilename);
   std::cout << "Bonsai tree written to "<< treeFilename << std::endl;
   cout << endl;

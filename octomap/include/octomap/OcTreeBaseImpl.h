@@ -174,12 +174,14 @@ namespace octomap {
     virtual inline size_t memoryUsageNode() const {return sizeof(NODE); };
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
-    size_t memoryFullGrid();
+    size_t memoryFullGrid() const;
 
     double volume();
 
     /// Size of OcTree (all known space) in meters for x, y and z dimension
     virtual void getMetricSize(double& x, double& y, double& z);
+    /// Size of OcTree (all known space) in meters for x, y and z dimension
+    virtual void getMetricSize(double& x, double& y, double& z) const;
     /// minimum value of the bounding box of all known space in x, y, z
     virtual void getMetricMin(double& x, double& y, double& z);
     /// minimum value of the bounding box of all known space in x, y, z
