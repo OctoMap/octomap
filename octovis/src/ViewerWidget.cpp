@@ -55,6 +55,8 @@ namespace octomap {
 
     // Make camera the default manipulated frame.
     setManipulatedFrame( camera()->frame() );
+    // invert mousewheel (more like Blender)
+    camera()->frame()->setWheelSensitivity(-1.0);
 
 
     // Light initialization:
