@@ -49,7 +49,7 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "USAGE: " << self << " [options]\n";
+  std::cerr << "USAGE: " << self << " [options]\n\n";
   std::cerr << "This tool is part of OctoMap and inserts the data of a scan graph\n"
                "file (point clouds with poses) into an octree.\n"
                "The output is a compact maximum-likelihood binary octree file \n"
@@ -59,12 +59,14 @@ void printUsage(char* self){
 
   std::cerr << "OPTIONS:\n  -i <InputFile.graph> (required)\n"
             "  -o <OutputFile.bt> (required) \n"
-            "  -res <resolution> (default: 0.1 m)\n\n"
+            "  -res <resolution> (optional, default: 0.1 m)\n"
             "  -m <maxrange> (optional) \n"
             "  -n <max scan no.> (optional) \n"
-            "  -log (output a detailed log file with statistics) \n"
+            "  -log (enable a detailed log file with statistics) \n"
             "  -compress (enable lossless compression after every scan)\n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
+            "  -clamping <p_min> <p_max> (override default sensor model clamping probabilities between 0..1)\n"
+            "  -sensor <p_miss> <p_hit> (override default sensor model hit and miss probabilities between 0..1)"
   "\n";
 
 
@@ -77,7 +79,7 @@ void outputStatistics(const OcTree* tree){
   unsigned int numThresholded, numOther;
   tree->calcNumThresholdedNodes(numThresholded, numOther);
   size_t memUsage = tree->memoryUsage();
-  size_t memFullGrid = tree->memoryFullGrid();
+  unsigned long long memFullGrid = tree->memoryFullGrid();
   size_t numLeafNodes = tree->getNumLeafNodes();
 
   cout << "Tree size: " << tree->size() <<" nodes (" << numLeafNodes<< " leafs). " <<numThresholded <<" nodes thresholded, "<< numOther << " other\n";
@@ -99,6 +101,14 @@ int main(int argc, char** argv) {
   bool detailedLog = false;
   unsigned char compression = 0;
 
+  // get default sensor model values:
+  OcTree emptyTree(0.1);
+  double clampingMin = emptyTree.getClampingThresMin();
+  double clampingMax = emptyTree.getClampingThresMax();
+  double probMiss = emptyTree.getProbMiss();
+  double probHit = emptyTree.getProbHit();
+
+
   timeval start; 
   timeval stop; 
 
@@ -108,6 +118,8 @@ int main(int argc, char** argv) {
       graphFilename = std::string(argv[++arg]);
     else if (!strcmp(argv[arg], "-o"))
       treeFilename = std::string(argv[++arg]);
+    else if (! strcmp(argv[arg], "-res") && argc-arg < 2)
+      printUsage(argv[0]);
     else if (! strcmp(argv[arg], "-res"))
       res = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-log"))
@@ -120,6 +132,18 @@ int main(int argc, char** argv) {
       maxrange = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-n"))
       max_scan_no = atoi(argv[++arg]);
+    else if (! strcmp(argv[arg], "-clamping") && (argc-arg < 3))
+      printUsage(argv[0]);
+    else if (! strcmp(argv[arg], "-clamping")){
+      clampingMin = atof(argv[++arg]);
+      clampingMax = atof(argv[++arg]);
+    }
+    else if (! strcmp(argv[arg], "-sensor") && (argc-arg < 3))
+      printUsage(argv[0]);
+    else if (! strcmp(argv[arg], "-sensor")){
+      probMiss = atof(argv[++arg]);
+      probHit = atof(argv[++arg]);
+    }
     else {
       printUsage(argv[0]);
     }
@@ -128,13 +152,31 @@ int main(int argc, char** argv) {
   if (graphFilename == "" || treeFilename == "")
     printUsage(argv[0]);
 
+  // verify input:
+  if (res <= 0.0){
+    OCTOMAP_ERROR("Resolution must be positive");
+    exit(1);
+  }
+
+  if (clampingMin >= clampingMax || clampingMin < 0.0 || clampingMax > 1.0){
+    OCTOMAP_ERROR("Error in clamping values:  0.0 <= [%f] < [%f] <= 1.0\n", clampingMin, clampingMax);
+    exit(1);
+  }
+
+  if (probMiss >= probHit || probMiss < 0.0 || probHit > 1.0){
+    OCTOMAP_ERROR("Error in sensor model (hit/miss prob.):  0.0 <= [%f] < [%f] <= 1.0\n", probMiss, probHit);
+    exit(1);
+  }
+
 
   std::string treeFilenameOT = treeFilename + ".ot";
   std::string treeFilenameMLOT = treeFilename + "_ml.ot";
 
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
-  graph->readBinary(graphFilename);
+  if (!graph->readBinary(graphFilename))
+    exit(2);
+
   unsigned int num_points_in_graph = 0;
   if (max_scan_no > 0) {
     num_points_in_graph = graph->getNumPoints(max_scan_no-1);
@@ -154,6 +196,11 @@ int main(int argc, char** argv) {
 
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
+
+  tree->setClampingThresMin(clampingMin);
+  tree->setClampingThresMax(clampingMax);
+  tree->setProbHit(probHit);
+  tree->setProbMiss(probMiss);
 
 
   gettimeofday(&start, NULL);  // start timer
@@ -217,4 +264,6 @@ int main(int argc, char** argv) {
   cout << endl;
 
   delete tree;
+
+  exit(0);
 }

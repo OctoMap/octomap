@@ -174,7 +174,8 @@ namespace octomap {
     virtual inline size_t memoryUsageNode() const {return sizeof(NODE); };
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)
-    size_t memoryFullGrid() const;
+    /// \note this can be larger than the adressable memory - size_t may not be enough to hold it!
+    unsigned long long memoryFullGrid() const;
 
     double volume();
 

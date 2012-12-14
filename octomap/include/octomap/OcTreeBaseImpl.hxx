@@ -651,13 +651,16 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  size_t OcTreeBaseImpl<NODE,I>::memoryFullGrid() const{
+  unsigned long long OcTreeBaseImpl<NODE,I>::memoryFullGrid() const{
     double size_x, size_y, size_z;
     this->getMetricSize(size_x, size_y,size_z);
     
     // assuming best case (one big array and efficient addressing)
     // we can avoid "ceil" since size already accounts for voxels
-    return size_t((size_x/resolution) * (size_y/resolution) * (size_z/resolution)
+    
+    // Note: this can be larger than the adressable memory 
+    //   - size_t may not be enough to hold it!
+    return ((size_x/resolution) * (size_y/resolution) * (size_z/resolution)
         * sizeof(root->getValue()));
 
   }
