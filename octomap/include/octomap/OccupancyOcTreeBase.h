@@ -223,11 +223,11 @@ namespace octomap {
      * cell is returned (as center coordinate). If the starting coordinate is already
      * occupied in the tree, this coordinate will be returned as a hit.
      *
-     * @param origin starting coordinate of ray
-     * @param direction A vector pointing in the direction of the raycast. Does not need to be normalized.
-     * @param end returns the center of the cell that was hit by the ray, if successful
-     * @param ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
-     * @param maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
+     * @param[in] origin starting coordinate of ray
+     * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
+     * @param[out] end returns the center of the cell that was hit by the ray, if successful
+     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
+     * @param[in] maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
