@@ -16,13 +16,7 @@ ADD_LIBRARY( octomap SHARED ${octomap_SRCS})
 ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
 SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap") 
 
-
-# Link in ROS libs e.g. for logging output if needed:
-if(WITH_ROS)
-  TARGET_LINK_LIBRARIES(octomap octomath ${${PROJECT_NAME}_LIBRARIES})
-else(WITH_ROS)
-  TARGET_LINK_LIBRARIES(octomap octomath)
-endif(WITH_ROS)
+TARGET_LINK_LIBRARIES(octomap octomath)
 
 ADD_SUBDIRECTORY( testing )
 
@@ -44,6 +38,9 @@ TARGET_LINK_LIBRARIES(edit_octree octomap)
 ADD_EXECUTABLE(convert_octree convert_octree.cpp)
 TARGET_LINK_LIBRARIES(convert_octree octomap)
 
+ADD_EXECUTABLE(eval_octree_accuracy eval_octree_accuracy.cpp)
+TARGET_LINK_LIBRARIES(eval_octree_accuracy octomap)
+
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
@@ -62,6 +59,7 @@ install(TARGETS
 	bt2vrml
 	edit_octree
 	convert_octree
+	eval_octree_accuracy
 	${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 

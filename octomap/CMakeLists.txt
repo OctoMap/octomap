@@ -99,7 +99,7 @@ install_pkg_config_file(octomap
     CFLAGS
     LIBS -loctomap -loctomath
     REQUIRES
-    VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
+    VERSION ${OCTOMAP_VERSION})
 
 # Documentation 
 FIND_PACKAGE(Doxygen)
