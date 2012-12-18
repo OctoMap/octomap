@@ -90,7 +90,7 @@ IF(BUILD_VIEWER)
   install(FILES
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
-    DESTINATION lib/cmake/octovis/)
+    DESTINATION share/octovis/)
     
   # make package release from source
 	IF (NOT WIN32)

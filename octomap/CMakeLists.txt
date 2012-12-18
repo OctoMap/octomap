@@ -91,7 +91,7 @@ configure_file(octomap-config-version.cmake.in
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" 
-  DESTINATION lib/cmake/octomap/)
+  DESTINATION share/octomap/)
 
 # Write pkgconfig-file:
 include(InstallPkgConfigFile)
