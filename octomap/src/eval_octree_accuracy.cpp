@@ -9,7 +9,7 @@
 */
 
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, University of Freiburg
+ * Copyright (c) 2012, K. M. Wurm, A. Hornung, University of Freiburg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -131,7 +131,6 @@ int main(int argc, char** argv) {
   unsigned num_voxels_correct = 0;
   unsigned num_voxels_wrong = 0;
   unsigned num_voxels_unknown = 0;
-  unsigned num_voxels_total = 0;
 
 
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {

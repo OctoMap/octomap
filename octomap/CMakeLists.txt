@@ -107,7 +107,7 @@ IF(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/octomap.dox.in ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox @ONLY)
   ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Generating documentation (Doxygen)...")
+    COMMENT "Generating documentation (Doxygen) at location ${PROJECT_SOURCE_DIR}/doc/html/")
 ENDIF(DOXYGEN_FOUND)
 
 # make package release from source (must be done on the SVN source tree)

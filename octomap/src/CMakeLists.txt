@@ -41,6 +41,9 @@ TARGET_LINK_LIBRARIES(convert_octree octomap)
 ADD_EXECUTABLE(eval_octree_accuracy eval_octree_accuracy.cpp)
 TARGET_LINK_LIBRARIES(eval_octree_accuracy octomap)
 
+ADD_EXECUTABLE(compare_octrees compare_octrees.cpp)
+TARGET_LINK_LIBRARIES(compare_octrees octomap)
+
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
@@ -60,6 +63,7 @@ install(TARGETS
 	edit_octree
 	convert_octree
 	eval_octree_accuracy
+	compare_octrees
 	${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
