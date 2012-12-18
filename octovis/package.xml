@@ -12,5 +12,15 @@
   
 
   <buildtool_depend>cmake</buildtool_depend>
+
+  <build_depend>octomap</build_depends>
+  <build_depend>libqglviewer-qt4-dev</build_depends>
+  <build_depend>libqt4-dev</build_depends>
+  <build_depend>libqt4-opengl-dev</build_depends>
+ 
+  <run_depend>octomap</depends>
+  <run_depend>libqglviewer-qt4</depends>
+  <run_depend>libqtgui4</depends>
+  <run_depend>libqt4-opengl</depends>
   
 </package>
