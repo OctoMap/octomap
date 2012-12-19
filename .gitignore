@@ -5,6 +5,7 @@
 .project
 .cproject
 doc
+html
 .qglviewer.xml
 
 # build output:
