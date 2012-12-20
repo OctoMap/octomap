@@ -3,7 +3,7 @@ Octomap
 - A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
 Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2012.
-http://octomap.sourceforge.net/
+http://octomap.github.com
 
 Further Contributors:
 C. Sprunk, University of Freiburg
@@ -15,6 +15,19 @@ R. Bogdan Rusu, Willow Garage Inc.
 License: 
   * New BSD License (see "octomap/LICENSE.txt")
   * GPL for the viewer "octovis" and related libraries (see "octovis/LICENSE.txt").
+
+
+Download the latest releases:
+  https://github.com/OctoMap/octomap/tags
+
+API documentation:
+  http://octomap.github.com/octomap/doc/
+  
+Report bugs and request features in our tracker:
+  https://github.com/OctoMap/octomap/issues
+
+A list of changes is available in the file "octomap/CHANGELOG.txt"
+
 
 OVERVIEW
 ############################
@@ -45,10 +58,5 @@ Binaries and libs will end up in the directories "bin" and "lib" of the
 top-level directory where you started the build.
 
 
-See "octomap/README.txt" and "octovis/README.txt" for 
-details about compilation and hints on compiling under Windows.
-
-Report bugs and request features in our tracker:
-https://sourceforge.net/apps/trac/octomap    
-
-A list of changes is available in "octomap/CHANGELOG.txt"
+See "octomap/README.txt" and "octovis/README.txt" for further
+details and hints on compiling under Windows.
