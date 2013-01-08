@@ -257,30 +257,6 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
-
-    if (keyval >= 2*tree_max_val)
-      return false;
-    
-    unsigned int diff = tree_depth - depth;
-    if(!diff) {
-      out_keyval = keyval;
-    }
-    else {
-      out_keyval = (((keyval-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
-    }
-    return true;
-  }
-
-  template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
-    for (unsigned int i=0;i<3;i++) {
-      if (!genKeyValueAtDepth( key[i], depth, out_key[i])) return false;
-    }
-    return true;
-  }
-
-  template <class NODE,class I>
   NODE* OcTreeBaseImpl<NODE,I>::search(const point3d& value, unsigned int depth) const {
     OcTreeKey key;
     if (!coordToKeyChecked(value, key)){

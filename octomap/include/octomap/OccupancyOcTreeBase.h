@@ -227,72 +227,6 @@ namespace octomap {
      */
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
-   
-    /**
-     * Convenience function to return all occupied nodes in the OcTree.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!
-     *
-     * @param node_centers list of occpupied nodes (as point3d)
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED( void getOccupied(point3d_list& node_centers, unsigned int max_depth = 0) const);
-    
-    /**
-     * Convenience function to return all occupied nodes in the OcTree.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!     *
-     *
-     * @param occupied_volumes list of occpupied nodes (as point3d and size of the volume)
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED(void getOccupied(std::list<OcTreeVolume>& occupied_volumes, unsigned int max_depth = 0) const);
-
-    /**
-     * Traverses the tree and collects all OcTreeVolumes regarded as occupied.
-     * Inner nodes with both occupied and free children are regarded as occupied. 
-     * This should be for internal use only, use getOccupied(occupied_volumes) instead.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!     *
-     *
-     * @param binary_nodes list of binary OcTreeVolumes which are occupied
-     * @param delta_nodes list of delta OcTreeVolumes which are occupied
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED(void getOccupied(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
-                     unsigned int max_depth = 0) const);
-
-
-    /**
-     * returns occupied leafs within a bounding box defined by min and max.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!
-     */
-    DEPRECATED(void getOccupiedLeafsBBX(point3d_list& node_centers, point3d min, point3d max) const);
-
-    /**
-     * Convenience function to return all free nodes in the OcTree.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!
-     *
-     * @param free_volumes list of free nodes (as point3d and size of the volume)
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED(void getFreespace(std::list<OcTreeVolume>& free_volumes, unsigned int max_depth = 0) const);
-
-    /**
-     * Traverses the tree and collects all OcTreeVolumes regarded as free.
-     * Inner nodes with both occupied and free children are regarded as occupied.
-     * @note Deprecated, will be removed in the future.
-     * Direcly access the nodes with iterators instead!
-     *
-     * @param binary_nodes list of binary OcTreeVolumes which are free
-     * @param delta_nodes list of delta OcTreeVolumes which are free
-     * @param max_depth Depth limit of query. 0 (default): no depth limit
-     */
-    DEPRECATED(void getFreespace(std::list<OcTreeVolume>& binary_nodes, std::list<OcTreeVolume>& delta_nodes,
-                      unsigned int max_depth = 0) const);
-
 
 
     //-- set BBX limit (limits tree updates to this bounding box  
@@ -429,10 +363,6 @@ namespace octomap {
                            unsigned int depth, const float& log_odds_update, bool lazy_eval = false);
     
     void updateInnerOccupancyRecurs(NODE* node, unsigned int depth);
-
-    void getOccupiedLeafsBBXRecurs( point3d_list& node_centers, unsigned int max_depth, NODE* node, 
-                                    unsigned int depth, const OcTreeKey& parent_key, 
-                                    const OcTreeKey& min, const OcTreeKey& max) const;
     
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
 

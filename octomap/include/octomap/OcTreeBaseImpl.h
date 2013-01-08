@@ -422,66 +422,6 @@ namespace octomap {
       return point3d(float(keyToCoord(key[0], depth)), float(keyToCoord(key[1], depth)), float(keyToCoord(key[2], depth)));
     }
 
-    /// @deprecated, replaced with coordToKeyChecked()
-    DEPRECATED( bool genKeyValue(double coordinate, unsigned short int& keyval) const) {
-      return coordToKeyChecked(coordinate, keyval);
-    }
-
-    /// @deprecated, replaced with coordToKeyChecked()
-    DEPRECATED( bool genKey(const point3d& point, OcTreeKey& key) const ) {
-      return coordToKeyChecked(point, key);
-    }
-
-    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
-    DEPRECATED( bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const );
-
-    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
-    DEPRECATED( bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const );
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const ){
-      coord = float(keyToCoord(key, depth));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const) {
-      coord = float(keyToCoord(key, depth));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord) const) {
-      coord = float(keyToCoord(key));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    DEPRECATED( double genCoordFromKey(const unsigned short int& key, unsigned depth) const) {
-      return keyToCoord(key, depth);
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    DEPRECATED( inline double genCoordFromKey(const unsigned short int& key) const) {
-      return keyToCoord(key);
-    }
-
-     /// @deprecated, replaced by keyToCoord().
-     /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const){
-      point = keyToCoord(key, depth);
-      return true;
-    }
-
-    /// generate child index (between 0 and 7) from key at given tree depth
-    /// DEPRECATED
-    DEPRECATED( inline void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const) {
-      pos = computeChildIdx(key, depth);
-    }
-
  protected:
     /// Constructor to enable derived classes to change tree constants.
     /// This usually requires a re-implementation of some core tree-traversal functions as well!
