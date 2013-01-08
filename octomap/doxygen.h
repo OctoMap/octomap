@@ -15,7 +15,7 @@
 
   \section intro_sec Introduction
 
-  The <a href="http://octomap.sourceforge.net/">Octomap library</a>
+  The <a href="http://octomap.github.com/">Octomap library</a>
   implements a 3D occupancy grid mapping approach. It provides data
   structures and mapping algorithms. The map is implemented using an
   \ref octomap::OcTree "Octree". It is designed to meet the following
@@ -61,7 +61,9 @@ convenient exchange between robots even under bandwidth constraints.
 href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and
 <a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin
 Hornung</a>, and is currently maintained by Armin Hornung. A tracker for bug reports and
-feature requests is available available at <a href="https://sourceforge.net/apps/trac/octomap">https://sourceforge.net/apps/trac/octomap</a></p>
+feature requests is available available <a href="https://github.com/OctoMap/octomap/issues">on GitHub</a>.
+You can find an overview at http://octomap.github.com/ and the code repository at
+https://github.com/OctoMap/octomap.</p>
 
   \section install_sec Installation
   <p>See the file README.txt in the main folder.
@@ -69,7 +71,8 @@ feature requests is available available at <a href="https://sourceforge.net/apps
 
 
   \section changelog_sec Changelog
-  <p>See the file CHANGELOG.txt in the main folder or the <a href="http://octomap.svn.sourceforge.net/viewvc/octomap/trunk/octomap/CHANGELOG.txt">latest version online</a>
+  <p>See the file CHANGELOG.txt in the main folder or the
+  <a href="https://raw.github.com/OctoMap/octomap/master/octomap/CHANGELOG.txt">latest version online</a>.
   </p>
 
 
@@ -89,14 +92,12 @@ feature requests is available available at <a href="https://sourceforge.net/apps
 
 
 <p>
-  Start the 3D visualization with:<br>
-  bin/octovis 
+  Start the 3D visualization with: <b>bin/octovis</b>
 </p>
 
 <p>
-  You will find an example scan to load at<br>
-  src/examples/scan.dat.bz2     (please bunzip2 it first)
-  </p>
+  You will find an example scan to load at <b>src/examples/scan.dat.bz2</b>  (please bunzip2 it first)
+</p>
 
 
 **/
