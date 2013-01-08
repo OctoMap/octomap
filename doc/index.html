@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock"><h2><a class="anchor" id="intro_sec"></a>
 Introduction</h2>
-<p>The <a href="http://octomap.sourceforge.net/">Octomap library</a> implements a 3D occupancy grid mapping approach. It provides data structures and mapping algorithms. The map is implemented using an <a class="el" href="classoctomap_1_1OcTree.html">Octree</a>. It is designed to meet the following requirements: </p>
+<p>The <a href="http://octomap.github.com/">Octomap library</a> implements a 3D occupancy grid mapping approach. It provides data structures and mapping algorithms. The map is implemented using an <a class="el" href="classoctomap_1_1OcTree.html">Octree</a>. It is designed to meet the following requirements: </p>
 <ul>
 <li>
 <b>Full 3D model.</b> The map is able to model arbitrary environments without prior assumptions about it. The representation models occupied areas as well as free space. If no information is available about an area (commonly denoted as <em>unknown areas</em>), this information is encoded as well. While the distinction between free and occupied space is essential for safe robot navigation, information about unknown areas is important, e.g., for autonomous exploration of an environment.  </li>
@@ -108,21 +108,19 @@ Introduction</h2>
 <li>
 <b>Compact.</b> The is stored efficiently, both in memory and on disk. It is possible to generate compressed files for later usage or convenient exchange between robots even under bandwidth constraints.  </li>
 </ul>
-<p>Octomap was developed by <a href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and <a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin Hornung</a>, and is currently maintained by Armin Hornung. A tracker for bug reports and feature requests is available available at <a href="https://sourceforge.net/apps/trac/octomap">https://sourceforge.net/apps/trac/octomap</a></p>
+<p>Octomap was developed by <a href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and <a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin Hornung</a>, and is currently maintained by Armin Hornung. A tracker for bug reports and feature requests is available available <a href="https://github.com/OctoMap/octomap/issues">on GitHub</a>. You can find an overview at <a href="http://octomap.github.com/">http://octomap.github.com/</a> and the code repository at <a href="https://github.com/OctoMap/octomap">https://github.com/OctoMap/octomap</a>.</p>
 <h2><a class="anchor" id="install_sec"></a>
 Installation</h2>
 <p>See the file README.txt in the main folder. </p>
 <h2><a class="anchor" id="changelog_sec"></a>
 Changelog</h2>
-<p>See the file CHANGELOG.txt in the main folder or the <a href="http://octomap.svn.sourceforge.net/viewvc/octomap/trunk/octomap/CHANGELOG.txt">latest version online</a> </p>
+<p>See the file CHANGELOG.txt in the main folder or the <a href="https://raw.github.com/OctoMap/octomap/master/octomap/CHANGELOG.txt">latest version online</a>. </p>
 <h2><a class="anchor" id="gettingstarted_sec"></a>
 Getting Started</h2>
 <p>Jump right in and have a look at the main class <a class="el" href="classoctomap_1_1OcTree.html" title="octomap main map data structure, stores 3D occupancy grid map in an OcTree.">octomap::OcTree</a> and the examples in src/octomap/simple.cpp. To integrate single measurements into the 3D map have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a3c1c2678e33a791df715affa6ea03dcd" title="Insert one ray between origin and end into the tree.">octomap::OcTree::insertRay</a>(...), to insert full 3D scans (pointclouds) please have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a5e0c99b7e2dfd178489d4a2f7deac5bb" title="Integrate a Pointcloud (in global reference frame)">octomap::OcTree::insertScan</a>(...). Queries can be performed e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce" title="Search node at specified depth given a 3d point (depth=0: search full tree depth)">octomap::OcTree::search</a>(...) or <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#afc368d6ff93f40ee33eca3df0b8d1967" title="Performs raycasting in 3d, similar to computeRay().">octomap::OcTree::castRay</a>(...). The preferred way to batch-access or process nodes in an Octree is with the iterators <a class="el" href="classleaf__iterator.html">leaf_iterator</a>, <a class="el" href="classtree__iterator.html">tree_iterator</a>, or <a class="el" href="classleaf__bbx__iterator.html">leaf_bbx_iterator</a>. </p>
 <p>The <a class="el" href="classoctomap_1_1OcTree.html">OcTree</a> class is derived from <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html">OccupancyOcTreeBase</a>, with most functionality in the parent class. Also derive from OccupancyOcTreeBase if you you want to implement your own Octree and node classes. You can have a look at the classes <a class="el" href="classoctomap_1_1OcTreeStamped.html">octomap::OcTreeStamped</a> and <a class="el" href="classoctomap_1_1OcTreeNodeStamped.html">octomap::OcTreeNodeStamped</a> as examples. </p>
-<p>Start the 3D visualization with:<br/>
- bin/octovis </p>
-<p>You will find an example scan to load at<br/>
- src/examples/scan.dat.bz2 (please bunzip2 it first)  </p>
+<p>Start the 3D visualization with: <b>bin/octovis</b> </p>
+<p>You will find an example scan to load at <b>src/examples/scan.dat.bz2</b> (please bunzip2 it first)  </p>
 </div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -142,7 +140,7 @@ Getting Started</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Wed Dec 19 2012 13:57:59 for octomap by
+    <li class="footer">Generated on Tue Jan 8 2013 11:06:55 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
