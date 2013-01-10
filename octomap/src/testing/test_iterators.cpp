@@ -152,6 +152,29 @@ int main(int argc, char** argv) {
   if (maxDepth== 0)
     maxDepth = tree_depth;
 
+  // iterate over empty tree:
+  OcTree emptyTree(0.2);
+  EXPECT_EQ(emptyTree.size(), 0);
+  EXPECT_EQ(emptyTree.calcNumNodes(), 0);
+
+  size_t iteratedNodes = 0;
+  OcTree::tree_iterator t_it = emptyTree.begin_tree(maxDepth);
+  OcTree::tree_iterator t_end = emptyTree.end_tree();
+  EXPECT_TRUE (t_it == t_end);
+  for( ; t_it != t_end; ++t_it){
+    iteratedNodes++;
+  }
+  EXPECT_EQ(iteratedNodes, 0);
+
+
+  for(OcTree::leaf_iterator l_it = emptyTree.begin_leafs(maxDepth), l_end=emptyTree.end_leafs(); l_it!= l_end; ++l_it){
+    iteratedNodes++;
+  }
+  EXPECT_EQ(iteratedNodes, 0);
+
+
+
+
 
   cout << "\nReading OcTree file\n===========================\n";
   OcTree* tree = new OcTree(btFilename);
@@ -374,10 +397,10 @@ int main(int argc, char** argv) {
 
   }
 
-  // test empty tree:
-  OcTree emptyTree(0.01);
-  emptyTree.updateNode(point3d(10, 10, 10), 5.0f);
-  for(OcTree::leaf_iterator it = emptyTree.begin_leafs(maxDepth), end=emptyTree.end_leafs(); it!= end; ++it) {
+  // test tree with one node:
+  OcTree simpleTree(0.01);
+  simpleTree.updateNode(point3d(10, 10, 10), 5.0f);
+  for(OcTree::leaf_iterator it = simpleTree.begin_leafs(maxDepth), end=simpleTree.end_leafs(); it!= end; ++it) {
     std::cout << it.getDepth() << " " << " "<<it.getCoordinate()<< std::endl;
   }
 

@@ -100,7 +100,7 @@ namespace octomap {
     /**
      * \return Pointer to the root node of the tree. This pointer
      * should not be modified or deleted externally, the OcTree
-     * manages its memory itself.
+     * manages its memory itself. In an empty tree, root is NULL.
      */
     inline NODE* getRoot() const { return root; }
 
@@ -143,7 +143,7 @@ namespace octomap {
      */
     bool deleteNode(const OcTreeKey& key, unsigned int depth = 0);
 
-    /// Deletes the complete tree structure (only the root node will remain)
+    /// Deletes the complete tree structure
     void clear();
 
     OcTreeBaseImpl deepCopy() const;
@@ -450,7 +450,7 @@ namespace octomap {
 
   protected:
 
-    NODE* root;
+    NODE* root; ///< Pointer to the root NODE, NULL for empty tree
 
     // constants of the tree
     const unsigned int tree_depth; ///< Maximum tree depth is fixed to 16 currently

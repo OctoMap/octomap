@@ -107,7 +107,9 @@ namespace octomap {
     AbstractOcTree* tree = createTree(id, res);
 
     if (tree){
-      tree->readData(s);
+      if (size > 0)
+        tree->readData(s);
+
       OCTOMAP_DEBUG_STR("Done ("<< tree->size() << " nodes)");
     }
 

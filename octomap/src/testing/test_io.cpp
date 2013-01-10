@@ -17,6 +17,23 @@ int main(int argc, char** argv) {
     return 1; // exit 1 means failure
   }
 
+  //empty tree
+  OcTree emptyTree(0.999);
+  EXPECT_EQ(emptyTree.size(), 0);
+  EXPECT_TRUE(emptyTree.writeBinary("empty.bt"));
+  EXPECT_TRUE(emptyTree.write("empty.ot"));
+
+  OcTree emptyReadTree(0.2);
+  EXPECT_TRUE(emptyReadTree.readBinary("empty.bt"));
+  EXPECT_EQ(emptyReadTree.size(), 0);
+  EXPECT_TRUE(emptyTree == emptyReadTree);
+
+  EXPECT_TRUE(emptyReadTree.read("empty.ot"));
+  EXPECT_EQ(emptyReadTree.size(), 0);
+  EXPECT_TRUE(emptyTree == emptyReadTree);
+
+
+
   string filename = string(argv[1]);
 
   string filenameOt = "test_io_file.ot";
@@ -30,7 +47,7 @@ int main(int argc, char** argv) {
   // test copy constructor / assignment:
   OcTree* treeCopy = new OcTree(tree);
   EXPECT_TRUE(tree == *treeCopy);
-  treeCopy->writeBinary(filenameBtCopyOut);
+  EXPECT_TRUE(treeCopy->writeBinary(filenameBtCopyOut));
 
   // change a tree property, trees must be different afterwards
   treeCopy->setResolution(tree.getResolution()*2.0);

@@ -285,7 +285,7 @@ namespace octomap {
     // -- I/O  -----------------------------------------
 
     /**
-     * Reads only the data (=tree structure) from the input stream.
+     * Reads only the data (=complete tree structure) from the input stream.
      * The tree needs to be constructed with the proper header information
      * beforehand, see readBinary().
      */

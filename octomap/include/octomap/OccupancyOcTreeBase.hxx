@@ -192,6 +192,12 @@ namespace octomap {
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval) {
+    if (this->root == NULL){
+      this->root = new NODE();
+      this->tree_size++;
+    }
+    // TODO: check early abort (already clamped)
+
     return updateNodeRecurs(this->root, false, key, 0, log_odds_update, lazy_eval);
   }
 
@@ -218,8 +224,15 @@ namespace octomap {
     if (leaf && (this->isNodeAtThreshold(leaf)) && (this->isNodeOccupied(leaf) == occupied)) {
       return leaf;
     }
-    if (occupied) return updateNodeRecurs(this->root, false, key, 0, this->prob_hit_log,  lazy_eval);
-    else          return updateNodeRecurs(this->root, false, key, 0, this->prob_miss_log, lazy_eval);
+    if (this->root == NULL){
+      this->root = new NODE();
+      this->tree_size++;
+    }
+
+    if (occupied)
+      return updateNodeRecurs(this->root, false, key, 0, this->prob_hit_log,  lazy_eval);
+    else
+      return updateNodeRecurs(this->root, false, key, 0, this->prob_miss_log, lazy_eval);
   }
 
   template <class NODE>
@@ -241,8 +254,10 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                                                     unsigned int depth, const float& log_odds_update, bool lazy_eval) {
-    unsigned int pos = computeChildIdx(key, this->tree_depth-1-depth);
+    unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
     bool created_node = false;
+
+    assert(node);
 
     // follow down to last level
     if (depth < this->tree_depth) {
@@ -297,7 +312,7 @@ namespace octomap {
     }
   }
   
-
+  // FIXME: remove
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::calcNumThresholdedNodes(unsigned int& num_thresholded,
                                        unsigned int& num_other) const {
@@ -326,11 +341,14 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateInnerOccupancy(){
-    this->updateInnerOccupancyRecurs(this->root, 0);
+    if (this->root)
+      this->updateInnerOccupancyRecurs(this->root, 0);
   }
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateInnerOccupancyRecurs(NODE* node, unsigned int depth){
+    assert(node);
+
     // only recurse and update for inner nodes:
     if (node->hasChildren()){
       // return early for last level:
@@ -347,6 +365,8 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::toMaxLikelihood() {
+    if (this->root == NULL)
+      return;
 
     // convert bottom up
     for (unsigned int depth=this->tree_depth; depth>0; depth--) {
@@ -360,6 +380,8 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::toMaxLikelihoodRecurs(NODE* node, unsigned int depth,
       unsigned int max_depth) {
+
+    assert(node);
 
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
@@ -582,6 +604,13 @@ namespace octomap {
 
   template <class NODE>
   std::istream& OccupancyOcTreeBase<NODE>::readBinaryData(std::istream &s){
+    // tree needs to be newly created or cleared externally
+    if (this->root) {
+      OCTOMAP_ERROR_STR("Trying to read into an existing tree.");
+      return s;
+    }
+
+    this->root = new NODE();
     this->readBinaryNode(s, this->root);
     this->size_changed = true;
     this->tree_size = OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::calcNumNodes();  // compute number of nodes    
@@ -591,12 +620,15 @@ namespace octomap {
   template <class NODE>
   std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryData(std::ostream &s) const{
     OCTOMAP_DEBUG("Writing %zu nodes to output stream...", this->size());
-    this->writeBinaryNode(s, this->root);
+    if (this->root)
+      this->writeBinaryNode(s, this->root);
     return s;
   }
 
   template <class NODE>
   std::istream& OccupancyOcTreeBase<NODE>::readBinaryNode(std::istream &s, NODE* node) const {
+
+    assert(node);
 
     char child1to4_char;
     char child5to8_char;
@@ -666,6 +698,8 @@ namespace octomap {
 
   template <class NODE>
   std::ostream& OccupancyOcTreeBase<NODE>::writeBinaryNode(std::ostream &s, const NODE* node) const{
+
+    assert(node);
 
     // 2 bits for each children, 8 children per node -> 16 bits
     std::bitset<8> child1to4;
