@@ -1,17 +1,10 @@
-// $Id$
-
-/*!
-* @file edit_octree.cpp
-* Quick (commandline) tool for simple edits to octree files
-*
-* @author A. Hornung, University of Freiburg, Copyright (C) 2010.
-* @see http://octomap.sourceforge.net/
-* License: New BSD License
-*/
-
 /*
- * Copyright (c) 2009, K. M. Wurm, A. Hornung, S. Osswald, University of Freiburg
+ * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
+ * http://octomap.github.com/
+ *
+ * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
+ * License: New BSD
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
