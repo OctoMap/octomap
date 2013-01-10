@@ -1,14 +1,13 @@
-// $Id$
-
-/**
- * Octomap:
- * A  probabilistic, flexible, and compact 3D mapping library for robotic systems.
- * @author K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2012.
- * @see http://octomap.sourceforge.net/
- * License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
- */
-
 /*
+ * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
+ * http://octomap.github.com/
+ *
+ * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
+ * All rights reserved.
+ * License (octovis): GNU GPL v2
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+ *
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
