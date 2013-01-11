@@ -312,33 +312,6 @@ namespace octomap {
     }
   }
   
-  // FIXME: remove
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::calcNumThresholdedNodes(unsigned int& num_thresholded,
-                                       unsigned int& num_other) const {
-    num_thresholded = 0;
-    num_other = 0;
-    // TODO: The recursive call could be completely replaced with the new iterators
-    calcNumThresholdedNodesRecurs(this->root, num_thresholded, num_other);
-  }
-
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::calcNumThresholdedNodesRecurs (NODE* node,
-                                              unsigned int& num_thresholded,
-                                              unsigned int& num_other) const {
-    assert(node != NULL);
-    for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        NODE* child_node = node->getChild(i);
-        if (this->isNodeAtThreshold(child_node))
-          num_thresholded++;
-        else
-          num_other++;
-        calcNumThresholdedNodesRecurs(child_node, num_thresholded, num_other);
-      } // end if child
-    } // end for children
-  }
-
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateInnerOccupancy(){
     if (this->root)

@@ -323,8 +323,6 @@ namespace octomap {
     std::ostream& writeBinaryData(std::ostream &s) const;
 
 
-    void calcNumThresholdedNodes(unsigned int& num_thresholded, unsigned int& num_other) const;
-
     /**
      * Updates the occupancy of all inner nodes to reflect their children's occupancy.
      * If you performed batch-updates with lazy evaluation enabled, you must call this
@@ -366,9 +364,6 @@ namespace octomap {
     
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
 
-    void calcNumThresholdedNodesRecurs (NODE* node,
-                                        unsigned int& num_thresholded,
-                                        unsigned int& num_other) const;
 
   protected:
     bool use_bbx_limit;  ///< use bounding box for queries (needs to be set)?

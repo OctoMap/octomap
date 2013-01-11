@@ -69,9 +69,24 @@ void printUsage(char* self){
   exit(0);
 }
 
+void calcThresholdedNodes(const OcTree* tree,
+                          unsigned int& num_thresholded,
+                          unsigned int& num_other)
+{
+  num_thresholded = 0;
+  num_other = 0;
+
+  for(OcTree::tree_iterator it = tree->begin_tree(), end=tree->end_tree(); it!= end; ++it){
+    if (tree->isNodeAtThreshold(*it))
+      num_thresholded++;
+    else
+      num_other++;
+  }
+}
+
 void outputStatistics(const OcTree* tree){
   unsigned int numThresholded, numOther;
-  tree->calcNumThresholdedNodes(numThresholded, numOther);
+  calcThresholdedNodes(tree, numThresholded, numOther);
   size_t memUsage = tree->memoryUsage();
   unsigned long long memFullGrid = tree->memoryFullGrid();
   size_t numLeafNodes = tree->getNumLeafNodes();
@@ -84,6 +99,7 @@ void outputStatistics(const OcTree* tree){
   cout << "Size: " << x << " x " << y << " x " << z << " m^3\n";
   cout << endl;
 }
+
 
 int main(int argc, char** argv) {
   // default values:
