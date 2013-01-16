@@ -206,6 +206,7 @@ namespace octomap {
     OcTreeKey key;
     if (!this->coordToKeyChecked(value, key))
       return NULL;
+
     return updateNode(key, log_odds_update, lazy_eval);
   }
 
@@ -214,6 +215,7 @@ namespace octomap {
     OcTreeKey key;
     if (!this->coordToKeyChecked(x, y, z, key))
       return NULL;
+
     return updateNode(key, log_odds_update, lazy_eval);
   }
 
