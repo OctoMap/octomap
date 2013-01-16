@@ -12,6 +12,7 @@ html
 lib
 bin
 build
+callgrind.out*
 
 # in case someone runs an in-source build:
 CMakeCache.txt
