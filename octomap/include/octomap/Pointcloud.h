@@ -103,6 +103,7 @@ namespace octomap {
     const_iterator end() const  { return points.end(); }
     point3d back()  { return points.back(); }
     point3d getPoint(unsigned int i);   // may return NULL
+    const point3d& getPoint(unsigned int i) const;   // may return NULL
 
     // I/O methods
 
