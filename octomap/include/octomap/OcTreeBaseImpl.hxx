@@ -35,6 +35,8 @@
 #undef min
 #include <limits>
 
+#include <omp.h>
+
 namespace octomap {
 
 
@@ -93,7 +95,19 @@ namespace octomap {
     }
     size_changed = true;
 
-    this->keyrays.resize(1);
+    // create as many KeyRays as there are OMP_THREADS defined
+#pragma omp parallel
+#pragma omp critical
+    {
+      if (omp_get_thread_num() == 0){
+        this->keyrays.resize(omp_get_num_threads());
+        std::cout << "Initialized OcTreeBase with " << this->keyrays.size() << " KeyRays"<< std::endl;
+      }
+
+    }
+
+    // TODO: check without OMP, create only one
+
 
   }
 
@@ -410,7 +424,8 @@ namespace octomap {
     }
 
     
-    if (key_origin == key_end) return true; // same tree cell, we're done.
+    if (key_origin == key_end)
+      return true; // same tree cell, we're done.
 
     ray.addKey(key_origin);
 
