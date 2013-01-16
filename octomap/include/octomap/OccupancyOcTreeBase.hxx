@@ -95,7 +95,8 @@ namespace octomap {
     }
 
     // TODO: does pruning make sense if we used "lazy_eval"?
-    if (pruning) this->prune();
+    if (pruning)
+      this->prune();
   } 
 
   // performs transformation to data and sensor origin first
@@ -134,12 +135,13 @@ namespace octomap {
     //#pragma omp parallel private (local_key_ray, point_it) 
     for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
       const point3d& p = *point_it;
+      KeyRay* keyray = &(this->keyrays[0]); // TODO: idx according to thread
       if (!use_bbx_limit) {
         // -------------- no BBX specified ---------------
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
-          if (this->computeRayKeys(origin, p, this->keyray)){
-            free_cells.insert(this->keyray.begin(), this->keyray.end());
+          if (this->computeRayKeys(origin, p, *keyray)){
+            free_cells.insert(keyray->begin(), keyray->end());
           }
           // occupied endpoint
           OcTreeKey key;
@@ -150,8 +152,8 @@ namespace octomap {
         else { // user set a maxrange and this is reached
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
-          if (this->computeRayKeys(origin, new_end, this->keyray)){
-            free_cells.insert(this->keyray.begin(), this->keyray.end());
+          if (this->computeRayKeys(origin, new_end, *keyray)){
+            free_cells.insert(keyray->begin(), keyray->end());
           }
         } // end if maxrange
       }
@@ -167,8 +169,8 @@ namespace octomap {
             occupied_cells.insert(key);
 
           // update freespace, break as soon as bbx limit is reached
-          if (this->computeRayKeys(origin, p, this->keyray)){
-            for(KeyRay::reverse_iterator rit=this->keyray.rbegin(); rit != this->keyray.rend(); rit++) {
+          if (this->computeRayKeys(origin, p, *keyray)){
+            for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
               if (inBBX(*rit)) {
                 free_cells.insert(*rit);
               }
@@ -500,11 +502,11 @@ namespace octomap {
   template <class NODE> inline bool 
   OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end, bool lazy_eval) {
 
-    if (!this->computeRayKeys(origin, end, this->keyray)) {
+    if (!this->computeRayKeys(origin, end, this->keyrays.at(0))) {
       return false;
     }
     
-    for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+    for(KeyRay::iterator it=this->keyrays[0].begin(); it != this->keyrays[0].end(); it++) {
       updateNode(*it, false, lazy_eval); // insert freespace measurement
     }
   
