@@ -133,18 +133,25 @@ namespace octomap {
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange)
   {
+#ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
-
     #pragma omp parallel for
+#endif
     for (unsigned i = 0; i < scan.size(); ++i) {
       const point3d& p = scan[i];
-      KeyRay* keyray = &(this->keyrays.at(omp_get_thread_num()));
+      unsigned threadIdx = 0;
+#ifdef _OPENMP
+      threadIdx = omp_get_thread_num();
+#endif
+      KeyRay* keyray = &(this->keyrays.at(threadIdx));
       if (!use_bbx_limit) {
         // -------------- no BBX specified ---------------
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
           if (this->computeRayKeys(origin, p, *keyray)){
+#ifdef _OPENMP
             #pragma omp critical (free_insert)
+#endif
             {
               free_cells.insert(keyray->begin(), keyray->end());
             }
@@ -152,7 +159,9 @@ namespace octomap {
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
+#ifdef _OPENMP
             #pragma omp critical (occupied_insert)
+#endif
             {
               occupied_cells.insert(key);
             }
@@ -163,7 +172,9 @@ namespace octomap {
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, *keyray)){
+#ifdef _OPENMP
             #pragma omp critical (free_insert)
+#endif
             {
               free_cells.insert(keyray->begin(), keyray->end());
             }
@@ -179,7 +190,9 @@ namespace octomap {
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
+#ifdef _OPENMP
             #pragma omp critical (occupied_insert)
+#endif
             {
               occupied_cells.insert(key);
             }
@@ -189,7 +202,9 @@ namespace octomap {
           if (this->computeRayKeys(origin, p, *keyray)){
             for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
               if (inBBX(*rit)) {
+#ifdef _OPENMP
                 #pragma omp critical (free_insert)
+#endif
                 {
                   free_cells.insert(*rit);
                 }

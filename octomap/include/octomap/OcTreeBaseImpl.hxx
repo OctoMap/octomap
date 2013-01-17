@@ -35,7 +35,9 @@
 #undef min
 #include <limits>
 
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 namespace octomap {
 
@@ -97,6 +99,7 @@ namespace octomap {
 
     // create as many KeyRays as there are OMP_THREADS defined,
     // one buffer for each thread
+#ifdef _OPENMP
     #pragma omp parallel
     #pragma omp critical
     {
@@ -105,6 +108,9 @@ namespace octomap {
       }
 
     }
+#else
+    this->keyrays.resize(1);
+#endif
 
     // TODO: check without OMP, create only one
 
