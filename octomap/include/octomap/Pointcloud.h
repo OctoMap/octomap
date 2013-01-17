@@ -105,6 +105,9 @@ namespace octomap {
     point3d getPoint(unsigned int i);   // may return NULL
     const point3d& getPoint(unsigned int i) const;   // may return NULL
 
+    inline const point3d& operator[] (size_t i) const { return points[i]; }
+    inline point3d& operator[] (size_t i) { return points[i]; }
+
     // I/O methods
 
     std::istream& readBinary(std::istream &s);

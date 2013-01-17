@@ -95,13 +95,13 @@ namespace octomap {
     }
     size_changed = true;
 
-    // create as many KeyRays as there are OMP_THREADS defined
-#pragma omp parallel
-#pragma omp critical
+    // create as many KeyRays as there are OMP_THREADS defined,
+    // one buffer for each thread
+    #pragma omp parallel
+    #pragma omp critical
     {
       if (omp_get_thread_num() == 0){
         this->keyrays.resize(omp_get_num_threads());
-        std::cout << "Initialized OcTreeBase with " << this->keyrays.size() << " KeyRays"<< std::endl;
       }
 
     }

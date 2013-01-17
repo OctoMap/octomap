@@ -116,6 +116,7 @@ namespace octomap {
       return;
 
     // integrate each single beam
+    // TODO: parallelize with computeRayKeys
     octomap::point3d p;
     for (octomap::Pointcloud::const_iterator point_it = pc.begin();
          point_it != pc.end(); point_it++) {
@@ -134,17 +135,16 @@ namespace octomap {
   {
     omp_set_num_threads(this->keyrays.size());
 
-    //#pragma omp parallel private (local_key_ray, point_it) 
-#pragma omp parallel for
+    #pragma omp parallel for
     for (unsigned i = 0; i < scan.size(); ++i) {
-      const point3d& p = scan.getPoint(i); // TODO: [] accessor
+      const point3d& p = scan[i];
       KeyRay* keyray = &(this->keyrays.at(omp_get_thread_num()));
       if (!use_bbx_limit) {
         // -------------- no BBX specified ---------------
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
           if (this->computeRayKeys(origin, p, *keyray)){
-#pragma omp critical (free_insert)
+            #pragma omp critical (free_insert)
             {
               free_cells.insert(keyray->begin(), keyray->end());
             }
@@ -152,7 +152,7 @@ namespace octomap {
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
-#pragma omp critical (occupied_insert)
+            #pragma omp critical (occupied_insert)
             {
               occupied_cells.insert(key);
             }
@@ -163,7 +163,7 @@ namespace octomap {
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, *keyray)){
-#pragma omp critical (free_insert)
+            #pragma omp critical (free_insert)
             {
               free_cells.insert(keyray->begin(), keyray->end());
             }
@@ -179,7 +179,7 @@ namespace octomap {
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
-#pragma omp critical (occupied_insert)
+            #pragma omp critical (occupied_insert)
             {
               occupied_cells.insert(key);
             }
@@ -189,7 +189,7 @@ namespace octomap {
           if (this->computeRayKeys(origin, p, *keyray)){
             for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
               if (inBBX(*rit)) {
-#pragma omp critical (free_insert)
+                #pragma omp critical (free_insert)
                 {
                   free_cells.insert(*rit);
                 }
