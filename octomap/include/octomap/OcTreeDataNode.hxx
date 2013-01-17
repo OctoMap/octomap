@@ -62,7 +62,6 @@ namespace octomap {
   }
 
 
-
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
@@ -127,9 +126,13 @@ namespace octomap {
 
   template <typename T>
   bool OcTreeDataNode<T>::hasChildren() const {
-    if (children == NULL) return false;
-    for (unsigned int i = 0; i<8; i++)
-      if (childExists(i)) return true;
+    if (children == NULL)
+      return false;
+    for (unsigned int i = 0; i<8; i++){
+      // fast check, we know children != NULL
+      if (children[i] != NULL)
+        return true;
+    }
     return false;
   }
 

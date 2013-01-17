@@ -153,7 +153,7 @@ namespace octomap {
    */
   inline void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key,
                                           const OcTreeKey& parent_key, OcTreeKey& child_key) {
-    
+    // x-axis
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
     else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
     // y-axis
