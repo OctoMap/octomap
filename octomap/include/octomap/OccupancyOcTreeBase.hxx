@@ -551,11 +551,11 @@ namespace octomap {
   template <class NODE> inline bool 
   OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end, bool lazy_eval) {
 
-    if (!this->computeRayKeys(origin, end, this->keyray)) {
+    if (!this->computeRayKeys(origin, end, this->keyrays.at(0))) {
       return false;
     }
     
-    for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+    for(KeyRay::iterator it=this->keyrays[0].begin(); it != this->keyrays[0].end(); it++) {
       updateNode(*it, false, lazy_eval); // insert freespace measurement
     }
   
