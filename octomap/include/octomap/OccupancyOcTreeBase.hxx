@@ -95,7 +95,8 @@ namespace octomap {
     }
 
     // TODO: does pruning make sense if we used "lazy_eval"?
-    if (pruning) this->prune();
+    if (pruning)
+      this->prune();
   } 
 
   // performs transformation to data and sensor origin first
@@ -131,7 +132,6 @@ namespace octomap {
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange) {
 
-    //#pragma omp parallel private (local_key_ray, point_it) 
     for (Pointcloud::const_iterator point_it = scan.begin(); point_it != scan.end(); point_it++) {
       const point3d& p = *point_it;
       if (!use_bbx_limit) {
@@ -192,11 +192,21 @@ namespace octomap {
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval) {
+    // early abort (no change will happen).
+    // may cause an overhead in some configuration, but more often helps
+    NODE* leaf = this->search(key);
+    // no change: node already at threshold
+    if (leaf
+        && ((log_odds_update >= 0 && leaf->getLogOdds() >= this->clamping_thres_max)
+        || ( log_odds_update <= 0 && leaf->getLogOdds() <= this->clamping_thres_min)))
+    {
+      return leaf;
+    }
+
     if (this->root == NULL){
       this->root = new NODE();
       this->tree_size++;
     }
-    // TODO: check early abort (already clamped)
 
     return updateNodeRecurs(this->root, false, key, 0, log_odds_update, lazy_eval);
   }
@@ -221,11 +231,16 @@ namespace octomap {
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, bool occupied, bool lazy_eval) {
+    // early abort (no change will happen).
+    // may cause an overhead in some configuration, but more often helps
     NODE* leaf = this->search(key);
-    // no change: node already at threshold
-    if (leaf && (this->isNodeAtThreshold(leaf)) && (this->isNodeOccupied(leaf) == occupied)) {
+    if (leaf
+        && ((occupied && leaf->getLogOdds() >= this->clamping_thres_max)
+        || ( !occupied && leaf->getLogOdds() <= this->clamping_thres_min)))
+    {
       return leaf;
     }
+
     if (this->root == NULL){
       this->root = new NODE();
       this->tree_size++;
@@ -267,7 +282,7 @@ namespace octomap {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created && (node != this->root)) {
           // current node does not have children AND it is not a new node 
-          // AND its not the root node
+          // AND its not the root node // TODO: last check could be eliminated?
           // -> expand pruned node
           node->expandNode();
           this->tree_size+=8;
