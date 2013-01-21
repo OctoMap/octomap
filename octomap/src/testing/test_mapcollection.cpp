@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <octomap/MapCollection.h>
 #include <octomap/math/Utils.h>
+#include "testing.h"
 
 using namespace std;
 using namespace octomap;
@@ -50,6 +51,7 @@ int main(int argc, char** argv) {
   //Read MapCollection from command line
   std::string filename(argv[1]);
   MapCollection<MapNode<OcTree> > collection(filename);
+  EXPECT_TRUE(collection.size() > 0);
 
   //Write it to file
   collection.write("writeout.txt");
