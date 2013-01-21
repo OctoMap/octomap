@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="include/octomap/MapNode.h" name="include/octomap/MapNode.h">
 <area shape="rect" id="node5" href="$OcTree_8h.html" title="octomap/OcTree.h" alt="" coords="1312,83,1443,112"/>
 <area shape="rect" id="node105" href="$MapNode_8hxx.html" title="octomap/MapNode.hxx" alt="" coords="1820,83,1977,112"/>
 <area shape="rect" id="node7" href="$OccupancyOcTreeBase_8h.html" title="OccupancyOcTreeBase.h" alt="" coords="1353,160,1524,189"/>

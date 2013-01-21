@@ -1,5 +1,6 @@
 var classiterator__base =
 [
+    [ "StackElement", "structiterator__base_1_1StackElement.html", "structiterator__base_1_1StackElement" ],
     [ "iterator_base", "classiterator__base.html#a38f0241e65565fa60f97214eae70200f", null ],
     [ "iterator_base", "classiterator__base.html#af9c9f54fd4c4ce95eeb9b1c331c48e18", null ],
     [ "iterator_base", "classiterator__base.html#aa6ec8de8d6bf58cae21510d946befbb9", null ],

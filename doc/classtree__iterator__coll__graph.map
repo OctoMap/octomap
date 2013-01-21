@@ -1,4 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="139,197,235,227"/>
-<area shape="rect" id="node6" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="93,5,280,35"/>
+<map id="tree_iterator" name="tree_iterator">
+<area shape="rect" id="node2" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="60,216,156,245"/>
+<area shape="rect" id="node6" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="15,5,201,35"/>
 </map>

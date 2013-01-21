@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/AbstractOcTree.cpp" name="src/AbstractOcTree.cpp">
 <area shape="rect" id="node3" href="$AbstractOcTree_8h.html" title="octomap/AbstractOcTree.h" alt="" coords="224,315,403,344"/>
 <area shape="rect" id="node15" href="$OcTree_8h.html" title="octomap/OcTree.h" alt="" coords="807,83,937,112"/>
 <area shape="rect" id="node105" href="$CountingOcTree_8h.html" title="octomap/CountingOcTree.h" alt="" coords="512,83,693,112"/>

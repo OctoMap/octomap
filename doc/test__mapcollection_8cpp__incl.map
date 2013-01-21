@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/testing/test_mapcollection.cpp" name="src/testing/test_mapcollection.cpp">
 <area shape="rect" id="node5" href="$MapCollection_8h.html" title="octomap/MapCollection.h" alt="" coords="1719,83,1889,112"/>
 <area shape="rect" id="node120" href="$Utils_8h.html" title="octomap/math/Utils.h" alt="" coords="1913,83,2060,112"/>
 <area shape="rect" id="node9" href="$MapNode_8h.html" title="octomap/MapNode.h" alt="" coords="1456,160,1597,189"/>

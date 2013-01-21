@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/Pointcloud.cpp" name="src/Pointcloud.cpp">
 <area shape="rect" id="node9" href="$Pointcloud_8h.html" title="octomap/Pointcloud.h" alt="" coords="636,83,783,112"/>
 <area shape="rect" id="node15" href="$octomap__types_8h.html" title="octomap/octomap_types.h" alt="" coords="540,160,716,189"/>
 <area shape="rect" id="node19" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="267,392,432,421"/>

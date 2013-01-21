@@ -1,9 +1,9 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value." alt="" coords="288,5,501,35"/>
-<area shape="rect" id="node5" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\&lt; float \&gt;" alt="" coords="280,59,509,88"/>
-<area shape="rect" id="node13" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\&lt; unsigned int \&gt;" alt="" coords="257,112,532,141"/>
-<area shape="rect" id="node7" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree." alt="" coords="608,59,763,88"/>
-<area shape="rect" id="node9" href="$classoctomap_1_1ColorOcTreeNode.html" title="octomap::ColorOcTreeNode" alt="" coords="849,32,1033,61"/>
-<area shape="rect" id="node11" href="$classoctomap_1_1OcTreeNodeStamped.html" title="octomap::OcTreeNodeStamped" alt="" coords="839,85,1044,115"/>
-<area shape="rect" id="node15" href="$classoctomap_1_1CountingOcTreeNode.html" title="An Octree&#45;node which stores an internal counter per node / volume." alt="" coords="583,112,788,141"/>
+<map id="octomap::AbstractOcTreeNode" name="octomap::AbstractOcTreeNode">
+<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value." alt="" coords="257,5,471,35"/>
+<area shape="rect" id="node5" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; float \&gt;" alt="" coords="273,58,455,105"/>
+<area shape="rect" id="node13" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; unsigned int \&gt;" alt="" coords="273,127,455,174"/>
+<area shape="rect" id="node7" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree." alt="" coords="547,67,701,96"/>
+<area shape="rect" id="node9" href="$classoctomap_1_1ColorOcTreeNode.html" title="octomap::ColorOcTreeNode" alt="" coords="788,40,972,69"/>
+<area shape="rect" id="node11" href="$classoctomap_1_1OcTreeNodeStamped.html" title="octomap::OcTreeNodeStamped" alt="" coords="777,93,983,123"/>
+<area shape="rect" id="node15" href="$classoctomap_1_1CountingOcTreeNode.html" title="An Octree&#45;node which stores an internal counter per node / volume." alt="" coords="521,136,727,165"/>
 </map>

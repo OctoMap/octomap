@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/testing/test_lut.cpp" name="src/testing/test_lut.cpp">
 <area shape="rect" id="node5" href="$octomap_8h.html" title="octomap/octomap.h" alt="" coords="541,83,677,112"/>
 <area shape="rect" id="node111" href="$OcTreeLUT_8h.html" title="octomap/OcTreeLUT.h" alt="" coords="1849,315,2004,344"/>
 <area shape="rect" id="node7" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="765,547,888,576"/>

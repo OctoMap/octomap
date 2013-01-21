@@ -1,5 +1,5 @@
 var namespaces =
 [
-    [ "octomap", "namespaceoctomap.html", "namespaceoctomap" ],
-    [ "octomath", "namespaceoctomath.html", "namespaceoctomath" ]
+    [ "octomap", "namespaceoctomap.html", null ],
+    [ "octomath", "namespaceoctomath.html", null ]
 ];

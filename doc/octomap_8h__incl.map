@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="include/octomap/octomap.h" name="include/octomap/octomap.h">
 <area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="723,469,845,499"/>
 <area shape="rect" id="node25" href="$Pointcloud_8h.html" title="Pointcloud.h" alt="" coords="88,392,181,421"/>
 <area shape="rect" id="node30" href="$ScanGraph_8h.html" title="ScanGraph.h" alt="" coords="43,315,141,344"/>

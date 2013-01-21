@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="include/octomap/OcTreeNode.h" name="include/octomap/OcTreeNode.h">
 <area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="171,160,293,189"/>
 <area shape="rect" id="node25" href="$octomap__utils_8h.html" title="octomap_utils.h" alt="" coords="5,315,120,344"/>
 <area shape="rect" id="node28" href="$OcTreeDataNode_8h.html" title="OcTreeDataNode.h" alt="" coords="331,83,464,112"/>

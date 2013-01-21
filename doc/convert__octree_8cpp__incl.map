@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/convert_octree.cpp" name="src/convert_octree.cpp">
 <area shape="rect" id="node3" href="$AbstractOcTree_8h.html" title="octomap/AbstractOcTree.h" alt="" coords="157,315,336,344"/>
 <area shape="rect" id="node15" href="$OcTree_8h.html" title="octomap/OcTree.h" alt="" coords="693,83,824,112"/>
 <area shape="rect" id="node105" href="$ColorOcTree_8h.html" title="octomap/ColorOcTree.h" alt="" coords="1240,83,1400,112"/>

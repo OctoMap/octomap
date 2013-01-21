@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="octomath::Pose6D" name="octomath::Pose6D">
 <area shape="rect" id="node2" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion." alt="" coords="5,5,152,35"/>
 <area shape="rect" id="node4" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="176,5,304,35"/>
 </map>

@@ -1,4 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\&lt; unsigned int \&gt;" alt="" coords="5,85,280,115"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="41,5,244,35"/>
+<map id="octomap::CountingOcTreeNode" name="octomap::CountingOcTreeNode">
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; unsigned int \&gt;" alt="" coords="17,86,199,133"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="7,5,209,35"/>
 </map>

@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/ScanGraph.cpp" name="src/ScanGraph.cpp">
 <area shape="rect" id="node11" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="195,315,360,344"/>
 <area shape="rect" id="node25" href="$ScanGraph_8h.html" title="octomap/ScanGraph.h" alt="" coords="663,83,815,112"/>
 <area shape="rect" id="node13" href="$Vector3_8h.html" title="Vector3.h" alt="" coords="308,469,385,499"/>

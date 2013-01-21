@@ -1,4 +1,4 @@
-<map id="G" name="G">
+<map id="src/testing/test_io.cpp" name="src/testing/test_io.cpp">
 <area shape="rect" id="node7" href="$OcTree_8h.html" title="octomap/OcTree.h" alt="" coords="217,83,348,112"/>
 <area shape="rect" id="node107" href="$ColorOcTree_8h.html" title="octomap/ColorOcTree.h" alt="" coords="1141,83,1301,112"/>
 <area shape="rect" id="node112" href="$Utils_8h.html" title="octomap/math/Utils.h" alt="" coords="372,83,519,112"/>

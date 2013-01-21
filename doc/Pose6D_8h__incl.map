@@ -1,4 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$Vector3_8h.html" title="Vector3.h" alt="" coords="33,160,111,189"/>
-<area shape="rect" id="node9" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="105,83,201,112"/>
+<map id="include/octomap/math/Pose6D.h" name="include/octomap/math/Pose6D.h">
+<area shape="rect" id="node3" href="$Vector3_8h.html" title="Vector3.h" alt="" coords="9,179,87,208"/>
+<area shape="rect" id="node9" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="81,101,177,131"/>
 </map>
