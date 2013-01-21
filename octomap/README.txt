@@ -92,7 +92,7 @@ Or start the 3D viewer
 bin/octovis 
 
 You will find an example scan to load at
-src/examples/scan.dat.bz2     (please bunzip2 it first)
+share/data/scan.dat.bz2     (please bunzip2 it first)
 
 Further examples can be downloaded from the project website.
 
@@ -116,7 +116,7 @@ link_libraries(${OCTOMAP_LIBRARIES})
 In addition to this cmake-module we also provide a pkgconfig-file.
 
 For convenience, there is a minimal project included in the file 
-example-project.tgz
+share/example-project.tgz
 
 
 ECLIPSE PROJECT FILES

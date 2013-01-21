@@ -101,7 +101,7 @@ https://github.com/OctoMap/octomap.</p>
 </p>
 
 <p>
-  You will find an example scan to load at <b>src/examples/scan.dat.bz2</b>  (please bunzip2 it first)
+You will find an example 3D scan (please bunzip2 first) and an example OctoMap .bt file in the directory <b>share/data</b> to try. More data sets are available at http://ais.informatik.uni-freiburg.de/projects/datasets/octomap/.
 </p>
 
 
