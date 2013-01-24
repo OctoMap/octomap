@@ -1,17 +1,34 @@
-# - Config file for the OctoMap package
-# (example from http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file)
-# It defines the following variables
-#  OCTOMAP_INCLUDE_DIRS - include directories for OctoMap
-#  OCTOMAP_LIBRARY_DIRS - library directories for OctoMap (normally not used!)
-#  OCTOMAP_LIBRARIES    - libraries to link against
+# ===================================================================================
+#  The OctoMap CMake configuration file
+#
+#             ** File generated automatically, do not modify **
+#
+#  Usage from an external project:
+#    In your CMakeLists.txt, add these lines:
+#
+#    FIND_PACKAGE(octomap REQUIRED )
+#    TARGET_LINK_LIBRARIES(MY_TARGET_NAME ${OCTOMAP_LIBRARIES})
+#
+#    This file will define the following variables:
+#      - OCTOMAP_LIBRARIES      : The list of libraries to links against.
+#      - OCTOMAP_LIBRARY_DIRS   : The directory where lib files are. Calling
+#                                 LINK_DIRECTORIES with this path is NOT needed.
+#      - OCTOMAP_INCLUDE_DIRS   : The OpenCV include directories.
+#
+# Based on the example CMake Tutorial
+# http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
+# and OpenCVConfig.cmake.in from OpenCV
+# ===================================================================================
+
  
-# Tell the user project where to find our headers and libraries
 set(OCTOMAP_INCLUDE_DIRS @OCTOMAP_INCLUDE_DIRS@)
 set(OCTOMAP_LIBRARY_DIRS @OCTOMAP_LIB_DIR@)
  
 # Our library dependencies (contains definitions for IMPORTED targets)
 # include("@FOOBAR_CMAKE_DIR@/FooBarLibraryDepends.cmake")
- 
-set(OCTOMAP_LIBRARIES octomap octomath)
 
-#set(FOOBAR_EXECUTABLE bar)
+# Set library names as absolute paths:
+set(OCTOMAP_LIBRARIES
+  @OCTOMAP_LIB_DIR@/liboctomap.so
+  @OCTOMAP_LIB_DIR@/liboctomath.so
+)

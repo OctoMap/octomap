@@ -31,7 +31,6 @@ find_package(octomap REQUIRED
    ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
-LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
