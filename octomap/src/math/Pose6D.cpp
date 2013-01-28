@@ -1,5 +1,3 @@
-// $Id$
-
 /**
 * OctoMap:
 * A probabilistic, flexible, and compact 3D mapping library for robotic systems.
