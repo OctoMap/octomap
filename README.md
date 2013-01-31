@@ -1,15 +1,16 @@
-Octomap
-- A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+OctoMap - A probabilistic, flexible, and compact 3D mapping library for robotic systems.
+========================================================================================
+
 
 Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2013.
 http://octomap.github.com
 
 Further Contributors:
-C. Sprunk, University of Freiburg
-J. Mueller, University of Freiburg
-S. Osswald, University of Freiburg
-R. Schmitt, University of Freiburg
-R. Bogdan Rusu, Willow Garage Inc.
+* C. Sprunk, University of Freiburg
+* J. Mueller, University of Freiburg
+* S. Osswald, University of Freiburg
+* R. Schmitt, University of Freiburg
+* R. Bogdan Rusu, Willow Garage Inc.
 
 License: 
   * octomap: [New BSD License](octomap/LICENSE.txt)
@@ -29,12 +30,12 @@ A list of changes is available in the [octomap changelog](octomap/CHANGELOG.txt)
 
 
 OVERVIEW
-========
+--------
 
 OctoMap consists of two separate libraries each in its own subfolder:
 **octomap**, the actual library, and **octovis**, our visualization libraries and tools.
 This README provides an overview of both, for details on compiling each please 
-see [octomap/README.txt](octomap/README.txt) and [octovis/README.txt](octovis/README.txt) respectively.
+see [octomap/README.md](octomap/README.md) and [octovis/README.md](octovis/README.md) respectively.
 See http://www.ros.org/wiki/octomap and http://www.ros.org/wiki/octovis if you 
 want to use OctoMap in ROS; there are pre-compiled packages available.
 
@@ -49,7 +50,7 @@ only compile the library, run:
     make
   
 To compile the complete package, run:
-  
+
     cd build
     cmake ..
     make
@@ -58,5 +59,5 @@ Binaries and libs will end up in the directories `bin` and `lib` of the
 top-level directory where you started the build.
 
 
-See [octomap README](octomap/README.txt) and [octovis README](octovis/README.txt) for further
+See [octomap README](octomap/README.md) and [octovis README](octovis/README.md) for further
 details and hints on compiling, especially under Windows.
