@@ -1,4 +1,3 @@
-
 Octomap
 - A probabilistic, flexible, and compact 3D mapping library for robotic systems.
 
@@ -26,16 +25,16 @@ API documentation:
 Report bugs and request features in our tracker:
   https://github.com/OctoMap/octomap/issues
 
-A list of changes is available in the file "octomap/CHANGELOG.txt"
+A list of changes is available in the [octomap changelog](octomap/CHANGELOG.txt)
 
 
 OVERVIEW
-############################
+========
 
 OctoMap now consists of two separate libraries each in its own subfolder:
 octomap, the actual library, and octovis, our visualization libraries and tools.
 This README provides an overview of both, for details on compiling each please 
-see "octomap/README.txt" and "octovis/README.txt" respectively.
+see [octomap/README.txt](octomap/README.txt) and [octovis/README.txt](octovis/README.txt) respectively.
 See http://www.ros.org/wiki/octomap and http://www.ros.org/wiki/octovis if you 
 want to use OctoMap in ROS; there are pre-compiled packages available.
 
@@ -43,20 +42,20 @@ You can build each library separately with CMake by running it from the subdirec
 or build octomap and octovis together from this top-level directory. E.g., to
 only compile the library, run:
 
-  cd octomap
-  mkdir build
-  cd build
-  cmake ..
-  make
+    cd octomap
+    mkdir build
+    cd build
+    cmake ..
+    make
   
 To compile the complete package, run:
-  cd build
-  cmake ..
-  make
+    cd build
+    cmake ..
+    make
   
 Binaries and libs will end up in the directories "bin" and "lib" of the 
 top-level directory where you started the build.
 
 
-See "octomap/README.txt" and "octovis/README.txt" for further
-details and hints on compiling under Windows.
+See [octomap README](octomap/README.txt") and [octovis README](octovis/README.txt) for further
+details and hints on compiling, especially under Windows.
