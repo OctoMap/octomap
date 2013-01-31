@@ -12,8 +12,8 @@ R. Schmitt, University of Freiburg
 R. Bogdan Rusu, Willow Garage Inc.
 
 License: 
-  * New BSD License (see "octomap/LICENSE.txt")
-  * GPL for the viewer "octovis" and related libraries (see "octovis/LICENSE.txt").
+  * octomap: [New BSD License](octomap/LICENSE.txt)
+  * octovis and related libraries: [GPL](octovis/LICENSE.txt)
 
 
 Download the latest releases:
@@ -31,8 +31,8 @@ A list of changes is available in the [octomap changelog](octomap/CHANGELOG.txt)
 OVERVIEW
 ========
 
-OctoMap now consists of two separate libraries each in its own subfolder:
-octomap, the actual library, and octovis, our visualization libraries and tools.
+OctoMap consists of two separate libraries each in its own subfolder:
+**octomap**, the actual library, and **octovis**, our visualization libraries and tools.
 This README provides an overview of both, for details on compiling each please 
 see [octomap/README.txt](octomap/README.txt) and [octovis/README.txt](octovis/README.txt) respectively.
 See http://www.ros.org/wiki/octomap and http://www.ros.org/wiki/octovis if you 
@@ -49,13 +49,14 @@ only compile the library, run:
     make
   
 To compile the complete package, run:
+  
     cd build
     cmake ..
     make
   
-Binaries and libs will end up in the directories "bin" and "lib" of the 
+Binaries and libs will end up in the directories `bin` and `lib` of the
 top-level directory where you started the build.
 
 
-See [octomap README](octomap/README.txt") and [octovis README](octovis/README.txt) for further
+See [octomap README](octomap/README.txt) and [octovis README](octovis/README.txt) for further
 details and hints on compiling, especially under Windows.
