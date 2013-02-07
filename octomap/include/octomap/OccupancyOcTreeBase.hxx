@@ -123,7 +123,7 @@ namespace octomap {
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for
 #endif
-    for (unsigned i = 0; i < pc.size(); ++i) {
+    for (int i = 0; i < (int)pc.size(); ++i) {
       const point3d& p = pc[i];
       unsigned threadIdx = 0;
 #ifdef _OPENMP
@@ -157,9 +157,9 @@ namespace octomap {
   {
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(guided)
 #endif
-    for (unsigned i = 0; i < scan.size(); ++i) {
+    for (int i = 0; i < (int)scan.size(); ++i) {
       const point3d& p = scan[i];
       unsigned threadIdx = 0;
 #ifdef _OPENMP
