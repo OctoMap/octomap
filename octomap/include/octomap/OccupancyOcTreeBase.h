@@ -76,7 +76,11 @@ namespace octomap {
     OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs);
 
      /**
-     * Integrate a Pointcloud (in global reference frame)
+     * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
+     * Special care is taken that each voxel
+     * in the map is updated only once, and occupied nodes have a preference over free ones.
+     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
+     * ray insertion in insertScanRays().
      *
      * @param scan Pointcloud (measurement endpoints), in global reference frame
      * @param sensor_origin measurement origin in global reference frame
@@ -89,7 +93,11 @@ namespace octomap {
                     double maxrange=-1., bool pruning=true, bool lazy_eval = false);
 
      /**
-     * Integrate a 3d scan, transform scan before tree update
+     * Integrate a 3d scan (transform scan before tree update), parallelized with OpenMP.
+     * Special care is taken that each voxel
+     * in the map is updated only once, and occupied nodes have a preference over free ones.
+     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
+     * ray insertion in insertScanRays().
      *
      * @param scan Pointcloud (measurement endpoints) relative to frame origin
      * @param sensor_origin origin of sensor relative to frame origin
@@ -103,7 +111,7 @@ namespace octomap {
                     double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /**
-     * Insert a 3d scan (given as a ScanNode) into the tree.
+     * Insert a 3d scan (given as a ScanNode) into the tree, parallelized with OpenMP.
      *
      * @param scan ScanNode contains Pointcloud data and frame/sensor origin
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
@@ -113,8 +121,23 @@ namespace octomap {
      */
     virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
-    /// for testing only
-    virtual void insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning = true, bool lazy_eval = false);
+    /// @note Deprecated, use insertScanRays instead.
+    DEPRECATED( virtual void insertScanNaive(const Pointcloud& svan, const point3d& sensor_origin, double maxrange, bool pruning = true, bool lazy_eval = false));
+
+    /**
+    * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
+    * This function simply inserts all rays of the point clouds as batch operation.
+    * Discretization effects can lead to the deletion of occupied space, it is
+    * usually recommended to use insertScan() instead.
+    *
+    * @param scan Pointcloud (measurement endpoints), in global reference frame
+    * @param sensor_origin measurement origin in global reference frame
+    * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+    * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
+    * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+    *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+    */
+    virtual void insertScanRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool pruning = true, bool lazy_eval = false);
 
     /**
      * Manipulate log_odds value of voxel directly
@@ -201,6 +224,8 @@ namespace octomap {
     /**
      * Insert one ray between origin and end into the tree.
      * integrateMissOnRay() is called for the ray, the end point is updated as occupied.
+     * It is usually more efficient to insert complete pointcloudsm with insertScan() or
+     * insertScanRays().
      *
      * @param origin origin of sensor in global coordinates
      * @param end endpoint of measurement in global coordinates
@@ -212,7 +237,8 @@ namespace octomap {
     virtual bool insertRay(const point3d& origin, const point3d& end, double maxrange=-1.0, bool lazy_eval = false);
     
     /**
-     * Performs raycasting in 3d, similar to computeRay().
+     * Performs raycasting in 3d, similar to computeRay(). Can be called in parallel e.g. with OpenMP
+     * for a speedup.
      *
      * A ray is cast from origin with a given direction, the first occupied
      * cell is returned (as center coordinate). If the starting coordinate is already

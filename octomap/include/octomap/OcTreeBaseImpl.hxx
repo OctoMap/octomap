@@ -112,9 +112,6 @@ namespace octomap {
     this->keyrays.resize(1);
 #endif
 
-    // TODO: check without OMP, create only one
-
-
   }
 
   template <class NODE,class I>
@@ -397,6 +394,7 @@ namespace octomap {
     if (root == NULL)
       return;
 
+    // TODO: check if worth in parallel
     for (unsigned int depth=tree_depth-1; depth>0; depth--) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
@@ -619,6 +617,7 @@ namespace octomap {
       size_changed = true;
     }
     // recursively expand children
+    // TODO: check if worth in parallel
     for (unsigned int i=0; i<8; i++) {
       if (node->childExists(i)) {
         expandRecurs(node->getChild(i), depth+1, max_depth);
