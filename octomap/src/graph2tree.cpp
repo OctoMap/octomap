@@ -59,6 +59,7 @@ void printUsage(char* self){
             "  -log (enable a detailed log file with statistics) \n"
             "  -compress (enable lossless compression after every scan)\n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
+            "  -simple (simple scan insertion ray by ray instead of optimized) \n"
             "  -clamping <p_min> <p_max> (override default sensor model clamping probabilities between 0..1)\n"
             "  -sensor <p_miss> <p_hit> (override default sensor model hit and miss probabilities between 0..1)"
   "\n";
@@ -109,6 +110,7 @@ int main(int argc, char** argv) {
   double maxrange = -1;
   int max_scan_no = -1;
   bool detailedLog = false;
+  bool simpleUpdate = false;
   unsigned char compression = 0;
 
   // get default sensor model values:
@@ -134,6 +136,8 @@ int main(int argc, char** argv) {
       res = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-log"))
       detailedLog = true;
+    else if (! strcmp(argv[arg], "-simple"))
+      simpleUpdate = true;
     else if (! strcmp(argv[arg], "-compress"))
       compression = 1;
     else if (! strcmp(argv[arg], "-compressML"))
@@ -196,6 +200,20 @@ int main(int argc, char** argv) {
     num_points_in_graph = graph->getNumPoints();
     cout << "\n Data points in graph: " << num_points_in_graph << endl;
   }
+
+  // transform pointclouds first, so we can directly operate on them later
+  for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
+
+    pose6d frame_origin = (*scan_it)->pose;
+    point3d sensor_origin = frame_origin.inv().transform((*scan_it)->pose.trans());
+
+    (*scan_it)->scan->transform(frame_origin);
+    point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
+    (*scan_it)->pose = pose6d(transformed_sensor_origin, octomath::Quaternion());
+
+  }
+
+
   std::ofstream logfile;
   if (detailedLog){
     logfile.open((treeFilename+".log").c_str());
@@ -203,6 +221,8 @@ int main(int argc, char** argv) {
     logfile << "# Resolution: "<< res <<"; compression: " << int(compression) << "; scan endpoints: "<< num_points_in_graph << std::endl;
     logfile << "# [scan number] [bytes octree] [bytes full 3D grid]\n";
   }
+
+
 
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
@@ -220,7 +240,11 @@ int main(int argc, char** argv) {
     if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;
 
-    tree->insertScan(**scan_it, maxrange, (compression==1));
+//    if (simpleUpdate)
+//      tree->insertScanRays(pc, origin, maxrange, (compression==1));
+//    else
+    tree->insertScan((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
+
     if (compression == 2){
       tree->toMaxLikelihood();
       tree->prune();
