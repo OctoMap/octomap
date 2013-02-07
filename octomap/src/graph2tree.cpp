@@ -240,10 +240,10 @@ int main(int argc, char** argv) {
     if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;
 
-//    if (simpleUpdate)
-//      tree->insertScanRays(pc, origin, maxrange, (compression==1));
-//    else
-    tree->insertScan((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
+    if (simpleUpdate)
+      tree->insertScanRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
+    else
+      tree->insertScan((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
 
     if (compression == 2){
       tree->toMaxLikelihood();
