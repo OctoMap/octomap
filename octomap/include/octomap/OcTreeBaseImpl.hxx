@@ -44,12 +44,7 @@ namespace octomap {
     resolution(resolution), tree_size(0)
   {
     
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = -(std::numeric_limits<double>::max( ));
-      min_value[i] = std::numeric_limits<double>::max( );
-    }
-    size_changed = true;
+    init();
 
     // no longer create an empty root node - only on demand
   }
@@ -59,12 +54,7 @@ namespace octomap {
     I(), root(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
     resolution(resolution), tree_size(0)
   {
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = -(std::numeric_limits<double>::max( ));
-      min_value[i] = std::numeric_limits<double>::max( );
-    }
-    size_changed = true;
+    init();
 
     // no longer create an empty root node - only on demand
   }
@@ -74,8 +64,10 @@ namespace octomap {
   OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){
     if (root)
       delete root;
+
     root = NULL;
   }
+
 
 
   template <class NODE,class I>
@@ -83,17 +75,23 @@ namespace octomap {
     root(NULL), tree_depth(rhs.tree_depth), tree_max_val(rhs.tree_max_val),
     resolution(rhs.resolution), tree_size(rhs.tree_size)
   {
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = rhs.max_value[i];
-      min_value[i] = rhs.min_value[i];
-    }
+    init();
 
     // copy nodes recursively:
     if (rhs.root)
       root = new NODE(*(rhs.root));
 
+  }
 
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::init(){
+
+    this->setResolution(this->resolution);
+    for (unsigned i = 0; i< 3; i++){
+      max_value[i] = -(std::numeric_limits<double>::max( ));
+      min_value[i] = std::numeric_limits<double>::max( );
+    }
+    size_changed = true;
   }
 
   template <class NODE,class I>
@@ -409,7 +407,8 @@ namespace octomap {
     }
 
     
-    if (key_origin == key_end) return true; // same tree cell, we're done.
+    if (key_origin == key_end)
+      return true; // same tree cell, we're done.
 
     ray.addKey(key_origin);
 

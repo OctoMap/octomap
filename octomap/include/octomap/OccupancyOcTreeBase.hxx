@@ -109,17 +109,25 @@ namespace octomap {
     insertScan(transformed_scan, transformed_sensor_origin, maxrange, pruning, lazy_eval);
   }
 
-
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning, bool lazy_eval) {
+    this->insertScanRays(pc, origin, maxrange, pruning, lazy_eval);
+  }
+
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::insertScanRays(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning, bool lazy_eval) {
     if (pc.size() < 1)
       return;
 
-    // integrate each single beam
-    octomap::point3d p;
-    for (octomap::Pointcloud::const_iterator point_it = pc.begin();
-         point_it != pc.end(); point_it++) {
-      this->insertRay(origin, *point_it, maxrange, lazy_eval);
+    for (unsigned i = 0; i < pc.size(); ++i) {
+      const point3d p = pc.getPoint(i);
+
+      if (this->computeRayKeys(origin, p, this->keyray)){
+        for(KeyRay::iterator it=this->keyray.begin(); it != this->keyray.end(); it++) {
+          updateNode(*it, false, lazy_eval); // insert freespace measurement
+        }
+        updateNode(p, true, lazy_eval); // update endpoint to be occupied
+      }
     }
 
     if (pruning)
