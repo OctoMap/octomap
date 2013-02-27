@@ -255,7 +255,7 @@ namespace octomap {
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
 
-    //-- set BBX limit (limits tree updates to this bounding box  
+    //-- set BBX limit (limits tree updates to this bounding box)
 
     ///  use or ignore BBX limit (default: ignore)
     void useBBXLimit(bool enable) { use_bbx_limit = enable; }
