@@ -11,6 +11,13 @@ target_link_libraries(dynamicedt3d-static ${OCTOMAP_LIBRARIES})
 
 SET_TARGET_PROPERTIES(dynamicedt3d-static PROPERTIES OUTPUT_NAME "dynamicedt3d") 
 
+# directly depend on the octomap library target when building the
+# complete distribution, so it it recompiled as needed
+if (CMAKE_PROJECT_NAME STREQUAL "octomap-distribution")
+  ADD_DEPENDENCIES(dynamicedt3d-static octomap-static)
+  ADD_DEPENDENCIES(dynamicedt3d octomap)
+endif()
+
 ADD_SUBDIRECTORY(examples)
 
 install(TARGETS 
