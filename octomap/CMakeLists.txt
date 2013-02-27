@@ -104,21 +104,6 @@ IF(DOXYGEN_FOUND)
     COMMENT "Generating documentation (Doxygen) at location ${PROJECT_SOURCE_DIR}/doc/html/")
 ENDIF(DOXYGEN_FOUND)
 
-# make package release from source (must be done on the SVN source tree)
-IF (NOT WIN32)
-	SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
-	SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-	ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-		rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
-		COMMAND mkdir "${DIST_DIR}"
-		COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-		COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-		# cleanup so that there is no copy in the source dir
-		COMMAND rm -rf "${DIST_DIR}"
-	)
-ENDIF()
-
 # Needs to be last statement:
 INCLUDE(CPackSettings)
 

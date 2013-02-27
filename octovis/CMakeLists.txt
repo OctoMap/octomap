@@ -95,21 +95,6 @@ IF(BUILD_VIEWER)
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
     DESTINATION share/octovis/)
     
-  # make package release from source
-	IF (NOT WIN32)
-		SET(OCTOVIS_PKG_NAME "${PROJECT_NAME}-${OCTOVIS_VERSION}.tar.gz")
-		SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-		ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-		  rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}"
-		  COMMAND mkdir "${DIST_DIR}"
-		  COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-		  COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-		    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-		  # cleanup so that there is no copy in the source dir
-	      COMMAND rm -rf "${DIST_DIR}"
-		)
-	ENDIF ()
-    
   # #installation:
   # # store all header files to install:
   file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
