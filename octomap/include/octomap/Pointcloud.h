@@ -102,8 +102,9 @@ namespace octomap {
     const_iterator begin() const { return points.begin(); }
     const_iterator end() const  { return points.end(); }
     point3d back()  { return points.back(); }
-    point3d getPoint(unsigned int i);   // may return NULL
-    const point3d& getPoint(unsigned int i) const;   // may return NULL
+    /// Returns a copy of the ith point in point cloud.
+    /// Use operator[] for direct access to point reference.
+    point3d getPoint(unsigned int i) const;   // may return NULL
 
     inline const point3d& operator[] (size_t i) const { return points[i]; }
     inline point3d& operator[] (size_t i) { return points[i]; }

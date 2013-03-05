@@ -84,8 +84,6 @@ namespace octomap {
 
     OcTreeBaseImpl(const OcTreeBaseImpl<NODE,INTERFACE>& rhs);
 
-    void init();
-
     bool operator== (const OcTreeBaseImpl<NODE,INTERFACE>& rhs) const;
 
     std::string getTreeType() const {return "OcTreeBaseImpl";}
