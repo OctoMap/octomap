@@ -429,6 +429,9 @@ namespace octomap {
     /// This usually requires a re-implementation of some core tree-traversal functions as well!
     OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
 
+    /// initialize non-trivial members, helper for constructors
+    void init();
+
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
 
@@ -471,7 +474,8 @@ namespace octomap {
     /// contains the size of a voxel at level i (0: root node). tree_depth+1 levels (incl. 0)
     std::vector<double> sizeLookupTable;
 
-    KeyRay keyray;  // data structure for ray casting
+    /// data structure for ray casting, array for multithreading
+    std::vector<KeyRay> keyrays;
 
     const leaf_iterator leaf_iterator_end;
     const leaf_bbx_iterator leaf_iterator_bbx_end;

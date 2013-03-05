@@ -69,7 +69,6 @@ namespace octomap {
   }
 
 
-
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::OcTreeBaseImpl(const OcTreeBaseImpl<NODE,I>& rhs) :
     root(NULL), tree_depth(rhs.tree_depth), tree_max_val(rhs.tree_max_val),
@@ -92,6 +91,22 @@ namespace octomap {
       min_value[i] = std::numeric_limits<double>::max( );
     }
     size_changed = true;
+
+    // create as many KeyRays as there are OMP_THREADS defined,
+    // one buffer for each thread
+#ifdef _OPENMP
+    #pragma omp parallel
+    #pragma omp critical
+    {
+      if (omp_get_thread_num() == 0){
+        this->keyrays.resize(omp_get_num_threads());
+      }
+
+    }
+#else
+    this->keyrays.resize(1);
+#endif
+
   }
 
   template <class NODE,class I>
@@ -509,8 +524,8 @@ namespace octomap {
   bool OcTreeBaseImpl<NODE,I>::computeRay(const point3d& origin, const point3d& end,
                                     std::vector<point3d>& _ray) {
     _ray.clear();
-    if (!computeRayKeys(origin, end, keyray)) return false;
-    for (KeyRay::const_iterator it = keyray.begin(); it != keyray.end(); ++it) {
+    if (!computeRayKeys(origin, end, keyrays.at(0))) return false;
+    for (KeyRay::const_iterator it = keyrays[0].begin(); it != keyrays[0].end(); ++it) {
       _ray.push_back(keyToCoord(*it));
     }
     return true;

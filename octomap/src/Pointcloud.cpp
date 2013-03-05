@@ -88,6 +88,14 @@ namespace octomap {
     }
   }
 
+  const point3d& Pointcloud::getPoint(unsigned int i) const{
+    if (i<points.size()) return points[i];
+    else {
+      OCTOMAP_WARNING("Pointcloud::getPoint index out of range!\n");
+      return points.back();
+    }
+  }
+
   void Pointcloud::transform(octomath::Pose6D transform) {
 
     for (unsigned int i=0; i<points.size(); i++) {
