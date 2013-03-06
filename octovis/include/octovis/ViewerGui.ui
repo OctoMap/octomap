@@ -95,6 +95,8 @@
     <addaction name="actionSelection_box"/>
     <addaction name="actionClear_selection"/>
     <addaction name="actionFill_selection"/>
+    <addaction name="actionClear_unknown_in_selection"/>
+    <addaction name="actionFill_unknown_in_selection"/>
     <addaction name="actionClear_nodes_in_selection"/>
     <addaction name="actionFill_nodes_in_selection"/>
     <addaction name="actionDelete_nodes_in_selection"/>
@@ -493,6 +495,22 @@
    </property>
    <property name="text">
     <string>Delete nodes outside of selection (crop)</string>
+   </property>
+  </action>
+  <action name="actionClear_unknown_in_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Fill unknown in selection with &quot;free&quot;</string>
+   </property>
+  </action>
+  <action name="actionFill_unknown_in_selection">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Fill unknown in selection with &quot;occupied&quot;</string>
    </property>
   </action>
  </widget>

@@ -848,6 +848,24 @@ namespace octomap{
 	  setNodesInBBX(min, max, false);
   }
 
+  void ViewerGui::on_actionClear_unknown_in_selection_triggered()
+  {
+      point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+      setNonNodesInBBX(min, max, false);
+  }
+
+  void ViewerGui::on_actionFill_unknown_in_selection_triggered()
+  {
+      point3d min, max;
+      m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+      m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+      setNonNodesInBBX(min, max, true);
+  }
+
   void ViewerGui::on_actionFill_selection_triggered(){
 	  point3d min, max;
 	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
@@ -1017,6 +1035,36 @@ namespace octomap{
     showOcTree();
   }
 
+  void ViewerGui::setNonNodesInBBX(const point3d& min, const point3d& max, bool occupied) {
+    for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
+      OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
+
+      if (octree){
+        float logodds = octree->getClampingThresMaxLog() - octree->getClampingThresMinLog();
+        if (!occupied)
+          logodds *= -1;
+
+        OcTreeKey minKey(0,0,0);
+        OcTreeKey maxKey(0,0,0);
+        octree->coordToKeyChecked(min, minKey);
+        octree->coordToKeyChecked(max, maxKey);
+        OcTreeKey k;
+        for (k[0] = minKey[0]; k[0] < maxKey[0]; ++k[0]){
+          for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
+            for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
+              OcTreeNode* n = octree->search(k);
+              if(!n)
+                octree->updateNode(k, logodds);
+            }
+          }
+        }
+      }
+
+    }
+
+    showOcTree();
+  }
+
   void ViewerGui::on_actionExport_view_triggered(){
     m_glwidget->openSnapshotFormatDialog();
     m_glwidget->saveSnapshot(false);
@@ -1048,6 +1096,8 @@ namespace octomap{
   void ViewerGui::on_actionSelection_box_toggled(bool checked){
 	  ui.actionClear_selection->setEnabled(checked);
 	  ui.actionFill_selection->setEnabled(checked);
+	  ui.actionClear_unknown_in_selection->setEnabled(checked);
+	  ui.actionFill_unknown_in_selection->setEnabled(checked);
 	  ui.actionClear_nodes_in_selection->setEnabled(checked);
 	  ui.actionFill_nodes_in_selection->setEnabled(checked);
 	  ui.actionDelete_nodes_in_selection->setEnabled(checked);

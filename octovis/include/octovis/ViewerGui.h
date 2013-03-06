@@ -84,6 +84,8 @@ namespace octomap {
     void on_actionExport_sequence_triggered(bool checked);
     void on_actionClear_selection_triggered();
     void on_actionFill_selection_triggered();
+    void on_actionClear_unknown_in_selection_triggered();
+    void on_actionFill_unknown_in_selection_triggered();
     void on_actionClear_nodes_in_selection_triggered();
     void on_actionFill_nodes_in_selection_triggered();
     void on_actionDelete_nodes_in_selection_triggered();
@@ -193,6 +195,7 @@ namespace octomap {
     void updateNodesInBBX(const point3d& min, const point3d& max, bool occupied);
     void setNodesInBBX(const point3d& min, const point3d& max, float logodds);
     void setNodesInBBX(const point3d& min, const point3d& max, bool occupied);
+    void setNonNodesInBBX(const point3d& min, const point3d& max, bool occupied);
 
     std::map<int, OcTreeRecord> m_octrees;
  
