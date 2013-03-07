@@ -67,9 +67,6 @@ namespace octomap {
     void addNextScans(unsigned scans);
     void gotoFirstScan();
 
-    /* void handleOctomapBinaryMsg(const octomap2::OctomapBinary::ConstPtr& msg); */
-    /* void handleMoveMapMsg(const octomap2::MoveMap::ConstPtr& msg); */
-
     bool isShown();
 
     private slots:
