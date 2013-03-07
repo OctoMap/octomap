@@ -140,7 +140,8 @@ namespace octomap {
     virtual void insertScanRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool pruning = true, bool lazy_eval = false);
 
     /**
-     * Manipulate log_odds value of voxel directly
+     * Manipulate log_odds value of a voxel directly. This only works if key is at the lowest
+     * octree level
      *
      * @param key OcTreeKey of the NODE that is to be updated
      * @param log_odds_update value to be added (+) to log_odds value of node

@@ -938,74 +938,36 @@ namespace octomap{
     showOcTree();
   }
 
-
-
-  void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, float logodds){
-	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
-	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
-
-	    if (octree){
-
-	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
-	    			end=octree->end_leafs_bbx(); it!= end; ++it){
-	    		octree->updateNode(it.getKey(), logodds);
-	    	}
-	    } else
-        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
-                                     QMessageBox::Ok);
-
-	  }
-
-	  showOcTree();
-  }
-
-
   void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, bool occupied){
-	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
-	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
-
-	    if (octree){
-	      float logodds = octree->getClampingThresMaxLog() - octree->getClampingThresMinLog();
-	      if (!occupied)
-	        logodds *= -1;
-
-	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
-	    			end=octree->end_leafs_bbx(); it!= end; ++it){
-	    		octree->updateNode(it.getKey(), logodds);
-	    	}
-	    } else
-        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
-                                     QMessageBox::Ok);
-
-	  }
-
-	  showOcTree();
-  }
-
-
-  void ViewerGui::setNodesInBBX(const point3d& min, const point3d& max, float logodds){
     for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
       OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
 
       if (octree){
-        OcTreeKey minKey(0,0,0);
-        OcTreeKey maxKey(0,0,0);
-        octree->coordToKeyChecked(min, minKey);
-        octree->coordToKeyChecked(max, maxKey);
-        OcTreeKey k;
-        for (k[0] = minKey[0]; k[0] < maxKey[0]; ++k[0]){
-          for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
-            for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
-              octree->updateNode(k, logodds);
-            }
-          }
+        float logodds;
+        if (occupied)
+          logodds = octree->getClampingThresMaxLog();
+        else
+          logodds = octree->getClampingThresMinLog();
+
+        for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
+            end=octree->end_leafs_bbx(); it!= end; ++it)
+        {
+          // directly set values of leafs:
+          it->setLogOdds(logodds);
         }
-      }
+
+        // update inner nodes to make tree consistent:
+        octree->updateInnerOccupancy();
+
+      } else
+        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
+                             QMessageBox::Ok);
 
     }
 
     showOcTree();
   }
+
 
   void ViewerGui::setNodesInBBX(const point3d& min, const point3d& max, bool occupied){
     for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {

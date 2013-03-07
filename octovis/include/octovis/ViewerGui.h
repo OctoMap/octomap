@@ -191,9 +191,7 @@ namespace octomap {
     void saveCameraPosition(const char* filename) const;
     void loadCameraPosition(const char* filename);
 
-    void updateNodesInBBX(const point3d& min, const point3d& max, float logodds);
     void updateNodesInBBX(const point3d& min, const point3d& max, bool occupied);
-    void setNodesInBBX(const point3d& min, const point3d& max, float logodds);
     void setNodesInBBX(const point3d& min, const point3d& max, bool occupied);
     void setNonNodesInBBX(const point3d& min, const point3d& max, bool occupied);
 
