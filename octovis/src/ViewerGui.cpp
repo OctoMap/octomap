@@ -386,7 +386,6 @@ namespace octomap{
   }
 
 
-
   // ==  file I/O   ===========================================
 
   void ViewerGui::openFile(){
@@ -721,7 +720,6 @@ namespace octomap{
 
       AbstractOcTree* t = r->octree;
 
-      // TODO: get rid of casts (requires occupancy tree interface)
       if (fileinfo.suffix() == "bt") {
         AbstractOccupancyOcTree* ot = dynamic_cast<AbstractOccupancyOcTree*> (t);
         if (ot)
@@ -970,14 +968,11 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionSelection_box_toggled(bool checked){
-	  ui.actionClear_selection->setEnabled(checked);
-	  ui.actionFill_selection->setEnabled(checked);
-	  ui.actionClear_unknown_in_selection->setEnabled(checked);
-	  ui.actionFill_unknown_in_selection->setEnabled(checked);
-	  ui.actionClear_nodes_in_selection->setEnabled(checked);
-	  ui.actionFill_nodes_in_selection->setEnabled(checked);
-	  ui.actionDelete_nodes_in_selection->setEnabled(checked);
-	  ui.actionDelete_nodes_outside_of_selection->setEnabled(checked);
+
+    ui.menuDelete_nodes->setEnabled(checked);
+    ui.menuFill_selection->setEnabled(checked);
+    ui.menuChange_nodes_in_selection->setEnabled(checked);
+
 
     m_glwidget->enableSelectionBox(checked);
 
