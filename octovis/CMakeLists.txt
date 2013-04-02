@@ -100,6 +100,9 @@ IF(BUILD_VIEWER)
   # # store all header files to install:
   file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
   install(FILES ${octovis_HDRS} DESTINATION include/octovis)
+
+  # Install catkin package.xml
+  install(FILES package.xml DESTINATION share/octovis)
   
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
