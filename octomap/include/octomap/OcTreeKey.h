@@ -181,12 +181,16 @@ namespace octomap {
    * @return key corresponding to the input key at the given level
    */
   inline OcTreeKey computeIndexKey(unsigned short int level, const OcTreeKey& key) {
-    unsigned short int mask = 65535 << level;
-    OcTreeKey result = key;
-    result[0] &= mask;
-    result[1] &= mask;
-    result[2] &= mask;
-    return result;
+    if (level == 0)
+      return key;
+    else {
+      unsigned short int mask = 65535 << level;
+      OcTreeKey result = key;
+      result[0] &= mask;
+      result[1] &= mask;
+      result[2] &= mask;
+      return result;
+    }
   }
 
 } // namespace
