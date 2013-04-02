@@ -151,9 +151,8 @@ namespace octomap {
     T childValue = getChild(0)->getValue();
 
     for (unsigned int i = 1; i<8; i++) {
-      if (!childExists(i)) return false;
-      else if (getChild(i)->hasChildren()) return false;
-      else if (! (getChild(i)->getValue() == childValue)) return false;
+      if (!childExists(i) || getChild(i)->hasChildren() || !(getChild(i)->getValue() == childValue))
+        return false;
     }
     return true;
   }

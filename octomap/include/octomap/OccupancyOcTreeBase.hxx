@@ -361,6 +361,8 @@ namespace octomap {
       else {
         NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
         // set own probability according to prob of children
+        //if (node->pruneNode())
+        // TODO: pruning here?
         node->updateOccupancyChildren();
         return retval;
       }

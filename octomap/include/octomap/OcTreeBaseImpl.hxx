@@ -389,7 +389,7 @@ namespace octomap {
     if (root == NULL)
       return;
 
-    for (unsigned int depth=tree_depth-1; depth>0; depth--) {
+    for (unsigned int depth=tree_depth-1; depth > 0; --depth) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
       if (num_pruned == 0)
