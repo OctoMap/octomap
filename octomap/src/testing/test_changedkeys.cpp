@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
     }
 
     // insert in global coordinates:
-    tree.insertScan(cloud, origin, -1, false);
+    tree.insertPointCloud(cloud, origin, -1);
   }
 
   printChanges(tree);

@@ -314,7 +314,7 @@ namespace octomap{
       unsigned numScans = m_scanGraph->size();
       unsigned currentScan = 1;
       for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
-        tree->insertScan(**it, m_laserMaxRange);
+        tree->insertPointCloud(**it, m_laserMaxRange);
         fprintf(stderr, "generateOctree:: inserting scan node with %d points, origin: %.2f  ,%.2f , %.2f.\n",
                 (unsigned int) (*it)->scan->size(), (*it)->pose.x(), (*it)->pose.y(), (*it)->pose.z()  );
 
@@ -368,7 +368,7 @@ namespace octomap{
           return;
         }
         // not used with ColorOcTrees, omitting casts
-        ((OcTree*) r->octree)->insertScan(**m_nextScanToAdd, m_laserMaxRange); 
+        ((OcTree*) r->octree)->insertPointCloud(**m_nextScanToAdd, m_laserMaxRange);
         m_nextScanToAdd++;
       }
 

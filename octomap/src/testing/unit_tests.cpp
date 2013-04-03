@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
     }
   
     OcTree tree (0.05);
-    tree.insertScan(*measurement, origin);
+    tree.insertPointCloud(*measurement, origin);
     EXPECT_EQ ((int) tree.size(), 54076);
 
     ScanGraph* graph = new ScanGraph();

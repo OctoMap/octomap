@@ -240,9 +240,9 @@ int main(int argc, char** argv) {
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;
 
     if (simpleUpdate)
-      tree->insertScanRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
+      tree->insertPointCloudRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
     else
-      tree->insertScan((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, (compression==1));
+      tree->insertPointCloud((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
 
     if (compression == 2){
       tree->toMaxLikelihood();

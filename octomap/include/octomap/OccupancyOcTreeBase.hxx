@@ -69,19 +69,19 @@ namespace octomap {
 
   }
 
-  // performs transformation to data and sensor origin first
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScan(const ScanNode& scan, double maxrange, bool pruning, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloud(const ScanNode& scan, double maxrange, bool lazy_eval) {
+    // performs transformation to data and sensor origin first
     Pointcloud& cloud = *(scan.scan);
     pose6d frame_origin = scan.pose;
     point3d sensor_origin = frame_origin.inv().transform(scan.pose.trans());
-    insertScan(cloud, sensor_origin, frame_origin, maxrange, pruning, lazy_eval);
+    insertPointCloud(cloud, sensor_origin, frame_origin, maxrange, lazy_eval);
   }
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
-                                             double maxrange, bool pruning, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
+                                             double maxrange, bool lazy_eval) {
 
     KeySet free_cells, occupied_cells;
     computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
@@ -95,23 +95,19 @@ namespace octomap {
     }
   }
 
-  // performs transformation to data and sensor origin first
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScan(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin, 
-                                             double maxrange, bool pruning, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
+                                             double maxrange, bool lazy_eval) {
+    // performs transformation to data and sensor origin first
     Pointcloud transformed_scan (pc);
     transformed_scan.transform(frame_origin);
     point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
-    insertScan(transformed_scan, transformed_sensor_origin, maxrange, pruning, lazy_eval);
+    insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval);
   }
 
-  template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScanNaive(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning, bool lazy_eval) {
-    this->insertScanRays(pc, origin, maxrange, pruning, lazy_eval);
-  }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertScanRays(const Pointcloud& pc, const point3d& origin, double maxrange, bool pruning, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double maxrange, bool lazy_eval) {
     if (pc.size() < 1)
       return;
 
@@ -140,9 +136,6 @@ namespace octomap {
       }
 
     }
-
-    if (pruning)
-      this->prune();
   }
 
 
