@@ -122,7 +122,7 @@ namespace octomap {
     virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false);
 
     /// @note Deprecated, use insertScanRays instead.
-    OCTOMAP_DEPRECATED( virtual void insertScanNaive(const Pointcloud& svan, const point3d& sensor_origin, double maxrange, bool pruning = true, bool lazy_eval = false));
+    OCTOMAP_DEPRECATED( virtual void insertScanNaive(const Pointcloud& scan, const point3d& sensor_origin, double maxrange, bool pruning = true, bool lazy_eval = false));
 
     /**
     * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.

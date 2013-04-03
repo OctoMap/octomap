@@ -57,7 +57,6 @@ void printUsage(char* self){
             "  -m <maxrange> (optional) \n"
             "  -n <max scan no.> (optional) \n"
             "  -log (enable a detailed log file with statistics) \n"
-            "  -compress (enable lossless compression after every scan)\n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
             "  -simple (simple scan insertion ray by ray instead of optimized) \n"
             "  -clamping <p_min> <p_max> (override default sensor model clamping probabilities between 0..1)\n"
@@ -111,7 +110,7 @@ int main(int argc, char** argv) {
   int max_scan_no = -1;
   bool detailedLog = false;
   bool simpleUpdate = false;
-  unsigned char compression = 0;
+  unsigned char compression = 1;
 
   // get default sensor model values:
   OcTree emptyTree(0.1);
@@ -139,7 +138,7 @@ int main(int argc, char** argv) {
     else if (! strcmp(argv[arg], "-simple"))
       simpleUpdate = true;
     else if (! strcmp(argv[arg], "-compress"))
-      compression = 1;
+      OCTOMAP_WARNING("Argument -compress no longer has an effect, incremental pruning is done during each insertion.\n");
     else if (! strcmp(argv[arg], "-compressML"))
       compression = 2;
     else if (! strcmp(argv[arg], "-m"))
@@ -274,11 +273,7 @@ int main(int argc, char** argv) {
   cout << "time to insert 100.000 points took: " << time_to_insert/ ((double) num_points_in_graph / 100000) << " sec (avg)" << endl << endl;
 
 
-  std::cout << "Full tree\n" << "===========================\n";
-  outputStatistics(tree);
-
   std::cout << "Pruned tree (lossless compression)\n" << "===========================\n";
-  tree->prune();
   outputStatistics(tree);
 
   tree->write(treeFilenameOT);

@@ -279,6 +279,7 @@ int main(int argc, char** argv) {
     EXPECT_TRUE (result);
     unsigned int tree_time = stamped_tree.getLastUpdateTime();
     unsigned int node_time = result->getTimestamp();
+    std::cout << "After 1st update (cube): Tree time " <<tree_time << "; node(0.1, 0.1, 0.1) time " << result->getTimestamp() << std::endl;
     EXPECT_TRUE (tree_time > 0);
     #ifdef _WIN32
       Sleep(1000);
@@ -286,12 +287,18 @@ int main(int argc, char** argv) {
       sleep(1);
     #endif
     stamped_tree.integrateMissNoTime(result);  // reduce occupancy, no time update
+    std::cout << "After 2nd update (single miss): Tree time " <<tree_time << "; node(0.1, 0.1, 0.1) time " << node_time << std::endl;
     EXPECT_EQ  (node_time, result->getTimestamp()); // node time updated?
-    query = point3d  (0.1f, 0.1f, 0.3f);
-    stamped_tree.updateNode(query, true); // integrate 'occupied' measurement 
-    OcTreeNodeStamped* result2 = stamped_tree.search (query);
+    point3d query2 = point3d  (0.1f, 0.1f, 0.3f);
+    stamped_tree.updateNode(query2, true); // integrate 'occupied' measurement
+    OcTreeNodeStamped* result2 = stamped_tree.search (query2);
     EXPECT_TRUE (result2);
+    result = stamped_tree.search (query);
+    EXPECT_TRUE (result);
+    std::cout << "After 3rd update (single hit at (0.1, 0.1, 0.3): Tree time " << stamped_tree.getLastUpdateTime() << "; node(0.1, 0.1, 0.1) time " << result->getTimestamp()
+        << "; node(0.1, 0.1, 0.3) time " << result2->getTimestamp() << std::endl;
     EXPECT_TRUE (result->getTimestamp() < result2->getTimestamp()); // result2 has been updated
+    EXPECT_EQ(result2->getTimestamp(), stamped_tree.getLastUpdateTime());
   // ------------------------------------------------------------
   } else if (test_name == "OcTreeKey") {
     OcTree tree (0.05);  
