@@ -102,7 +102,6 @@ namespace octomap {
     * @param sensor_origin origin of sensor relative to frame origin
     * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
-    * @param pruning whether the tree is (losslessly) pruned after insertion (default: true)
     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
     */
@@ -342,9 +341,6 @@ namespace octomap {
      *
      * This will set the log_odds_occupancy value of
      * all leaves to either free or occupied.
-     *
-     * @param s
-     * @return
      */
     std::istream& readBinaryNode(std::istream &s, NODE* node) const;
 

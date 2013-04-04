@@ -213,7 +213,7 @@ namespace octomap {
      * all 3D point following until the next NODE keyword (or end of file) are
      * inserted into that scan node as pointcloud in its local coordinate frame
      *
-     * @param input stream to read from
+     * @param s input stream to read from
      * @return read stream
      */
     std::istream& readPlainASCII(std::istream& s);
