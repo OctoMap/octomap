@@ -35,6 +35,10 @@
 #undef min
 #include <limits>
 
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
+
 namespace octomap {
 
 
