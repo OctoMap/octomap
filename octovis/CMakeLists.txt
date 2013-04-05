@@ -3,8 +3,8 @@ PROJECT( octovis )
 
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
-set(OCTOVIS_MINOR_VERSION 5)
-set(OCTOVIS_PATCH_VERSION 3)
+set(OCTOVIS_MINOR_VERSION 6)
+set(OCTOVIS_PATCH_VERSION 0)
 set(OCTOVIS_VERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION}.${OCTOVIS_PATCH_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
@@ -22,7 +22,7 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-# We need the main octomap library to link againt.
+# We need the main octomap library to link against.
 # Look at parent directory by default, in case the complete distribution 
 # (octomap & octovis together) is built. 
 # Otherwise you need to export octomap_DIR to find the CMakeConfig.
@@ -31,7 +31,6 @@ find_package(octomap REQUIRED
    ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
-LINK_DIRECTORIES(${OCTOMAP_LIBRARY_DIRS})
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
@@ -96,25 +95,14 @@ IF(BUILD_VIEWER)
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
     DESTINATION share/octovis/)
     
-  # make package release from source
-	IF (NOT WIN32)
-		SET(OCTOVIS_PKG_NAME "${PROJECT_NAME}-${OCTOVIS_VERSION}.tar.gz")
-		SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-		ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-		  rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}"
-		  COMMAND mkdir "${DIST_DIR}"
-		  COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-		  COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOVIS_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-		    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-		  # cleanup so that there is no copy in the source dir
-	      COMMAND rm -rf "${DIST_DIR}"
-		)
-	ENDIF ()
     
   # #installation:
   # # store all header files to install:
   file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
   install(FILES ${octovis_HDRS} DESTINATION include/octovis)
+
+  # Install catkin package.xml
+  install(FILES package.xml DESTINATION share/octovis)
   
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")

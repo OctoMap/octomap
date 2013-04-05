@@ -62,7 +62,6 @@ namespace octomap {
   }
 
 
-
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
@@ -127,9 +126,13 @@ namespace octomap {
 
   template <typename T>
   bool OcTreeDataNode<T>::hasChildren() const {
-    if (children == NULL) return false;
-    for (unsigned int i = 0; i<8; i++)
-      if (childExists(i)) return true;
+    if (children == NULL)
+      return false;
+    for (unsigned int i = 0; i<8; i++){
+      // fast check, we know children != NULL
+      if (children[i] != NULL)
+        return true;
+    }
     return false;
   }
 
@@ -145,12 +148,11 @@ namespace octomap {
     if (!childExists(0) || getChild(0)->hasChildren())
       return false;
 
-    T childValue = getChild(0)->getValue();
-
     for (unsigned int i = 1; i<8; i++) {
-      if (!childExists(i)) return false;
-      else if (getChild(i)->hasChildren()) return false;
-      else if (! (getChild(i)->getValue() == childValue)) return false;
+      // comparison via getChild so that casts of derived classes ensure
+      // that the right == operator gets called
+      if (!childExists(i) || getChild(i)->hasChildren() || !(*(getChild(i)) == *(getChild(0))))
+        return false;
     }
     return true;
   }

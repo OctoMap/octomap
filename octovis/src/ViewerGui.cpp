@@ -314,7 +314,7 @@ namespace octomap{
       unsigned numScans = m_scanGraph->size();
       unsigned currentScan = 1;
       for (it = m_scanGraph->begin(); it != m_nextScanToAdd; it++) {
-        tree->insertScan(**it, m_laserMaxRange);
+        tree->insertPointCloud(**it, m_laserMaxRange);
         fprintf(stderr, "generateOctree:: inserting scan node with %d points, origin: %.2f  ,%.2f , %.2f.\n",
                 (unsigned int) (*it)->scan->size(), (*it)->pose.x(), (*it)->pose.y(), (*it)->pose.z()  );
 
@@ -333,92 +333,6 @@ namespace octomap{
     }
 
   }
-
-
-  // void ViewerGui::handleOctomapBinaryMsg(const octomap2::OctomapBinary::ConstPtr& msg) {
-
-  //   printf("received octomap, tree id=%d, origin: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
-  //          msg->id, msg->origin.position.x, msg->origin.position.y, msg->origin.position.z,
-  //          msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z,
-  //          msg->origin.orientation.w
-  //          );
-
-  //   OcTree* tree = new octomap::OcTree(0.05);
-  //   octomap::octomapMsgToMap(*msg, *tree);
-
-  //   octomath::Vector3 trans (msg->origin.position.x, msg->origin.position.y, msg->origin.position.z);
-  //   octomath::Quaternion rot (msg->origin.orientation.w, msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z);
-  //   std::cout << rot << std::endl;
-  //   octomap::pose6d origin (trans, rot);
-
-  //   this->addOctree(tree, msg->id, origin);
-
-  //   m_octreeResolution = tree->getResolution();
-  //   emit changeResolution(m_octreeResolution);
-
-  //   ui.actionPointcloud->setChecked(false);
-  //   ui.actionPointcloud->setEnabled(false);
-  //   ui.actionOctree_cells->setChecked(true);
-  //   ui.actionOctree_cells->setEnabled(true);
-  //   ui.actionFree->setChecked(false);
-  //   ui.actionFree->setEnabled(true);
-  //   ui.actionOctree_structure->setEnabled(true);
-  //   ui.actionOctree_structure->setChecked(false);
-  //   ui.actionTrajectory->setEnabled(false);
-  //   ui.actionConvert_ml_tree->setEnabled(false);
-  //   ui.actionReload_Octree->setEnabled(false);
-  //   ui.actionSettings->setEnabled(false);
-
-  //   showOcTree();
-  //   //    m_glwidget->resetView();
-  // }
-
-
-  // void ViewerGui::handleMoveMapMsg(const octomap2::MoveMap::ConstPtr& msg) {
-
-  //   octomath::Vector3 trans (msg->transform.position.x, msg->transform.position.y, msg->transform.position.z);
-  //   octomath::Quaternion rot (msg->transform.orientation.w, msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z);
-  //   octomap::pose6d transform (trans, rot);
-  //   std::cout << transform << std::endl;
-    
-  //   OcTreeRecord* r;
-  //   if (getOctreeRecord(msg->id, r)) {
-
-  //     if (msg->absolute) {  // absolute movement -> set origin
-
-  //       r->origin = transform;
-  //       r->octree_drawer->setOrigin(transform);
-
-  //       fprintf(stderr, "received new origin for map id=%d: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
-  //               msg->id, msg->transform.position.x, msg->transform.position.y, msg->transform.position.z,
-  //               msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z,
-  //               msg->transform.orientation.w
-  //               );
-  //     }
-
-  //     else { // relative movement -> transform pose
-
-  //       octomap::pose6d T = r->origin;
-  //       octomath::Quaternion rot_new = T.rot() * transform.rot();
-  //       octomap::point3d trans_new = T.trans() + transform.trans();
-
-  //       r->origin = octomap::pose6d(trans_new, rot_new);
-  //       r->octree_drawer->setOrigin(r->origin);
-
-  //       fprintf(stderr, "received relative transform for map id=%d: <%.2f , %.2f , %.2f>, <%.2f , %.2f , %.2f , %.2f>\n", 
-  //               msg->id, msg->transform.position.x, msg->transform.position.y, msg->transform.position.z,
-  //               msg->transform.orientation.x, msg->transform.orientation.y, msg->transform.orientation.z,
-  //               msg->transform.orientation.w
-  //               );
-  //     }
-  //     m_glwidget->updateGL();
-  //   }
-  //   else {
-  //     fprintf(stderr, "ERROR: map %d does not exist\n", msg->id);
-  //   }
-  // }
-
-
 
   // ==  incremental graph generation   =======================
 
@@ -454,7 +368,7 @@ namespace octomap{
           return;
         }
         // not used with ColorOcTrees, omitting casts
-        ((OcTree*) r->octree)->insertScan(**m_nextScanToAdd, m_laserMaxRange); 
+        ((OcTree*) r->octree)->insertPointCloud(**m_nextScanToAdd, m_laserMaxRange);
         m_nextScanToAdd++;
       }
 
@@ -470,7 +384,6 @@ namespace octomap{
       addNextScan();
     }
   }
-
 
 
   // ==  file I/O   ===========================================
@@ -807,7 +720,6 @@ namespace octomap{
 
       AbstractOcTree* t = r->octree;
 
-      // TODO: get rid of casts (requires occupancy tree interface)
       if (fileinfo.suffix() == "bt") {
         AbstractOccupancyOcTree* ot = dynamic_cast<AbstractOccupancyOcTree*> (t);
         if (ot)
@@ -846,6 +758,24 @@ namespace octomap{
 	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
 
 	  setNodesInBBX(min, max, false);
+  }
+
+  void ViewerGui::on_actionClear_unknown_in_selection_triggered()
+  {
+      point3d min, max;
+	  m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+	  m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+      setNonNodesInBBX(min, max, false);
+  }
+
+  void ViewerGui::on_actionFill_unknown_in_selection_triggered()
+  {
+      point3d min, max;
+      m_glwidget->selectionBox().getBBXMin(min.x(), min.y(), min.z());
+      m_glwidget->selectionBox().getBBXMax(max.x(), max.y(), max.z());
+
+      setNonNodesInBBX(min, max, true);
   }
 
   void ViewerGui::on_actionFill_selection_triggered(){
@@ -920,74 +850,36 @@ namespace octomap{
     showOcTree();
   }
 
-
-
-  void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, float logodds){
-	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
-	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
-
-	    if (octree){
-
-	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
-	    			end=octree->end_leafs_bbx(); it!= end; ++it){
-	    		octree->updateNode(it.getKey(), logodds);
-	    	}
-	    } else
-        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
-                                     QMessageBox::Ok);
-
-	  }
-
-	  showOcTree();
-  }
-
-
   void ViewerGui::updateNodesInBBX(const point3d& min, const point3d& max, bool occupied){
-	  for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
-	    OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
-
-	    if (octree){
-	      float logodds = octree->getClampingThresMaxLog() - octree->getClampingThresMinLog();
-	      if (!occupied)
-	        logodds *= -1;
-
-	    	for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
-	    			end=octree->end_leafs_bbx(); it!= end; ++it){
-	    		octree->updateNode(it.getKey(), logodds);
-	    	}
-	    } else
-        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
-                                     QMessageBox::Ok);
-
-	  }
-
-	  showOcTree();
-  }
-
-
-  void ViewerGui::setNodesInBBX(const point3d& min, const point3d& max, float logodds){
     for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
       OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
 
       if (octree){
-        OcTreeKey minKey(0,0,0);
-        OcTreeKey maxKey(0,0,0);
-        octree->coordToKeyChecked(min, minKey);
-        octree->coordToKeyChecked(max, maxKey);
-        OcTreeKey k;
-        for (k[0] = minKey[0]; k[0] < maxKey[0]; ++k[0]){
-          for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
-            for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
-              octree->updateNode(k, logodds);
-            }
-          }
+        float logodds;
+        if (occupied)
+          logodds = octree->getClampingThresMaxLog();
+        else
+          logodds = octree->getClampingThresMinLog();
+
+        for(OcTree::leaf_bbx_iterator it = octree->begin_leafs_bbx(min,max),
+            end=octree->end_leafs_bbx(); it!= end; ++it)
+        {
+          // directly set values of leafs:
+          it->setLogOdds(logodds);
         }
-      }
+
+        // update inner nodes to make tree consistent:
+        octree->updateInnerOccupancy();
+
+      } else
+        QMessageBox::warning(this, "Not implemented", "Functionality not yet implemented for this octree type",
+                             QMessageBox::Ok);
 
     }
 
     showOcTree();
   }
+
 
   void ViewerGui::setNodesInBBX(const point3d& min, const point3d& max, bool occupied){
     for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
@@ -1007,6 +899,36 @@ namespace octomap{
           for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
             for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
               octree->updateNode(k, logodds);
+            }
+          }
+        }
+      }
+
+    }
+
+    showOcTree();
+  }
+
+  void ViewerGui::setNonNodesInBBX(const point3d& min, const point3d& max, bool occupied) {
+    for (std::map<int, OcTreeRecord>::iterator t_it = m_octrees.begin(); t_it != m_octrees.end(); ++t_it) {
+      OcTree* octree = dynamic_cast<OcTree*>(t_it->second.octree);
+
+      if (octree){
+        float logodds = octree->getClampingThresMaxLog() - octree->getClampingThresMinLog();
+        if (!occupied)
+          logodds *= -1;
+
+        OcTreeKey minKey(0,0,0);
+        OcTreeKey maxKey(0,0,0);
+        octree->coordToKeyChecked(min, minKey);
+        octree->coordToKeyChecked(max, maxKey);
+        OcTreeKey k;
+        for (k[0] = minKey[0]; k[0] < maxKey[0]; ++k[0]){
+          for (k[1] = minKey[1]; k[1] < maxKey[1]; ++k[1]){
+            for (k[2] = minKey[2]; k[2] < maxKey[2]; ++k[2]){
+              OcTreeNode* n = octree->search(k);
+              if(!n)
+                octree->updateNode(k, logodds);
             }
           }
         }
@@ -1046,12 +968,11 @@ namespace octomap{
   }
 
   void ViewerGui::on_actionSelection_box_toggled(bool checked){
-	  ui.actionClear_selection->setEnabled(checked);
-	  ui.actionFill_selection->setEnabled(checked);
-	  ui.actionClear_nodes_in_selection->setEnabled(checked);
-	  ui.actionFill_nodes_in_selection->setEnabled(checked);
-	  ui.actionDelete_nodes_in_selection->setEnabled(checked);
-	  ui.actionDelete_nodes_outside_of_selection->setEnabled(checked);
+
+    ui.menuDelete_nodes->setEnabled(checked);
+    ui.menuFill_selection->setEnabled(checked);
+    ui.menuChange_nodes_in_selection->setEnabled(checked);
+
 
     m_glwidget->enableSelectionBox(checked);
 

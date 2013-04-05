@@ -88,17 +88,47 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <widget class="QMenu" name="menuDelete_nodes">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Delete nodes</string>
+     </property>
+     <addaction name="actionDelete_nodes_in_selection"/>
+     <addaction name="actionDelete_nodes_outside_of_selection"/>
+    </widget>
+    <widget class="QMenu" name="menuFill_selection">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Fill selection</string>
+     </property>
+     <addaction name="actionClear_selection"/>
+     <addaction name="actionFill_selection"/>
+     <addaction name="separator"/>
+     <addaction name="actionClear_unknown_in_selection"/>
+     <addaction name="actionFill_unknown_in_selection"/>
+    </widget>
+    <widget class="QMenu" name="menuChange_nodes_in_selection">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Change nodes in selection</string>
+     </property>
+     <addaction name="actionClear_nodes_in_selection"/>
+     <addaction name="actionFill_nodes_in_selection"/>
+    </widget>
     <addaction name="actionConvert_ml_tree"/>
     <addaction name="actionPrune_tree"/>
     <addaction name="actionExpand_tree"/>
     <addaction name="separator"/>
     <addaction name="actionSelection_box"/>
-    <addaction name="actionClear_selection"/>
-    <addaction name="actionFill_selection"/>
-    <addaction name="actionClear_nodes_in_selection"/>
-    <addaction name="actionFill_nodes_in_selection"/>
-    <addaction name="actionDelete_nodes_in_selection"/>
-    <addaction name="actionDelete_nodes_outside_of_selection"/>
+    <addaction name="menuFill_selection"/>
+    <addaction name="menuChange_nodes_in_selection"/>
+    <addaction name="menuDelete_nodes"/>
     <addaction name="separator"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
@@ -449,50 +479,66 @@
   </action>
   <action name="actionClear_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fill selection with &quot;free&quot;</string>
+    <string>With &quot;free&quot; (all)</string>
    </property>
   </action>
   <action name="actionFill_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fill selection with &quot;occupied&quot;</string>
+    <string>With &quot;occupied&quot; (all)</string>
    </property>
   </action>
   <action name="actionClear_nodes_in_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Set nodes in selection to &quot;free&quot;</string>
+    <string>To &quot;free&quot;</string>
    </property>
   </action>
   <action name="actionFill_nodes_in_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Set nodes in selection to &quot;occupied&quot;</string>
+    <string>To &quot;occupied&quot;</string>
    </property>
   </action>
   <action name="actionDelete_nodes_in_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Delete nodes in selection</string>
+    <string>In selection</string>
    </property>
   </action>
   <action name="actionDelete_nodes_outside_of_selection">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Delete nodes outside of selection (crop)</string>
+    <string>Outside of selection (crop)</string>
+   </property>
+  </action>
+  <action name="actionClear_unknown_in_selection">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>With &quot;free&quot; (only unknown)</string>
+   </property>
+  </action>
+  <action name="actionFill_unknown_in_selection">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+     <string>With &quot;occupied&quot; (only unknown)</string>
    </property>
   </action>
  </widget>

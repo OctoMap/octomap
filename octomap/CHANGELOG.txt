@@ -1,3 +1,21 @@
+v1.6.0: 2013-04-05
+==================
+- Speedup: Pruning is now done only on affected nodes on each call to
+  updateNode(). You no longer have to call prune(), except when you manually
+  change nodes or use lazy_update.
+- insertScan() renamed to insertPointCloud(), removed parameter "pruning"
+- insertScanNaive() renamed to insertScanRays(), removed parameter "pruning"
+- insertScan() / insertPointCloud() / insertScanRays() can now be parallelized
+  with OpenMP, currently disabled by default. Enable with CMake flag OCTOMAP_OMP
+- Empty octrees no longer contain a root node (#11)
+- Library names in CMake configs are now absolute paths, you should no longer
+  use OCTOMAP_LIBRARY_DIRS with FIND_PACKAGE (#14)
+- graph2tree: pointcloud is transformed in batch before insertion, small changes
+  in command line options
+- octovis: more map editing options, fixed setting nodes to free/occupied (thx
+  to C. Dornhege)
+- Sample data is now in octomap/share
+
 v1.5.4: 2013-02-27
 ==================
 - Removed binvox binaries from sources for improved packaging compatibility

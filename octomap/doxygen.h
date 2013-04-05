@@ -83,7 +83,7 @@ https://github.com/OctoMap/octomap.</p>
   Jump right in and have a look at the main class \ref octomap::OcTree OcTree and the examples in src/octomap/simple.cpp.
   To integrate single measurements into the 3D map have a look at
   \ref octomap::OcTree::insertRay "OcTree::insertRay(...)", to insert full 3D scans (pointclouds) please have a look at
-  \ref octomap::OcTree::insertScan "OcTree::insertScan(...)". Queries can be performed e.g. with \ref octomap::OcTree::search "OcTree::search(...)" or
+  \ref octomap::OcTree::insertPointCloud "OcTree::insertPointCloud(...)". Queries can be performed e.g. with \ref octomap::OcTree::search "OcTree::search(...)" or
   \ref octomap::OcTree::castRay(...) "OcTree::castRay(...)". The preferred way to batch-access or process nodes in an Octree is with the iterators
   \ref leaf_iterator "leaf_iterator",  \ref tree_iterator "tree_iterator", or \ref leaf_bbx_iterator "leaf_bbx_iterator".</p>
 
@@ -101,7 +101,7 @@ https://github.com/OctoMap/octomap.</p>
 </p>
 
 <p>
-  You will find an example scan to load at <b>src/examples/scan.dat.bz2</b>  (please bunzip2 it first)
+You will find an example 3D scan (please bunzip2 first) and an example OctoMap .bt file in the directory <b>share/data</b> to try. More data sets are available at http://ais.informatik.uni-freiburg.de/projects/datasets/octomap/.
 </p>
 
 

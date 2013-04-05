@@ -34,6 +34,7 @@
 #ifndef OCTOMAP_TYPES_H
 #define OCTOMAP_TYPES_H
 
+#include <stdio.h>
 #include <vector>
 #include <list>
 

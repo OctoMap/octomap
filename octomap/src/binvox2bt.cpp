@@ -39,7 +39,6 @@
 * This file is based on code from http://www.cs.princeton.edu/~min/binvox/read_binvox.cc
 *
 * @author S. Osswald, University of Freiburg, Copyright (C) 2010.
-* @see http://octomap.sourceforge.net/
 * License: New BSD License
 */
 

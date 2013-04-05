@@ -84,7 +84,7 @@ namespace octomap {
       "It provides data structures and mapping algorithms. The map is implemented "
       "using an octree. 3D maps can be viewed an built using this 3D viewer."
       "<br/><br/>"
-      "Octomap is available at http://octomap.sourceforge.net/, and is actively "
+      "Octomap is available at http://octomap.github.com, and is actively "
       "maintained by Kai M. Wurm and Armin Hornung. This 3D viewer is based on "
       "libQGLViewer, available at http://www.libqglviewer.com/."
       "<br/><br/>"

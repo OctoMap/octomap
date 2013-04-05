@@ -73,7 +73,9 @@ namespace octomap {
         c++;
       }
     }
-    if (c) mean /= (double) c;
+    if (c)
+      mean /= (double) c;
+
     return log(mean/(1-mean));
   }
 
@@ -82,7 +84,8 @@ namespace octomap {
     for (unsigned int i=0; i<8; i++) {
       if (childExists(i)) {
         float l = getChild(i)->getLogOdds();
-        if (l > max) max = l;
+        if (l > max)
+          max = l;
       }
     }
     return max;

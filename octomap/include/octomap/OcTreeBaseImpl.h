@@ -100,7 +100,7 @@ namespace octomap {
     /**
      * \return Pointer to the root node of the tree. This pointer
      * should not be modified or deleted externally, the OcTree
-     * manages its memory itself.
+     * manages its memory itself. In an empty tree, root is NULL.
      */
     inline NODE* getRoot() const { return root; }
 
@@ -143,7 +143,7 @@ namespace octomap {
      */
     bool deleteNode(const OcTreeKey& key, unsigned int depth = 0);
 
-    /// Deletes the complete tree structure (only the root node will remain)
+    /// Deletes the complete tree structure
     void clear();
 
     OcTreeBaseImpl deepCopy() const;
@@ -422,70 +422,13 @@ namespace octomap {
       return point3d(float(keyToCoord(key[0], depth)), float(keyToCoord(key[1], depth)), float(keyToCoord(key[2], depth)));
     }
 
-    /// @deprecated, replaced with coordToKeyChecked()
-    DEPRECATED( bool genKeyValue(double coordinate, unsigned short int& keyval) const) {
-      return coordToKeyChecked(coordinate, keyval);
-    }
-
-    /// @deprecated, replaced with coordToKeyChecked()
-    DEPRECATED( bool genKey(const point3d& point, OcTreeKey& key) const ) {
-      return coordToKeyChecked(point, key);
-    }
-
-    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
-    DEPRECATED( bool genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const );
-
-    /// @deprecated, replaced by adjustKeyAtDepth() or coordToKey() with depth parameter
-    DEPRECATED( bool genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const );
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( bool genCoordFromKey(const unsigned short int& key, unsigned depth, float& coord) const ){
-      coord = float(keyToCoord(key, depth));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord, unsigned depth) const) {
-      coord = float(keyToCoord(key, depth));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoordFromKey(const unsigned short int& key, float& coord) const) {
-      coord = float(keyToCoord(key));
-      return true;
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    DEPRECATED( double genCoordFromKey(const unsigned short int& key, unsigned depth) const) {
-      return keyToCoord(key, depth);
-    }
-
-    /// @deprecated, replaced by keyToCoord()
-    DEPRECATED( inline double genCoordFromKey(const unsigned short int& key) const) {
-      return keyToCoord(key);
-    }
-
-     /// @deprecated, replaced by keyToCoord().
-     /// Will always return true, there is no more boundary check here
-    DEPRECATED( inline bool genCoords(const OcTreeKey& key, unsigned int depth, point3d& point) const){
-      point = keyToCoord(key, depth);
-      return true;
-    }
-
-    /// generate child index (between 0 and 7) from key at given tree depth
-    /// DEPRECATED
-    DEPRECATED( inline void genPos(const OcTreeKey& key, int depth, unsigned int& pos) const) {
-      pos = computeChildIdx(key, depth);
-    }
-
  protected:
     /// Constructor to enable derived classes to change tree constants.
     /// This usually requires a re-implementation of some core tree-traversal functions as well!
     OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
+
+    /// initialize non-trivial members, helper for constructors
+    void init();
 
     /// recalculates min and max in x, y, z. Does nothing when tree size didn't change.
     void calcMinMax();
@@ -510,7 +453,7 @@ namespace octomap {
 
   protected:
 
-    NODE* root;
+    NODE* root; ///< Pointer to the root NODE, NULL for empty tree
 
     // constants of the tree
     const unsigned int tree_depth; ///< Maximum tree depth is fixed to 16 currently
@@ -529,7 +472,8 @@ namespace octomap {
     /// contains the size of a voxel at level i (0: root node). tree_depth+1 levels (incl. 0)
     std::vector<double> sizeLookupTable;
 
-    KeyRay keyray;  // data structure for ray casting
+    /// data structure for ray casting, array for multithreading
+    std::vector<KeyRay> keyrays;
 
     const leaf_iterator leaf_iterator_end;
     const leaf_bbx_iterator leaf_iterator_bbx_end;

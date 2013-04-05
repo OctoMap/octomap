@@ -153,7 +153,7 @@ namespace octomap {
    */
   inline void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key,
                                           const OcTreeKey& parent_key, OcTreeKey& child_key) {
-    
+    // x-axis
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
     else         child_key[0] = parent_key[0] - center_offset_key - (center_offset_key ? 0 : 1);
     // y-axis
@@ -181,12 +181,16 @@ namespace octomap {
    * @return key corresponding to the input key at the given level
    */
   inline OcTreeKey computeIndexKey(unsigned short int level, const OcTreeKey& key) {
-    unsigned short int mask = 65535 << level;
-    OcTreeKey result = key;
-    result[0] &= mask;
-    result[1] &= mask;
-    result[2] &= mask;
-    return result;
+    if (level == 0)
+      return key;
+    else {
+      unsigned short int mask = 65535 << level;
+      OcTreeKey result = key;
+      result[0] &= mask;
+      result[1] &= mask;
+      result[2] &= mask;
+      return result;
+    }
   }
 
 } // namespace

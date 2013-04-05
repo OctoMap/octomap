@@ -35,6 +35,10 @@
 #undef min
 #include <limits>
 
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
+
 namespace octomap {
 
 
@@ -44,16 +48,9 @@ namespace octomap {
     resolution(resolution), tree_size(0)
   {
     
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = -(std::numeric_limits<double>::max( ));
-      min_value[i] = std::numeric_limits<double>::max( );
-    }
-    size_changed = true;
+    init();
 
-    // init root node:
-    root = new NODE();
-    tree_size++;
+    // no longer create an empty root node - only on demand
   }
 
   template <class NODE,class I>
@@ -61,22 +58,18 @@ namespace octomap {
     I(), root(NULL), tree_depth(tree_depth), tree_max_val(tree_max_val),
     resolution(resolution), tree_size(0)
   {
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = -(std::numeric_limits<double>::max( ));
-      min_value[i] = std::numeric_limits<double>::max( );
-    }
-    size_changed = true;
+    init();
 
-    // init root node:
-    root = new NODE();
-    tree_size++;
+    // no longer create an empty root node - only on demand
   }
 
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){
-    delete root;
+    if (root)
+      delete root;
+
+    root = NULL;
   }
 
 
@@ -85,15 +78,38 @@ namespace octomap {
     root(NULL), tree_depth(rhs.tree_depth), tree_max_val(rhs.tree_max_val),
     resolution(rhs.resolution), tree_size(rhs.tree_size)
   {
-    this->setResolution(resolution);
-    for (unsigned i = 0; i< 3; i++){
-      max_value[i] = rhs.max_value[i];
-      min_value[i] = rhs.min_value[i];
-    }
+    init();
 
     // copy nodes recursively:
-    root = new NODE(*(rhs.root));
+    if (rhs.root)
+      root = new NODE(*(rhs.root));
 
+  }
+
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::init(){
+
+    this->setResolution(this->resolution);
+    for (unsigned i = 0; i< 3; i++){
+      max_value[i] = -(std::numeric_limits<double>::max( ));
+      min_value[i] = std::numeric_limits<double>::max( );
+    }
+    size_changed = true;
+
+    // create as many KeyRays as there are OMP_THREADS defined,
+    // one buffer for each thread
+#ifdef _OPENMP
+    #pragma omp parallel
+    #pragma omp critical
+    {
+      if (omp_get_thread_num() == 0){
+        this->keyrays.resize(omp_get_num_threads());
+      }
+
+    }
+#else
+    this->keyrays.resize(1);
+#endif
 
   }
 
@@ -257,30 +273,6 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::genKeyValueAtDepth(const unsigned short int keyval, unsigned int depth, unsigned short int &out_keyval) const {
-
-    if (keyval >= 2*tree_max_val)
-      return false;
-    
-    unsigned int diff = tree_depth - depth;
-    if(!diff) {
-      out_keyval = keyval;
-    }
-    else {
-      out_keyval = (((keyval-tree_max_val) >> diff) << diff) + (1 << (diff-1)) + tree_max_val;
-    }
-    return true;
-  }
-
-  template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::genKeyAtDepth(const OcTreeKey& key, unsigned int depth, OcTreeKey& out_key) const {
-    for (unsigned int i=0;i<3;i++) {
-      if (!genKeyValueAtDepth( key[i], depth, out_key[i])) return false;
-    }
-    return true;
-  }
-
-  template <class NODE,class I>
   NODE* OcTreeBaseImpl<NODE,I>::search(const point3d& value, unsigned int depth) const {
     OcTreeKey key;
     if (!coordToKeyChecked(value, key)){
@@ -309,6 +301,8 @@ namespace octomap {
   template <class NODE,class I>
   NODE* OcTreeBaseImpl<NODE,I>::search (const OcTreeKey& key, unsigned int depth) const {
     assert(depth <= tree_depth);
+    if (root == NULL)
+      return NULL;
 
     if (depth == 0)
       depth = tree_depth;
@@ -373,6 +367,9 @@ namespace octomap {
 
   template <class NODE,class I>
   bool OcTreeBaseImpl<NODE,I>::deleteNode(const OcTreeKey& key, unsigned int depth) {
+    if (root == NULL)
+      return true;
+
     if (depth == 0)
       depth = tree_depth;
 
@@ -381,29 +378,33 @@ namespace octomap {
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::clear() {
-    // don't clear if the tree is empty:
-    if (this->root->hasChildren()) {
+    if (this->root){
       delete this->root;
-      this->root = new NODE();
+      this->root = NULL;
+      this->tree_size = 0;
+      // max extent of tree changed:
+      this->size_changed = true;
     }
-    this->tree_size = 1;
-    // max extent of tree changed:
-    this->size_changed = true;
   }
 
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::prune() {
-    for (unsigned int depth=tree_depth-1; depth>0; depth--) {
+    if (root == NULL)
+      return;
+
+    for (unsigned int depth=tree_depth-1; depth > 0; --depth) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
-      if (num_pruned == 0) break;
+      if (num_pruned == 0)
+        break;
     }
   }
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::expand() {
-    expandRecurs(root,0, tree_depth);
+    if (root)
+      expandRecurs(root,0, tree_depth);
   }
 
   template <class NODE,class I>
@@ -425,7 +426,8 @@ namespace octomap {
     }
 
     
-    if (key_origin == key_end) return true; // same tree cell, we're done.
+    if (key_origin == key_end)
+      return true; // same tree cell, we're done.
 
     ray.addKey(key_origin);
 
@@ -526,8 +528,8 @@ namespace octomap {
   bool OcTreeBaseImpl<NODE,I>::computeRay(const point3d& origin, const point3d& end,
                                     std::vector<point3d>& _ray) {
     _ray.clear();
-    if (!computeRayKeys(origin, end, keyray)) return false;
-    for (KeyRay::const_iterator it = keyray.begin(); it != keyray.end(); ++it) {
+    if (!computeRayKeys(origin, end, keyrays.at(0))) return false;
+    for (KeyRay::const_iterator it = keyrays[0].begin(); it != keyrays[0].end(); ++it) {
       _ray.push_back(keyToCoord(*it));
     }
     return true;
@@ -537,6 +539,8 @@ namespace octomap {
   bool OcTreeBaseImpl<NODE,I>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
     if (depth >= max_depth) // on last level: delete child when going up
       return true;
+
+    assert(node);
 
     unsigned int pos = computeChildIdx(key, this->tree_depth-1-depth);
 
@@ -575,6 +579,8 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::pruneRecurs(NODE* node, unsigned int depth,
          unsigned int max_depth, unsigned int& num_pruned) {
 
+    assert(node);
+
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
         if (node->childExists(i)) {
@@ -597,7 +603,10 @@ namespace octomap {
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::expandRecurs(NODE* node, unsigned int depth,
                                       unsigned int max_depth) {
-    if (depth >= max_depth) return;
+    if (depth >= max_depth)
+      return;
+
+    assert(node);
 
     // current node has no children => can be expanded
     if (!node->hasChildren()){
@@ -616,7 +625,9 @@ namespace octomap {
 
   template <class NODE,class I>
   std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s) const{
-    root->writeValue(s);
+    if (root)
+      root->writeValue(s);
+
     return s;
   }
 
@@ -630,12 +641,13 @@ namespace octomap {
     this->tree_size = 0;
     size_changed = true;
 
-    // tree needs to be newly created or cleared externally!
-    if (root->hasChildren()) {
+    // tree needs to be newly created or cleared externally
+    if (root) {
       OCTOMAP_ERROR_STR("Trying to read into an existing tree.");
       return s;
     }
 
+    root = new NODE();
     root->readValue(s);
     tree_size = calcNumNodes();  // compute number of nodes
     return s;
@@ -646,6 +658,9 @@ namespace octomap {
 
   template <class NODE,class I>
   unsigned long long OcTreeBaseImpl<NODE,I>::memoryFullGrid() const{
+    if (root == NULL)
+      return 0;
+
     double size_x, size_y, size_z;
     this->getMetricSize(size_x, size_y,size_z);
     
@@ -696,8 +711,8 @@ namespace octomap {
     if (!size_changed)
       return;
 
-    // workaround for "empty" tree (only root)
-    if (!this->root->hasChildren()){
+    // empty tree
+    if (root == NULL){
       min_value[0] = min_value[1] = min_value[2] = 0.0;
       max_value[0] = max_value[1] = max_value[2] = 0.0;
       size_changed = false;
@@ -755,8 +770,8 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::getMetricMin(double& mx, double& my, double& mz) const {
     mx = my = mz = std::numeric_limits<double>::max( );
     if (size_changed) {
-      // workaround for "empty" tree (only root)
-      if (!this->root->hasChildren()){
+      // empty tree
+      if (root == NULL){
         mx = my = mz = 0.0;
         return;
       }
@@ -783,8 +798,8 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::getMetricMax(double& mx, double& my, double& mz) const {
     mx = my = mz = -std::numeric_limits<double>::max( );
     if (size_changed) {
-      // workaround for "empty" tree (only root)
-      if (!this->root->hasChildren()){
+      // empty tree
+      if (root == NULL){
         mx = my = mz = 0.0;
         return;
       }
@@ -809,14 +824,17 @@ namespace octomap {
 
   template <class NODE,class I>
   size_t OcTreeBaseImpl<NODE,I>::calcNumNodes() const {
-    size_t retval = 1; // root node
-    calcNumNodesRecurs(root, retval);
+    size_t retval = 0; // root node
+    if (root){
+      retval++;
+      calcNumNodesRecurs(root, retval);
+    }
     return retval;
   }
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::calcNumNodesRecurs(NODE* node, size_t& num_nodes) const {
-    assert (node != NULL);
+    assert (node);
     if (node->hasChildren()) {
       for (unsigned int i=0; i<8; ++i) {
         if (node->childExists(i)) {
@@ -868,14 +886,19 @@ namespace octomap {
 
   template <class NODE,class I>
   size_t OcTreeBaseImpl<NODE,I>::getNumLeafNodes() const {
+    if (root == NULL)
+      return 0;
+
     return getNumLeafNodesRecurs(root);
   }
 
 
   template <class NODE,class I>
   size_t OcTreeBaseImpl<NODE,I>::getNumLeafNodesRecurs(const NODE* parent) const {
+    assert(parent);
 
-    if (!parent->hasChildren()) return 1;  // this is a leaf -> terminate
+    if (!parent->hasChildren()) // this is a leaf -> terminate
+      return 1;
     
     size_t sum_leafs_children = 0;
     for (unsigned int i=0; i<8; ++i) {

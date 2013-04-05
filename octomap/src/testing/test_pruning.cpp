@@ -86,7 +86,8 @@ int main(int argc, char** argv) {
       }
     }
     EXPECT_EQ(tree.calcNumNodes(), tree.size());
-    EXPECT_EQ(37477, tree.size());
+    EXPECT_EQ(29, tree.size());
+    // TODO: replace with test for lazy eval?
     tree.prune();
     EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(29, tree.size());
@@ -94,6 +95,7 @@ int main(int argc, char** argv) {
     EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(37477, tree.size());
     tree.prune();
+    EXPECT_EQ(29, tree.size());
     // test expansion:
     for (float x=0.005; x <= 0.32; x+=res){
       for (float y=0.005; y <= 0.32; y+=res){

@@ -5,8 +5,8 @@ ENABLE_TESTING()
 
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
-set(OCTOMAP_MINOR_VERSION 5)
-set(OCTOMAP_PATCH_VERSION 4)
+set(OCTOMAP_MINOR_VERSION 6)
+set(OCTOMAP_PATCH_VERSION 0)
 set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -16,6 +16,18 @@ SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
+
+# OCTOMAP_OMP = enable OpenMP parallelization (experimental, defaults to OFF)
+SET(OCTOMAP_OMP FALSE CACHE BOOL "Enable/disable OpenMP parallelization")
+IF(DEFINED ENV{OCTOMAP_OMP})
+  SET(OCTOMAP_OMP $ENV{OCTOMAP_OMP})
+ENDIF(DEFINED ENV{OCTOMAP_OMP})
+IF(OCTOMAP_OMP)
+  FIND_PACKAGE( OpenMP REQUIRED)
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+ENDIF(OCTOMAP_OMP)
 
 # Set output directories for libraries and executables
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
@@ -43,6 +55,9 @@ file(GLOB octomap_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/*.h ${PROJECT_SOURC
 install(FILES ${octomap_HDRS}	DESTINATION include/octomap)
 file(GLOB octomap_math_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS}	DESTINATION include/octomap/math)
+
+# Install catkin package.xml
+install(FILES package.xml DESTINATION share/octomap)
 
 # uninstall target
 configure_file(
@@ -103,21 +118,6 @@ IF(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Generating documentation (Doxygen) at location ${PROJECT_SOURCE_DIR}/doc/html/")
 ENDIF(DOXYGEN_FOUND)
-
-# make package release from source (must be done on the SVN source tree)
-IF (NOT WIN32)
-	SET(OCTOMAP_PKG_NAME "${PROJECT_NAME}-${OCTOMAP_VERSION}.tar.gz")
-	SET(DIST_DIR "${CMAKE_BINARY_DIR}/dist-${PROJECT_NAME}")
-	ADD_CUSTOM_TARGET("dist-${PROJECT_NAME}" 
-		rm -rf "${DIST_DIR}" "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}"
-		COMMAND mkdir "${DIST_DIR}"
-		COMMAND svn export --force -q "${PROJECT_SOURCE_DIR}" "${DIST_DIR}/${PROJECT_NAME}" 
-		COMMAND tar -czf "${CMAKE_BINARY_DIR}/${OCTOMAP_PKG_NAME}" -C "${DIST_DIR}" --exclude=".hidden" "${PROJECT_NAME}"
-			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-		# cleanup so that there is no copy in the source dir
-		COMMAND rm -rf "${DIST_DIR}"
-	)
-ENDIF()
 
 # Needs to be last statement:
 INCLUDE(CPackSettings)
