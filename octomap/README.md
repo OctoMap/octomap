@@ -10,6 +10,7 @@ Further Contributors:
 * S. Osswald, University of Freiburg
 * R. Schmitt, University of Freiburg
 * R. Bogdan Rusu, Willow Garage Inc.
+* C. Dornhege, University of Freiburg
 
 License for octomap: [New BSD License](LICENSE.txt)
 
