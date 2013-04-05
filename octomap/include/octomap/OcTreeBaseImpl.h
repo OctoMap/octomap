@@ -82,8 +82,11 @@ namespace octomap {
     OcTreeBaseImpl(double resolution);
     virtual ~OcTreeBaseImpl();
 
+    /// Deep copy constructor
     OcTreeBaseImpl(const OcTreeBaseImpl<NODE,INTERFACE>& rhs);
 
+    /// Comparison between two octrees, all meta data, all
+    /// nodes, and the structure must be identical
     bool operator== (const OcTreeBaseImpl<NODE,INTERFACE>& rhs) const;
 
     std::string getTreeType() const {return "OcTreeBaseImpl";}
@@ -105,19 +108,22 @@ namespace octomap {
     inline NODE* getRoot() const { return root; }
 
     /** 
-     *  Search node at specified depth given a 3d point (depth=0: search full tree depth)
+     *  Search node at specified depth given a 3d point (depth=0: search full tree depth).
+     *  You need to check if the returned node is NULL, since it can be in unknown space.
      *  @return pointer to node if found, NULL otherwise
      */
     NODE* search(double x, double y, double z, unsigned int depth = 0) const;
 
     /**
      *  Search node at specified depth given a 3d point (depth=0: search full tree depth)
+     *  You need to check if the returned node is NULL, since it can be in unknown space.
      *  @return pointer to node if found, NULL otherwise
      */
     NODE* search(const point3d& value, unsigned int depth = 0) const;
 
     /**
      *  Search a node at specified depth given an addressing key (depth=0: search full tree depth)
+     *  You need to check if the returned node is NULL, since it can be in unknown space.
      *  @return pointer to node if found, NULL otherwise
      */
     NODE* search(const OcTreeKey& key, unsigned int depth = 0) const;
@@ -146,11 +152,12 @@ namespace octomap {
     /// Deletes the complete tree structure
     void clear();
 
-    OcTreeBaseImpl deepCopy() const;
-
-
-    /// Lossless compression of OcTree: merge children to parent when there are
-    /// eight children with identical values
+    /**
+     * Lossless compression of the octree: A node will replace all of its eight
+     * children if they have identical values. You usually don't have to call
+     * prune() after a regular occupancy update, updateNode() incrementally
+     * prunes all affected nodes.
+     */
     virtual void prune();
 
     /// Expands all pruned nodes (reverse of prune())
@@ -165,7 +172,7 @@ namespace octomap {
     /// \return Memory usage of the complete octree in bytes (may vary between architectures)
     virtual size_t memoryUsage() const;
 
-    /// \return Memory usage of the a single octree node
+    /// \return Memory usage of a single octree node
     virtual inline size_t memoryUsageNode() const {return sizeof(NODE); };
 
     /// \return Memory usage of a full grid of the same size as the OcTree in bytes (for comparison)

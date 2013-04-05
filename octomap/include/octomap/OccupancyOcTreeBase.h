@@ -82,6 +82,8 @@ namespace octomap {
     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
     * ray insertion in insertPointCloudRays().
     *
+    * @note replaces insertScan()
+    *
     * @param scan Pointcloud (measurement endpoints), in global reference frame
     * @param sensor_origin measurement origin in global reference frame
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
@@ -98,6 +100,8 @@ namespace octomap {
     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
     * ray insertion in insertPointCloudRays().
     *
+    * @note replaces insertScan()
+    *
     * @param scan Pointcloud (measurement endpoints) relative to frame origin
     * @param sensor_origin origin of sensor relative to frame origin
     * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
@@ -110,6 +114,8 @@ namespace octomap {
 
     /**
     * Insert a 3d scan (given as a ScanNode) into the tree, parallelized with OpenMP.
+    *
+    * @note replaces insertScan
     *
     * @param scan ScanNode contains Pointcloud data and frame/sensor origin
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)

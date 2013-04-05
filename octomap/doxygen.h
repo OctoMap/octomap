@@ -84,7 +84,7 @@ https://github.com/OctoMap/octomap.</p>
   To integrate single measurements into the 3D map have a look at
   \ref octomap::OcTree::insertRay "OcTree::insertRay(...)", to insert full 3D scans (pointclouds) please have a look at
   \ref octomap::OcTree::insertPointCloud "OcTree::insertPointCloud(...)". Queries can be performed e.g. with \ref octomap::OcTree::search "OcTree::search(...)" or
-  \ref octomap::OcTree::castRay(...) "OcTree::castRay(...)". The preferred way to batch-access or process nodes in an Octree is with the iterators
+  \ref octomap::OcTree::castRay "OcTree::castRay(...)". The preferred way to batch-access or process nodes in an Octree is with the iterators
   \ref leaf_iterator "leaf_iterator",  \ref tree_iterator "tree_iterator", or \ref leaf_bbx_iterator "leaf_bbx_iterator".</p>
 
   \image html uml_overview.png
