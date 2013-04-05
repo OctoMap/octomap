@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -120,8 +121,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a16b41d69799e89ba4c4433950d760bf0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance</a> (const <a class="el" href="classoctomath_1_1Vector3.html">Vector3</a> &amp;other) const </td></tr>
 <tr class="memitem:a34e0860ec771d19e8f5b93bcc4e84fb2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2">distanceXY</a> (const <a class="el" href="classoctomath_1_1Vector3.html">Vector3</a> &amp;other) const </td></tr>
 <tr class="memitem:a344a6ecd95076751dac24d502af26f7f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot</a> (const <a class="el" href="classoctomath_1_1Vector3.html">Vector3</a> &amp;other) const </td></tr>
+<tr class="memdesc:a344a6ecd95076751dac24d502af26f7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">dot product  <a href="#a344a6ecd95076751dac24d502af26f7f"></a><br/></td></tr>
 <tr class="memitem:a56bf8a27cdb62290e93b71cb5fa2619a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a">norm</a> () const </td></tr>
+<tr class="memitem:a32e618bee15015caf25a3fed1f07d2f4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4">norm_sq</a> () const </td></tr>
 <tr class="memitem:abf794bc14ccee08f69262448f546fca4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoctomath_1_1Vector3.html">Vector3</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#abf794bc14ccee08f69262448f546fca4">normalize</a> ()</td></tr>
+<tr class="memdesc:abf794bc14ccee08f69262448f546fca4"><td class="mdescLeft">&#160;</td><td class="mdescRight">normalizes this vector, so that it has norm=1.0  <a href="#abf794bc14ccee08f69262448f546fca4"></a><br/></td></tr>
 <tr class="memitem:ad78cb98b2a7c5f62ad7aeb2f27aa1ff4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classoctomath_1_1Vector3.html">Vector3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#ad78cb98b2a7c5f62ad7aeb2f27aa1ff4">normalized</a> () const </td></tr>
 <tr class="memitem:a4369d95d32cdfa0333f76370f7faca59"><td class="memItemLeft" align="right" valign="top">const float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59">operator()</a> (unsigned int i) const </td></tr>
 <tr class="memitem:a5b98989f14054b484e446ebb8c8321d1"><td class="memItemLeft" align="right" valign="top">float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomath_1_1Vector3.html#a5b98989f14054b484e446ebb8c8321d1">operator()</a> (unsigned int i)</td></tr>
@@ -409,6 +413,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>dot product </p>
+
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#adc2410ec4c9b0521a4f170309e8fde42">x()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af83235721a5631bee05bf226a0391342">y()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#af853f87d953c81f11de8ee14226e5f51">z()</a>.</p>
 
 <p>Referenced by <a class="el" href="classoctomath_1_1Vector3.html#af1c92795e3e72d8ca4af9c5c65cb60ef">angleTo()</a>.</p>
@@ -435,10 +441,39 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>length of the vector ("L2 norm") </dd></dl>
 
-<p>References <a class="el" href="classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59">operator()()</a>.</p>
+<p>References <a class="el" href="classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4">norm_sq()</a>.</p>
 
 <p>Referenced by <a class="el" href="classoctomath_1_1Vector3.html#af1c92795e3e72d8ca4af9c5c65cb60ef">angleTo()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a48521e9a52a04f4e0e11f8feeb2ed1e7">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::computeRayKeys()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#abf794bc14ccee08f69262448f546fca4">normalize()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a32e618bee15015caf25a3fed1f07d2f4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double octomath::Vector3::norm_sq </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>squared length ("L2 norm") of the vector </dd></dl>
+
+<p>References <a class="el" href="classoctomath_1_1Vector3.html#adc2410ec4c9b0521a4f170309e8fde42">x()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af83235721a5631bee05bf226a0391342">y()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#af853f87d953c81f11de8ee14226e5f51">z()</a>.</p>
+
+<p>Referenced by <a class="el" href="classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a">norm()</a>.</p>
 
 </div>
 </div>
@@ -462,6 +497,8 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>normalizes this vector, so that it has norm=1.0 </p>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a">norm()</a>.</p>
 
@@ -489,6 +526,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>normalized vector, this one remains unchanged </dd></dl>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#abf794bc14ccee08f69262448f546fca4">normalize()</a>.</p>
 
@@ -520,7 +558,7 @@ Protected Attributes</h2></td></tr>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#aaf81be1682c9f322cbac149e66829ba4">data</a>.</p>
 
-<p>Referenced by <a class="el" href="classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a">norm()</a>, <a class="el" href="classoctomath_1_1Vector3.html#adaf5ac929ea112cd46087a93fc13f6d6">pitch()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ae82d2fbacf5ee2b8bacb8d9a6517fa0b">readBinary()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af3d2c2eda4fb78218d9aeff0dac1f3d8">roll()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ad575ba45ae52d9280027a21cde016a03">writeBinary()</a>, <a class="el" href="classoctomath_1_1Vector3.html#adc2410ec4c9b0521a4f170309e8fde42">x()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af83235721a5631bee05bf226a0391342">y()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ad1ce279ec7fcd9eabf878ccba0de75b4">yaw()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#af853f87d953c81f11de8ee14226e5f51">z()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomath_1_1Vector3.html#adaf5ac929ea112cd46087a93fc13f6d6">pitch()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ae82d2fbacf5ee2b8bacb8d9a6517fa0b">readBinary()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af3d2c2eda4fb78218d9aeff0dac1f3d8">roll()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ad575ba45ae52d9280027a21cde016a03">writeBinary()</a>, <a class="el" href="classoctomath_1_1Vector3.html#adc2410ec4c9b0521a4f170309e8fde42">x()</a>, <a class="el" href="classoctomath_1_1Vector3.html#af83235721a5631bee05bf226a0391342">y()</a>, <a class="el" href="classoctomath_1_1Vector3.html#ad1ce279ec7fcd9eabf878ccba0de75b4">yaw()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#af853f87d953c81f11de8ee14226e5f51">z()</a>.</p>
 
 </div>
 </div>
@@ -1050,7 +1088,7 @@ Protected Attributes</h2></td></tr>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59">operator()()</a>.</p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2">distanceXY()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="test__mapcollection_8cpp.html#a1f19e89a91a2005f425e13921b51e8f8">generateSphereTree()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a5a61500c885db317ade5bada0776c537">operator*()</a>, <a class="el" href="classoctomath_1_1Vector3.html#aa662cfa4a17488124e65ca2f65ace9be">operator*=()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a0d3991508dc070a083eea8c61ba296f9">operator/=()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2">distanceXY()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="test__mapcollection_8cpp.html#a1f19e89a91a2005f425e13921b51e8f8">generateSphereTree()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4">norm_sq()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a5a61500c885db317ade5bada0776c537">operator*()</a>, <a class="el" href="classoctomath_1_1Vector3.html#aa662cfa4a17488124e65ca2f65ace9be">operator*=()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a0d3991508dc070a083eea8c61ba296f9">operator/=()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
 
 </div>
 </div>
@@ -1102,7 +1140,7 @@ Protected Attributes</h2></td></tr>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59">operator()()</a>.</p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2">distanceXY()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2">distanceXY()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4">norm_sq()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
 
 </div>
 </div>
@@ -1206,7 +1244,7 @@ Protected Attributes</h2></td></tr>
 
 <p>References <a class="el" href="classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59">operator()()</a>.</p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1MapCollection.html#a671492e7c3a34c42283d5595657bdef9">octomap::MapCollection&lt; MAPNODE &gt;::castRay()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a27aad5dfe17b3fb6981947f17a85d5eb">cross()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a16b41d69799e89ba4c4433950d760bf0">distance()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f">dot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6e162cee6011e1fec8933a331817aa00">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::getUnknownLeafCenters()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a65963bf3e34131f640e87fbdb987d239">octomap::OccupancyOcTreeBase&lt; NODE &gt;::inBBX()</a>, <a class="el" href="test__mapcollection_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4">norm_sq()</a>, <a class="el" href="namespaceoctomath.html#a36501ff9e6e55ea2dc94d5ca1f7506fb">octomath::operator&lt;&lt;()</a>, <a class="el" href="classoctomath_1_1Quaternion.html#a773737e48dfae34de81decea1d58a14c">octomath::Quaternion::Quaternion()</a>, <a class="el" href="classoctomath_1_1Vector3.html#a4f3b27f6eac5cad78c6ee7b870adada2">rotate_IP()</a>, and <a class="el" href="classoctomath_1_1Vector3.html#a7adce88a796626f8198267c49a181a9f">Vector3()</a>.</p>
 
 </div>
 </div>
@@ -1268,7 +1306,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomath.html">octomath</a></li><li class="navelem"><a class="el" href="classoctomath_1_1Vector3.html">Vector3</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

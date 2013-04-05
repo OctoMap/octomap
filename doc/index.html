@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -122,19 +123,19 @@ Changelog</h1>
 <p>See the file CHANGELOG.txt in the main folder or the <a href="https://raw.github.com/OctoMap/octomap/master/octomap/CHANGELOG.txt">latest version online</a>. </p>
 <h1><a class="anchor" id="gettingstarted_sec"></a>
 Getting Started</h1>
-<p>Jump right in and have a look at the main class <a class="el" href="classoctomap_1_1OcTree.html">octomap::OcTree</a> OcTree and the examples in src/octomap/simple.cpp. To integrate single measurements into the 3D map have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a3c1c2678e33a791df715affa6ea03dcd">OcTree::insertRay(...)</a>, to insert full 3D scans (pointclouds) please have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a5e0c99b7e2dfd178489d4a2f7deac5bb">OcTree::insertScan(...)</a>. Queries can be performed e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce">OcTree::search(...)</a> or <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#afc368d6ff93f40ee33eca3df0b8d1967">octomap::OcTree::castRay</a>(...) "OcTree::castRay(...)". The preferred way to batch-access or process nodes in an Octree is with the iterators <a class="el" href="classleaf__iterator.html">leaf_iterator</a>, <a class="el" href="classtree__iterator.html">tree_iterator</a>, or <a class="el" href="classleaf__bbx__iterator.html">leaf_bbx_iterator</a>.</p>
+<p>Jump right in and have a look at the main class <a class="el" href="classoctomap_1_1OcTree.html">octomap::OcTree</a> OcTree and the examples in src/octomap/simple.cpp. To integrate single measurements into the 3D map have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a3c1c2678e33a791df715affa6ea03dcd">OcTree::insertRay(...)</a>, to insert full 3D scans (pointclouds) please have a look at <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#af05b00ef0053171b454c856360d5e9e0">OcTree::insertPointCloud(...)</a>. Queries can be performed e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce">OcTree::search(...)</a> or <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#afc368d6ff93f40ee33eca3df0b8d1967">OcTree::castRay(...)</a>. The preferred way to batch-access or process nodes in an Octree is with the iterators <a class="el" href="classleaf__iterator.html">leaf_iterator</a>, <a class="el" href="classtree__iterator.html">tree_iterator</a>, or <a class="el" href="classleaf__bbx__iterator.html">leaf_bbx_iterator</a>.</p>
 <div class="image">
 <img src="uml_overview.png" alt="uml_overview.png"/>
 </div>
 <p>The <a class="el" href="classoctomap_1_1OcTree.html">OcTree</a> class is derived from <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html">OccupancyOcTreeBase</a>, with most functionality in the parent class. Also derive from OccupancyOcTreeBase if you you want to implement your own Octree and node classes. You can have a look at the classes <a class="el" href="classoctomap_1_1OcTreeStamped.html">OcTreeStamped</a> and <a class="el" href="classoctomap_1_1OcTreeNodeStamped.html">OcTreeNodeStamped</a> as examples. </p>
 <p>Start the 3D visualization with: <b>bin/octovis</b> </p>
-<p>You will find an example scan to load at <b>src/examples/scan.dat.bz2</b> (please bunzip2 it first) </p>
+<p>You will find an example 3D scan (please bunzip2 first) and an example OctoMap .bt file in the directory <b>share/data</b> to try. More data sets are available at <a href="http://ais.informatik.uni-freiburg.de/projects/datasets/octomap/">http://ais.informatik.uni-freiburg.de/projects/datasets/octomap/</a>. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

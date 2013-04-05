@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -140,67 +141,68 @@ $(document).ready(function(){initNavTree('octomap__types_8h_source.html','');});
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#ifndef OCTOMAP_TYPES_H</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define OCTOMAP_TYPES_H</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;list&gt;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Vector3_8h.html">octomap/math/Vector3.h</a>&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Pose6D_8h.html">octomap/math/Pose6D.h</a>&gt;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="octomap__deprecated_8h.html">octomap/octomap_deprecated.h</a>&gt;</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">namespace </span>octomap {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">   47</a></span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classoctomath_1_1Vector3.html" title="This class represents a three-dimensional vector.">octomath::Vector3</a>               <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a6bd8a48b69816a376984cc55af3887e3">   49</a></span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classoctomath_1_1Pose6D.html" title="This class represents a tree-dimensional pose of an object.">octomath::Pose6D</a>                <a class="code" href="namespaceoctomap.html#a6bd8a48b69816a376984cc55af3887e3" title="Use our Pose6D (float precision) as pose6d in octomap.">pose6d</a>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a8c7efe5aaf007f996de00755af1f604b">   51</a></span>&#160;  <span class="keyword">typedef</span> std::vector&lt;octomath::Vector3&gt;  <a class="code" href="namespaceoctomap.html#a8c7efe5aaf007f996de00755af1f604b">point3d_collection</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a435066a1f3df3ffeecc24db9cd3a5be0">   52</a></span>&#160;  <span class="keyword">typedef</span> std::list&lt;octomath::Vector3&gt;    <a class="code" href="namespaceoctomap.html#a435066a1f3df3ffeecc24db9cd3a5be0">point3d_list</a>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a9b950c5454456605858a92a7d317d7f2">   55</a></span>&#160;  <span class="keyword">typedef</span> std::pair&lt;point3d, double&gt; <a class="code" href="namespaceoctomap.html#a9b950c5454456605858a92a7d317d7f2" title="A voxel defined by its center point3d and its side length.">OcTreeVolume</a>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">//Macros for compiling with an without ROS (for output logging)</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">  #ifdef OCTOMAP_ROS</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #include &lt;ros/ros.h&gt;</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">    #define OCTOMAP_DEBUG         ROS_DEBUG</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_DEBUG_STR     ROS_DEBUG_STREAM</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING       ROS_WARN</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING_STR   ROS_WARN_STREAM</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR         ROS_ERROR</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR_STR     ROS_ERROR_STREAM</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">  #else</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor"></span>    <span class="comment">// no debug output if not in debug mode:</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">    #ifdef NDEBUG</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #ifndef OCTOMAP_NODEBUGOUT</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor"></span><span class="preprocessor">        #define OCTOMAP_NODEBUGOUT</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #endif</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #endif</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">    #ifdef OCTOMAP_NODEBUGOUT</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG(...)       (void)0</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG_STR(...)   (void)0</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #else</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#aa3366c19d4acb0dc9fa040c09f61774f">   82</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG(...)        fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a5934fb41deb9bd90f649482f839b2118">   83</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG_STR(args)   std::cerr &lt;&lt; args &lt;&lt; std::endl</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #endif</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a7727a9e67f921a2b7e79086e38e7ae06">   86</a></span>&#160;<span class="preprocessor">    #define OCTOMAP_WARNING(...)      fprintf(stderr, &quot;WARNING: &quot;), fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#ab0641214b665cad32c6f3c8f1cc8ff69">   87</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING_STR(args) std::cerr &lt;&lt; &quot;WARNING: &quot; &lt;&lt; args &lt;&lt; std::endl</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#abf66e030ee1f4496c01fdb47f0b14dda">   88</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR(...)        fprintf(stderr, &quot;ERROR: &quot;), fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a86314c002a60ea0964b947f5109ac75e">   89</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR_STR(args)   std::cerr &lt;&lt; &quot;ERROR: &quot; &lt;&lt; args &lt;&lt; std::endl</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #endif</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;list&gt;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Vector3_8h.html">octomap/math/Vector3.h</a>&gt;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Pose6D_8h.html">octomap/math/Pose6D.h</a>&gt;</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="octomap__deprecated_8h.html">octomap/octomap_deprecated.h</a>&gt;</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">namespace </span>octomap {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">   48</a></span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classoctomath_1_1Vector3.html" title="This class represents a three-dimensional vector.">octomath::Vector3</a>               <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a6bd8a48b69816a376984cc55af3887e3">   50</a></span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classoctomath_1_1Pose6D.html" title="This class represents a tree-dimensional pose of an object.">octomath::Pose6D</a>                <a class="code" href="namespaceoctomap.html#a6bd8a48b69816a376984cc55af3887e3" title="Use our Pose6D (float precision) as pose6d in octomap.">pose6d</a>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a8c7efe5aaf007f996de00755af1f604b">   52</a></span>&#160;  <span class="keyword">typedef</span> std::vector&lt;octomath::Vector3&gt;  <a class="code" href="namespaceoctomap.html#a8c7efe5aaf007f996de00755af1f604b">point3d_collection</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a435066a1f3df3ffeecc24db9cd3a5be0">   53</a></span>&#160;  <span class="keyword">typedef</span> std::list&lt;octomath::Vector3&gt;    <a class="code" href="namespaceoctomap.html#a435066a1f3df3ffeecc24db9cd3a5be0">point3d_list</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="code" href="namespaceoctomap.html#a9b950c5454456605858a92a7d317d7f2">   56</a></span>&#160;  <span class="keyword">typedef</span> std::pair&lt;point3d, double&gt; <a class="code" href="namespaceoctomap.html#a9b950c5454456605858a92a7d317d7f2" title="A voxel defined by its center point3d and its side length.">OcTreeVolume</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="comment">//Macros for compiling with an without ROS (for output logging)</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">  #ifdef OCTOMAP_ROS</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #include &lt;ros/ros.h&gt;</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">    #define OCTOMAP_DEBUG         ROS_DEBUG</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_DEBUG_STR     ROS_DEBUG_STREAM</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING       ROS_WARN</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING_STR   ROS_WARN_STREAM</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR         ROS_ERROR</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR_STR     ROS_ERROR_STREAM</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">  #else</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor"></span>    <span class="comment">// no debug output if not in debug mode:</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">    #ifdef NDEBUG</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #ifndef OCTOMAP_NODEBUGOUT</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor"></span><span class="preprocessor">        #define OCTOMAP_NODEBUGOUT</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #endif</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #endif</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">    #ifdef OCTOMAP_NODEBUGOUT</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG(...)       (void)0</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG_STR(...)   (void)0</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #else</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#aa3366c19d4acb0dc9fa040c09f61774f">   83</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG(...)        fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a5934fb41deb9bd90f649482f839b2118">   84</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">      #define OCTOMAP_DEBUG_STR(args)   std::cerr &lt;&lt; args &lt;&lt; std::endl</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #endif</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a7727a9e67f921a2b7e79086e38e7ae06">   87</a></span>&#160;<span class="preprocessor">    #define OCTOMAP_WARNING(...)      fprintf(stderr, &quot;WARNING: &quot;), fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#ab0641214b665cad32c6f3c8f1cc8ff69">   88</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_WARNING_STR(args) std::cerr &lt;&lt; &quot;WARNING: &quot; &lt;&lt; args &lt;&lt; std::endl</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#abf66e030ee1f4496c01fdb47f0b14dda">   89</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR(...)        fprintf(stderr, &quot;ERROR: &quot;), fprintf(stderr, __VA_ARGS__), fflush(stderr)</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="code" href="octomap__types_8h.html#a86314c002a60ea0964b947f5109ac75e">   90</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_ERROR_STR(args)   std::cerr &lt;&lt; &quot;ERROR: &quot; &lt;&lt; args &lt;&lt; std::endl</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #endif</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_acb7e2643aa3a139d302c662c8abe061.html">octomap</a></li><li class="navelem"><a class="el" href="octomap__types_8h.html">octomap_types.h</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:23 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -150,19 +151,23 @@ $(document).ready(function(){initNavTree('functions_func_0x69.html','');});
 <li>increaseCount()
 : <a class="el" href="classoctomap_1_1CountingOcTreeNode.html#a56074de4541fd8bbb525092ee273906d">octomap::CountingOcTreeNode</a>
 </li>
+<li>init()
+: <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ac054acf73b2f7e8f509c7fa695169aa8">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;</a>
+</li>
 <li>initLUT()
 : <a class="el" href="classoctomap_1_1OcTreeLUT.html#a82d121c95a140a1093803f0eccf97cb6">octomap::OcTreeLUT</a>
+</li>
+<li>insertPointCloud()
+: <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a2b373229892cc3cbf11ebba2002de47a">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
+</li>
+<li>insertPointCloudRays()
+: <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a82a4f48761792bc15549eaa6d3fd03b9">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
 </li>
 <li>insertRay()
 : <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a3c1c2678e33a791df715affa6ea03dcd">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
 </li>
 <li>insertScan()
-: <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#abee5643f1a86bd2a9b2de64010c0fcc1">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
-, <a class="el" href="classoctomap_1_1MapCollection.html#a59d04b00cf144d5b1f09852d429ddf35">octomap::MapCollection&lt; MAPNODE &gt;</a>
-, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a5e0c99b7e2dfd178489d4a2f7deac5bb">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
-</li>
-<li>insertScanNaive()
-: <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ab21b9ec31bada18b49d4fe16be34f5de">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
+: <a class="el" href="classoctomap_1_1MapCollection.html#a59d04b00cf144d5b1f09852d429ddf35">octomap::MapCollection&lt; MAPNODE &gt;</a>
 </li>
 <li>integrateHit()
 : <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ab6a76668ab47e521b5162c825f2eb35d">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
@@ -177,15 +182,15 @@ $(document).ready(function(){initNavTree('functions_func_0x69.html','');});
 : <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#aaa4024dfb0d825e8e10299ad9d55ff8f">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>
 </li>
 <li>integrateNodeColor()
-: <a class="el" href="classoctomap_1_1ColorOcTree.html#ace682377b828ab92505b393612a3712f">octomap::ColorOcTree</a>
+: <a class="el" href="classoctomap_1_1ColorOcTree.html#a95d3f18592fd8e41d35a797dbba21a58">octomap::ColorOcTree</a>
 </li>
 <li>inv()
 : <a class="el" href="classoctomath_1_1Pose6D.html#ab03872542bb21a55e2e9ef1525c1d5eb">octomath::Pose6D</a>
 , <a class="el" href="classoctomath_1_1Quaternion.html#af0618cf84f6b6e926904d4e7a95e77e9">octomath::Quaternion</a>
 </li>
 <li>inv_IP()
-: <a class="el" href="classoctomath_1_1Quaternion.html#ab7a78fb4b456ecab698ad6249617a3aa">octomath::Quaternion</a>
-, <a class="el" href="classoctomath_1_1Pose6D.html#aae3d5d4844b6b9d415dfd26de3b3ba07">octomath::Pose6D</a>
+: <a class="el" href="classoctomath_1_1Pose6D.html#aae3d5d4844b6b9d415dfd26de3b3ba07">octomath::Pose6D</a>
+, <a class="el" href="classoctomath_1_1Quaternion.html#ab7a78fb4b456ecab698ad6249617a3aa">octomath::Quaternion</a>
 </li>
 <li>isColorSet()
 : <a class="el" href="classoctomap_1_1ColorOcTreeNode.html#afd5522fb4e337f0dd9dfdb421ee6a7f1">octomap::ColorOcTreeNode</a>
@@ -194,16 +199,16 @@ $(document).ready(function(){initNavTree('functions_func_0x69.html','');});
 : <a class="el" href="classtree__iterator.html#a39daaa4e901e96d4ea73e0a555da7e10">tree_iterator</a>
 </li>
 <li>isNodeAtThreshold()
-: <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#abede503cffd5a0b53b31a2fddb0059c1">octomap::AbstractOccupancyOcTree</a>
+: <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a05ea3e5bcb70168fc3a231d9cc2ec778">octomap::AbstractOccupancyOcTree</a>
 </li>
 <li>isNodeOccupied()
-: <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#abbc4f4678cabdd007e4d4fdf89b1a9bf">octomap::AbstractOccupancyOcTree</a>
+: <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a13d49abf341b4aeb3b2a10faac14e472">octomap::AbstractOccupancyOcTree</a>
 </li>
 <li>isOccupied()
-: <a class="el" href="classoctomap_1_1MapCollection.html#a6db9605f5b5fe8a2c4fbb8f23fbb4552">octomap::MapCollection&lt; MAPNODE &gt;</a>
+: <a class="el" href="classoctomap_1_1MapCollection.html#ab704f311c5110847437d237192405124">octomap::MapCollection&lt; MAPNODE &gt;</a>
 </li>
 <li>iterator_base()
-: <a class="el" href="classiterator__base.html#aa6ec8de8d6bf58cae21510d946befbb9">iterator_base</a>
+: <a class="el" href="classiterator__base.html#af9c9f54fd4c4ce95eeb9b1c331c48e18">iterator_base</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -211,7 +216,7 @@ $(document).ready(function(){initNavTree('functions_func_0x69.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

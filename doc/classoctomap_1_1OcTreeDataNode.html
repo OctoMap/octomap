@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -140,6 +141,7 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa32103a2127a4e39f127f3c0a881693e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeDataNode.html#aa32103a2127a4e39f127f3c0a881693e">childExists</a> (unsigned int i) const </td></tr>
+<tr class="memdesc:aa32103a2127a4e39f127f3c0a881693e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safe test to check of the i-th child exists, first tests if there are any children.  <a href="#aa32103a2127a4e39f127f3c0a881693e"></a><br/></td></tr>
 <tr class="memitem:aa645a4c3cc6e80ad8df94b695df9d008"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeDataNode.html#aa645a4c3cc6e80ad8df94b695df9d008">collapsible</a> () const </td></tr>
 <tr class="memdesc:aa645a4c3cc6e80ad8df94b695df9d008"><td class="mdescLeft">&#160;</td><td class="mdescRight">A node is collapsible if all children exist, don't have children of their own and have the same occupancy value.  <a href="#aa645a4c3cc6e80ad8df94b695df9d008"></a><br/></td></tr>
 <tr class="memitem:afd691fd4b43d04bbe1484e50da32f55d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeDataNode.html#afd691fd4b43d04bbe1484e50da32f55d">createChild</a> (unsigned int i)</td></tr>
@@ -326,6 +328,8 @@ template&lt;typename T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Safe test to check of the i-th child exists, first tests if there are any children. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the i-th child exists </dd></dl>
 
 <p>Referenced by <a class="el" href="classoctomap_1_1CountingOcTree.html#aaf8af0604f5f7adfe0ec1127547d82b6">octomap::CountingOcTree::getCentersMinHitsRecurs()</a>, <a class="el" href="test__iterators_8cpp.html#a6d0d0c5419db07d6a4bafb7ab02fb5e6">getLeafNodesRecurs()</a>, <a class="el" href="test__iterators_8cpp.html#ade5dd65b1a3ed7673eab3afb2d8dd9d6">getVoxelsRecurs()</a>, <a class="el" href="classoctomap_1_1ColorOcTree.html#a9ee485283eb9a761e3b212465b4f3012">octomap::ColorOcTree::updateInnerOccupancyRecurs()</a>, and <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>.</p>
@@ -700,7 +704,7 @@ template&lt;typename T&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li><li class="navelem"><a class="el" href="classoctomap_1_1OcTreeDataNode.html">OcTreeDataNode</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

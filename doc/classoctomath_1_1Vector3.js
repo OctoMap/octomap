@@ -9,6 +9,7 @@ var classoctomath_1_1Vector3 =
     [ "distanceXY", "classoctomath_1_1Vector3.html#a34e0860ec771d19e8f5b93bcc4e84fb2", null ],
     [ "dot", "classoctomath_1_1Vector3.html#a344a6ecd95076751dac24d502af26f7f", null ],
     [ "norm", "classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a", null ],
+    [ "norm_sq", "classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4", null ],
     [ "normalize", "classoctomath_1_1Vector3.html#abf794bc14ccee08f69262448f546fca4", null ],
     [ "normalized", "classoctomath_1_1Vector3.html#ad78cb98b2a7c5f62ad7aeb2f27aa1ff4", null ],
     [ "operator()", "classoctomath_1_1Vector3.html#a4369d95d32cdfa0333f76370f7faca59", null ],

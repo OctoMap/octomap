@@ -1,16 +1,16 @@
 <map id="octomap::OcTreeBaseSE&lt; NODE &gt;" name="octomap::OcTreeBaseSE&lt; NODE &gt;">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBase.html" title="octomap::OcTreeBase\l\&lt; NODE \&gt;" alt="" coords="1537,277,1689,323"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; NODE, AbstractOcTree \&gt;" alt="" coords="1257,210,1441,257"/>
-<area shape="rect" id="node6" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="905,59,1076,88"/>
-<area shape="rect" id="node8" title="STL class." alt="" coords="661,59,741,88"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBase.html" title="octomap::OcTreeBase\l\&lt; NODE \&gt;" alt="" coords="1452,286,1604,333"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; NODE, AbstractOcTree \&gt;" alt="" coords="1215,210,1399,257"/>
+<area shape="rect" id="node6" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="863,59,1033,88"/>
+<area shape="rect" id="node8" title="STL class." alt="" coords="645,59,725,88"/>
 <area shape="rect" id="node10" title="STL class." alt="" coords="340,50,465,97"/>
-<area shape="rect" id="node12" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator." alt="" coords="932,219,1049,248"/>
-<area shape="rect" id="node14" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="653,165,749,195"/>
-<area shape="rect" id="node28" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree." alt="" coords="945,112,1036,141"/>
-<area shape="rect" id="node31" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs)." alt="" coords="945,165,1036,195"/>
+<area shape="rect" id="node12" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator." alt="" coords="889,112,1007,141"/>
+<area shape="rect" id="node14" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="637,165,733,195"/>
+<area shape="rect" id="node22" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree." alt="" coords="903,165,993,195"/>
+<area shape="rect" id="node25" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs)." alt="" coords="903,219,993,248"/>
 <area shape="rect" id="node18" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="5,165,192,195"/>
-<area shape="rect" id="node22" href="$classoctomap_1_1KeyRay.html" title="octomap::KeyRay" alt="" coords="928,393,1053,423"/>
-<area shape="rect" id="node26" href="$classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing." alt="" coords="329,393,476,423"/>
-<area shape="rect" id="node34" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="927,325,1055,355"/>
-<area shape="rect" id="node39" href="$classoctomap_1_1OcTreeLUT.html" title="Implements a lookup table that allows to computer keys of neighbor cells directly, see: Samet 1989, &quot;Implementing ray tracing with octrees and neighbor finding&quot;." alt="" coords="1540,461,1687,491"/>
+<area shape="rect" id="node28" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="884,325,1012,355"/>
+<area shape="rect" id="node32" href="$classoctomap_1_1KeyRay.html" title="octomap::KeyRay" alt="" coords="623,407,748,436"/>
+<area shape="rect" id="node36" href="$classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing." alt="" coords="25,407,172,436"/>
+<area shape="rect" id="node41" href="$classoctomap_1_1OcTreeLUT.html" title="Implements a lookup table that allows to computer keys of neighbor cells directly, see: Samet 1989, &quot;Implementing ray tracing with octrees and neighbor finding&quot;." alt="" coords="1455,483,1601,512"/>
 </map>

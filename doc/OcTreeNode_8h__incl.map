@@ -1,10 +1,10 @@
 <map id="include/octomap/OcTreeNode.h" name="include/octomap/OcTreeNode.h">
-<area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="171,160,293,189"/>
-<area shape="rect" id="node25" href="$octomap__utils_8h.html" title="octomap_utils.h" alt="" coords="5,315,120,344"/>
-<area shape="rect" id="node28" href="$OcTreeDataNode_8h.html" title="OcTreeDataNode.h" alt="" coords="331,83,464,112"/>
-<area shape="rect" id="node9" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="105,392,271,421"/>
-<area shape="rect" id="node15" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="209,237,375,267"/>
-<area shape="rect" id="node23" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="399,237,607,267"/>
-<area shape="rect" id="node18" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="260,315,356,344"/>
-<area shape="rect" id="node35" href="$OcTreeDataNode_8hxx.html" title="octomap/OcTreeDataNode.hxx" alt="" coords="317,160,520,189"/>
+<area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="341,160,464,189"/>
+<area shape="rect" id="node27" href="$octomap__utils_8h.html" title="octomap_utils.h" alt="" coords="5,315,120,344"/>
+<area shape="rect" id="node30" href="$OcTreeDataNode_8h.html" title="OcTreeDataNode.h" alt="" coords="445,83,579,112"/>
+<area shape="rect" id="node11" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="100,392,265,421"/>
+<area shape="rect" id="node17" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="195,237,360,267"/>
+<area shape="rect" id="node25" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="445,237,653,267"/>
+<area shape="rect" id="node20" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="251,315,347,344"/>
+<area shape="rect" id="node37" href="$OcTreeDataNode_8hxx.html" title="octomap/OcTreeDataNode.hxx" alt="" coords="565,160,768,189"/>
 </map>

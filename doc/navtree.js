@@ -2,6 +2,7 @@ var NAVTREE =
 [
   [ "octomap", "index.html", [
     [ "OctoMap", "index.html", null ],
+    [ "Octomap - A probabilistic, flexible, and compact 3D mapping library for robotic systems", "md_README.html", null ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -39,13 +40,13 @@ var NAVTREEINDEX =
 [
 "AbstractOcTree_8cpp.html",
 "classleaf__iterator.html#a09bee68e7bc2fd77d5ddb17e06feecc0",
-"classoctomap_1_1ColorOcTree.html#ac7b422a040cdd65ae18e26334bb03f35",
-"classoctomap_1_1MapCollection.html#a8a44117a31d9042d3464cd0b625d7699",
-"classoctomap_1_1OcTreeBase.html#a9736e60909414430b8d4acac397c6942",
-"classoctomap_1_1OcTreeBaseSE.html#af1ef3f9fa8a01299183c994c37d8308a",
-"classoctomap_1_1OcTreeStamped.html#ab6a76668ab47e521b5162c825f2eb35d",
-"classoctomap_1_1OccupancyOcTreeBase.html#afca4716278c2e810da682362f979291c",
-"dir_68267d1309a1af8e8297ef4c3efbcdba.html"
+"classoctomap_1_1ColorOcTree.html#ae38720a5b019b0aeece66d51dfb1e138",
+"classoctomap_1_1MapNode.html#ac3670ee7d6d4d4a26a5c55f00e0f87b0",
+"classoctomap_1_1OcTreeBaseImpl.html#a0d644d0caf31705312a94d8091ead298",
+"classoctomap_1_1OcTreeLUT.html#aa7cb7355aa82995f5412013fed5afc49",
+"classoctomap_1_1OccupancyOcTreeBase.html#a31c53676e6900005297812fbc78b10e0",
+"classoctomath_1_1Pose6D.html#a0956d8a58f692f75920da32ac15e98f0",
+"octomap__types_8h.html#a5934fb41deb9bd90f649482f839b2118"
 ];
 
 var navTreeSubIndices = new Array();

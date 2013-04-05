@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -141,14 +142,14 @@ $(document).ready(function(){initNavTree('octomap__deprecated_8h_source.html',''
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define OCTOMAP_DEPRECATED_H</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">// define multi-platform deprecation mechanism</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#ifndef DEPRECATED</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#ifndef OCTOMAP_DEPRECATED</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #ifdef __GNUC__</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define DEPRECATED(func) func __attribute__ ((deprecated))</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_DEPRECATED(func) func __attribute__ ((deprecated))</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #elif defined(_MSC_VER)</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define DEPRECATED(func) __declspec(deprecated) func</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_DEPRECATED(func) __declspec(deprecated) func</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #else</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #pragma message(&quot;WARNING: You need to implement DEPRECATED for this compiler&quot;)</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="code" href="octomap__deprecated_8h.html#aaf225a2b96038de3a42d61a1fa63654b">   45</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define DEPRECATED(func) func</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #pragma message(&quot;WARNING: You need to implement OCTOMAP_DEPRECATED for this compiler&quot;)</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="code" href="octomap__deprecated_8h.html#a4dc2ae18ec6d0c87c135e59ce855d1c1">   45</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">    #define OCTOMAP_DEPRECATED(func) func</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor"></span><span class="preprocessor">  #endif</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor"></span></div>
@@ -159,7 +160,7 @@ $(document).ready(function(){initNavTree('octomap__deprecated_8h_source.html',''
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_acb7e2643aa3a139d302c662c8abe061.html">octomap</a></li><li class="navelem"><a class="el" href="octomap__deprecated_8h.html">octomap_deprecated.h</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:23 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

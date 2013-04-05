@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -170,59 +171,59 @@ $(document).ready(function(){initNavTree('OcTreeDataNode_8h_source.html','');});
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#afd691fd4b43d04bbe1484e50da32f55d" title="initialize i-th child, allocate children array if needed">createChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#aa32103a2127a4e39f127f3c0a881693e">childExists</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>* <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a12641b3a4477f43ae2709fa63927fd98">getChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">const</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>* <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a12641b3a4477f43ae2709fa63927fd98">getChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a134828fdbe7ab094c17d14bebb03d027">hasChildren</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#aa645a4c3cc6e80ad8df94b695df9d008" title="A node is collapsible if all children exist, don&#39;t have children of their own and have the same occup...">collapsible</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2393dc680be80cc96c867209cddd633d" title="Deletes the i-th child of the node.">deleteChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="comment">// -- pruning of children  -----------------------</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#aa32103a2127a4e39f127f3c0a881693e" title="Safe test to check of the i-th child exists, first tests if there are any children.">childExists</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>* <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a12641b3a4477f43ae2709fa63927fd98">getChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">const</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>* <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a12641b3a4477f43ae2709fa63927fd98">getChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a134828fdbe7ab094c17d14bebb03d027">hasChildren</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#aa645a4c3cc6e80ad8df94b695df9d008" title="A node is collapsible if all children exist, don&#39;t have children of their own and have the same occup...">collapsible</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2393dc680be80cc96c867209cddd633d" title="Deletes the i-th child of the node.">deleteChild</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a8eee55feb9112c168e79d30f9927f5f3" title="Prunes a node when it is collapsible.">pruneNode</a>();</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a464499247802a507b6f88bd38ae57658" title="Expands a node (reverse of pruning): All children are created and their occupancy probability is set ...">expandNode</a>();</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a893b367d8111bca791d769fb9efdbcb4">  116</a></span>&#160;    T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a893b367d8111bca791d769fb9efdbcb4">getValue</a>()<span class="keyword"> const</span>{<span class="keywordflow">return</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a>;};</div>
-<div class="line"><a name="l00118"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a3a947574d6345bc32ae664a1a259d41b">  118</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a3a947574d6345bc32ae664a1a259d41b" title="sets value to be stored in the node">setValue</a>(T v) {<a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a> = v;};</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="comment">// file IO:</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="comment">// -- pruning of children  -----------------------</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a8eee55feb9112c168e79d30f9927f5f3" title="Prunes a node when it is collapsible.">pruneNode</a>();</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a464499247802a507b6f88bd38ae57658" title="Expands a node (reverse of pruning): All children are created and their occupancy probability is set ...">expandNode</a>();</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a893b367d8111bca791d769fb9efdbcb4">  118</a></span>&#160;    T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a893b367d8111bca791d769fb9efdbcb4">getValue</a>()<span class="keyword"> const</span>{<span class="keywordflow">return</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a>;};</div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a3a947574d6345bc32ae664a1a259d41b">  120</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a3a947574d6345bc32ae664a1a259d41b" title="sets value to be stored in the node">setValue</a>(T v) {<a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a> = v;};</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    std::istream&amp; <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a8f8a294b44860a4e12acbe35d9fb9f0f" title="Read node from binary stream (incl.">readValue</a>(std::istream &amp;s);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    std::ostream&amp; <a class="code" href="classoctomap_1_1OcTreeDataNode.html#af88ccfc2949d9cf7da2562c0cddb6c0b" title="Write node to binary stream (incl float value), recursively continue with all children.">writeValue</a>(std::ostream &amp;s) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
-<div class="line"><a name="l00143"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a205989d8ce9190edd5f1a3d7ac036243">  143</a></span>&#160;    <span class="keyword">typedef</span> T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a205989d8ce9190edd5f1a3d7ac036243" title="Make the templated data type available from the outside.">DataType</a>;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a7b587993f7007728ef07b0eb6a9a8b27">allocChildren</a>();</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#af417a9c3f0e5bcab2ee1290cb101552b">  150</a></span>&#160;    <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>** <a class="code" href="classoctomap_1_1OcTreeDataNode.html#af417a9c3f0e5bcab2ee1290cb101552b" title="pointer to array of children, may be NULL">children</a>;</div>
-<div class="line"><a name="l00152"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6">  152</a></span>&#160;    T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a>;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  };</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="comment">// file IO:</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::istream&amp; <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a8f8a294b44860a4e12acbe35d9fb9f0f" title="Read node from binary stream (incl.">readValue</a>(std::istream &amp;s);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    std::ostream&amp; <a class="code" href="classoctomap_1_1OcTreeDataNode.html#af88ccfc2949d9cf7da2562c0cddb6c0b" title="Write node to binary stream (incl float value), recursively continue with all children.">writeValue</a>(std::ostream &amp;s) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a205989d8ce9190edd5f1a3d7ac036243">  145</a></span>&#160;    <span class="keyword">typedef</span> T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a205989d8ce9190edd5f1a3d7ac036243" title="Make the templated data type available from the outside.">DataType</a>;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a7b587993f7007728ef07b0eb6a9a8b27">allocChildren</a>();</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#af417a9c3f0e5bcab2ee1290cb101552b">  152</a></span>&#160;    <a class="code" href="classoctomap_1_1OcTreeDataNode.html" title="Basic node in the OcTree that can hold arbitrary data of type T in value.">OcTreeDataNode&lt;T&gt;</a>** <a class="code" href="classoctomap_1_1OcTreeDataNode.html#af417a9c3f0e5bcab2ee1290cb101552b" title="pointer to array of children, may be NULL">children</a>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6">  154</a></span>&#160;    T <a class="code" href="classoctomap_1_1OcTreeDataNode.html#a2d312f0c46506809e97ffa4d6da00ad6" title="stored data (payload)">value</a>;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;} <span class="comment">// end namespace</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  };</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OcTreeDataNode_8hxx.html">octomap/OcTreeDataNode.hxx</a>&quot;</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;} <span class="comment">// end namespace</span></div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="OcTreeDataNode_8hxx.html">octomap/OcTreeDataNode.hxx</a>&quot;</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_acb7e2643aa3a139d302c662c8abe061.html">octomap</a></li><li class="navelem"><a class="el" href="OcTreeDataNode_8h.html">OcTreeDataNode.h</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:23 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -142,6 +143,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa100bf893d73fe6c490df3e2c454ce5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeNode.html#aa100bf893d73fe6c490df3e2c454ce5c">addValue</a> (const float &amp;p)</td></tr>
 <tr class="memdesc:aa100bf893d73fe6c490df3e2c454ce5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds p to the node's logOdds value (with no boundary / threshold checking!)  <a href="#aa100bf893d73fe6c490df3e2c454ce5c"></a><br/></td></tr>
 <tr class="memitem:aa32103a2127a4e39f127f3c0a881693e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeDataNode.html#aa32103a2127a4e39f127f3c0a881693e">childExists</a> (unsigned int i) const</td></tr>
+<tr class="memdesc:aa32103a2127a4e39f127f3c0a881693e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safe test to check of the i-th child exists, first tests if there are any children.  <a href="#aa32103a2127a4e39f127f3c0a881693e"></a><br/></td></tr>
 <tr class="memitem:aa645a4c3cc6e80ad8df94b695df9d008"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeDataNode.html#aa645a4c3cc6e80ad8df94b695df9d008">collapsible</a> () const</td></tr>
 <tr class="memdesc:aa645a4c3cc6e80ad8df94b695df9d008"><td class="mdescLeft">&#160;</td><td class="mdescRight">A node is collapsible if all children exist, don't have children of their own and have the same occupancy value.  <a href="#aa645a4c3cc6e80ad8df94b695df9d008"></a><br/></td></tr>
 <tr class="memitem:ae2fe9812cbc38f68cda51978e27a8fad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeNode.html#ae2fe9812cbc38f68cda51978e27a8fad">createChild</a> (unsigned int i)</td></tr>
@@ -313,6 +315,8 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Safe test to check of the i-th child exists, first tests if there are any children. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the i-th child exists </dd></dl>
 
 <p>Referenced by <a class="el" href="classoctomap_1_1ColorOcTreeNode.html#a3cb1a13ab01869930543a1212b60aaa5">octomap::ColorOcTreeNode::getAverageChildColor()</a>, <a class="el" href="classoctomap_1_1OcTreeNode.html#a39c69b105873fbfb3edb6f1a41457fc5">getMaxChildLogOdds()</a>, <a class="el" href="classoctomap_1_1OcTreeNode.html#a3e17df95db13e73e1e5e941b8e3bfb9b">getMeanChildLogOdds()</a>, and <a class="el" href="classoctomap_1_1ColorOcTreeNode.html#ab54f198c66f654260159bff5422f21f3">octomap::ColorOcTreeNode::writeValue()</a>.</p>
@@ -902,7 +906,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li><li class="navelem"><a class="el" href="classoctomap_1_1OcTreeNode.html">OcTreeNode</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

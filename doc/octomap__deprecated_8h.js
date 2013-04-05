@@ -1,4 +1,4 @@
 var octomap__deprecated_8h =
 [
-    [ "DEPRECATED", "octomap__deprecated_8h.html#aaf225a2b96038de3a42d61a1fa63654b", null ]
+    [ "OCTOMAP_DEPRECATED", "octomap__deprecated_8h.html#a4dc2ae18ec6d0c87c135e59ce855d1c1", null ]
 ];

@@ -1,6 +1,6 @@
 <map id="include/octomap/octomap_types.h" name="include/octomap/octomap_types.h">
-<area shape="rect" id="node7" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="145,256,311,285"/>
-<area shape="rect" id="node13" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="121,101,287,131"/>
-<area shape="rect" id="node21" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="361,101,569,131"/>
-<area shape="rect" id="node16" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="67,179,163,208"/>
+<area shape="rect" id="node9" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="227,256,392,285"/>
+<area shape="rect" id="node15" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="203,101,368,131"/>
+<area shape="rect" id="node23" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="443,101,651,131"/>
+<area shape="rect" id="node18" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="148,179,244,208"/>
 </map>

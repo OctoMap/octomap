@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.5.3</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -43,6 +43,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -175,7 +176,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac9f2518a6a29c24aefb1d5dcc7c3cd4d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#ac9f2518a6a29c24aefb1d5dcc7c3cd4d">readBinary</a> (const std::string &amp;filename)</td></tr>
 <tr class="memdesc:ac9f2518a6a29c24aefb1d5dcc7c3cd4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads <a class="el" href="classoctomap_1_1OcTree.html" title="octomap main map data structure, stores 3D occupancy grid map in an OcTree.">OcTree</a> from a binary file.  <a href="#ac9f2518a6a29c24aefb1d5dcc7c3cd4d"></a><br/></td></tr>
 <tr class="memitem:ac9a5d4f9b4bc84f029df04a5f8202270"><td class="memItemLeft" align="right" valign="top">virtual std::istream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#ac9a5d4f9b4bc84f029df04a5f8202270">readBinaryData</a> (std::istream &amp;s)=0</td></tr>
-<tr class="memdesc:ac9a5d4f9b4bc84f029df04a5f8202270"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the actual data, implemented in <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ac0c3b21746b1034254779db716cf8b22" title="Reads only the data (=tree structure) from the input stream.">OccupancyOcTreeBase::readBinaryData()</a>  <a href="#ac9a5d4f9b4bc84f029df04a5f8202270"></a><br/></td></tr>
+<tr class="memdesc:ac9a5d4f9b4bc84f029df04a5f8202270"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the actual data, implemented in <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ac0c3b21746b1034254779db716cf8b22" title="Reads only the data (=complete tree structure) from the input stream.">OccupancyOcTreeBase::readBinaryData()</a>  <a href="#ac9a5d4f9b4bc84f029df04a5f8202270"></a><br/></td></tr>
 <tr class="memitem:a70038bf4fd0745f5f3c60f901964a934"><td class="memItemLeft" align="right" valign="top">virtual std::istream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOcTree.html#a70038bf4fd0745f5f3c60f901964a934">readData</a> (std::istream &amp;s)=0</td></tr>
 <tr class="memdesc:a70038bf4fd0745f5f3c60f901964a934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read all nodes from the input stream (without file header), for this the tree needs to be already created.  <a href="#a70038bf4fd0745f5f3c60f901964a934"></a><br/></td></tr>
 <tr class="memitem:a754f6a8a72b55548fbb857f799e4157d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a754f6a8a72b55548fbb857f799e4157d">setClampingThresMax</a> (double thresProb)</td></tr>
@@ -1263,7 +1264,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reads the actual data, implemented in <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ac0c3b21746b1034254779db716cf8b22" title="Reads only the data (=tree structure) from the input stream.">OccupancyOcTreeBase::readBinaryData()</a> </p>
+<p>Reads the actual data, implemented in <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ac0c3b21746b1034254779db716cf8b22" title="Reads only the data (=complete tree structure) from the input stream.">OccupancyOcTreeBase::readBinaryData()</a> </p>
 
 <p>Implemented in <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ac0c3b21746b1034254779db716cf8b22">octomap::OccupancyOcTreeBase&lt; NODE &gt;</a>.</p>
 
@@ -2247,7 +2248,7 @@ Static Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li><li class="navelem"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html">AbstractOccupancyOcTree</a></li>
-    <li class="footer">Generated on Mon Jan 21 2013 15:25:47 for octomap by
+    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

@@ -63,9 +63,9 @@ var hierarchy =
     [ "octomap::ScanGraph", "classoctomap_1_1ScanGraph.html", null ],
     [ "octomap::ScanNode", "classoctomap_1_1ScanNode.html", null ],
     [ "iterator_base::StackElement", "structiterator__base_1_1StackElement.html", null ],
-    [ "octomap::OcTreeStamped::StaticMemberInitializer", "classoctomap_1_1OcTreeStamped_1_1StaticMemberInitializer.html", null ],
     [ "octomap::ColorOcTree::StaticMemberInitializer", "classoctomap_1_1ColorOcTree_1_1StaticMemberInitializer.html", null ],
-    [ "octomap::OcTree::StaticMemberInitializer", "classoctomap_1_1OcTree_1_1StaticMemberInitializer.html", null ],
     [ "octomap::CountingOcTree::StaticMemberInitializer", "classoctomap_1_1CountingOcTree_1_1StaticMemberInitializer.html", null ],
+    [ "octomap::OcTreeStamped::StaticMemberInitializer", "classoctomap_1_1OcTreeStamped_1_1StaticMemberInitializer.html", null ],
+    [ "octomap::OcTree::StaticMemberInitializer", "classoctomap_1_1OcTree_1_1StaticMemberInitializer.html", null ],
     [ "octomath::Vector3", "classoctomath_1_1Vector3.html", null ]
 ];
