@@ -40,7 +40,7 @@ CameraFollowMode::~CameraFollowMode() {
 
 void CameraFollowMode::jumpToFrame(unsigned int frame) {
   if(m_followRobotTrajectory) {
-    if(frame >= 0 && frame <= m_scan_graph->size()) {
+    if(frame <= m_scan_graph->size()) {
       m_current_scan = frame;
       octomath::Pose6D pose = m_scan_graph->getNodeByID(frame-1)->pose;
       emit changeCamPose(pose);
