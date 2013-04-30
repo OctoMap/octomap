@@ -429,14 +429,14 @@ namespace octomap {
   }
   
   template <class NODE>
-  int OccupancyOcTreeBase<NODE>::getNormals(const point3d& point, std::vector<point3d>& normals,
+  bool OccupancyOcTreeBase<NODE>::getNormals(const point3d& point, std::vector<point3d>& normals,
 																						bool unknownStatus) const {
 		normals.clear();
 			
 		OcTreeKey init_key;
 		if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(point, init_key) ) {
 			OCTOMAP_WARNING_STR("Voxel out of bounds");
-		  return -1;
+		  return false;
 		}
 		
 		int vertex_values[8];
@@ -483,10 +483,9 @@ namespace octomap {
 	  
 		// All vertices are occupied or free resulting in no normal
 		if (edgeTable[cube_index] == 0)
-			return 0;
+			return true;
 		
 		// No interpolation is done yet, we use vertexList in <MCTables.h>.
-		int ntriang = 0;
 		for(int i = 0; triTable[cube_index][i] != -1; i += 3){
 			point3d p1 = vertexList[triTable[cube_index][i  ]];
 			point3d p2 = vertexList[triTable[cube_index][i+1]];
@@ -497,10 +496,9 @@ namespace octomap {
 			// Right hand side cross product to retreive the normal in the good
 			// direction (pointing to the free nodes).
 			normals.push_back(v1.cross(v2).normalize());
-			++ntriang;
 		}
 	  
-	  return ntriang;
+	  return true;
   }
   
   template <class NODE>

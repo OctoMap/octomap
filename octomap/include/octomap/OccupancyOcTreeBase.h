@@ -287,9 +287,9 @@ namespace octomap {
 		 * @param[in] voxel for which retreive the normals
 		 * @param[out] triangles normals
 		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
-		 * @return number of triangles returned in [0, 5]. If -1, the voxel is out of bound.
+		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
 		 */
-		int getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
+		bool getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
 	
     //-- set BBX limit (limits tree updates to this bounding box)
 

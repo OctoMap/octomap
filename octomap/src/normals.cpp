@@ -99,11 +99,11 @@ int main(int argc, char** argv) {
 	result = tree.search(query);
 	
   vector<point3d> normals;
-  int num_normals = tree.getNormals(query, normals);
+  bool known = tree.getNormals(query, normals);
   
 	cout << endl;
-	string s_norm = (num_normals > 0) ? " normals " : " normal ";
-	cout << "MC algorithm gives " << num_normals << s_norm << "in voxel at " << query << endl;
-	for(int i = 0; i < num_normals; ++i)
+	string s_norm = (normals.size() > 0) ? " normals " : " normal ";
+	cout << "MC algorithm gives " << normals.size() << s_norm << "in voxel at " << query << endl;
+	for(int i = 0; i < normals.size(); ++i)
 		cout << "\t" << normals[i].x() << "; " << normals[i].y() << "; " << normals[i].z() << endl;
 }
