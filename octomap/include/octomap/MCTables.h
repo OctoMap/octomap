@@ -1,6 +1,6 @@
 
-#ifndef __MCTABLES_H__
-#define __MCTABLES_H__
+#ifndef OCTOMAP_MCTABLES_H
+#define OCTOMAP_MCTABLES_H
 
  /**
   * Tables used by the Marching Cubes Algorithm 
