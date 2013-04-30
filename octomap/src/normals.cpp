@@ -31,6 +31,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <vector>
+#include <string>
+
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
 
@@ -95,14 +98,12 @@ int main(int argc, char** argv) {
   query = point3d(-0.5, -0.4, -0.4);
 	result = tree.search(query);
 	
-  point3d* normals = new point3d[5];
+  vector<point3d> normals;
   int num_normals = tree.getNormals(query, normals);
   
 	cout << endl;
-	cout << "MC algorithm gives " << num_normals << " normals in voxel at " << query << endl;
+	string s_norm = (num_normals > 0) ? " normals " : " normal ";
+	cout << "MC algorithm gives " << num_normals << s_norm << "in voxel at " << query << endl;
 	for(int i = 0; i < num_normals; ++i)
 		cout << "\t" << normals[i].x() << "; " << normals[i].y() << "; " << normals[i].z() << endl;
-
-	delete[] normals; 
-
 }
