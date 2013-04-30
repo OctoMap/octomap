@@ -37,6 +37,7 @@
 
 #include <list>
 #include <stdlib.h>
+#include <vector>
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
@@ -288,7 +289,7 @@ namespace octomap {
 		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
 		 * @return number of triangles returned in [0, 5]. If -1, the voxel is out of bound.
 		 */
-		int getNormals(const point3d& voxel, point3d* normals, bool unknownStatus=true) const;
+		int getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
 	
     //-- set BBX limit (limits tree updates to this bounding box)
 

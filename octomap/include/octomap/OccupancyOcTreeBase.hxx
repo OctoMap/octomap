@@ -33,7 +33,7 @@
 
 #include <bitset>
 
-#include "MCTables.h"
+#include <octomap/MCTables.h>
 
 namespace octomap {
 
@@ -429,12 +429,15 @@ namespace octomap {
   }
   
   template <class NODE>
-  int OccupancyOcTreeBase<NODE>::getNormals(const point3d& point, point3d* normals, bool unknownStatus) const {
-      OcTreeKey init_key;
-      if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(point, init_key) ) {
-      	OCTOMAP_WARNING_STR("Voxel out of bounds");
-        return -1;
-      }
+  int OccupancyOcTreeBase<NODE>::getNormals(const point3d& point, std::vector<point3d>& normals,
+																						bool unknownStatus) const {
+		normals.clear();
+			
+		OcTreeKey init_key;
+		if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(point, init_key) ) {
+			OCTOMAP_WARNING_STR("Voxel out of bounds");
+		  return -1;
+		}
 		
 		int vertex_values[8];
 		
@@ -493,7 +496,7 @@ namespace octomap {
 			
 			// Right hand side cross product to retreive the normal in the good
 			// direction (pointing to the free nodes).
-			normals[ntriang] = v1.cross(v2).normalize();
+			normals.push_back(v1.cross(v2).normalize());
 			++ntriang;
 		}
 	  
