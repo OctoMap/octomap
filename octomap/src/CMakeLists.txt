@@ -44,11 +44,11 @@ TARGET_LINK_LIBRARIES(eval_octree_accuracy octomap)
 ADD_EXECUTABLE(compare_octrees compare_octrees.cpp)
 TARGET_LINK_LIBRARIES(compare_octrees octomap)
 
-ADD_EXECUTABLE(simple simple.cpp)
-TARGET_LINK_LIBRARIES(simple octomap)
+ADD_EXECUTABLE(simple_example simple_example.cpp)
+TARGET_LINK_LIBRARIES(simple_example octomap)
 
-ADD_EXECUTABLE(normals normals.cpp)
-TARGET_LINK_LIBRARIES(normals octomap)
+ADD_EXECUTABLE(normals_example normals_example.cpp)
+TARGET_LINK_LIBRARIES(normals_example octomap)
 
 
 # installation:

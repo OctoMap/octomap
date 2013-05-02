@@ -80,7 +80,7 @@ https://github.com/OctoMap/octomap.</p>
  
 
 <p>
-  Jump right in and have a look at the main class \ref octomap::OcTree OcTree and the examples in src/octomap/simple.cpp.
+  Jump right in and have a look at the main class \ref octomap::OcTree OcTree and the examples in src/octomap/simple_example.cpp.
   To integrate single measurements into the 3D map have a look at
   \ref octomap::OcTree::insertRay "OcTree::insertRay(...)", to insert full 3D scans (pointclouds) please have a look at
   \ref octomap::OcTree::insertPointCloud "OcTree::insertPointCloud(...)". Queries can be performed e.g. with \ref octomap::OcTree::search "OcTree::search(...)" or
