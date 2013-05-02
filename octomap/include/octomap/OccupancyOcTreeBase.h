@@ -37,6 +37,7 @@
 
 #include <list>
 #include <stdlib.h>
+#include <vector>
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
@@ -278,7 +279,18 @@ namespace octomap {
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
-
+		/**
+		 * Performs a step of the marching cubes surface reconstruction algorithm
+		 * to retreive the normal of the triangles that fall in the cube
+		 * formed by the voxels located at the vertex of a given voxel.
+		 *
+		 * @param[in] voxel for which retreive the normals
+		 * @param[out] triangles normals
+		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
+		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
+		 */
+		bool getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
+	
     //-- set BBX limit (limits tree updates to this bounding box)
 
     ///  use or ignore BBX limit (default: ignore)
