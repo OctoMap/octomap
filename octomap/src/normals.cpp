@@ -82,28 +82,31 @@ int main(int argc, char** argv) {
   cout << endl;
   cout << "performing some queries around the desired voxel:" << endl;
   
-	point3d query;
-	OcTreeNode* result = NULL;
-	
+  point3d query;
+  OcTreeNode* result = NULL;
+
   for(float z = -0.6; z < -0.21; z += 0.1){
-		for(float y = -0.6; y < -0.21; y += 0.1){
-			for(float x = -0.6; x < -0.21; x += 0.1){
-				query = point3d(x, y, z);
-				result = tree.search(query);
-				print_query_info(query, result);
-			}
-		}
-	}
+    for(float y = -0.6; y < -0.21; y += 0.1){
+      for(float x = -0.6; x < -0.21; x += 0.1){
+        query = point3d(x, y, z);
+        result = tree.search(query);
+        print_query_info(query, result);
+      }
+    }
+  }
   
   query = point3d(-0.5, -0.4, -0.4);
-	result = tree.search(query);
+  result = tree.search(query);
 	
   vector<point3d> normals;
-  bool known = tree.getNormals(query, normals);
+  if (tree.getNormals(query, normals)){
   
-	cout << endl;
-	string s_norm = (normals.size() > 0) ? " normals " : " normal ";
-	cout << "MC algorithm gives " << normals.size() << s_norm << "in voxel at " << query << endl;
-	for(int i = 0; i < normals.size(); ++i)
-		cout << "\t" << normals[i].x() << "; " << normals[i].y() << "; " << normals[i].z() << endl;
+    cout << endl;
+    string s_norm = (normals.size() > 1) ? " normals " : " normal ";
+    cout << "MC algorithm gives " << normals.size() << s_norm << "in voxel at " << query << endl;
+    for(unsigned i = 0; i < normals.size(); ++i)
+      cout << "\t" << normals[i].x() << "; " << normals[i].y() << "; " << normals[i].z() << endl;
+  } else{
+    cout << "query point unknown (no normals)\n";
+  }
 }

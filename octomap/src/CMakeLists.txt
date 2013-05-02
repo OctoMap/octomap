@@ -47,6 +47,9 @@ TARGET_LINK_LIBRARIES(compare_octrees octomap)
 ADD_EXECUTABLE(simple simple.cpp)
 TARGET_LINK_LIBRARIES(simple octomap)
 
+ADD_EXECUTABLE(normals normals.cpp)
+TARGET_LINK_LIBRARIES(normals octomap)
+
 
 # installation:
 # store all header files to install:
