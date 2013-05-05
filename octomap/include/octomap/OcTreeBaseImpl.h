@@ -151,9 +151,6 @@ namespace octomap {
     /// Deletes the complete tree structure (only the root node will remain)
     void clear();
 
-    OcTreeBaseImpl deepCopy() const;
-
-
     /// Lossless compression of OcTree: merge children to parent when there are
     /// eight children with identical values
     virtual void prune();
