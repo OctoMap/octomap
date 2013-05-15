@@ -16,6 +16,10 @@ v1.6.0: 2013-04-05
   to C. Dornhege)
 - Sample data is now in octomap/share
 
+v1.5.5: 2013-05-05
+==================
+- Fixed compilation of external code against OctoMap with gcc4.8 (issue #28)
+
 v1.5.4: 2013-02-27
 ==================
 - Removed binvox binaries from sources for improved packaging compatibility
