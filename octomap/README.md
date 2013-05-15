@@ -76,7 +76,7 @@ GETTING STARTED
 ---------------
 
 Jump right in and have a look at the example
-src/octomap/simple.cpp
+src/octomap/simple_example.cpp
 
 Or start the 3D viewer with `bin/octovis`
 
