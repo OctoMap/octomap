@@ -272,7 +272,7 @@ namespace octomap {
      * @param[in] origin starting coordinate of ray
      * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
      * @param[out] end returns the center of the cell that was hit by the ray, if successful
-     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
+     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unknown cell is hit.
      * @param[in] maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */

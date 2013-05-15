@@ -430,75 +430,75 @@ namespace octomap {
   
   template <class NODE>
   bool OccupancyOcTreeBase<NODE>::getNormals(const point3d& point, std::vector<point3d>& normals,
-																						bool unknownStatus) const {
-		normals.clear();
-			
-		OcTreeKey init_key;
-		if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(point, init_key) ) {
-			OCTOMAP_WARNING_STR("Voxel out of bounds");
-		  return false;
-		}
-		
-		int vertex_values[8];
-		
-		OcTreeKey current_key;
-		NODE* current_node;
-		
-		int x_index[4] = {-1, 1, 1, -1};
-		int y_index[4] = {1, 1, -1, -1};
-		int z_index[2] = {-1, 1};
-		
-		int k = 0;
-		for(int j = 0; j < 2; ++j){
-			for(int i = 0; i < 4; ++i){
-				current_key[0] = init_key[0] + x_index[i];
-				current_key[1] = init_key[1] + y_index[i];
-				current_key[2] = init_key[2] + z_index[j];
-				current_node = this->search(current_key);
-				
-				if(current_node){
-					vertex_values[k] = this->isNodeOccupied(current_node);
-					
-					// point3d coord = this->keyToCoord(current_key);
-					// OCTOMAP_WARNING_STR("vertex " << k << " at " << coord << "; value " << vertex_values[k]);
-				}else{
-					// Occupancy of unknown cells
-					vertex_values[k] = unknownStatus;
-				}
-				++k;
-			}
-		}
-	  
-		int cube_index = 0;
-		if (vertex_values[0]) cube_index |= 1;
-		if (vertex_values[1]) cube_index |= 2;
-		if (vertex_values[2]) cube_index |= 4;
-		if (vertex_values[3]) cube_index |= 8;
-		if (vertex_values[4]) cube_index |= 16;
-		if (vertex_values[5]) cube_index |= 32;
-		if (vertex_values[6]) cube_index |= 64;
-		if (vertex_values[7]) cube_index |= 128;
-		
-		// OCTOMAP_WARNING_STR("cubde_index: " << cube_index);
-	  
-		// All vertices are occupied or free resulting in no normal
-		if (edgeTable[cube_index] == 0)
-			return true;
-		
-		// No interpolation is done yet, we use vertexList in <MCTables.h>.
-		for(int i = 0; triTable[cube_index][i] != -1; i += 3){
-			point3d p1 = vertexList[triTable[cube_index][i  ]];
-			point3d p2 = vertexList[triTable[cube_index][i+1]];
-			point3d p3 = vertexList[triTable[cube_index][i+2]];
-			point3d v1 = p2 - p1;
-			point3d v2 = p3 - p1;
-			
-			// Right hand side cross product to retreive the normal in the good
-			// direction (pointing to the free nodes).
-			normals.push_back(v1.cross(v2).normalize());
-		}
-	  
-	  return true;
+                                             bool unknownStatus) const {
+    normals.clear();
+
+    OcTreeKey init_key;
+    if ( !OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>::coordToKeyChecked(point, init_key) ) {
+      OCTOMAP_WARNING_STR("Voxel out of bounds");
+      return false;
+    }
+
+    int vertex_values[8];
+
+    OcTreeKey current_key;
+    NODE* current_node;
+
+    int x_index[4] = {-1, 1, 1, -1};
+    int y_index[4] = {1, 1, -1, -1};
+    int z_index[2] = {-1, 1};
+
+    int k = 0;
+    for(int j = 0; j < 2; ++j){
+      for(int i = 0; i < 4; ++i){
+        current_key[0] = init_key[0] + x_index[i];
+        current_key[1] = init_key[1] + y_index[i];
+        current_key[2] = init_key[2] + z_index[j];
+        current_node = this->search(current_key);
+
+        if(current_node){
+          vertex_values[k] = this->isNodeOccupied(current_node);
+
+          // point3d coord = this->keyToCoord(current_key);
+          // OCTOMAP_WARNING_STR("vertex " << k << " at " << coord << "; value " << vertex_values[k]);
+        }else{
+          // Occupancy of unknown cells
+          vertex_values[k] = unknownStatus;
+        }
+        ++k;
+      }
+    }
+
+    int cube_index = 0;
+    if (vertex_values[0]) cube_index |= 1;
+    if (vertex_values[1]) cube_index |= 2;
+    if (vertex_values[2]) cube_index |= 4;
+    if (vertex_values[3]) cube_index |= 8;
+    if (vertex_values[4]) cube_index |= 16;
+    if (vertex_values[5]) cube_index |= 32;
+    if (vertex_values[6]) cube_index |= 64;
+    if (vertex_values[7]) cube_index |= 128;
+
+    // OCTOMAP_WARNING_STR("cubde_index: " << cube_index);
+
+    // All vertices are occupied or free resulting in no normal
+    if (edgeTable[cube_index] == 0)
+      return true;
+
+    // No interpolation is done yet, we use vertexList in <MCTables.h>.
+    for(int i = 0; triTable[cube_index][i] != -1; i += 3){
+      point3d p1 = vertexList[triTable[cube_index][i  ]];
+      point3d p2 = vertexList[triTable[cube_index][i+1]];
+      point3d p3 = vertexList[triTable[cube_index][i+2]];
+      point3d v1 = p2 - p1;
+      point3d v2 = p3 - p1;
+
+      // Right hand side cross product to retrieve the normal in the good
+      // direction (pointing to the free nodes).
+      normals.push_back(v1.cross(v2).normalize());
+    }
+
+    return true;
   }
   
   template <class NODE>
