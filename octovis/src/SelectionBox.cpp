@@ -215,27 +215,15 @@ namespace octomap{
   }
 
   void SelectionBox::getBBXMin(float& x, float& y, float& z) const {
-    x = frame(0)->position().x;
-    y = frame(0)->position().y;
-    z = frame(0)->position().z;
-
-    for (unsigned i = 1; i < m_frames.size(); ++i){
-      x = std::min(x,float(frame(i)->position().x));
-      y = std::min(y,float(frame(i)->position().y));
-      z = std::min(z,float(frame(i)->position().z));
-    }
+    x = m_minPt.x;
+    y = m_minPt.y;
+    z = m_minPt.z;
   }
 
   void SelectionBox::getBBXMax(float& x, float& y, float& z) const {
-    x = frame(0)->position().x;
-    y = frame(0)->position().y;
-    z = frame(0)->position().z;
-
-    for (unsigned i = 1; i < m_frames.size(); ++i){
-      x = std::max(x,float(frame(i)->position().x));
-      y = std::max(y,float(frame(i)->position().y));
-      z = std::max(z,float(frame(i)->position().z));
-    }
+    x = m_maxPt.x;
+    y = m_maxPt.y;
+    z = m_maxPt.z;
   }
 
   int SelectionBox::getGrabbedFrame() const {
