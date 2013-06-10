@@ -1,3 +1,7 @@
+v1.5.6: 2013-06-10
+==================
+- Fixed compilation with OSX 10.8 (issue #23)
+
 v1.5.5: 2013-05-05
 ==================
 - Fixed compilation of external code against OctoMap with gcc4.8 (issue #28)
