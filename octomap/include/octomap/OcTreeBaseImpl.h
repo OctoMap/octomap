@@ -85,6 +85,15 @@ namespace octomap {
     /// Deep copy constructor
     OcTreeBaseImpl(const OcTreeBaseImpl<NODE,INTERFACE>& rhs);
 
+
+    /**
+     * Swap contents of two octrees, i.e., only the underlying
+     * pointer / tree structure. You have to ensure yourself that the
+     * metadata (resolution etc) matches. No memory is cleared
+     * in this function
+     */
+    void swapContent(OcTreeBaseImpl<NODE,INTERFACE>& rhs);
+
     /// Comparison between two octrees, all meta data, all
     /// nodes, and the structure must be identical
     bool operator== (const OcTreeBaseImpl<NODE,INTERFACE>& rhs) const;
