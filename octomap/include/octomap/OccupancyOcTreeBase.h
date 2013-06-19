@@ -37,6 +37,7 @@
 
 #include <list>
 #include <stdlib.h>
+#include <vector>
 
 #include "octomap_types.h"
 #include "octomap_utils.h"
@@ -82,6 +83,8 @@ namespace octomap {
     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
     * ray insertion in insertPointCloudRays().
     *
+    * @note replaces insertScan()
+    *
     * @param scan Pointcloud (measurement endpoints), in global reference frame
     * @param sensor_origin measurement origin in global reference frame
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
@@ -98,6 +101,8 @@ namespace octomap {
     * This avoids holes in the floor from mutual deletion and is more efficient than the plain
     * ray insertion in insertPointCloudRays().
     *
+    * @note replaces insertScan()
+    *
     * @param scan Pointcloud (measurement endpoints) relative to frame origin
     * @param sensor_origin origin of sensor relative to frame origin
     * @param frame_origin origin of reference frame, determines transform to be applied to cloud and sensor origin
@@ -110,6 +115,8 @@ namespace octomap {
 
     /**
     * Insert a 3d scan (given as a ScanNode) into the tree, parallelized with OpenMP.
+    *
+    * @note replaces insertScan
     *
     * @param scan ScanNode contains Pointcloud data and frame/sensor origin
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
@@ -265,14 +272,25 @@ namespace octomap {
      * @param[in] origin starting coordinate of ray
      * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
      * @param[out] end returns the center of the cell that was hit by the ray, if successful
-     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit.
+     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unknown cell is hit.
      * @param[in] maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
      * @return whether or not an occupied cell was hit
      */
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
-
+		/**
+		 * Performs a step of the marching cubes surface reconstruction algorithm
+		 * to retreive the normal of the triangles that fall in the cube
+		 * formed by the voxels located at the vertex of a given voxel.
+		 *
+		 * @param[in] voxel for which retreive the normals
+		 * @param[out] triangles normals
+		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
+		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
+		 */
+		bool getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
+	
     //-- set BBX limit (limits tree updates to this bounding box)
 
     ///  use or ignore BBX limit (default: ignore)

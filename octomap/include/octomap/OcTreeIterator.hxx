@@ -130,7 +130,7 @@
         return tree->keyToCoord(stack.top().key[2], stack.top().depth);
       }
 
-      /// @return the side if the volume occupied by the current node
+      /// @return the side of the volume occupied by the current node
       double getSize() const {return  tree->getNodeSize(stack.top().depth); }
 
       /// return depth of the current node

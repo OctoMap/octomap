@@ -114,6 +114,17 @@ namespace octomap {
   }
 
   template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::swapContent(OcTreeBaseImpl<NODE,I>& other){
+    NODE* this_root = root;
+    root = other.root;
+    other.root = this_root;
+
+    size_t this_size = this->tree_size;
+    this->tree_size = other.tree_size;
+    other.tree_size = this_size;
+  }
+
+  template <class NODE,class I>
   bool OcTreeBaseImpl<NODE,I>::operator== (const OcTreeBaseImpl<NODE,I>& other) const{
     if (tree_depth != other.tree_depth || tree_max_val != other.tree_max_val
         || resolution != other.resolution || tree_size != other.tree_size){

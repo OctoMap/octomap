@@ -37,6 +37,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <list>
+#include <cmath>
 
 using std::cout;
 using std::endl;
@@ -126,7 +127,7 @@ int main(int argc, char** argv) {
       else
         kld +=log(p1/p2)*p1 + log((1-p1)/(1-p2))*(1-p1);
 
-      if (isnan(kld)){
+      if (std::isnan(kld)){
         OCTOMAP_ERROR("KLD is nan! KLD(%f,%f)=%f; sum = %f", p1, p2, kld, kld_sum);
         exit(-1);
       }

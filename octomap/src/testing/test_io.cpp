@@ -68,6 +68,15 @@ int main(int argc, char** argv) {
 
   delete treeCopy;
 
+  // test swap:
+  OcTree emptyT(tree.getResolution());
+  OcTree emptySw(emptyT);
+  OcTree otherSw(tree);
+  emptySw.swapContent(otherSw);
+  EXPECT_FALSE(emptyT == emptySw);
+  EXPECT_TRUE(emptySw == tree);
+  EXPECT_TRUE(otherSw == emptyT);
+
 
   // write again to bt, read & compare
   EXPECT_TRUE(tree.writeBinary(filenameBtOut));

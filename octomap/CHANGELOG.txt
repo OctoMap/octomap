@@ -1,3 +1,10 @@
+v1.6.1: 2013-06-19
+==================
+- New function swapContent to exchange the contents of two octrees (issue #32)
+- New normal estimation based on marching cubes (thanks to F-M. de Rainville)
+- Fixed octovis edit box affecting small selection ranges
+- Fixed compilation with gcc 4.8 and OSX (issues #23 #28)
+
 v1.6.0: 2013-04-05
 ==================
 - Speedup: Pruning is now done only on affected nodes on each call to
@@ -15,6 +22,14 @@ v1.6.0: 2013-04-05
 - octovis: more map editing options, fixed setting nodes to free/occupied (thx
   to C. Dornhege)
 - Sample data is now in octomap/share
+
+v1.5.6: 2013-06-10
+==================
+- Fixed compilation with OSX 10.8 (issue #23)
+
+v1.5.5: 2013-05-05
+==================
+- Fixed compilation of external code against OctoMap with gcc4.8 (issue #28)
 
 v1.5.4: 2013-02-27
 ==================
