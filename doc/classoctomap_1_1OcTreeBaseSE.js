@@ -77,6 +77,7 @@ var classoctomap_1_1OcTreeBaseSE =
     [ "search", "classoctomap_1_1OcTreeBaseSE.html#ab45f108891eb301805392e164565353f", null ],
     [ "setResolution", "classoctomap_1_1OcTreeBaseSE.html#a4ad4d6dd0659abbe639c5ce5f1d6c4a4", null ],
     [ "size", "classoctomap_1_1OcTreeBaseSE.html#a61a371f276bd00516080c05a76a8be38", null ],
+    [ "swapContent", "classoctomap_1_1OcTreeBaseSE.html#a83584b21b3cd286552797a6a4f4b159c", null ],
     [ "volume", "classoctomap_1_1OcTreeBaseSE.html#aaeb5a6148103a127b1f94860803812ae", null ],
     [ "write", "classoctomap_1_1OcTreeBaseSE.html#a577f9bc020aaadcda530ba5acb116a76", null ],
     [ "write", "classoctomap_1_1OcTreeBaseSE.html#af296066b45352b7fdce4c2f152ae1a31", null ],

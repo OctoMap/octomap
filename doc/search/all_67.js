@@ -38,6 +38,7 @@ var searchData=
   ['getneighborids',['getNeighborIDs',['../classoctomap_1_1ScanGraph.html#a572795027b048432d1c534295465b2bf',1,'octomap::ScanGraph']]],
   ['getnodebyid',['getNodeByID',['../classoctomap_1_1ScanGraph.html#a719339ce6d0bb25bb0c36bbd082815a6',1,'octomap::ScanGraph']]],
   ['getnodesize',['getNodeSize',['../classoctomap_1_1OcTreeBaseImpl.html#a48ba7b2eb65ed1ddbbccf04c48a560da',1,'octomap::OcTreeBaseImpl']]],
+  ['getnormals',['getNormals',['../classoctomap_1_1OccupancyOcTreeBase.html#a44daf1f70083202ac8277dc9574b1d9c',1,'octomap::OccupancyOcTreeBase']]],
   ['getnumleafnodes',['getNumLeafNodes',['../classoctomap_1_1OcTreeBaseImpl.html#aa8ba9b01d5e67118d2fd2e64547f1b7b',1,'octomap::OcTreeBaseImpl']]],
   ['getnumleafnodesrecurs',['getNumLeafNodesRecurs',['../classoctomap_1_1OcTreeBaseImpl.html#af1ef3f9fa8a01299183c994c37d8308a',1,'octomap::OcTreeBaseImpl']]],
   ['getnumpoints',['getNumPoints',['../classoctomap_1_1ScanGraph.html#afcaf51b26119050a3fd2f12743ec1f84',1,'octomap::ScanGraph']]],

@@ -6,15 +6,16 @@
 <area shape="rect" id="node11" href="$eval__octree__accuracy_8cpp.html" title="src/eval_octree_accuracy.cpp" alt="" coords="640,92,835,121"/>
 <area shape="rect" id="node13" href="$graph2tree_8cpp.html" title="src/graph2tree.cpp" alt="" coords="859,92,989,121"/>
 <area shape="rect" id="node15" href="$log2graph_8cpp.html" title="src/log2graph.cpp" alt="" coords="1013,92,1139,121"/>
-<area shape="rect" id="node17" href="$offset__graph_8cpp.html" title="src/offset_graph.cpp" alt="" coords="1163,92,1304,121"/>
-<area shape="rect" id="node19" href="$simple_8cpp.html" title="src/simple.cpp" alt="" coords="1328,92,1435,121"/>
-<area shape="rect" id="node21" href="$color__tree__histogram_8cpp.html" title="src/testing/color_tree\l_histogram.cpp" alt="" coords="1459,83,1603,130"/>
-<area shape="rect" id="node23" href="$test__changedkeys_8cpp.html" title="src/testing/test_changedkeys.cpp" alt="" coords="1627,92,1845,121"/>
-<area shape="rect" id="node25" href="$test__color__tree_8cpp.html" title="src/testing/test_color\l_tree.cpp" alt="" coords="1869,83,2013,130"/>
-<area shape="rect" id="node27" href="$test__iterators_8cpp.html" title="src/testing/test_iterators.cpp" alt="" coords="2037,92,2224,121"/>
-<area shape="rect" id="node29" href="$test__lut_8cpp.html" title="src/testing/test_lut.cpp" alt="" coords="2248,92,2403,121"/>
-<area shape="rect" id="node31" href="$test__pruning_8cpp.html" title="src/testing/test_pruning.cpp" alt="" coords="2427,92,2608,121"/>
-<area shape="rect" id="node33" href="$test__raycasting_8cpp.html" title="src/testing/test_raycasting.cpp" alt="" coords="2632,92,2832,121"/>
-<area shape="rect" id="node35" href="$test__scans_8cpp.html" title="src/testing/test_scans.cpp" alt="" coords="2856,92,3032,121"/>
-<area shape="rect" id="node37" href="$unit__tests_8cpp.html" title="src/testing/unit_tests.cpp" alt="" coords="3056,92,3224,121"/>
+<area shape="rect" id="node17" href="$normals__example_8cpp.html" title="src/normals_example.cpp" alt="" coords="1163,92,1333,121"/>
+<area shape="rect" id="node19" href="$offset__graph_8cpp.html" title="src/offset_graph.cpp" alt="" coords="1357,92,1499,121"/>
+<area shape="rect" id="node21" href="$simple__example_8cpp.html" title="src/simple_example.cpp" alt="" coords="1523,92,1685,121"/>
+<area shape="rect" id="node23" href="$color__tree__histogram_8cpp.html" title="src/testing/color_tree\l_histogram.cpp" alt="" coords="1709,83,1853,130"/>
+<area shape="rect" id="node25" href="$test__changedkeys_8cpp.html" title="src/testing/test_changedkeys.cpp" alt="" coords="1877,92,2096,121"/>
+<area shape="rect" id="node27" href="$test__color__tree_8cpp.html" title="src/testing/test_color\l_tree.cpp" alt="" coords="2120,83,2264,130"/>
+<area shape="rect" id="node29" href="$test__iterators_8cpp.html" title="src/testing/test_iterators.cpp" alt="" coords="2288,92,2475,121"/>
+<area shape="rect" id="node31" href="$test__lut_8cpp.html" title="src/testing/test_lut.cpp" alt="" coords="2499,92,2653,121"/>
+<area shape="rect" id="node33" href="$test__pruning_8cpp.html" title="src/testing/test_pruning.cpp" alt="" coords="2677,92,2859,121"/>
+<area shape="rect" id="node35" href="$test__raycasting_8cpp.html" title="src/testing/test_raycasting.cpp" alt="" coords="2883,92,3083,121"/>
+<area shape="rect" id="node37" href="$test__scans_8cpp.html" title="src/testing/test_scans.cpp" alt="" coords="3107,92,3283,121"/>
+<area shape="rect" id="node39" href="$unit__tests_8cpp.html" title="src/testing/unit_tests.cpp" alt="" coords="3307,92,3475,121"/>
 </map>

@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.6.1</span>
    </div>
   </td>
  </tr>
@@ -104,7 +104,8 @@ $(document).ready(function(){initNavTree('namespaceoctomap.html','');});
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">octomap Namespace Reference</div>  </div>
 </div><!--header-->
@@ -197,9 +198,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:ad3794eea63040bb8dace218c31d9aaa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">user friendly output in format (r g b)  <a href="#ad3794eea63040bb8dace218c31d9aaa9"></a><br/></td></tr>
 <tr class="memitem:aa8660dcbf419b46db64ffcf7beb95e69"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#aa8660dcbf419b46db64ffcf7beb95e69">probability</a> (double <a class="el" href="namespaceoctomap.html#a10a09b5553d8f945a405e2487732153a">logodds</a>)</td></tr>
 <tr class="memdesc:aa8660dcbf419b46db64ffcf7beb95e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute probability from logodds:  <a href="#aa8660dcbf419b46db64ffcf7beb95e69"></a><br/></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a92a418b9cb26e2ff026b8f9c7378ec5b"><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a92a418b9cb26e2ff026b8f9c7378ec5b">edgeTable</a> [256]</td></tr>
+<tr class="memitem:a19dbada07173243366ff31c32f3f7b2b"><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a19dbada07173243366ff31c32f3f7b2b">triTable</a> [256][16]</td></tr>
+<tr class="memitem:acec5728228c6ce682a8b1334be948316"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#acec5728228c6ce682a8b1334be948316">vertexList</a> [12]</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Namespace the OctoMap library and visualization tools. </p>
+<p>Tables used by the Marching Cubes Algorithm The tables are from Paul Bourke's web page <a href="http://paulbourke.net/geometry/polygonise/">http://paulbourke.net/geometry/polygonise/</a> Used with permission here under BSD license.</p>
 </div><h2>Typedef Documentation</h2>
 <a class="anchor" id="a87b5e904d1983f4af540c112febaebf3"></a>
 <div class="memitem">
@@ -528,13 +536,93 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<h2>Variable Documentation</h2>
+<a class="anchor" id="a92a418b9cb26e2ff026b8f9c7378ec5b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int octomap::edgeTable[256]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a44daf1f70083202ac8277dc9574b1d9c">octomap::OccupancyOcTreeBase&lt; NODE &gt;::getNormals()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a19dbada07173243366ff31c32f3f7b2b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int octomap::triTable[256][16]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Referenced by <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a44daf1f70083202ac8277dc9574b1d9c">octomap::OccupancyOcTreeBase&lt; NODE &gt;::getNormals()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="acec5728228c6ce682a8b1334be948316"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> octomap::vertexList[12]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"> </div>
+<div class="line">  {<a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(0, 1, -1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(1, 0, -1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(0, -1, -1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(-1, 0, -1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(0, 1, 1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(1, 0, 1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(0, -1, 1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(-1, 0, 1),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(-1, 1, 0),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(1, 1, 0),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(1, -1, 0),</div>
+<div class="line">   <a class="code" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7" title="Use Vector3 (float precision) as a point3d in octomap.">point3d</a>(-1, -1, 0)}</div>
+</div><!-- fragment -->
+<p>Referenced by <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a44daf1f70083202ac8277dc9574b1d9c">octomap::OccupancyOcTreeBase&lt; NODE &gt;::getNormals()</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li>
-    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
+    <li class="footer">Generated on Thu Jun 20 2013 18:13:32 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

@@ -21,6 +21,7 @@ var dir_acb7e2643aa3a139d302c662c8abe061 =
       [ "MapNode", "classoctomap_1_1MapNode.html", "classoctomap_1_1MapNode" ]
     ] ],
     [ "MapNode.hxx", "MapNode_8hxx.html", null ],
+    [ "MCTables.h", "MCTables_8h.html", "MCTables_8h" ],
     [ "OccupancyOcTreeBase.h", "OccupancyOcTreeBase_8h.html", [
       [ "OccupancyOcTreeBase", "classoctomap_1_1OccupancyOcTreeBase.html", "classoctomap_1_1OccupancyOcTreeBase" ]
     ] ],

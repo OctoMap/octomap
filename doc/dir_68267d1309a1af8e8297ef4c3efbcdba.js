@@ -14,6 +14,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "eval_octree_accuracy.cpp", "eval__octree__accuracy_8cpp.html", "eval__octree__accuracy_8cpp" ],
     [ "graph2tree.cpp", "graph2tree_8cpp.html", "graph2tree_8cpp" ],
     [ "log2graph.cpp", "log2graph_8cpp.html", "log2graph_8cpp" ],
+    [ "normals_example.cpp", "normals__example_8cpp.html", "normals__example_8cpp" ],
     [ "OcTree.cpp", "OcTree_8cpp.html", null ],
     [ "OcTreeLUT.cpp", "OcTreeLUT_8cpp.html", null ],
     [ "OcTreeNode.cpp", "OcTreeNode_8cpp.html", null ],
@@ -21,5 +22,5 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "offset_graph.cpp", "offset__graph_8cpp.html", "offset__graph_8cpp" ],
     [ "Pointcloud.cpp", "Pointcloud_8cpp.html", null ],
     [ "ScanGraph.cpp", "ScanGraph_8cpp.html", null ],
-    [ "simple.cpp", "simple_8cpp.html", "simple_8cpp" ]
+    [ "simple_example.cpp", "simple__example_8cpp.html", "simple__example_8cpp" ]
 ];

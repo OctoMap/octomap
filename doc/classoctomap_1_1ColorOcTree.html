@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.6.1</span>
    </div>
   </td>
  </tr>
@@ -232,6 +232,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab74ef7bae2862ec0c5d98963fb2bbabb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ab74ef7bae2862ec0c5d98963fb2bbabb">getMetricSize</a> (double &amp;x, double &amp;y, double &amp;z) const </td></tr>
 <tr class="memdesc:ab74ef7bae2862ec0c5d98963fb2bbabb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of <a class="el" href="classoctomap_1_1OcTree.html" title="octomap main map data structure, stores 3D occupancy grid map in an OcTree.">OcTree</a> (all known space) in meters for x, y and z dimension.  <a href="#ab74ef7bae2862ec0c5d98963fb2bbabb"></a><br/></td></tr>
 <tr class="memitem:a48ba7b2eb65ed1ddbbccf04c48a560da"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a48ba7b2eb65ed1ddbbccf04c48a560da">getNodeSize</a> (unsigned depth) const </td></tr>
+<tr class="memitem:a44daf1f70083202ac8277dc9574b1d9c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a44daf1f70083202ac8277dc9574b1d9c">getNormals</a> (const <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &amp;point, std::vector&lt; <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &gt; &amp;normals, bool unknownStatus=true) const</td></tr>
+<tr class="memdesc:a44daf1f70083202ac8277dc9574b1d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a step of the marching cubes surface reconstruction algorithm to retreive the normal of the triangles that fall in the cube formed by the voxels located at the vertex of a given voxel.  <a href="#a44daf1f70083202ac8277dc9574b1d9c"></a><br/></td></tr>
 <tr class="memitem:aa8ba9b01d5e67118d2fd2e64547f1b7b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#aa8ba9b01d5e67118d2fd2e64547f1b7b">getNumLeafNodes</a> () const </td></tr>
 <tr class="memdesc:aa8ba9b01d5e67118d2fd2e64547f1b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traverses the tree to calculate the total number of leaf nodes.  <a href="#aa8ba9b01d5e67118d2fd2e64547f1b7b"></a><br/></td></tr>
 <tr class="memitem:a9f052f60b7381a574d20d2e05d519ec4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a9f052f60b7381a574d20d2e05d519ec4">getResolution</a> () const </td></tr>
@@ -290,11 +292,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab1b94303bdfff6c27547c0d5f7085017"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ab1b94303bdfff6c27547c0d5f7085017">resetChangeDetection</a> ()</td></tr>
 <tr class="memdesc:ab1b94303bdfff6c27547c0d5f7085017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the set of changed keys. Call this after you obtained all changed nodes.  <a href="#ab1b94303bdfff6c27547c0d5f7085017"></a><br/></td></tr>
 <tr class="memitem:a6db68c9dd1eef46e6343edcc9448a5ce"><td class="memItemLeft" align="right" valign="top">NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce">search</a> (double x, double y, double z, unsigned int depth=0) const </td></tr>
-<tr class="memdesc:a6db68c9dd1eef46e6343edcc9448a5ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search node at specified depth given a 3d point (depth=0: search full tree depth)  <a href="#a6db68c9dd1eef46e6343edcc9448a5ce"></a><br/></td></tr>
+<tr class="memdesc:a6db68c9dd1eef46e6343edcc9448a5ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search node at specified depth given a 3d point (depth=0: search full tree depth).  <a href="#a6db68c9dd1eef46e6343edcc9448a5ce"></a><br/></td></tr>
 <tr class="memitem:ae73a920481fa4701c7f89c34f4ab2f15"><td class="memItemLeft" align="right" valign="top">NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ae73a920481fa4701c7f89c34f4ab2f15">search</a> (const <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &amp;value, unsigned int depth=0) const </td></tr>
-<tr class="memdesc:ae73a920481fa4701c7f89c34f4ab2f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search node at specified depth given a 3d point (depth=0: search full tree depth)  <a href="#ae73a920481fa4701c7f89c34f4ab2f15"></a><br/></td></tr>
+<tr class="memdesc:ae73a920481fa4701c7f89c34f4ab2f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search node at specified depth given a 3d point (depth=0: search full tree depth) You need to check if the returned node is NULL, since it can be in unknown space.  <a href="#ae73a920481fa4701c7f89c34f4ab2f15"></a><br/></td></tr>
 <tr class="memitem:ab45f108891eb301805392e164565353f"><td class="memItemLeft" align="right" valign="top">NODE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ab45f108891eb301805392e164565353f">search</a> (const <a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a> &amp;key, unsigned int depth=0) const </td></tr>
-<tr class="memdesc:ab45f108891eb301805392e164565353f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search a node at specified depth given an addressing key (depth=0: search full tree depth)  <a href="#ab45f108891eb301805392e164565353f"></a><br/></td></tr>
+<tr class="memdesc:ab45f108891eb301805392e164565353f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search a node at specified depth given an addressing key (depth=0: search full tree depth) You need to check if the returned node is NULL, since it can be in unknown space.  <a href="#ab45f108891eb301805392e164565353f"></a><br/></td></tr>
 <tr class="memitem:a20440262a32b80919913417e87385645"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a20440262a32b80919913417e87385645">setBBXMax</a> (<a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &amp;max)</td></tr>
 <tr class="memdesc:a20440262a32b80919913417e87385645"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the maximum for a query bounding box to use  <a href="#a20440262a32b80919913417e87385645"></a><br/></td></tr>
 <tr class="memitem:a42cd4dc782682358ec1651ea14ec3316"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#a42cd4dc782682358ec1651ea14ec3316">setBBXMin</a> (<a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &amp;min)</td></tr>
@@ -304,6 +306,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4ad4d6dd0659abbe639c5ce5f1d6c4a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a4ad4d6dd0659abbe639c5ce5f1d6c4a4">setResolution</a> (double r)</td></tr>
 <tr class="memdesc:a4ad4d6dd0659abbe639c5ce5f1d6c4a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the resolution of the octree, scaling all voxels. This will not preserve the (metric) scale!  <a href="#a4ad4d6dd0659abbe639c5ce5f1d6c4a4"></a><br/></td></tr>
 <tr class="memitem:a61a371f276bd00516080c05a76a8be38"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a61a371f276bd00516080c05a76a8be38">size</a> () const </td></tr>
+<tr class="memitem:a83584b21b3cd286552797a6a4f4b159c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a83584b21b3cd286552797a6a4f4b159c">swapContent</a> (<a class="el" href="classoctomap_1_1OcTreeBaseImpl.html">OcTreeBaseImpl</a>&lt; NODE, INTERFACE &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a83584b21b3cd286552797a6a4f4b159c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swap contents of two octrees, i.e., only the underlying pointer / tree structure.  <a href="#a83584b21b3cd286552797a6a4f4b159c"></a><br/></td></tr>
 <tr class="memitem:ae0846e72f5f4e772561bc6f1f8430042"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#ae0846e72f5f4e772561bc6f1f8430042">toMaxLikelihood</a> ()</td></tr>
 <tr class="memdesc:ae0846e72f5f4e772561bc6f1f8430042"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the maximum likelihood map by calling toMaxLikelihood on all tree nodes, setting their occupancy to the corresponding occupancy thresholds.  <a href="#ae0846e72f5f4e772561bc6f1f8430042"></a><br/></td></tr>
 <tr class="memitem:a341fc7913858d410ad1bbe40e451d3d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1ColorOcTree.html#a341fc7913858d410ad1bbe40e451d3d6">updateInnerOccupancy</a> ()</td></tr>
@@ -1011,7 +1015,7 @@ template&lt;class NODE, class I &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">origin</td><td>starting coordinate of ray </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">direction</td><td>A vector pointing in the direction of the raycast. Does not need to be normalized. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">end</td><td>returns the center of the cell that was hit by the ray, if successful </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ignoreUnknownCells</td><td>whether unknown cells are ignored. If false (default), the raycast aborts when an unkown cell is hit. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ignoreUnknownCells</td><td>whether unknown cells are ignored. If false (default), the raycast aborts when an unknown cell is hit. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">maxRange</td><td>Maximum range after which the raycast is aborted (&lt;= 0: no limit, default) </td></tr>
   </table>
   </dd>
@@ -1139,7 +1143,7 @@ template&lt;class NODE , class I &gt; </div>
 </div><div class="memdoc">
 
 <p>Traces a ray from origin to end (excluding), returning the coordinates of all nodes traversed by the beam. </p>
-<p>You still need to check if a node at that coordinate exists (e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce" title="Search node at specified depth given a 3d point (depth=0: search full tree depth)">search()</a>). </p>
+<p>You still need to check if a node at that coordinate exists (e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce" title="Search node at specified depth given a 3d point (depth=0: search full tree depth).">search()</a>). </p>
 <dl class="section note"><dt>Note</dt><dd>: use the faster computeRayKeys method if possible.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1194,7 +1198,7 @@ template&lt;class NODE , class I &gt; </div>
 </div><div class="memdoc">
 
 <p>Traces a ray from origin to end (excluding), returning an <a class="el" href="classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing.">OcTreeKey</a> of all nodes traversed by the beam. </p>
-<p>You still need to check if a node at that coordinate exists (e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce" title="Search node at specified depth given a 3d point (depth=0: search full tree depth)">search()</a>).</p>
+<p>You still need to check if a node at that coordinate exists (e.g. with <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a6db68c9dd1eef46e6343edcc9448a5ce" title="Search node at specified depth given a 3d point (depth=0: search full tree depth).">search()</a>).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">origin</td><td>start coordinate of ray </td></tr>
@@ -2639,6 +2643,57 @@ template&lt;class NODE, class INTERFACE&gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a44daf1f70083202ac8277dc9574b1d9c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html">octomap::OccupancyOcTreeBase</a>&lt; <a class="el" href="classoctomap_1_1ColorOcTreeNode.html">ColorOcTreeNode</a>  &gt;::getNormals </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>normals</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>unknownStatus</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inherited</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performs a step of the marching cubes surface reconstruction algorithm to retreive the normal of the triangles that fall in the cube formed by the voxels located at the vertex of a given voxel. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">voxel</td><td>for which retreive the normals </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">triangles</td><td>normals </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">unknownStatus</td><td>consider unknown cells as free (false) or occupied (default, true). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the input voxel is known in the occupancy grid, and false if it is unknown. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aa8ba9b01d5e67118d2fd2e64547f1b7b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -4063,7 +4118,8 @@ template&lt;class NODE , class I &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Search node at specified depth given a 3d point (depth=0: search full tree depth) </p>
+<p>Search node at specified depth given a 3d point (depth=0: search full tree depth). </p>
+<p>You need to check if the returned node is NULL, since it can be in unknown space. </p>
 <dl class="section return"><dt>Returns</dt><dd>pointer to node if found, NULL otherwise </dd></dl>
 
 <p>References <a class="el" href="octomap__types_8h.html#a86314c002a60ea0964b947f5109ac75e">OCTOMAP_ERROR_STR</a>.</p>
@@ -4106,7 +4162,7 @@ template&lt;class NODE , class I &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Search node at specified depth given a 3d point (depth=0: search full tree depth) </p>
+<p>Search node at specified depth given a 3d point (depth=0: search full tree depth) You need to check if the returned node is NULL, since it can be in unknown space. </p>
 <dl class="section return"><dt>Returns</dt><dd>pointer to node if found, NULL otherwise </dd></dl>
 
 <p>References <a class="el" href="octomap__types_8h.html#a86314c002a60ea0964b947f5109ac75e">OCTOMAP_ERROR_STR</a>.</p>
@@ -4147,7 +4203,7 @@ template&lt;class NODE , class I &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Search a node at specified depth given an addressing key (depth=0: search full tree depth) </p>
+<p>Search a node at specified depth given an addressing key (depth=0: search full tree depth) You need to check if the returned node is NULL, since it can be in unknown space. </p>
 <dl class="section return"><dt>Returns</dt><dd>pointer to node if found, NULL otherwise </dd></dl>
 
 <p>References <a class="el" href="namespaceoctomap.html#a60fec7525fc7e99466abc53d03bffa8f">octomap::computeChildIdx()</a>.</p>
@@ -4363,6 +4419,37 @@ template&lt;class NODE, class INTERFACE&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The number of nodes in the tree </dd></dl>
 
 <p>Referenced by <a class="el" href="convert__octree_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main()</a>, and <a class="el" href="graph2tree_8cpp.html#af262a89a040a4e4d0c9c274d60a900d8">outputStatistics()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a83584b21b3cd286552797a6a4f4b159c"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class NODE, class I&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html">octomap::OcTreeBaseImpl</a>&lt; NODE, I &gt;::swapContent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classoctomap_1_1OcTreeBaseImpl.html">OcTreeBaseImpl</a>&lt; NODE, I &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inherited</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Swap contents of two octrees, i.e., only the underlying pointer / tree structure. </p>
+<p>You have to ensure yourself that the metadata (resolution etc) matches. No memory is cleared in this function </p>
+
+<p>References <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#aebd8f6d931c30b559055a3ad3376aa11">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::root</a>, and <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ad8ffbc2b6a76a338095974e7b03a7365">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::tree_size</a>.</p>
 
 </div>
 </div>
@@ -5416,7 +5503,7 @@ template&lt;class NODE, class INTERFACE&gt; </div>
 
 <p>Pointer to the root NODE, NULL for empty tree. </p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1CountingOcTree.html#a6ef758820d7db4066e96d74ccd3c7605">octomap::CountingOcTree::getCentersMinHits()</a>, <a class="el" href="classoctomap_1_1OcTreeStamped.html#a29c595c596e943052bccdfe38363cd90">octomap::OcTreeStamped::getLastUpdateTime()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a35ac605b40608c122241cc530833a5b5">octomap::OcTreeBaseImpl&lt; CountingOcTreeNode, AbstractOcTree &gt;::getRoot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a4075202da456b3103a0fb9aa42a05198">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::OcTreeBaseImpl()</a>, <a class="el" href="classoctomap_1_1ColorOcTree.html#a341fc7913858d410ad1bbe40e451d3d6">updateInnerOccupancy()</a>, and <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1CountingOcTree.html#a6ef758820d7db4066e96d74ccd3c7605">octomap::CountingOcTree::getCentersMinHits()</a>, <a class="el" href="classoctomap_1_1OcTreeStamped.html#a29c595c596e943052bccdfe38363cd90">octomap::OcTreeStamped::getLastUpdateTime()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a35ac605b40608c122241cc530833a5b5">octomap::OcTreeBaseImpl&lt; CountingOcTreeNode, AbstractOcTree &gt;::getRoot()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a4075202da456b3103a0fb9aa42a05198">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::OcTreeBaseImpl()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a83584b21b3cd286552797a6a4f4b159c">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::swapContent()</a>, <a class="el" href="classoctomap_1_1ColorOcTree.html#a341fc7913858d410ad1bbe40e451d3d6">updateInnerOccupancy()</a>, and <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>.</p>
 
 </div>
 </div>
@@ -5584,7 +5671,7 @@ template&lt;class NODE, class INTERFACE&gt; </div>
 
 <p>number of nodes in tree flag to denote whether the octree extent changed (for lazy min/max eval) </p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a9e8184d78950217466f56ac031384d08">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::operator==()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a61a371f276bd00516080c05a76a8be38">octomap::OcTreeBaseImpl&lt; CountingOcTreeNode, AbstractOcTree &gt;::size()</a>, and <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a9e8184d78950217466f56ac031384d08">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::operator==()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a61a371f276bd00516080c05a76a8be38">octomap::OcTreeBaseImpl&lt; CountingOcTreeNode, AbstractOcTree &gt;::size()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#a83584b21b3cd286552797a6a4f4b159c">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::swapContent()</a>, and <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>.</p>
 
 </div>
 </div>
@@ -5640,7 +5727,7 @@ template&lt;class NODE, class INTERFACE&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li><li class="navelem"><a class="el" href="classoctomap_1_1ColorOcTree.html">ColorOcTree</a></li>
-    <li class="footer">Generated on Fri Apr 5 2013 15:15:24 for octomap by
+    <li class="footer">Generated on Thu Jun 20 2013 18:13:32 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

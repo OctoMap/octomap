@@ -73,6 +73,7 @@ var classoctomap_1_1CountingOcTree =
     [ "search", "classoctomap_1_1CountingOcTree.html#ab45f108891eb301805392e164565353f", null ],
     [ "setResolution", "classoctomap_1_1CountingOcTree.html#a4ad4d6dd0659abbe639c5ce5f1d6c4a4", null ],
     [ "size", "classoctomap_1_1CountingOcTree.html#a61a371f276bd00516080c05a76a8be38", null ],
+    [ "swapContent", "classoctomap_1_1CountingOcTree.html#a83584b21b3cd286552797a6a4f4b159c", null ],
     [ "updateNode", "classoctomap_1_1CountingOcTree.html#ac3c5e35e6d51aeafad261b3cd1301f1e", null ],
     [ "updateNode", "classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a", null ],
     [ "volume", "classoctomap_1_1CountingOcTree.html#aaeb5a6148103a127b1f94860803812ae", null ],

@@ -72,6 +72,7 @@ var classoctomap_1_1OcTreeBaseImpl =
     [ "search", "classoctomap_1_1OcTreeBaseImpl.html#ab45f108891eb301805392e164565353f", null ],
     [ "setResolution", "classoctomap_1_1OcTreeBaseImpl.html#a4ad4d6dd0659abbe639c5ce5f1d6c4a4", null ],
     [ "size", "classoctomap_1_1OcTreeBaseImpl.html#a61a371f276bd00516080c05a76a8be38", null ],
+    [ "swapContent", "classoctomap_1_1OcTreeBaseImpl.html#a83584b21b3cd286552797a6a4f4b159c", null ],
     [ "volume", "classoctomap_1_1OcTreeBaseImpl.html#aaeb5a6148103a127b1f94860803812ae", null ],
     [ "writeData", "classoctomap_1_1OcTreeBaseImpl.html#a8e86a2b65a21ae07837ce08dc82aa1af", null ],
     [ "keyrays", "classoctomap_1_1OcTreeBaseImpl.html#a6bd58a85177ebd36b1dfed18a95ab965", null ],

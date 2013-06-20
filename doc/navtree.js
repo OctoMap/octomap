@@ -8,6 +8,7 @@ var NAVTREE =
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ]
       ] ]
     ] ],
@@ -39,14 +40,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "AbstractOcTree_8cpp.html",
-"classleaf__iterator.html#a09bee68e7bc2fd77d5ddb17e06feecc0",
-"classoctomap_1_1ColorOcTree.html#ae38720a5b019b0aeece66d51dfb1e138",
-"classoctomap_1_1MapNode.html#ac3670ee7d6d4d4a26a5c55f00e0f87b0",
-"classoctomap_1_1OcTreeBaseImpl.html#a0d644d0caf31705312a94d8091ead298",
-"classoctomap_1_1OcTreeLUT.html#aa7cb7355aa82995f5412013fed5afc49",
-"classoctomap_1_1OccupancyOcTreeBase.html#a31c53676e6900005297812fbc78b10e0",
-"classoctomath_1_1Pose6D.html#a0956d8a58f692f75920da32ac15e98f0",
-"octomap__types_8h.html#a5934fb41deb9bd90f649482f839b2118"
+"classleaf__bbx__iterator.html#ade40eee6b25f7a1540efb46f26041293",
+"classoctomap_1_1ColorOcTree.html#ad436f105df97668234b4836bcafe2dc8",
+"classoctomap_1_1MapNode.html#a7b48ab96feedbd370f8baf2b00dc0841",
+"classoctomap_1_1OcTreeBase.html#af7e855ad9f24517d5cc69e1b27da5372",
+"classoctomap_1_1OcTreeLUT.html#a6f11e89662ca2311509930ddd867dd5ba9f325ec4f4150891adea74e75538fd40",
+"classoctomap_1_1OccupancyOcTreeBase.html#a1a0841eef190e9eb6c07db41bc047f8b",
+"classoctomap_1_1ScanGraph.html#ae40c4d7ee229834f1d823e830fb80115",
+"namespacemembers.html"
 ];
 
 var navTreeSubIndices = new Array();
