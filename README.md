@@ -5,13 +5,7 @@ OctoMap - A probabilistic, flexible, and compact 3D mapping library for robotic 
 Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2013.
 http://octomap.github.com
 
-Further Contributors:
-* C. Sprunk, University of Freiburg
-* J. Mueller, University of Freiburg
-* S. Osswald, University of Freiburg
-* R. Schmitt, University of Freiburg
-* R. Bogdan Rusu, Willow Garage Inc.
-* C. Dornhege, University of Freiburg
+See the [list of contributors](octomap/AUTHORS.txt) for further authors.
 
 License: 
   * octomap: [New BSD License](octomap/LICENSE.txt)
