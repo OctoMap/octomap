@@ -394,7 +394,7 @@ namespace octomap {
     virtual void integrateHit(NODE* occupancyNode) const;
     /// integrate a "miss" measurement according to the tree's sensor model
     virtual void integrateMiss(NODE* occupancyNode) const;
-    // update logodds value of node, given update is added to current value.
+    /// update logodds value of node by adding to the current value.
     virtual void updateNodeLogOdds(NODE* occupancyNode, const float& update) const;
 
     /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
