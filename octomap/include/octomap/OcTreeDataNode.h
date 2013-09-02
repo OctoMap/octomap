@@ -140,6 +140,10 @@ namespace octomap {
      */
     std::ostream& writeValue(std::ostream &s) const;
 
+    OcTreeDataNode<T>* getParent(){return this->parent;}
+    void setParent(OcTreeDataNode<T>* _parent){this->parent=_parent;}
+
+
 
     /// Make the templated data type available from the outside
     typedef T DataType;
@@ -150,6 +154,7 @@ namespace octomap {
 
     /// pointer to array of children, may be NULL
     OcTreeDataNode<T>** children;
+    OcTreeDataNode<T>* parent;
     /// stored data (payload)
     T value;
 

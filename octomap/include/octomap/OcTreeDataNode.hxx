@@ -90,6 +90,7 @@ namespace octomap {
     }
     assert (children[i] == NULL);
     children[i] = new OcTreeDataNode<T>();
+    children[i]->setParent(this);
     return true;
   }
 
