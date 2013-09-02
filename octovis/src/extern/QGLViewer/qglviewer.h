@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.17.
+ This file is part of the QGLViewer library version 2.4.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -39,13 +39,10 @@ namespace qglviewer {
 	class MouseGrabber;
 }
 
-#if QT_VERSION >= 0x040000
-// Qt::ButtonState was split into Qt::KeyboardModifiers and Qt::MouseButtons in Qt 4.
-# define QtKeyboardModifiers Qt::KeyboardModifiers
-# define QtMouseButtons Qt::MouseButtons
-#else
-# define QtKeyboardModifiers Qt::ButtonState
-# define QtMouseButtons Qt::ButtonState
+#if QT_VERSION < 0x040000
+# define Qt::KeyboardModifiers Qt::ButtonState
+# define Qt::MouseButtons Qt::ButtonState
+# define Qt::WindowFlags Qt::WFlags
 #endif
 
 /*! \brief A versatile 3D OpenGL viewer based on QGLWidget.
@@ -78,15 +75,15 @@ public:
 	// Complete implementation is provided so that the constructor is defined with QT3_SUPPORT when .h is included.
 	// (Would not be available otherwise since lib is compiled without QT3_SUPPORT).
 #if QT_VERSION < 0x040000 || defined QT3_SUPPORT
-	explicit QGLViewer(QWidget* parent=NULL, const char* name=0, const QGLWidget* shareWidget=0, Qt::WFlags flags=0)
+    explicit QGLViewer(QWidget* parent=NULL, const char* name=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0)
 		: QGLWidget(parent, name, shareWidget, flags)
 	{ defaultConstructor(); }
 
-	explicit QGLViewer(const QGLFormat& format, QWidget* parent=0, const char* name=0, const QGLWidget* shareWidget=0,Qt::WFlags flags=0)
+    explicit QGLViewer(const QGLFormat& format, QWidget* parent=0, const char* name=0, const QGLWidget* shareWidget=0,Qt::WindowFlags flags=0)
 		: QGLWidget(format, parent, name, shareWidget, flags)
 	{ defaultConstructor(); }
 
-	QGLViewer(QGLContext* context, QWidget* parent, const char* name=0, const QGLWidget* shareWidget=0, Qt::WFlags flags=0)
+    QGLViewer(QGLContext* context, QWidget* parent, const char* name=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0)
 # if QT_VERSION >= 0x030200
 		: QGLWidget(context, parent, name, shareWidget, flags) {
 # else
@@ -99,9 +96,9 @@ public:
 
 #else
 
-	explicit QGLViewer(QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WFlags flags=0);
-	explicit QGLViewer(QGLContext *context, QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WFlags flags=0);
-	explicit QGLViewer(const QGLFormat& format, QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WFlags flags=0);
+    explicit QGLViewer(QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0);
+    explicit QGLViewer(QGLContext *context, QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0);
+    explicit QGLViewer(const QGLFormat& format, QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0);
 #endif
 
 	virtual ~QGLViewer();
@@ -931,22 +928,22 @@ protected:
 		MOVE_CAMERA_LEFT, MOVE_CAMERA_RIGHT, MOVE_CAMERA_UP, MOVE_CAMERA_DOWN,
 		INCREASE_FLYSPEED, DECREASE_FLYSPEED, SNAPSHOT_TO_CLIPBOARD };
 public:
-	int shortcut(KeyboardAction action) const;
+    unsigned int shortcut(KeyboardAction action) const;
 #ifndef DOXYGEN
 	// QGLViewer 1.x
 	int keyboardAccelerator(KeyboardAction action) const;
 	Qt::Key keyFrameKey(int index) const;
-	QtKeyboardModifiers playKeyFramePathStateKey() const;
+    Qt::KeyboardModifiers playKeyFramePathStateKey() const;
 	// QGLViewer 2.0 without Qt4 support
-	QtKeyboardModifiers addKeyFrameStateKey() const;
-	QtKeyboardModifiers playPathStateKey() const;
+    Qt::KeyboardModifiers addKeyFrameStateKey() const;
+    Qt::KeyboardModifiers playPathStateKey() const;
 #endif
 	Qt::Key pathKey(int index) const;
-	QtKeyboardModifiers addKeyFrameKeyboardModifiers() const;
-	QtKeyboardModifiers playPathKeyboardModifiers() const;
+    Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
+    Qt::KeyboardModifiers playPathKeyboardModifiers() const;
 
 	public Q_SLOTS:
-		void setShortcut(KeyboardAction action, int key);
+        void setShortcut(KeyboardAction action, unsigned int key);
 #ifndef DOXYGEN
 		void setKeyboardAccelerator(KeyboardAction action, int key);
 #endif
@@ -962,8 +959,8 @@ public:
 		virtual void setAddKeyFrameStateKey(int buttonState);
 #endif
 		virtual void setPathKey(int key, int index = 0);
-		virtual void setPlayPathKeyboardModifiers(QtKeyboardModifiers modifiers);
-		virtual void setAddKeyFrameKeyboardModifiers(QtKeyboardModifiers modifiers);
+        virtual void setPlayPathKeyboardModifiers(Qt::KeyboardModifiers modifiers);
+        virtual void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers modifiers);
 		//@}
 
 
@@ -1006,29 +1003,29 @@ public:
 	MouseAction mouseAction(int state) const;
 	int mouseHandler(int state) const;
 	int mouseButtonState(MouseHandler handler, MouseAction action, bool withConstraint=true) const;
-	ClickAction clickAction(int state, bool doubleClick, QtMouseButtons buttonsBefore) const;
-	void getClickButtonState(ClickAction action, int& state, bool& doubleClick, QtMouseButtons& buttonsBefore) const;
+    ClickAction clickAction(int state, bool doubleClick, Qt::MouseButtons buttonsBefore) const;
+    void getClickButtonState(ClickAction action, int& state, bool& doubleClick, Qt::MouseButtons& buttonsBefore) const;
 
-	MouseAction wheelAction(QtKeyboardModifiers modifiers) const;
-	int wheelHandler(QtKeyboardModifiers modifiers) const;
+    MouseAction wheelAction(Qt::KeyboardModifiers modifiers) const;
+    int wheelHandler(Qt::KeyboardModifiers modifiers) const;
 	int wheelButtonState(MouseHandler handler, MouseAction action, bool withConstraint=true) const;
 
-	public Q_SLOTS:
-		void setMouseBinding(int state, MouseHandler handler, MouseAction action, bool withConstraint=true);
+public Q_SLOTS:
+    void setMouseBinding(int state, MouseHandler handler, MouseAction action, bool withConstraint=true);
 #if QT_VERSION < 0x030000
-		// Two slots cannot have the same name or two default parameters with Qt 2.3.
+    // Two slots cannot have the same name or two default parameters with Qt 2.3.
 public:
 #endif
-	void setMouseBinding(int state, ClickAction action, bool doubleClick=false, QtMouseButtons buttonsBefore=Qt::NoButton);
-	void setMouseBindingDescription(int state, QString description, bool doubleClick=false, QtMouseButtons buttonsBefore=Qt::NoButton);
+    void setMouseBinding(int state, ClickAction action, bool doubleClick=false, Qt::MouseButtons buttonsBefore=Qt::NoButton);
 #if QT_VERSION < 0x030000
-	public Q_SLOTS:
+public Q_SLOTS:
 #endif
-		void setWheelBinding(QtKeyboardModifiers modifiers, MouseHandler handler, MouseAction action, bool withConstraint=true);
-		void setHandlerKeyboardModifiers(MouseHandler handler, QtKeyboardModifiers modifiers);
+    void setMouseBindingDescription(int state, QString description, bool doubleClick=false, Qt::MouseButtons buttonsBefore=Qt::NoButton);
+    void setWheelBinding(Qt::KeyboardModifiers modifiers, MouseHandler handler, MouseAction action, bool withConstraint=true);
+    void setHandlerKeyboardModifiers(MouseHandler handler, Qt::KeyboardModifiers modifiers);
 #ifndef DOXYGEN
-		void setHandlerStateKey(MouseHandler handler, int buttonState);
-		void setMouseStateKey(MouseHandler handler, int buttonState);
+    void setHandlerStateKey(MouseHandler handler, int buttonState);
+    void setMouseStateKey(MouseHandler handler, int buttonState);
 #endif
 
 private:
@@ -1193,12 +1190,12 @@ private:
 	void setDefaultShortcuts();
 	QString cameraPathKeysString() const;
 	QMap<KeyboardAction, QString> keyboardActionDescription_;
-	QMap<KeyboardAction, int> keyboardBinding_;
-	QMap<int, QString> keyDescription_;
+    QMap<KeyboardAction, unsigned int> keyboardBinding_;
+    QMap<int, QString> keyDescription_;
 
 	// K e y   F r a m e s   s h o r t c u t s
 	QMap<Qt::Key, int> pathIndex_;
-	QtKeyboardModifiers addKeyFrameKeyboardModifiers_, playPathKeyboardModifiers_;
+    Qt::KeyboardModifiers addKeyFrameKeyboardModifiers_, playPathKeyboardModifiers_;
 
 	// B u f f e r   T e x t u r e
 	GLuint bufferTextureId_;
@@ -1217,10 +1214,10 @@ private:
 
 	// C l i c k   a c t i o n s
 	struct ClickActionPrivate {
-		QtKeyboardModifiers modifiers;
-		QtMouseButtons button;
+        Qt::KeyboardModifiers modifiers;
+        Qt::MouseButtons button;
 		bool doubleClick;
-		QtMouseButtons buttonsBefore; // only defined when doubleClick is true
+        Qt::MouseButtons buttonsBefore; // only defined when doubleClick is true
 
 		// This sort order in used in mouseString() to displays sorted mouse bindings
 		bool operator<(const ClickActionPrivate& cap) const
@@ -1245,7 +1242,7 @@ private:
 	void setDefaultMouseBindings();
 	void performClickAction(ClickAction ca, const QMouseEvent* const e);
 	QMap<int, MouseActionPrivate> mouseBinding_;
-	QMap<QtKeyboardModifiers, MouseActionPrivate> wheelBinding_;
+    QMap<Qt::KeyboardModifiers, MouseActionPrivate> wheelBinding_;
 	QMap<ClickActionPrivate, ClickAction> clickBinding_;
 
 	// S n a p s h o t s
