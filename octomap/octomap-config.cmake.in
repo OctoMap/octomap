@@ -24,15 +24,9 @@
 set(OCTOMAP_INCLUDE_DIRS @OCTOMAP_INCLUDE_DIRS@)
 set(OCTOMAP_LIBRARY_DIRS @OCTOMAP_LIB_DIR@)
  
-# library ext. hardcoded to dylib on Apple 
-if(APPLE)
-  set(SO_EXT ".dylib")
-else(APPLE)
-  set(SO_EXT ".so")
-endif(APPLE)
 
 # Set library names as absolute paths:
 set(OCTOMAP_LIBRARIES
-  @OCTOMAP_LIB_DIR@/liboctomap${SO_EXT}
-  @OCTOMAP_LIB_DIR@/liboctomath${SO_EXT}
+  @OCTOMAP_LIB_DIR@/liboctomap@CMAKE_SHARED_LIBRARY_SUFFIX@
+  @OCTOMAP_LIB_DIR@/liboctomath@CMAKE_SHARED_LIBRARY_SUFFIX@
 )
