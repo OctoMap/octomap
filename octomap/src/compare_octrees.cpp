@@ -39,7 +39,9 @@
 #include <list>
 #include <cmath>
 
+#ifdef _MSC_VER
 #define isnan(x) _isnan(x)  //for VC++
+#endif
 
 using std::cout;
 using std::endl;
