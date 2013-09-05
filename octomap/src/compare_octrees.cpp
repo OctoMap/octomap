@@ -39,13 +39,13 @@
 #include <list>
 #include <cmath>
 
-#ifdef _MSC_VER
-#define isnan(x) _isnan(x)  //for VC++
+#ifdef _MSC_VER // fix missing isnan for VC++
+#define isnan(x) _isnan(x)  
 #endif
 
-using std::cout;
-using std::endl;
+// on MacOS, isnan is in std (also C++11)
 using namespace std;
+
 using namespace octomap;
 
 void printUsage(char* self){
