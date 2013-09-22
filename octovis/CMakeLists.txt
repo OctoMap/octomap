@@ -22,14 +22,18 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-# We need the main octomap library to link against.
-# Look at parent directory by default, in case the complete distribution 
-# (octomap & octovis together) is built. 
-# Otherwise you need to export octomap_DIR to find the CMakeConfig.
-find_package(octomap REQUIRED
-  HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
-   ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
+# We need the main octomap library to link against (same version as octovis)
+# Look at parent directory by default, in case the complete distribution
+# (octomap & octovis together) is built.
+#
+# Otherwise you need to export octomap_DIR to the directory containing
+# the file octomap-config.cmake
+find_package(octomap ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION} REQUIRED
+HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
+${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
+MESSAGE(STATUS "Found octomap version: " ${octomap_VERSION})
+
 INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
 
 # Export the package for use from the build-tree

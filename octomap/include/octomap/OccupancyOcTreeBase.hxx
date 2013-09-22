@@ -626,6 +626,78 @@ namespace octomap {
     return true;
   }
 
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::getIntersection (const point3d& origin, const point3d& direction, const point3d& center,
+                 point3d& intersection, double delta/*=0.0*/) const {
+    // We only need three normals for the six planes
+    octomap::point3d normalX(1, 0, 0);
+    octomap::point3d normalY(0, 1, 0);
+    octomap::point3d normalZ(0, 0, 1);
+
+    // One point on each plane, let them be the center for simplicity
+    octomap::point3d pointXNeg(center(0) - this->resolution / 2, center(1), center(2));
+    octomap::point3d pointXPos(center(0) + this->resolution / 2, center(1), center(2));
+    octomap::point3d pointYNeg(center(0), center(1) - this->resolution / 2, center(2));
+    octomap::point3d pointYPos(center(0), center(1) + this->resolution / 2, center(2));
+    octomap::point3d pointZNeg(center(0), center(1), center(2) - this->resolution / 2);
+    octomap::point3d pointZPos(center(0), center(1), center(2) + this->resolution / 2);
+
+    double lineDotNormal = 0.0;
+    double d = 0.0;
+    double outD = std::numeric_limits<double>::max();
+    octomap::point3d intersect;
+
+    // Find the intersection (if any) with each place
+    // Line dot normal will be zero if they are parallel, in which case no intersection can be the entry one
+    // if there is an intersection does it occur in the bounded plane of the voxel
+    // if yes keep only the closest (smallest distance to sensor origin).
+    if((lineDotNormal = normalX.dot(direction))){
+      d = (pointXNeg - origin).dot(normalX) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(1) < pointYNeg(1) || intersect(1) > pointYPos(1) ||
+         intersect(2) < pointZNeg(2) || intersect(2) > pointZPos(2)))
+        outD = std::min(outD, d);
+
+      d = (pointXPos - origin).dot(normalX) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(1) < pointYNeg(1) || intersect(1) > pointYPos(1) ||
+         intersect(2) < pointZNeg(2) || intersect(2) > pointZPos(2)))
+        outD = std::min(outD, d);
+    }
+
+    if((lineDotNormal = normalY.dot(direction))){
+      d = (pointYNeg - origin).dot(normalY) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(0) < pointXNeg(0) || intersect(0) > pointXPos(0) ||
+         intersect(2) < pointZNeg(2) || intersect(2) > pointZPos(2)))
+        outD = std::min(outD, d);
+
+      d = (pointYPos - origin).dot(normalY) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(0) < pointXNeg(0) || intersect(0) > pointXPos(0) ||
+         intersect(2) < pointZNeg(2) || intersect(2) > pointZPos(2)))
+        outD = std::min(outD, d);
+    }
+
+    if((lineDotNormal = normalZ.dot(direction))){
+      d = (pointZNeg - origin).dot(normalZ) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(0) < pointXNeg(0) || intersect(0) > pointXPos(0) ||
+         intersect(1) < pointYNeg(1) || intersect(1) > pointYPos(1)))
+        outD = std::min(outD, d);
+
+      d = (pointZPos - origin).dot(normalZ) / lineDotNormal;
+      intersect = direction * d + origin;
+      if(!(intersect(0) < pointXNeg(0) || intersect(0) > pointXPos(0) ||
+         intersect(1) < pointYNeg(1) || intersect(1) > pointYPos(1)))
+        outD = std::min(outD, d);
+    }
+
+    // Substract a fraction to ensure no ambiguity on the starting voxel
+    // Don't start on a bondary.
+    intersection = direction * (outD + delta) + origin;
+  }
+
 
   template <class NODE> inline bool 
   OccupancyOcTreeBase<NODE>::integrateMissOnRay(const point3d& origin, const point3d& end, bool lazy_eval) {

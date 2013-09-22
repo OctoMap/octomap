@@ -279,6 +279,19 @@ namespace octomap {
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
 
+    /**
+     * Retrieves the entry point of a ray into a voxel. This is the closest intersection point of the ray
+     * originating from origin and a plane of the axis aligned cube.
+     * 
+     * @param[in] origin Starting point of ray
+     * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
+     * @param[in] center The center of the voxel where the ray terminated. This is the output of castRay.
+     * @param[out] intersection The entry point of the ray into the voxel, on the voxel surface.
+     * @param[in] delta A small increment to avoid ambiguity of beeing exactly on a voxel surface. A positive value will get the point out of the hit voxel, while a negative valuewill get it inside.
+     */
+    virtual void getIntersection(const point3d& origin, const point3d& direction, const point3d& center,
+                 point3d& intersection, double delta=0.0) const;
+
 		/**
 		 * Performs a step of the marching cubes surface reconstruction algorithm
 		 * to retreive the normal of the triangles that fall in the cube
@@ -394,7 +407,7 @@ namespace octomap {
     virtual void integrateHit(NODE* occupancyNode) const;
     /// integrate a "miss" measurement according to the tree's sensor model
     virtual void integrateMiss(NODE* occupancyNode) const;
-    // update logodds value of node, given update is added to current value.
+    /// update logodds value of node by adding to the current value.
     virtual void updateNodeLogOdds(NODE* occupancyNode, const float& update) const;
 
     /// converts the node to the maximum likelihood value according to the tree's parameter for "occupancy"
