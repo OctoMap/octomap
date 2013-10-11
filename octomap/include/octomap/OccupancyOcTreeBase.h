@@ -288,8 +288,9 @@ namespace octomap {
      * @param[in] center The center of the voxel where the ray terminated. This is the output of castRay.
      * @param[out] intersection The entry point of the ray into the voxel, on the voxel surface.
      * @param[in] delta A small increment to avoid ambiguity of beeing exactly on a voxel surface. A positive value will get the point out of the hit voxel, while a negative valuewill get it inside.
+     * @return Whether or not an intesection point has been found. Either, the ray never cross the voxel or the ray is exactly parallel to the only surface it intersect.
      */
-    virtual void getIntersection(const point3d& origin, const point3d& direction, const point3d& center,
+    virtual bool getRayIntersection(const point3d& origin, const point3d& direction, const point3d& center,
                  point3d& intersection, double delta=0.0) const;
 
 		/**
