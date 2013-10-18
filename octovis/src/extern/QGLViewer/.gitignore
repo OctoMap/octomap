@@ -1,0 +1,8 @@
+.moc
+.obj
+*.so
+*.so.*
+ui_*.h
+libQGLViewer.prl
+
+

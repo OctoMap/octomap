@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.17.
+ This file is part of the QGLViewer library version 2.4.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -24,7 +24,7 @@
 
 #ifndef NO_VECTORIAL_RENDER
 # if QT_VERSION >= 0x040000
-#  include "ui_VRenderInterface.Qt4.h"
+#  include "ui_VRenderInterface.h"
 # else
 #  include <qcheckbox.h>
 #  include <qcombobox.h>
@@ -34,7 +34,7 @@
 #endif
 
 #if QT_VERSION >= 0x040000
-# include "ui_ImageInterface.Qt4.h"
+# include "ui_ImageInterface.h"
 #else
 # include <qspinbox.h>
 # include <qcheckbox.h>
@@ -818,7 +818,7 @@ QImage QGLViewer::grabFrameBuffer(bool withAlpha)
   }
   else
   {
-#if defined (Q_WS_WIN)
+#if defined (Q_OS_WIN) || defined (Q_WS_WIN)
 	res = QImage(w, h, 8);
 	glReadPixels(0, 0, w, h, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, res.bits());
 	//int palSize = 0;
