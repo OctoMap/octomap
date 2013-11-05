@@ -340,10 +340,13 @@ namespace octomap {
         NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode())
+        if (node->pruneNode()){
           this->tree_size -= 8;
-        else
+          // return pointer to current parent (pruned), the just updated node no longer exists
+          retval = node;
+        } else{
           node->updateOccupancyChildren();
+        }
 
         return retval;
       }
