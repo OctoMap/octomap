@@ -31,7 +31,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef _MSC_VER
+/* According to c++ standard including this header has no practical effect
+ * but it can be used to determine the c++ standard library implementation.
+ */ 
+#include <ciso646>
+
+#if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
   #include <algorithm>
 #else
   #include <ext/algorithm>
@@ -199,8 +204,8 @@ namespace octomap {
 
   void Pointcloud::subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud) {
     point3d_collection samples;
-    // visual studio does not support random_sample_n
-  #ifdef _MSC_VER
+    // visual studio does not support random_sample_n and neither does libc++
+  #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
     samples.reserve(this->size());
     samples.insert(samples.end(), this->begin(), this->end());
     std::random_shuffle(samples.begin(), samples.end());
