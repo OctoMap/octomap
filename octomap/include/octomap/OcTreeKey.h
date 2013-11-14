@@ -47,11 +47,15 @@
 #if defined(__GNUC__) && ! defined(_LIBCPP_VERSION)
   #include <tr1/unordered_set>
   #include <tr1/unordered_map>
-  #define UNORDERED_NAMESPACE std::tr1
+  namespace octomap {
+    namespace unordered_ns = std::tr1;
+  };
 #else
   #include <unordered_set>
   #include <unordered_map>
-  #define UNORDERED_NAMESPACE std
+  namespace octomap {
+    namespace unordered_ns = std;
+  }
 #endif
 
 namespace octomap {
@@ -105,14 +109,14 @@ namespace octomap {
    * @note you need to use boost::unordered_set instead if your compiler does not
    * yet support tr1!
    */
-  typedef UNORDERED_NAMESPACE::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
+  typedef unordered_ns::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
 
   /**
    * Data structrure to efficiently track changed nodes as a combination of
    * OcTreeKeys and a bool flag (to denote newly created nodes)
    *
    */
-  typedef UNORDERED_NAMESPACE::unordered_map<OcTreeKey, bool, OcTreeKey::KeyHash> KeyBoolMap;
+  typedef unordered_ns::unordered_map<OcTreeKey, bool, OcTreeKey::KeyHash> KeyBoolMap;
 
 
   class KeyRay {

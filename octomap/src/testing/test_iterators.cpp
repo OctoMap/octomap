@@ -350,7 +350,7 @@ int main(int argc, char** argv) {
   EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
   EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
 
-  typedef UNORDERED_NAMESPACE::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
+  typedef unordered_ns::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
 
   KeyVolumeMap bbxVoxels;
 
