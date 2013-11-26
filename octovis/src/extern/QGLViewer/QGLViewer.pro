@@ -10,7 +10,7 @@
 
 TEMPLATE = lib
 TARGET = QGLViewer
-VERSION = 2.3.17
+VERSION = 2.4.0
 CONFIG *= qt opengl warn_on shared thread create_prl rtti no_keywords
 
 QGL_HEADERS = qglviewer.h \
@@ -45,8 +45,12 @@ TRANSLATIONS = qglviewer_fr.ts
                        
 QT_VERSION=$$[QT_VERSION]
 
-contains( QT_VERSION, "^4.*" ) {
-  QT *= xml opengl
+!contains( QT_VERSION, "^3.*" ) {
+    QT *= xml opengl
+}
+
+contains ( QT_VERSION, "^5.*" ) {
+    QT *= widgets
 }
 
 !isEmpty( QGLVIEWER_STATIC ) {
@@ -56,10 +60,10 @@ contains( QT_VERSION, "^4.*" ) {
 # -----------------------------------
 # --  I m a g e I n t e r f a c e  --
 # -----------------------------------
-contains( QT_VERSION, "^4.*" ) {
-  FORMS *= ImageInterface.Qt4.ui
-} else {
+contains( QT_VERSION, "^3.*" ) {
   FORMS *= ImageInterface.Qt3.ui
+} else {
+  FORMS *= ImageInterface.ui
 }
 
 # ---------------------------------------------
@@ -71,10 +75,10 @@ contains( QT_VERSION, "^4.*" ) {
 contains( DEFINES, NO_VECTORIAL_RENDER ) {
   message( Vectorial rendering disabled )
 } else {
-  contains( QT_VERSION, "^4.*" ) {
-    FORMS *= VRenderInterface.Qt4.ui
-  } else {
+  contains( QT_VERSION, "^3.*" ) {
     FORMS *= VRenderInterface.Qt3.ui
+  } else {
+    FORMS *= VRenderInterface.ui
   }
 
   SOURCES *= \
@@ -124,21 +128,33 @@ unix {
 
   # INCLUDE_DIR and LIB_DIR specify where to install the include files and the library.
   # Use qmake INCLUDE_DIR=... LIB_DIR=... , or qmake PREFIX=... to customize your installation.
+  
+  HOME_DIR = $$system(cd;pwd)
+
   isEmpty( PREFIX ) {
-    PREFIX=/usr
+    PREFIX_=/usr
+  } else {
+    PREFIX_=$${PREFIX}
   }
   isEmpty( LIB_DIR ) {
-    LIB_DIR = $${PREFIX}/lib
+    LIB_DIR_ = $${PREFIX_}/lib
+  } else {
+    LIB_DIR_ = $${LIB_DIR}
   }
   isEmpty( INCLUDE_DIR ) {
-    INCLUDE_DIR = $${PREFIX}/include
+    INCLUDE_DIR_ = $${PREFIX_}/include
+  } else {
+    INCLUDE_DIR_ = $${INCLUDE_DIR}
   }
-
   isEmpty( DOC_DIR ) {
     macx|darwin-g++ {
-      DOC_DIR = /Developer/Documentation/QGLViewer
+      isEmpty( PREFIX ) {
+        DOC_DIR = $${HOME_DIR}/Library/Developer/Shared/Documentation/QGLViewer
+      } else {
+        DOC_DIR = $${PREFIX}/Shared/Documentation/QGLViewer
+      }
     } else {
-      DOC_DIR = $${PREFIX}/share/doc/QGLViewer
+      DOC_DIR = $${PREFIX_}/share/doc/QGLViewer
     }
   }
 
@@ -161,7 +177,7 @@ unix {
   QMAKE_CXXFLAGS_RELEASE -= -g
 
   # install header
-  include.path = $${INCLUDE_DIR}/QGLViewer
+  include.path = $${INCLUDE_DIR_}/QGLViewer
   # Should be $$replace(TRANSLATIONS, .ts, .qm), but 'replace' only appeared in Qt 4.3
   include.files = $${QGL_HEADERS} qglviewer_fr.qm
 
@@ -183,26 +199,14 @@ unix {
 
   # install static library
   #staticlib.extra = make -f Makefile.Release staticlib
-  #staticlib.path = $${LIB_DIR}
+  #staticlib.path = $${LIB_DIR_}
   #staticlib.files = lib$${TARGET}.a
 
   # install library
-  target.path = $${LIB_DIR}
+  target.path = $${LIB_DIR_}
 
   # "make install" configuration options
   INSTALLS *= target include documentation docImages docRefManual
-}
-
-# -----------------
-# --  L i n u x  --
-# -----------------
-linux-g++ {
-  # Patch for gcc 3.2.0 and 3.3.1-2
-  system( g++ --version | grep " 3\.2\.0 " > /dev/null )|system( g++ --version | grep " 3\.3\.1\-2" > /dev/null ) {
-      message( Patching gcc bug - using debug configuration )
-      CONFIG -= release
-      CONFIG *= debug
-  }
 }
 
 
@@ -235,7 +239,7 @@ irix-cc|irix-n32 {
 # -------------------
 macx|darwin-g++ {
   # This setting creates a Mac framework. Comment out this line to create a dylib instead.
-  CONFIG *= lib_bundle
+  !staticlib: CONFIG *= lib_bundle
 
   include.files *= qglviewer.icns
 
@@ -246,8 +250,22 @@ macx|darwin-g++ {
     FRAMEWORK_HEADERS.path = Headers
     QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
 
-    DESTDIR = ~/Library/Frameworks/
+    DESTDIR = $${HOME_DIR}/Library/Frameworks/
 
+    # For a Framework, 'include' and 'lib' do no make sense.
+    # These and prefix will all define the DESTDIR, in that order in case several are defined
+    !isEmpty( INCLUDE_DIR ) {
+      DESTDIR = $${INCLUDE_DIR}
+    }
+
+    !isEmpty( LIB_DIR ) {
+      DESTDIR = $${LIB_DIR}
+    }
+
+    !isEmpty( PREFIX ) {
+      DESTDIR = $${PREFIX}
+    }
+  
     QMAKE_POST_LINK=cd $$DESTDIR/QGLViewer.framework/Headers && (test -L QGLViewer || ln -s . QGLViewer)
 
     #QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
@@ -296,6 +314,7 @@ win32 {
   # Any feedback on these flags is welcome.
   !win32-g++ {
     QMAKE_CXXFLAGS = -TP -GR -Zi
+    DEFINES += NOMINMAX
     win32-msvc {
       QMAKE_CXXFLAGS *= -GX
     } else {
@@ -305,7 +324,7 @@ win32 {
 }
 
 
-contains( QT_VERSION, "^4.*" ) {
+!contains( QT_VERSION, "^3.*" ) {
    build_pass:CONFIG(debug, debug|release) {
      unix: TARGET = $$join(TARGET,,,_debug)
      else: TARGET = $$join(TARGET,,,d)

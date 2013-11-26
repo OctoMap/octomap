@@ -5,20 +5,13 @@
 #  OCTOVIS_LIBRARY_DIRS - library directories for OctoMap viewer 
 #  OCTOVIS_LIBRARIES    - libraries to link against
  
-set(OCTOVIS_INCLUDE_DIRS @QGLViewer_INCLUDE_DIR@ @OCTOVIS_INCLUDE_DIR@)
-set(OCTOVIS_LIBRARY_DIRS @QGLViewer_LIBRARY_DIR@ @OCTOVIS_LIB_DIR@)
+set(OCTOVIS_INCLUDE_DIRS "@QGLViewer_INCLUDE_DIR@" "@OCTOVIS_INCLUDE_DIR@")
+set(OCTOVIS_LIBRARY_DIRS "@QGLViewer_LIBRARY_DIR@" "@OCTOVIS_LIB_DIR@")
 
-
-# library ext. hardcoded to dylib on Apple 
-if(APPLE)
-  set(SO_EXT ".dylib")
-else(APPLE)
-  set(SO_EXT ".so")
-endif(APPLE)
 
 # Set library names as absolute paths:
 set(OCTOVIS_LIBRARIES
-  @QGLViewer_LIBRARIES@
-  @QT_LIBRARIES@
-  @OCTOVIS_LIB_DIR@/liboctovis${SO_EXT}
+  "@QGLViewer_LIBRARIES@"
+  "@QT_LIBRARIES@"
+  "@OCTOVIS_LIB_DIR@/liboctovis@CMAKE_SHARED_LIBRARY_SUFFIX@"
 )

@@ -1,0 +1,24 @@
+
+      l i b Q G L V i e w e r   I n s t a l l a t i o n
+
+
+
+libQGLViewer requires the Qt library, available from Nokia.
+
+Binary packages are available for different architectures.
+
+
+If you want to compile the library from its sources:
+
+- On UNIX platforms, simply type (see doc/installUnix.html for details):
+
+ > cd QGLViewer
+ > qmake
+ > make
+ > make install [optional]
+
+- For Windows installation, see doc/installWindows.html.
+
+
+
+See doc/compilation.html for details on compiling programs that use libQGLViewer.

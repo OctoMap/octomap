@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.17.
+ This file is part of the QGLViewer library version 2.4.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -51,7 +51,7 @@ ManipulatedFrame::ManipulatedFrame()
   setWheelSensitivity(1.0f);
 
   isSpinning_ = false;
-  previousConstraint_ = false;
+  previousConstraint_ = NULL;
 
   connect(&spinningTimer_, SIGNAL(timeout()), SLOT(spinUpdate()));
 }

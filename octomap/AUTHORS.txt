@@ -1,0 +1,12 @@
+OctoMap was originally developed by Kai M. Wurm and Armin Hornung,
+University of Freiburg
+
+Further contributors:
+* C. Sprunk, University of Freiburg
+* J. Mueller, University of Freiburg
+* S. Osswald, University of Freiburg
+* R. Schmitt, University of Freiburg
+* R. Bogdan Rusu, Willow Garage Inc.
+* C. Dornhege, University of Freiburg
+* F-M. de Rainville, Universite Laval Quebec
+* B. Jensen, TU Munich

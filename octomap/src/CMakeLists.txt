@@ -50,6 +50,9 @@ TARGET_LINK_LIBRARIES(simple_example octomap)
 ADD_EXECUTABLE(normals_example normals_example.cpp)
 TARGET_LINK_LIBRARIES(normals_example octomap)
 
+ADD_EXECUTABLE(intersection_example intersection_example.cpp)
+TARGET_LINK_LIBRARIES(intersection_example octomap)
+
 
 # installation:
 # store all header files to install:
