@@ -241,6 +241,40 @@ namespace octomap {
   }
 
   template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(const OcTreeKey& key, float log_odds_value, bool lazy_eval) {
+    // clamp log odds within range:
+    log_odds_value = std::min(std::max(log_odds_value, this->clamping_thres_min), this->clamping_thres_max);
+
+    bool createdRoot = false;
+    if (this->root == NULL){
+      this->root = new NODE();
+      this->tree_size++;
+      createdRoot = true;
+    }
+
+    return setNodeValueRecurs(this->root, createdRoot, key, 0, log_odds_value, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(const point3d& value, float log_odds_value, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(value, key))
+      return NULL;
+
+    return setNodeValue(key, log_odds_value, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(double x, double y, double z, float log_odds_value, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(x, y, z, key))
+      return NULL;
+
+    return setNodeValue(key, log_odds_value, lazy_eval);
+  }
+
+
+  template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval) {
     // early abort (no change will happen).
     // may cause an overhead in some configuration, but more often helps
@@ -374,6 +408,75 @@ namespace octomap {
     }
   }
   
+  // TODO: mostly copy of updateNodeRecurs => merge code or general tree modifier / traversal
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
+                                                    unsigned int depth, const float& log_odds_value, bool lazy_eval) {
+    unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
+    bool created_node = false;
+
+    assert(node);
+
+    // follow down to last level
+    if (depth < this->tree_depth) {
+      if (!node->childExists(pos)) {
+        // child does not exist, but maybe it's a pruned node?
+        if ((!node->hasChildren()) && !node_just_created ) {
+          // current node does not have children AND it is not a new node
+          // -> expand pruned node
+          node->expandNode();
+          this->tree_size+=8;
+          this->size_changed = true;
+        }
+        else {
+          // not a pruned node, create requested child
+          node->createChild(pos);
+          this->tree_size++;
+          this->size_changed = true;
+          created_node = true;
+        }
+      }
+
+      if (lazy_eval)
+        return setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+      else {
+        NODE* retval = setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+        // prune node if possible, otherwise set own probability
+        // note: combining both did not lead to a speedup!
+        if (node->pruneNode()){
+          this->tree_size -= 8;
+          // return pointer to current parent (pruned), the just updated node no longer exists
+          retval = node;
+        } else{
+          node->updateOccupancyChildren();
+        }
+
+        return retval;
+      }
+    }
+
+    // at last level, update node, end of recursion
+    else {
+      if (use_change_detection) {
+        bool occBefore = this->isNodeOccupied(node);
+        node->setLogOdds(log_odds_value);
+
+        if (node_just_created){  // new node
+          changed_keys.insert(std::pair<OcTreeKey,bool>(key, true));
+        } else if (occBefore != this->isNodeOccupied(node)) {  // occupancy changed, track it
+          KeyBoolMap::iterator it = changed_keys.find(key);
+          if (it == changed_keys.end())
+            changed_keys.insert(std::pair<OcTreeKey,bool>(key, false));
+          else if (it->second == false)
+            changed_keys.erase(it);
+        }
+      } else {
+        node->setLogOdds(log_odds_value);
+      }
+      return node;
+    }
+  }
+
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateInnerOccupancy(){
     if (this->root)

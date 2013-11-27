@@ -164,8 +164,46 @@ namespace octomap {
      virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of a voxel directly. This only works if key is at the lowest
+      * Set log_odds value of voxel to log_odds_value. This only works if key is at the lowest
       * octree level
+      *
+      * @param key OcTreeKey of the NODE that is to be updated
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(const OcTreeKey& key, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Set log_odds value of voxel to log_odds_value.
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls setNodeValue() with it.
+      *
+      * @param value 3d coordinate of the NODE that is to be updated
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(const point3d& value, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Set log_odds value of voxel to log_odds_value.
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls setNodeValue() with it.
+      *
+      * @param x
+      * @param y
+      * @param z
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(double x, double y, double z, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * This only works if key is at the lowest octree level
       *
       * @param key OcTreeKey of the NODE that is to be updated
       * @param log_odds_update value to be added (+) to log_odds value of node
@@ -176,8 +214,8 @@ namespace octomap {
      virtual NODE* updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of voxel directly.
-      * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls updateNode() with it.
       *
       * @param value 3d coordinate of the NODE that is to be updated
       * @param log_odds_update value to be added (+) to log_odds value of node
@@ -188,8 +226,8 @@ namespace octomap {
      virtual NODE* updateNode(const point3d& value, float log_odds_update, bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of voxel directly.
-      * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls updateNode() with it.
       *
       * @param x
       * @param y
@@ -433,6 +471,9 @@ namespace octomap {
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, const float& log_odds_update, bool lazy_eval = false);
     
+    NODE* setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
+                           unsigned int depth, const float& log_odds_value, bool lazy_eval = false);
+
     void updateInnerOccupancyRecurs(NODE* node, unsigned int depth);
     
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
