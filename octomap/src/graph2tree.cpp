@@ -59,6 +59,7 @@ void printUsage(char* self){
             "  -log (enable a detailed log file with statistics) \n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
             "  -simple (simple scan insertion ray by ray instead of optimized) \n"
+            "  -discretize (approximate raycasting on discretized coordinates, speeds up insertion) \n"
             "  -clamping <p_min> <p_max> (override default sensor model clamping probabilities between 0..1)\n"
             "  -sensor <p_miss> <p_hit> (override default sensor model hit and miss probabilities between 0..1)"
   "\n";
@@ -110,6 +111,7 @@ int main(int argc, char** argv) {
   int max_scan_no = -1;
   bool detailedLog = false;
   bool simpleUpdate = false;
+  bool discretize = false;
   unsigned char compression = 1;
 
   // get default sensor model values:
@@ -137,6 +139,8 @@ int main(int argc, char** argv) {
       detailedLog = true;
     else if (! strcmp(argv[arg], "-simple"))
       simpleUpdate = true;
+    else if (! strcmp(argv[arg], "-discretize"))
+      discretize = true;
     else if (! strcmp(argv[arg], "-compress"))
       OCTOMAP_WARNING("Argument -compress no longer has an effect, incremental pruning is done during each insertion.\n");
     else if (! strcmp(argv[arg], "-compressML"))
@@ -242,7 +246,7 @@ int main(int argc, char** argv) {
     if (simpleUpdate)
       tree->insertPointCloudRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
     else
-      tree->insertPointCloud((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
+      tree->insertPointCloud((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, false, discretize);
 
     if (compression == 2){
       tree->toMaxLikelihood();

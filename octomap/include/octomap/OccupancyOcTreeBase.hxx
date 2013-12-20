@@ -72,21 +72,24 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertPointCloud(const ScanNode& scan, double maxrange, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloud(const ScanNode& scan, double maxrange, bool lazy_eval, bool discretize) {
     // performs transformation to data and sensor origin first
     Pointcloud& cloud = *(scan.scan);
     pose6d frame_origin = scan.pose;
     point3d sensor_origin = frame_origin.inv().transform(scan.pose.trans());
-    insertPointCloud(cloud, sensor_origin, frame_origin, maxrange, lazy_eval);
+    insertPointCloud(cloud, sensor_origin, frame_origin, maxrange, lazy_eval, discretize);
   }
 
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                                             double maxrange, bool lazy_eval) {
+                                             double maxrange, bool lazy_eval, bool discretize) {
 
     KeySet free_cells, occupied_cells;
-    computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
+    if (discretize)
+      computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+    else
+      computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
 
     // insert data into tree  -----------------------
     for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
@@ -99,12 +102,12 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
-                                             double maxrange, bool lazy_eval) {
+                                             double maxrange, bool lazy_eval, bool discretize) {
     // performs transformation to data and sensor origin first
     Pointcloud transformed_scan (pc);
     transformed_scan.transform(frame_origin);
     point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
-    insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval);
+    insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval, discretize);
   }
 
 
@@ -140,12 +143,35 @@ namespace octomap {
     }
   }
 
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::computeDiscreteUpdate(const Pointcloud& scan, const octomap::point3d& origin,
+                                                KeySet& free_cells, KeySet& occupied_cells,
+                                                double maxrange)
+ {
+   Pointcloud discretePC;
+   discretePC.reserve(scan.size());
+   KeySet endpoints;
+
+   for (int i = 0; i < (int)scan.size(); ++i) {
+     OcTreeKey k = this->coordToKey(scan[i]);
+     std::pair<KeySet::iterator,bool> ret = endpoints.insert(k);
+     if (ret.second){ // insertion took place => k was not in set
+       discretePC.push_back(this->keyToCoord(k));
+     }
+   }
+
+   computeUpdate(discretePC, origin, free_cells, occupied_cells, maxrange);
+ }
+
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange)
   {
+
+
+
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
@@ -157,8 +183,9 @@ namespace octomap {
       threadIdx = omp_get_thread_num();
 #endif
       KeyRay* keyray = &(this->keyrays.at(threadIdx));
-      if (!use_bbx_limit) {
-        // -------------- no BBX specified ---------------
+
+
+      if (!use_bbx_limit) { // no BBX specified
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
           if (this->computeRayKeys(origin, p, *keyray)){
@@ -179,9 +206,7 @@ namespace octomap {
               occupied_cells.insert(key);
             }
           }
-        } // end if NOT maxrange
-
-        else { // user set a maxrange and this is reached
+        } else { // user set a maxrange and length is above
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, *keyray)){
@@ -193,10 +218,7 @@ namespace octomap {
             }
           }
         } // end if maxrange
-      }
-
-      // --- update limited by user specified BBX  -----
-      else {
+      } else { // BBX was set
         // endpoint in bbx and not maxrange?
         if ( inBBX(p) && ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) )  {
 
