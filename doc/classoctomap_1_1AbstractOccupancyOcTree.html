@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.6.1</span>
+   &#160;<span id="projectnumber">1.6.3</span>
    </div>
   </td>
  </tr>
@@ -186,9 +186,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a03a4b455b5185ad715cc1a50aae42ed8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a03a4b455b5185ad715cc1a50aae42ed8">setOccupancyThres</a> (double prob)</td></tr>
 <tr class="memdesc:a03a4b455b5185ad715cc1a50aae42ed8"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the threshold for occupancy (sensor model)  <a href="#a03a4b455b5185ad715cc1a50aae42ed8"></a><br/></td></tr>
 <tr class="memitem:a08f3d30cc002428cd5c925c4b2c31ba4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a08f3d30cc002428cd5c925c4b2c31ba4">setProbHit</a> (double prob)</td></tr>
-<tr class="memdesc:a08f3d30cc002428cd5c925c4b2c31ba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the probablility for a "hit" (will be converted to logodds) - sensor model  <a href="#a08f3d30cc002428cd5c925c4b2c31ba4"></a><br/></td></tr>
+<tr class="memdesc:a08f3d30cc002428cd5c925c4b2c31ba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the probability for a "hit" (will be converted to logodds) - sensor model  <a href="#a08f3d30cc002428cd5c925c4b2c31ba4"></a><br/></td></tr>
 <tr class="memitem:a66e1aebc4f4ee4dfc1096006a035a831"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a66e1aebc4f4ee4dfc1096006a035a831">setProbMiss</a> (double prob)</td></tr>
-<tr class="memdesc:a66e1aebc4f4ee4dfc1096006a035a831"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the probablility for a "miss" (will be converted to logodds) - sensor model  <a href="#a66e1aebc4f4ee4dfc1096006a035a831"></a><br/></td></tr>
+<tr class="memdesc:a66e1aebc4f4ee4dfc1096006a035a831"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the probability for a "miss" (will be converted to logodds) - sensor model  <a href="#a66e1aebc4f4ee4dfc1096006a035a831"></a><br/></td></tr>
 <tr class="memitem:af21f950e9a96b08d2c282482cd565eb0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOcTree.html#af21f950e9a96b08d2c282482cd565eb0">setResolution</a> (double res)=0</td></tr>
 <tr class="memitem:a2ad346c0f49a214721781d3259575782"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOcTree.html#a2ad346c0f49a214721781d3259575782">size</a> () const =0</td></tr>
 <tr class="memitem:a1c6901fde57e5796568892b745db392e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a1c6901fde57e5796568892b745db392e">toMaxLikelihood</a> ()=0</td></tr>
@@ -808,7 +808,7 @@ Static Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>probablility for a "hit" in the sensor model (probability) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>probability for a "hit" in the sensor model (probability) </dd></dl>
 
 <p>References <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a453ef82a94dcef1f9b76e22602a06f89">prob_hit_log</a>, and <a class="el" href="namespaceoctomap.html#aa8660dcbf419b46db64ffcf7beb95e69">octomap::probability()</a>.</p>
 
@@ -834,7 +834,7 @@ Static Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>probablility for a "hit" in the sensor model (logodds) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>probability for a "hit" in the sensor model (logodds) </dd></dl>
 
 <p>References <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a453ef82a94dcef1f9b76e22602a06f89">prob_hit_log</a>.</p>
 
@@ -860,7 +860,7 @@ Static Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>probablility for a "miss" in the sensor model (probability) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>probability for a "miss" in the sensor model (probability) </dd></dl>
 
 <p>References <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a17a1b4b3d2e539f79babc27e3bd280b1">prob_miss_log</a>, and <a class="el" href="namespaceoctomap.html#aa8660dcbf419b46db64ffcf7beb95e69">octomap::probability()</a>.</p>
 
@@ -886,7 +886,7 @@ Static Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>probablility for a "miss" in the sensor model (logodds) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>probability for a "miss" in the sensor model (logodds) </dd></dl>
 
 <p>References <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a17a1b4b3d2e539f79babc27e3bd280b1">prob_miss_log</a>.</p>
 
@@ -1539,7 +1539,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>sets the probablility for a "hit" (will be converted to logodds) - sensor model </p>
+<p>sets the probability for a "hit" (will be converted to logodds) - sensor model </p>
 
 <p>References <a class="el" href="namespaceoctomap.html#a10a09b5553d8f945a405e2487732153a">octomap::logodds()</a>, and <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a453ef82a94dcef1f9b76e22602a06f89">prob_hit_log</a>.</p>
 
@@ -1569,7 +1569,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>sets the probablility for a "miss" (will be converted to logodds) - sensor model </p>
+<p>sets the probability for a "miss" (will be converted to logodds) - sensor model </p>
 
 <p>References <a class="el" href="namespaceoctomap.html#a10a09b5553d8f945a405e2487732153a">octomap::logodds()</a>, and <a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html#a17a1b4b3d2e539f79babc27e3bd280b1">prob_miss_log</a>.</p>
 
@@ -2248,7 +2248,7 @@ Static Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li><li class="navelem"><a class="el" href="classoctomap_1_1AbstractOccupancyOcTree.html">AbstractOccupancyOcTree</a></li>
-    <li class="footer">Generated on Thu Jun 20 2013 18:13:32 for octomap by
+    <li class="footer">Generated on Mon Jan 13 2014 11:57:31 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

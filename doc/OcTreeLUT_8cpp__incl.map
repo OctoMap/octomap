@@ -1,10 +1,10 @@
 <map id="src/OcTreeLUT.cpp" name="src/OcTreeLUT.cpp">
-<area shape="rect" id="node7" href="$OcTreeLUT_8h.html" title="octomap/OcTreeLUT.h" alt="" coords="476,83,631,112"/>
-<area shape="rect" id="node9" href="$OcTreeLUTdefs_8h.html" title="OcTreeLUTdefs.h" alt="" coords="783,160,908,189"/>
-<area shape="rect" id="node11" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="336,160,459,189"/>
-<area shape="rect" id="node34" href="$OcTreeKey_8h.html" title="OcTreeKey.h" alt="" coords="660,160,759,189"/>
-<area shape="rect" id="node18" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="517,392,683,421"/>
-<area shape="rect" id="node24" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="435,237,600,267"/>
-<area shape="rect" id="node32" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="67,237,275,267"/>
-<area shape="rect" id="node27" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="439,315,535,344"/>
+<area shape="rect" id="node7" href="$OcTreeLUT_8h.html" title="octomap/OcTreeLUT.h" alt="" coords="428,83,583,112"/>
+<area shape="rect" id="node9" href="$OcTreeLUTdefs_8h.html" title="OcTreeLUTdefs.h" alt="" coords="865,160,991,189"/>
+<area shape="rect" id="node11" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="224,160,347,189"/>
+<area shape="rect" id="node34" href="$OcTreeKey_8h.html" title="OcTreeKey.h" alt="" coords="743,160,841,189"/>
+<area shape="rect" id="node18" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="285,392,451,421"/>
+<area shape="rect" id="node24" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="203,237,368,267"/>
+<area shape="rect" id="node32" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="443,237,651,267"/>
+<area shape="rect" id="node27" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="207,315,303,344"/>
 </map>

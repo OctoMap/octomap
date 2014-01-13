@@ -51,6 +51,7 @@ var searchData=
   ['getprobhitlog',['getProbHitLog',['../classoctomap_1_1AbstractOccupancyOcTree.html#a811cab3e2de5ed561473e04729a858b3',1,'octomap::AbstractOccupancyOcTree']]],
   ['getprobmiss',['getProbMiss',['../classoctomap_1_1AbstractOccupancyOcTree.html#ac50656ad2abd2e702681d421c9cf9bb9',1,'octomap::AbstractOccupancyOcTree']]],
   ['getprobmisslog',['getProbMissLog',['../classoctomap_1_1AbstractOccupancyOcTree.html#af84761e2d981ffa1bd7d3a3f7ca424de',1,'octomap::AbstractOccupancyOcTree']]],
+  ['getrayintersection',['getRayIntersection',['../classoctomap_1_1OccupancyOcTreeBase.html#ad44ea7382488207c07d0fcbfff3772ed',1,'octomap::OccupancyOcTreeBase']]],
   ['getresolution',['getResolution',['../classoctomap_1_1AbstractOcTree.html#a0ba12f7eb01f9cc2d5a14e083c94046b',1,'octomap::AbstractOcTree::getResolution()'],['../classoctomap_1_1OcTreeBaseImpl.html#a9f052f60b7381a574d20d2e05d519ec4',1,'octomap::OcTreeBaseImpl::getResolution()']]],
   ['getroot',['getRoot',['../classoctomap_1_1OcTreeBaseImpl.html#a35ac605b40608c122241cc530833a5b5',1,'octomap::OcTreeBaseImpl']]],
   ['getsize',['getSize',['../classiterator__base.html#a90df5a6cf3c9b7672989299628a82127',1,'iterator_base']]],

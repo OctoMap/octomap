@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">octomap
-   &#160;<span id="projectnumber">1.6.1</span>
+   &#160;<span id="projectnumber">1.6.3</span>
    </div>
   </td>
  </tr>
@@ -162,16 +162,16 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a87b5e904d1983f4af540c112febaebf3"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-std::tr1::unordered_map<br class="typebreak"/>
+<tr class="memitem:a5f98f11c602d9fefec29ff55763e1d49"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+unordered_ns::unordered_map<br class="typebreak"/>
 &lt; <a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, bool, <br class="typebreak"/>
-<a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a87b5e904d1983f4af540c112febaebf3">KeyBoolMap</a></td></tr>
-<tr class="memdesc:a87b5e904d1983f4af540c112febaebf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structrure to efficiently track changed nodes as a combination of OcTreeKeys and a bool flag (to denote newly created nodes)  <a href="#a87b5e904d1983f4af540c112febaebf3"></a><br/></td></tr>
-<tr class="memitem:a79a27b638ec04d63cff94626dc8ed33a"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
-std::tr1::unordered_set<br class="typebreak"/>
+<a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a5f98f11c602d9fefec29ff55763e1d49">KeyBoolMap</a></td></tr>
+<tr class="memdesc:a5f98f11c602d9fefec29ff55763e1d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structrure to efficiently track changed nodes as a combination of OcTreeKeys and a bool flag (to denote newly created nodes)  <a href="#a5f98f11c602d9fefec29ff55763e1d49"></a><br/></td></tr>
+<tr class="memitem:aceae2f852393087f735de263074245df"><td class="memItemLeft" align="right" valign="top">typedef <br class="typebreak"/>
+unordered_ns::unordered_set<br class="typebreak"/>
 &lt; <a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, <br class="typebreak"/>
-<a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a79a27b638ec04d63cff94626dc8ed33a">KeySet</a></td></tr>
-<tr class="memdesc:a79a27b638ec04d63cff94626dc8ed33a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure to efficiently compute the nodes to update from a scan insertion using a hash set.  <a href="#a79a27b638ec04d63cff94626dc8ed33a"></a><br/></td></tr>
+<a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#aceae2f852393087f735de263074245df">KeySet</a></td></tr>
+<tr class="memdesc:aceae2f852393087f735de263074245df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure to efficiently compute the nodes to update from a scan insertion using a hash set.  <a href="#aceae2f852393087f735de263074245df"></a><br/></td></tr>
 <tr class="memitem:a9b950c5454456605858a92a7d317d7f2"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; <a class="el" href="namespaceoctomap.html#a7bc37f6465df7e66a7dccd16859637d7">point3d</a>, <br class="typebreak"/>
 double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceoctomap.html#a9b950c5454456605858a92a7d317d7f2">OcTreeVolume</a></td></tr>
 <tr class="memdesc:a9b950c5454456605858a92a7d317d7f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">A voxel defined by its center point3d and its side length.  <a href="#a9b950c5454456605858a92a7d317d7f2"></a><br/></td></tr>
@@ -209,12 +209,12 @@ Variables</h2></td></tr>
 <div class="textblock"><p>Namespace the OctoMap library and visualization tools. </p>
 <p>Tables used by the Marching Cubes Algorithm The tables are from Paul Bourke's web page <a href="http://paulbourke.net/geometry/polygonise/">http://paulbourke.net/geometry/polygonise/</a> Used with permission here under BSD license.</p>
 </div><h2>Typedef Documentation</h2>
-<a class="anchor" id="a87b5e904d1983f4af540c112febaebf3"></a>
+<a class="anchor" id="a5f98f11c602d9fefec29ff55763e1d49"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::tr1::unordered_map&lt;<a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, bool, <a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a>&gt; <a class="el" href="namespaceoctomap.html#a87b5e904d1983f4af540c112febaebf3">octomap::KeyBoolMap</a></td>
+          <td class="memname">typedef unordered_ns::unordered_map&lt;<a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, bool, <a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a>&gt; <a class="el" href="namespaceoctomap.html#a5f98f11c602d9fefec29ff55763e1d49">octomap::KeyBoolMap</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -223,12 +223,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a79a27b638ec04d63cff94626dc8ed33a"></a>
+<a class="anchor" id="aceae2f852393087f735de263074245df"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::tr1::unordered_set&lt;<a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, <a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a>&gt; <a class="el" href="namespaceoctomap.html#a79a27b638ec04d63cff94626dc8ed33a">octomap::KeySet</a></td>
+          <td class="memname">typedef unordered_ns::unordered_set&lt;<a class="el" href="classoctomap_1_1OcTreeKey.html">OcTreeKey</a>, <a class="el" href="structoctomap_1_1OcTreeKey_1_1KeyHash.html">OcTreeKey::KeyHash</a>&gt; <a class="el" href="namespaceoctomap.html#aceae2f852393087f735de263074245df">octomap::KeySet</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -341,7 +341,7 @@ Variables</h2></td></tr>
 
 <p>References <a class="el" href="classoctomap_1_1OcTreeKey.html#a6d2e27dabd69cf34ba17f6cb012fdc63">octomap::OcTreeKey::k</a>.</p>
 
-<p>Referenced by <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ae00cde0edc00cfad27057ec438f8c9a3">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::deleteNodeRecurs()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ab45f108891eb301805392e164565353f">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::search()</a>, <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>, and <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#abf29213fc595d17e2a83aed551166473">octomap::OccupancyOcTreeBase&lt; NODE &gt;::updateNodeRecurs()</a>.</p>
+<p>Referenced by <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ae00cde0edc00cfad27057ec438f8c9a3">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::deleteNodeRecurs()</a>, <a class="el" href="classoctomap_1_1OcTreeBaseImpl.html#ab45f108891eb301805392e164565353f">octomap::OcTreeBaseImpl&lt; NODE, INTERFACE &gt;::search()</a>, <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#af68159ed27df340f6930ec481a8b7a53">octomap::OccupancyOcTreeBase&lt; NODE &gt;::setNodeValueRecurs()</a>, <a class="el" href="classoctomap_1_1CountingOcTree.html#a4854f8e86347e1392fc3eb67f2a7b13a">octomap::CountingOcTree::updateNode()</a>, and <a class="el" href="classoctomap_1_1OccupancyOcTreeBase.html#abf29213fc595d17e2a83aed551166473">octomap::OccupancyOcTreeBase&lt; NODE &gt;::updateNodeRecurs()</a>.</p>
 
 </div>
 </div>
@@ -622,7 +622,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceoctomap.html">octomap</a></li>
-    <li class="footer">Generated on Thu Jun 20 2013 18:13:32 for octomap by
+    <li class="footer">Generated on Mon Jan 13 2014 11:57:31 for octomap by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.1.2 </li>
   </ul>

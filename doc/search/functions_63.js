@@ -20,6 +20,7 @@ var searchData=
   ['computechildcenter',['computeChildCenter',['../test__iterators_8cpp.html#a6d79ea570378ef756ee0757e0ddab7c1',1,'test_iterators.cpp']]],
   ['computechildidx',['computeChildIdx',['../namespaceoctomap.html#a60fec7525fc7e99466abc53d03bffa8f',1,'octomap']]],
   ['computechildkey',['computeChildKey',['../namespaceoctomap.html#af3c16a68511c2b90945e5882bfda3dbe',1,'octomap']]],
+  ['computediscreteupdate',['computeDiscreteUpdate',['../classoctomap_1_1OccupancyOcTreeBase.html#a36031c1e3046f265257c951094a1e571',1,'octomap::OccupancyOcTreeBase']]],
   ['computeindexkey',['computeIndexKey',['../namespaceoctomap.html#aaf7afbf0075a2193af050b0ba9742fab',1,'octomap']]],
   ['computeray',['computeRay',['../classoctomap_1_1OcTreeBaseImpl.html#ac8026734aa6d0dac8574b4a2c2231396',1,'octomap::OcTreeBaseImpl']]],
   ['computeraykeys',['computeRayKeys',['../classoctomap_1_1OcTreeBaseImpl.html#a48521e9a52a04f4e0e11f8feeb2ed1e7',1,'octomap::OcTreeBaseImpl::computeRayKeys()'],['../classoctomap_1_1OcTreeBaseSE.html#a9c2e58d0d68e297d8ce2e75ee818baa3',1,'octomap::OcTreeBaseSE::computeRayKeys()']]],

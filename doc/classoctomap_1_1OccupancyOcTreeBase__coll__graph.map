@@ -1,15 +1,15 @@
 <map id="octomap::OccupancyOcTreeBase&lt; NODE &gt;" name="octomap::OccupancyOcTreeBase&lt; NODE &gt;">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; NODE, AbstractOccupancyOcTree \&gt;" alt="" coords="1299,269,1549,315"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOccupancyOcTree.html" title="Interface class for all octree types that store occupancy." alt="" coords="925,183,1120,230"/>
-<area shape="rect" id="node6" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="623,231,793,260"/>
-<area shape="rect" id="node8" title="STL class." alt="" coords="363,187,443,216"/>
-<area shape="rect" id="node10" title="STL class." alt="" coords="36,178,161,225"/>
-<area shape="rect" id="node13" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator." alt="" coords="964,413,1081,443"/>
-<area shape="rect" id="node15" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="660,360,756,389"/>
-<area shape="rect" id="node23" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree." alt="" coords="977,307,1068,336"/>
-<area shape="rect" id="node26" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs)." alt="" coords="977,360,1068,389"/>
-<area shape="rect" id="node19" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="5,360,192,389"/>
-<area shape="rect" id="node29" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="959,477,1087,507"/>
-<area shape="rect" id="node33" href="$classoctomap_1_1KeyRay.html" title="octomap::KeyRay" alt="" coords="645,79,771,108"/>
-<area shape="rect" id="node37" href="$classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing." alt="" coords="25,45,172,75"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; NODE, AbstractOccupancyOcTree \&gt;" alt="" coords="1440,221,1691,267"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOccupancyOcTree.html" title="Interface class for all octree types that store occupancy." alt="" coords="1067,58,1261,105"/>
+<area shape="rect" id="node6" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="764,31,935,60"/>
+<area shape="rect" id="node8" title="STL class." alt="" coords="363,65,443,95"/>
+<area shape="rect" id="node10" title="STL class." alt="" coords="36,57,161,103"/>
+<area shape="rect" id="node13" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator." alt="" coords="1105,181,1223,211"/>
+<area shape="rect" id="node15" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="801,181,897,211"/>
+<area shape="rect" id="node23" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree." alt="" coords="1119,341,1209,371"/>
+<area shape="rect" id="node26" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs)." alt="" coords="1119,128,1209,157"/>
+<area shape="rect" id="node19" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="5,181,192,211"/>
+<area shape="rect" id="node29" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="1100,288,1228,317"/>
+<area shape="rect" id="node33" href="$classoctomap_1_1KeyRay.html" title="octomap::KeyRay" alt="" coords="787,417,912,447"/>
+<area shape="rect" id="node37" href="$classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing." alt="" coords="25,479,172,508"/>
 </map>
