@@ -1,3 +1,9 @@
+v1.6.3: 2014:01-13
+==================
+- New function setNodeValue(...) to directly set a node's value (#31)
+- New approximate point cloud insertion as fast variant (#39, see flag for
+  insertPointCloud(...) / new function computeDiscreteUpdate(...)
+
 v1.6.2: 2013-11-26
 ==================
 - Improved OSX 10.9 compatibility (thx to B. Jensen)
