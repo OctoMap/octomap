@@ -83,10 +83,13 @@ int main(int argc, char** argv) {
 	
 	
   for (int i=0; i<num_beams; i++) {    
-    if (!single_beams.insertRay(single_origin, single_origin+single_endpoint)) {
-      cout << "ERROR while inserting ray from " << single_origin << " to " << single_endpoint << endl;
+    for (int j=0; j<num_beams; j++) {          
+      if (!single_beams.insertRay(single_origin, single_origin+single_endpoint)) {
+	cout << "ERROR while inserting ray from " << single_origin << " to " << single_endpoint << endl;
+      }
+      single_endpoint.rotate_IP (0,0,DEG2RAD(360.0/num_beams));
     }
-    single_endpoint.rotate_IP (0,0,DEG2RAD(360.0/num_beams));
+    single_endpoint.rotate_IP (0,DEG2RAD(360.0/num_beams),0);
   }
 	
   cout << "done." << endl;

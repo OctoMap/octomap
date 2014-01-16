@@ -475,13 +475,6 @@ namespace octomap {
       }
     }
 
-    // for speedup:
-    point3d origin_scaled = origin;  
-    origin_scaled /= (float) this->resolution;  
-    double length_scaled = length - this->resolution/4.; // safety margin
-    length_scaled /= this->resolution;  // scale 
-    length_scaled = length_scaled*length_scaled;  // avoid sqrt in dist comp.
-
     // Incremental phase  ---------------------------------------------------------
 
     bool done = false;
@@ -513,12 +506,11 @@ namespace octomap {
       else {
 
         // reached endpoint world coords?
-        double dist_from_origin = 0;
-        for (unsigned int j = 0; j < 3; j++) {
-          double coord = (double) current_key[j] - (double) this->tree_max_val;
-          dist_from_origin += (coord - origin_scaled(j)) * (coord - origin_scaled(j));
-        }
-        if (dist_from_origin > length_scaled) {
+        // dist_from_origin now contains the length of the ray when traveled until the border of the current voxel
+        double dist_from_origin = std::min(std::min(tMax[0], tMax[1]), tMax[2]);
+        // if this is longer than the expected ray length, we should have already hit the voxel containing the end point with the code above (key_end).
+        // However, we did not hit it due to accumulating discretization errors, so this is the point here to stop the ray as we would never reach the voxel key_end
+        if (dist_from_origin > length) {
           done = true;
           break;
         }
