@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
     point3d origin (0.01f, 0.01f, 0.02f);
     point3d point_on_surface (2.01f, 0.01f, 0.01f);
   
-    for (int i=0; i<360; i++) {    
+    for (int i=0; i<360; i++) {
       for (int j=0; j<360; j++) {
         point3d p = origin+point_on_surface;
         measurement->push_back(p);
@@ -200,19 +200,6 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (0.025, p_inv.z());
 
   // ------------------------------------------------------------
-  } else if (test_name == "OcTreeIterator") {
-    OcTree tree (0.05);  
-    EXPECT_TRUE (tree.readBinary("sphere.bt"));
-    for( octomap::OcTree::leaf_iterator it = tree.begin(),
-	   end=tree.end(); it!= end; ++it){
-      point3d p = it.getCoordinate();
-      OcTreeKey key;
-      tree.coordToKeyChecked(p, key);
-      point3d p_inv = tree.keyToCoord(key, it.getDepth());
-      EXPECT_FLOAT_EQ (p.x(), p_inv.x());
-      EXPECT_FLOAT_EQ (p.y(), p_inv.y());
-      EXPECT_FLOAT_EQ (p.z(), p_inv.z());
-    }
   } else {
     std::cerr << "Invalid test name specified: " << test_name << std::endl;
     return 1;
