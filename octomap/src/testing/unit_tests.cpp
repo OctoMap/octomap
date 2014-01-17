@@ -112,122 +112,11 @@ int main(int argc, char** argv) {
       }
       point_on_surface.rotate_IP (0,DEG2RAD(1.),0);
     }
-    EXPECT_TRUE (tree.writeBinary("sphere.bt"));
-    EXPECT_EQ ((int) tree.size(), 51740);
+    EXPECT_TRUE (tree.writeBinary("sphere_rays.bt"));
+    EXPECT_EQ ((int) tree.size(), 50615);
   
   // ------------------------------------------------------------
-  // ray casting
-  } else if (test_name == "CastRay") {
-    OcTree tree (0.05);  
-    EXPECT_TRUE (tree.readBinary("sphere.bt"));
-    OcTree sampled_surface (0.05);  
-    point3d origin (0.01f, 0.01f, 0.02f);
-    point3d direction = point3d (1.0f,0.0f,0.0f);
-    point3d obstacle(0.0f,0.0f,0.0f);
-    unsigned int hits (0);
-    unsigned int misses (0);
-    double mean_dist(0);
-
-    for (int i=0; i<360; i++) {    
-      for (int j=0; j<360; j++) {
-        if (!tree.castRay(origin, direction, obstacle, true, 3.)) {
-          misses++;
-        }
-        else {
-          hits++;
-          mean_dist += (obstacle - origin).norm ();
-          sampled_surface.updateNode(obstacle, true);
-        }
-        direction.rotate_IP (0,0,DEG2RAD(1.));
-      }
-      direction.rotate_IP (0,DEG2RAD(1.),0);
-    }
-    EXPECT_TRUE (sampled_surface.writeBinary("sampled_surface.bt"));
-  
-    mean_dist /= (double) hits;
-    EXPECT_NEAR(mean_dist, 2., 0.1);
-  
-    EXPECT_EQ ((int) hits, 129416);
-    EXPECT_EQ ((int) misses,  184);
-
-
-    double res = 0.1;
-    double res_2 = res/2.0;
-    OcTree cubeTree(res);
-    // fill a cube with "free", end is "occupied":
-    for (float x=-0.95; x <= 1.0; x+=res){
-      for (float y=-0.95; y <= 1.0; y+=res){
-        for (float z=-0.95; z <= 1.0; z+=res){
-          if (x < 0.9){
-            EXPECT_TRUE(cubeTree.updateNode(point3d(x,y,z), false));
-          } else{
-            EXPECT_TRUE(cubeTree.updateNode(point3d(x,y,z), true));
-          }
-        }
-      }
-    }
-
-    // fill some "floor":
-    EXPECT_TRUE(cubeTree.updateNode(res_2,res_2,-res_2, true));
-    EXPECT_TRUE(cubeTree.updateNode(3*res_2,res_2,-res_2, true));
-    EXPECT_TRUE(cubeTree.updateNode(-res_2,res_2,-res_2, true));
-    EXPECT_TRUE(cubeTree.updateNode(-3*res_2,res_2,-res_2, true));
-
-    cubeTree.writeBinary("raycasting_cube.bt");
-    origin = point3d(0.0f, 0.0f, 0.0f);
-    point3d end;
-    // hit the corner:
-    direction = point3d(0.95f, 0.95f, 0.95f);
-    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
-    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
-    std::cout << "Hit occupied voxel: " << end << std::endl;
-    direction = point3d(1.0, 0.0, 0.0);
-    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
-    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
-    std::cout << "Hit occupied voxel: " << end << std::endl;
-    EXPECT_NEAR(1.0, (origin - end).norm(), res_2);
-
-    // hit bottom:
-    origin = point3d(res_2, res_2, 0.5f);
-    direction = point3d(0.0, 0.0, -1.0f);
-    EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
-    EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));
-    std::cout << "Hit voxel: " << end << std::endl;
-    EXPECT_FLOAT_EQ(origin(0), end(0));
-    EXPECT_FLOAT_EQ(origin(1), end(1));
-    EXPECT_FLOAT_EQ(-res_2, end(2));
-
-
-    // hit boundary of unknown:
-    origin = point3d(0.0f, 0.0f, 0.0f);
-    direction = point3d(0.0f, 1.0f, 0.0f);
-    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, false));
-    EXPECT_FALSE(cubeTree.search(end));
-    std::cout << "Boundary unknown hit: " << end << std::endl;
-
-    // hit boundary of octree:
-    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true));
-    EXPECT_FALSE(cubeTree.search(end));
-    EXPECT_FLOAT_EQ(end.x(), res_2);
-    EXPECT_FLOAT_EQ(end.y(), float(32768*res-res_2));
-    EXPECT_FLOAT_EQ(end.z(), res_2);
-    direction = point3d(-1.0f, 0.0f, 0.0f);
-    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true));
-    EXPECT_FALSE(cubeTree.search(end));
-    EXPECT_FLOAT_EQ(end.x(), float(-32767*res-res_2));
-    EXPECT_FLOAT_EQ(end.y(), res_2);
-    EXPECT_FLOAT_EQ(end.z(), res_2);
-
-    // test maxrange:
-    EXPECT_FALSE(cubeTree.castRay(origin, direction, end, true, 0.9));
-    std::cout << "Max range endpoint: " << end << std::endl;
-    OcTreeNode* endPt = cubeTree.search(end);
-    EXPECT_TRUE(endPt);
-    EXPECT_FALSE(cubeTree.isNodeOccupied(endPt));
-    double dist = (origin - end).norm();
-    EXPECT_NEAR(0.9, dist, res);
-
-
+  // ray casting is now in "test_raycasting.cpp"
 
   // ------------------------------------------------------------
   // insert scan test
@@ -250,10 +139,10 @@ int main(int argc, char** argv) {
   
     OcTree tree (0.05);
     tree.insertPointCloud(*measurement, origin);
-    EXPECT_EQ ((int) tree.size(), 54076);
+    EXPECT_EQ (tree.size(), 53959);
 
     ScanGraph* graph = new ScanGraph();
-    Pose6D node_pose (0.01f, 0.01f, 0.02f, 0.0f,0.0f,0.0f);
+    Pose6D node_pose (origin.x(), origin.y(), origin.z(),0.0f,0.0f,0.0f);
     graph->addNode(measurement, node_pose);
     EXPECT_TRUE (graph->writeBinary("test.graph"));
     delete graph;
