@@ -1,4 +1,9 @@
-v1.6.3: 2014:01-13
+v1.6.4: 2014-01-20
+==================
+- Fix for raycasting termination condition in computeRayKeys() (affects
+  insertScan / insertRay). Thanks to C. Sprunk!
+
+v1.6.3: 2014-01-13
 ==================
 - New function setNodeValue(...) to directly set a node's value (#31)
 - New approximate point cloud insertion as fast variant (#39, see flag for
@@ -40,6 +45,11 @@ v1.6.0: 2013-04-05
 - octovis: more map editing options, fixed setting nodes to free/occupied (thx
   to C. Dornhege)
 - Sample data is now in octomap/share
+
+v1.5.7: 2014-01-20
+==================
+- Fix for raycasting termination condition in computeRayKeys() (affects
+  insertScan / insertRay). Thanks to C. Sprunk!
 
 v1.5.6: 2013-06-10
 ==================
