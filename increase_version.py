@@ -100,8 +100,10 @@ if __name__ == '__main__':
     with open(manifest, 'w') as f:
       f.write(new_package_str)
 
-  print "Finished writing package.xml and CMakeLists.txt files."
-  print "Now check the output, adjust CHANGELOG, \"git commit\", and run \"git tag v%s\"." % new_version_str
+  print "Finished writing package.xml and CMakeLists.txt files.\n"
+  print "Now check the output, adjust CHANGELOG, and \"git commit\".\nFinally, run:"
+  print "  git checkout master && git merge --no-ff devel && git tag v%s" % new_version_str
+  print "  git push && git push --tags"
 
       
   
