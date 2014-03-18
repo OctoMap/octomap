@@ -91,9 +91,14 @@ configure_file(dynamicEDT3D-config.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3D-config.cmake" @ONLY)
 configure_file(dynamicEDT3D-config-version.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3D-config-version.cmake" @ONLY)
+IF(DEFINED NO_ABSOLUTE_PATH_IN_MODULE AND NO_ABSOLUTE_PATH_IN_MODULE)
+  set(DYNAMICEDT3D_MODULE_FILE "dynamicEDT3D-config.cmake")
+ELSE()
+  set(DYNAMICEDT3D_MODULE_FILE "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3D-config.cmake" )
+ENDIF()
 install(FILES
-  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
-  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake"
+  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3D-config-version.cmake"
+  "${DYNAMICEDT3D_MODULE_FILE}"
   DESTINATION share/dynamicEDT3D/)
 
 # Write pkgconfig-file:

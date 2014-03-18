@@ -95,9 +95,14 @@ IF(BUILD_VIEWER)
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake" @ONLY)
   configure_file(octovis-config-version.cmake.in
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" @ONLY)
+  IF(DEFINED NO_ABSOLUTE_PATH_IN_MODULE AND NO_ABSOLUTE_PATH_IN_MODULE)
+    set(OCTOVIS_MODULE_FILE "octovis-config.cmake")
+  ELSE()
+    set(OCTOVIS_MODULE_FILE "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake" )
+  ENDIF()
   install(FILES
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
+    "${OCTOVIS_MODULE_FILE}"
     DESTINATION share/octovis/)
     
     

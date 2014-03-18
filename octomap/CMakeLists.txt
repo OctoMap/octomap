@@ -98,9 +98,14 @@ configure_file(octomap-config.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake" @ONLY)
 configure_file(octomap-config-version.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" @ONLY)
+IF(DEFINED NO_ABSOLUTE_PATH_IN_MODULE AND NO_ABSOLUTE_PATH_IN_MODULE)
+  set(OCTOMAP_MODULE_FILE "octomap-config.cmake")
+ELSE()
+  set(OCTOMAP_MODULE_FILE "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake" )
+ENDIF()
 install(FILES
-  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" 
+  "${OCTOMAP_MODULE_FILE}"
   DESTINATION share/octomap/)
 
 # Write pkgconfig-file:
