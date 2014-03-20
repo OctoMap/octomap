@@ -7,9 +7,10 @@ include(${QT_USE_FILE})
 
 # Mac OS X seems to require special linker flags:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework OpenGL")
-  SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework OpenGL")
-  SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -framework OpenGL")
+  # QGL has framework issues
+  SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework QGLViewer")
+  SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework QGLViewer")
+  SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -framework QGLViewer")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 # sources for octovis library
@@ -79,8 +80,14 @@ target_link_libraries(octovis-shared
   ${OPENGL_gl_LIBRARY} 
   ${OPENGL_glu_LIBRARY} 
   ${OCTOMAP_LIBRARIES}
+)
+if(APPLE)
+else()
+target_link_libraries(octovis-shared 
   ${QGLViewer_LIBRARIES}
 )
+endif()
+
 set_target_properties(octovis-shared PROPERTIES OUTPUT_NAME octovis)
 
 # directly depend on the octomap library target when building the
@@ -96,18 +103,16 @@ endif()
 add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
 
 target_link_libraries(octovis 
-#  ${QGLViewer_LIBRARIES}
   ${QT_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   octovis-shared
 )
-
-# special handling of MacOS X:
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  add_custom_command(TARGET octovis POST_BUILD 
-  	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/octovis
-  )
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(APPLE)
+else()
+target_link_libraries(octovis 
+  ${QGLViewer_LIBRARIES}
+)
+endif()
 
 install(TARGETS octovis
   octovis-static
