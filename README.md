@@ -1,10 +1,10 @@
-OctoMap - A probabilistic, flexible, and compact 3D mapping library for robotic systems.
-========================================================================================
+OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees.
+===========================================================================
 
+http://octomap.github.io
 
-Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2014.
-http://octomap.github.com
-
+Originally developed by Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2014.
+Currently maintained by [Armin Hornung](https://github.com/ahornung).
 See the [list of contributors](octomap/AUTHORS.txt) for further authors.
 
 License: 
@@ -13,7 +13,7 @@ License:
 
 
 Download the latest releases:
-  https://github.com/octomap/octomap/tags
+  https://github.com/octomap/octomap/releases
 
 API documentation:
   http://octomap.github.com/octomap/doc/
