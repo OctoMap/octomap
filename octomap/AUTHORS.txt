@@ -9,3 +9,4 @@ Further contributors:
 * R. Bogdan Rusu, Willow Garage Inc.
 * C. Dornhege, University of Freiburg
 * F-M. de Rainville, Universite Laval Quebec
+* B. Jensen, TU Munich

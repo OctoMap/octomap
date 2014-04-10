@@ -34,14 +34,28 @@
 #ifndef OCTOMAP_OCTREE_KEY_H
 #define OCTOMAP_OCTREE_KEY_H
 
+/* According to c++ standard including this header has no practical effect
+ * but it can be used to determine the c++ standard library implementation.
+ */
+#include <ciso646>
 
 #include <assert.h>
-#ifdef __GNUC__
+
+/* Libc++ does not implement the TR1 namespace, all c++11 related functionality
+ * is instead implemented in the std namespace.
+ */
+#if defined(__GNUC__) && ! defined(_LIBCPP_VERSION)
   #include <tr1/unordered_set>
   #include <tr1/unordered_map>
+  namespace octomap {
+    namespace unordered_ns = std::tr1;
+  };
 #else
   #include <unordered_set>
   #include <unordered_map>
+  namespace octomap {
+    namespace unordered_ns = std;
+  }
 #endif
 
 namespace octomap {
@@ -95,14 +109,14 @@ namespace octomap {
    * @note you need to use boost::unordered_set instead if your compiler does not
    * yet support tr1!
    */
-  typedef std::tr1::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
+  typedef unordered_ns::unordered_set<OcTreeKey, OcTreeKey::KeyHash> KeySet;
 
   /**
    * Data structrure to efficiently track changed nodes as a combination of
    * OcTreeKeys and a bool flag (to denote newly created nodes)
    *
    */
-  typedef std::tr1::unordered_map<OcTreeKey, bool, OcTreeKey::KeyHash> KeyBoolMap;
+  typedef unordered_ns::unordered_map<OcTreeKey, bool, OcTreeKey::KeyHash> KeyBoolMap;
 
 
   class KeyRay {

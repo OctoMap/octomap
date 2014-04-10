@@ -81,7 +81,11 @@ target_link_libraries(octovis-shared
   ${OCTOMAP_LIBRARIES}
   ${QGLViewer_LIBRARIES}
 )
-set_target_properties(octovis-shared PROPERTIES OUTPUT_NAME octovis)
+set_target_properties(octovis-shared PROPERTIES
+  OUTPUT_NAME octovis
+  VERSION ${OCTOVIS_VERSION}
+  SOVERSION ${OCTOVIS_SOVERSION}
+)
 
 # directly depend on the octomap library target when building the
 # complete distribution, so it is recompiled as needed

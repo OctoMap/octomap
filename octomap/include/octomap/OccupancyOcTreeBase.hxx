@@ -72,21 +72,24 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertPointCloud(const ScanNode& scan, double maxrange, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloud(const ScanNode& scan, double maxrange, bool lazy_eval, bool discretize) {
     // performs transformation to data and sensor origin first
     Pointcloud& cloud = *(scan.scan);
     pose6d frame_origin = scan.pose;
     point3d sensor_origin = frame_origin.inv().transform(scan.pose.trans());
-    insertPointCloud(cloud, sensor_origin, frame_origin, maxrange, lazy_eval);
+    insertPointCloud(cloud, sensor_origin, frame_origin, maxrange, lazy_eval, discretize);
   }
 
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                                             double maxrange, bool lazy_eval) {
+                                             double maxrange, bool lazy_eval, bool discretize) {
 
     KeySet free_cells, occupied_cells;
-    computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);    
+    if (discretize)
+      computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+    else
+      computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
 
     // insert data into tree  -----------------------
     for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
@@ -99,12 +102,12 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& pc, const point3d& sensor_origin, const pose6d& frame_origin,
-                                             double maxrange, bool lazy_eval) {
+                                             double maxrange, bool lazy_eval, bool discretize) {
     // performs transformation to data and sensor origin first
     Pointcloud transformed_scan (pc);
     transformed_scan.transform(frame_origin);
     point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
-    insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval);
+    insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval, discretize);
   }
 
 
@@ -140,12 +143,35 @@ namespace octomap {
     }
   }
 
+  template <class NODE>
+  void OccupancyOcTreeBase<NODE>::computeDiscreteUpdate(const Pointcloud& scan, const octomap::point3d& origin,
+                                                KeySet& free_cells, KeySet& occupied_cells,
+                                                double maxrange)
+ {
+   Pointcloud discretePC;
+   discretePC.reserve(scan.size());
+   KeySet endpoints;
+
+   for (int i = 0; i < (int)scan.size(); ++i) {
+     OcTreeKey k = this->coordToKey(scan[i]);
+     std::pair<KeySet::iterator,bool> ret = endpoints.insert(k);
+     if (ret.second){ // insertion took place => k was not in set
+       discretePC.push_back(this->keyToCoord(k));
+     }
+   }
+
+   computeUpdate(discretePC, origin, free_cells, occupied_cells, maxrange);
+ }
+
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange)
   {
+
+
+
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
@@ -157,8 +183,9 @@ namespace octomap {
       threadIdx = omp_get_thread_num();
 #endif
       KeyRay* keyray = &(this->keyrays.at(threadIdx));
-      if (!use_bbx_limit) {
-        // -------------- no BBX specified ---------------
+
+
+      if (!use_bbx_limit) { // no BBX specified
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
           if (this->computeRayKeys(origin, p, *keyray)){
@@ -179,9 +206,7 @@ namespace octomap {
               occupied_cells.insert(key);
             }
           }
-        } // end if NOT maxrange
-
-        else { // user set a maxrange and this is reached
+        } else { // user set a maxrange and length is above
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, *keyray)){
@@ -193,10 +218,7 @@ namespace octomap {
             }
           }
         } // end if maxrange
-      }
-
-      // --- update limited by user specified BBX  -----
-      else {
+      } else { // BBX was set
         // endpoint in bbx and not maxrange?
         if ( inBBX(p) && ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) )  {
 
@@ -239,6 +261,40 @@ namespace octomap {
       }
     }
   }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(const OcTreeKey& key, float log_odds_value, bool lazy_eval) {
+    // clamp log odds within range:
+    log_odds_value = std::min(std::max(log_odds_value, this->clamping_thres_min), this->clamping_thres_max);
+
+    bool createdRoot = false;
+    if (this->root == NULL){
+      this->root = new NODE();
+      this->tree_size++;
+      createdRoot = true;
+    }
+
+    return setNodeValueRecurs(this->root, createdRoot, key, 0, log_odds_value, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(const point3d& value, float log_odds_value, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(value, key))
+      return NULL;
+
+    return setNodeValue(key, log_odds_value, lazy_eval);
+  }
+
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValue(double x, double y, double z, float log_odds_value, bool lazy_eval) {
+    OcTreeKey key;
+    if (!this->coordToKeyChecked(x, y, z, key))
+      return NULL;
+
+    return setNodeValue(key, log_odds_value, lazy_eval);
+  }
+
 
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval) {
@@ -340,10 +396,13 @@ namespace octomap {
         NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode())
+        if (node->pruneNode()){
           this->tree_size -= 8;
-        else
+          // return pointer to current parent (pruned), the just updated node no longer exists
+          retval = node;
+        } else{
           node->updateOccupancyChildren();
+        }
 
         return retval;
       }
@@ -371,6 +430,75 @@ namespace octomap {
     }
   }
   
+  // TODO: mostly copy of updateNodeRecurs => merge code or general tree modifier / traversal
+  template <class NODE>
+  NODE* OccupancyOcTreeBase<NODE>::setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
+                                                    unsigned int depth, const float& log_odds_value, bool lazy_eval) {
+    unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
+    bool created_node = false;
+
+    assert(node);
+
+    // follow down to last level
+    if (depth < this->tree_depth) {
+      if (!node->childExists(pos)) {
+        // child does not exist, but maybe it's a pruned node?
+        if ((!node->hasChildren()) && !node_just_created ) {
+          // current node does not have children AND it is not a new node
+          // -> expand pruned node
+          node->expandNode();
+          this->tree_size+=8;
+          this->size_changed = true;
+        }
+        else {
+          // not a pruned node, create requested child
+          node->createChild(pos);
+          this->tree_size++;
+          this->size_changed = true;
+          created_node = true;
+        }
+      }
+
+      if (lazy_eval)
+        return setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+      else {
+        NODE* retval = setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+        // prune node if possible, otherwise set own probability
+        // note: combining both did not lead to a speedup!
+        if (node->pruneNode()){
+          this->tree_size -= 8;
+          // return pointer to current parent (pruned), the just updated node no longer exists
+          retval = node;
+        } else{
+          node->updateOccupancyChildren();
+        }
+
+        return retval;
+      }
+    }
+
+    // at last level, update node, end of recursion
+    else {
+      if (use_change_detection) {
+        bool occBefore = this->isNodeOccupied(node);
+        node->setLogOdds(log_odds_value);
+
+        if (node_just_created){  // new node
+          changed_keys.insert(std::pair<OcTreeKey,bool>(key, true));
+        } else if (occBefore != this->isNodeOccupied(node)) {  // occupancy changed, track it
+          KeyBoolMap::iterator it = changed_keys.find(key);
+          if (it == changed_keys.end())
+            changed_keys.insert(std::pair<OcTreeKey,bool>(key, false));
+          else if (it->second == false)
+            changed_keys.erase(it);
+        }
+      } else {
+        node->setLogOdds(log_odds_value);
+      }
+      return node;
+    }
+  }
+
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::updateInnerOccupancy(){
     if (this->root)

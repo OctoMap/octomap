@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Image settings</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../../../Documents and Settings/debunne/Bureau/libQGLViewer-2.2.0-1/doc/images/qglviewer.icon.png</normaloff>../../../../../../Documents and Settings/debunne/Bureau/libQGLViewer-2.2.0-1/doc/images/qglviewer.icon.png</iconset>
-  </property>
   <layout class="QVBoxLayout">
    <property name="spacing">
     <number>6</number>

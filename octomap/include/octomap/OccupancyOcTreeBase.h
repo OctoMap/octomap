@@ -90,9 +90,11 @@ namespace octomap {
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+    * @param discretize whether the scan is discretized first into octree key cells (default: false).
+    *   This reduces the number of raycasts using computeDiscreteUpdate(), resulting in a potential speedup.*
     */
     virtual void insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                   double maxrange=-1., bool lazy_eval = false);
+                   double maxrange=-1., bool lazy_eval = false, bool discretize = false);
 
     /**
     * Integrate a 3d scan (transform scan before tree update), parallelized with OpenMP.
@@ -109,9 +111,11 @@ namespace octomap {
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
     * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
     *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+    * @param discretize whether the scan is discretized first into octree key cells (default: false).
+    *   This reduces the number of raycasts using computeDiscreteUpdate(), resulting in a potential speedup.*
     */
     virtual void insertPointCloud(const Pointcloud& scan, const point3d& sensor_origin, const pose6d& frame_origin,
-                   double maxrange=-1., bool lazy_eval = false);
+                   double maxrange=-1., bool lazy_eval = false, bool discretize = false);
 
     /**
     * Insert a 3d scan (given as a ScanNode) into the tree, parallelized with OpenMP.
@@ -122,8 +126,10 @@ namespace octomap {
     * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
     * @param lazy_eval whether the tree is left 'dirty' after the update (default: false).
     *   This speeds up the insertion by not updating inner nodes, but you need to call updateInnerOccupancy() when done.
+    * @param discretize whether the scan is discretized first into octree key cells (default: false).
+    *   This reduces the number of raycasts using computeDiscreteUpdate(), resulting in a potential speedup.
     */
-    virtual void insertPointCloud(const ScanNode& scan, double maxrange=-1., bool lazy_eval = false);
+    virtual void insertPointCloud(const ScanNode& scan, double maxrange=-1., bool lazy_eval = false, bool discretize = false);
 
     /// @note Deprecated, use insertPointCloud() instead. pruning is now done automatically.
     OCTOMAP_DEPRECATED(virtual void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin,
@@ -164,8 +170,46 @@ namespace octomap {
      virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of a voxel directly. This only works if key is at the lowest
+      * Set log_odds value of voxel to log_odds_value. This only works if key is at the lowest
       * octree level
+      *
+      * @param key OcTreeKey of the NODE that is to be updated
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(const OcTreeKey& key, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Set log_odds value of voxel to log_odds_value.
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls setNodeValue() with it.
+      *
+      * @param value 3d coordinate of the NODE that is to be updated
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(const point3d& value, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Set log_odds value of voxel to log_odds_value.
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls setNodeValue() with it.
+      *
+      * @param x
+      * @param y
+      * @param z
+      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
+      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+      * @return pointer to the updated NODE
+      */
+     virtual NODE* setNodeValue(double x, double y, double z, float log_odds_value, bool lazy_eval = false);
+
+     /**
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * This only works if key is at the lowest octree level
       *
       * @param key OcTreeKey of the NODE that is to be updated
       * @param log_odds_update value to be added (+) to log_odds value of node
@@ -176,8 +220,8 @@ namespace octomap {
      virtual NODE* updateNode(const OcTreeKey& key, float log_odds_update, bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of voxel directly.
-      * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls updateNode() with it.
       *
       * @param value 3d coordinate of the NODE that is to be updated
       * @param log_odds_update value to be added (+) to log_odds value of node
@@ -188,8 +232,8 @@ namespace octomap {
      virtual NODE* updateNode(const point3d& value, float log_odds_update, bool lazy_eval = false);
 
      /**
-      * Manipulate log_odds value of voxel directly.
-      * Looks up the OcTreeKey corresponding to the coordinate and then calls udpateNode() with it.
+      * Manipulate log_odds value of a voxel by changing it by log_odds_update (relative).
+      * Looks up the OcTreeKey corresponding to the coordinate and then calls updateNode() with it.
       *
       * @param x
       * @param y
@@ -358,6 +402,25 @@ namespace octomap {
                        KeySet& occupied_cells,
                        double maxrange);
 
+
+    /**
+     * Helper for insertPointCloud(). Computes all octree nodes affected by the point cloud
+     * integration at once. Here, occupied nodes have a preference over free
+     * ones. This function first discretizes the scan with the octree grid, which results
+     * in fewer raycasts (=speedup) but a slightly different result than computeUpdate().
+     *
+     * @param scan point cloud measurement to be integrated
+     * @param origin origin of the sensor for ray casting
+     * @param free_cells keys of nodes to be cleared
+     * @param occupied_cells keys of nodes to be marked occupied
+     * @param maxrange maximum range for raycasting (-1: unlimited)
+     */
+    void computeDiscreteUpdate(const Pointcloud& scan, const octomap::point3d& origin,
+                       KeySet& free_cells,
+                       KeySet& occupied_cells,
+                       double maxrange);
+
+
     // -- I/O  -----------------------------------------
 
     /**
@@ -433,6 +496,9 @@ namespace octomap {
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, const float& log_odds_update, bool lazy_eval = false);
     
+    NODE* setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
+                           unsigned int depth, const float& log_odds_value, bool lazy_eval = false);
+
     void updateInnerOccupancyRecurs(NODE* node, unsigned int depth);
     
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);

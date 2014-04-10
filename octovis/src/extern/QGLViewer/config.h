@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2011 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.3.17.
+ This file is part of the QGLViewer library version 2.4.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -28,7 +28,7 @@
 #ifndef QGLVIEWER_CONFIG_H
 #define QGLVIEWER_CONFIG_H
 
-#define QGLVIEWER_VERSION 0x020311
+#define QGLVIEWER_VERSION 0x020400
 
 // Needed for Qt < 4 (?)
 #ifndef QT_CLEAN_NAMESPACE
@@ -36,7 +36,6 @@
 #endif
 
 // Get QT_VERSION and other Qt flags
-// Cannot use <QtCore/qglobal.h> for backward compatibility
 #include <qglobal.h>
 
 #if QT_VERSION < 0x030000

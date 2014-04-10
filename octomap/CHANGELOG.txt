@@ -1,3 +1,30 @@
+v1.6.5: 2014-03-14
+==================
+- Fix octovis includes for QGLViewer > 2.5
+
+v1.6.4: 2014-01-20
+==================
+- Fix for raycasting termination condition in computeRayKeys() (affects
+  insertScan / insertRay). Thanks to C. Sprunk!
+
+v1.6.3: 2014-01-13
+==================
+- New function setNodeValue(...) to directly set a node's value (#31)
+- New approximate point cloud insertion as fast variant (#39, see flag for
+  insertPointCloud(...) / new function computeDiscreteUpdate(...)
+
+v1.6.2: 2013-11-26
+==================
+- Improved OSX 10.9 compatibility (thx to B. Jensen)
+- Improved  VC++ compatibility (thx to tmdiv)
+- New fct. getRayIntersection to get real intersection of raycasting on
+  voxel (thanks to F-M. de Rainville)
+- Fix #54: Quote paths in CMake configs to avoid problems with spaces
+- Fix #53: Auto-pruning after updateNode
+- Fix #44: CMAKE_SHARED_LIBRARY_SUFFIX in CMakeConfig (Win / Mac compatibility)
+- octovis now includes QGLViewer 2.4 (Qt5 support)
+- octovis now looks for the octomap version of the same number
+
 v1.6.1: 2013-06-19
 ==================
 - New function swapContent to exchange the contents of two octrees (issue #32)
@@ -22,6 +49,11 @@ v1.6.0: 2013-04-05
 - octovis: more map editing options, fixed setting nodes to free/occupied (thx
   to C. Dornhege)
 - Sample data is now in octomap/share
+
+v1.5.7: 2014-01-20
+==================
+- Fix for raycasting termination condition in computeRayKeys() (affects
+  insertScan / insertRay). Thanks to C. Sprunk!
 
 v1.5.6: 2013-06-10
 ==================

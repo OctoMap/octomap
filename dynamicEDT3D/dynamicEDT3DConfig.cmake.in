@@ -6,12 +6,10 @@
 #  OCTOMAP_LIBRARIES    - libraries to link against
  
 # Tell the user project where to find our headers and libraries
-set(DYNAMICEDT3D_INCLUDE_DIRS @DYNAMICEDT3D_INCLUDE_DIRS@)
-set(DYNAMICEDT3D_LIBRARY_DIRS @DYNAMICEDT3D_LIB_DIR@)
+set(DYNAMICEDT3D_INCLUDE_DIRS "@DYNAMICEDT3D_INCLUDE_DIRS@")
+set(DYNAMICEDT3D_LIBRARY_DIRS "@DYNAMICEDT3D_LIB_DIR@")
  
 # Our library dependencies (contains definitions for IMPORTED targets)
 # include("@FOOBAR_CMAKE_DIR@/FooBarLibraryDepends.cmake")
  
 set(DYNAMICEDT3D_LIBRARIES dynamicedt3d)
-
-#set(FOOBAR_EXECUTABLE bar)
