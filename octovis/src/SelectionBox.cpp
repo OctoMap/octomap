@@ -26,7 +26,7 @@
 // workaround for Windows
 #define NOMINMAX
 #include <octovis/SelectionBox.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <manipulatedFrame.h>
 
 namespace octomap{
 
