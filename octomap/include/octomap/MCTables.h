@@ -334,18 +334,22 @@ namespace octomap {
 	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 	
 	static const point3d vertexList[12] = 
-	{point3d(0, 1, -1),
-	 point3d(1, 0, -1),
-	 point3d(0, -1, -1),
-	 point3d(-1, 0, -1),
-	 point3d(0, 1, 1),
-	 point3d(1, 0, 1),
-	 point3d(0, -1, 1),
-	 point3d(-1, 0, 1),
-	 point3d(-1, 1, 0),
-	 point3d(1, 1, 0),
-	 point3d(1, -1, 0),
-	 point3d(-1, -1, 0)};
+	{
+		point3d(1, 0, -1),
+		point3d(0, -1, -1),
+		point3d(-1, 0, -1),
+		point3d(0, 1, -1),
+		
+		point3d(1, 0, 1),
+		point3d(0, -1, 1),
+		point3d(-1, 0, 1),
+		point3d(0, 1, 1),
+		
+		point3d(1, 1, 0),
+		point3d(1, -1, 0),
+		point3d(-1, -1, 0),
+		point3d(-1, 1, 0),
+	};
 
  }
 #endif
