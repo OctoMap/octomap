@@ -66,7 +66,7 @@ install(FILES ${dynamicEDT3D_HDRS}	DESTINATION include/dynamicEDT3D)
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
 export(PACKAGE dynamicEDT3D)
- 
+
 # Create a dynamicEDT3D-config.cmake file for the use from the build tree
 set(DYNAMICEDT3D_INCLUDE_DIRS "${INCLUDE_DIRS}")
 set(DYNAMICEDT3D_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -81,7 +81,7 @@ configure_file(dynamicEDT3D-config-version.cmake.in
 #install(EXPORT FooBarLibraryDepends DESTINATION
 #  "${INSTALL_DATA_DIR}/FooBar/CMake"
 #  COMPONENT dev)
- 
+
 # Create a dynamicEDT3D-config.cmake file for the use from the install tree
 # and install it
 set(DYNAMICEDT3D_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
@@ -110,7 +110,7 @@ install_pkg_config_file(dynamicEDT3D
     VERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION}.${DYNAMICEDT3D_PATCH_VERSION})
 
 
-# Documentation 
+# Documentation
 FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
   ADD_CUSTOM_TARGET(docs_dynamicEDT3D ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/dynamicEDT3D.dox
