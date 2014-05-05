@@ -94,7 +94,7 @@ configure_file(dynamicEDT3DConfig-version.cmake.in
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake" 
-  DESTINATION lib/cmake/dynamicEDT3D/)
+  DESTINATION share/dynamicEDT3D/)
 
 # Write pkgconfig-file:
 include(InstallPkgConfigFile)
