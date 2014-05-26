@@ -73,4 +73,6 @@ int main(int argc, char** argv) {
   cout << "\nWriting binary graph file\n===========================\n";
 
   graph->writeBinary(graphFilename);
+  
+  return 0;
 }

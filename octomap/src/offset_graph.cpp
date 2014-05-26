@@ -60,5 +60,5 @@ int main(int argc, char** argv) {
 
  graph->writeBinary(argv[3]);
   
-
+ return 0;
 }

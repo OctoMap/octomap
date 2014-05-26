@@ -153,4 +153,6 @@ int main(int argc, char** argv) {
 
   delete tree1;
   delete tree2;
+  
+  return 0;
 }

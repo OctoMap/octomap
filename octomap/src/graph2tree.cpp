@@ -298,5 +298,5 @@ int main(int argc, char** argv) {
 
   delete tree;
 
-  exit(0);
+  return 0;
 }

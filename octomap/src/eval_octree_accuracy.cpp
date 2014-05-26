@@ -87,7 +87,9 @@ int main(int argc, char** argv) {
 
   cout << "\nReading Graph file\n===========================\n";
   ScanGraph* graph = new ScanGraph();
-  graph->readBinary(graphFilename);
+  if (!graph->readBinary(graphFilename))
+    exit(2);
+  
   unsigned int num_points_in_graph = 0;
   if (max_scan_no > 0) {
     num_points_in_graph = graph->getNumPoints(max_scan_no-1);
@@ -189,4 +191,6 @@ int main(int argc, char** argv) {
 
   delete graph;
   delete tree;
+  
+  return 0;
 }

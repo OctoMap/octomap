@@ -143,6 +143,6 @@ int main(int argc, char** argv) {
 
 
   std::cout << "Finished writing to " << outputFilename << std::endl;
-  exit(0);
-
+  
+  return 0;
 }
