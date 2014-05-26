@@ -13,6 +13,10 @@ SET (octomap_SRCS
 
 # dynamic and static libs, see CMake FAQ:
 ADD_LIBRARY( octomap SHARED ${octomap_SRCS})
+set_target_properties( octomap PROPERTIES
+  VERSION ${OCTOMAP_VERSION}
+  SOVERSION ${OCTOMAP_SOVERSION}
+)
 ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
 SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap") 
 

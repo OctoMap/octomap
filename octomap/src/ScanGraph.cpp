@@ -363,8 +363,8 @@ namespace octomap {
 
   std::istream& ScanGraph::readBinary(std::ifstream &s) {
     if (!s.is_open()){
-      OCTOMAP_ERROR_STR("Could not read from input filestream in ScanGraph::readBinary, exiting!");
-      exit(0);
+      OCTOMAP_ERROR_STR("Could not read from input filestream in ScanGraph::readBinary");
+      return s;
     } else if (!s.good()){
       OCTOMAP_WARNING_STR("Input filestream not \"good\" in ScanGraph::readBinary");
     }

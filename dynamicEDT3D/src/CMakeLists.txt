@@ -4,6 +4,10 @@ SET( dynamicEDT3D_SRCS
    )
 
 add_library(dynamicedt3d SHARED ${dynamicEDT3D_SRCS})
+set_target_properties(dynamicedt3d PROPERTIES
+  VERSION ${DYNAMICEDT3D_VERSION}
+  SOVERSION ${DYNAMICEDT3D_SOVERSION}
+)
 target_link_libraries(dynamicedt3d ${OCTOMAP_LIBRARIES})
 
 add_library(dynamicedt3d-static STATIC ${dynamicEDT3D_SRCS})

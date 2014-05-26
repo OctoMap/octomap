@@ -1,3 +1,12 @@
+v1.6.6: 2014-05-26
+==================
+- Support for SOVERSION in the libraries for better packaging
+- Warning for unknown space in castRay() removed (needs to be inferred by
+  calling code depending on return value and endpoint voxel)
+- Marching cubes for ray surface intersection extended
+- Fixed QGLViewer include paths
+- ScanGraph read error no longer exits the process
+
 v1.6.5: 2014-03-14
 ==================
 - Fix octovis includes for QGLViewer > 2.5
