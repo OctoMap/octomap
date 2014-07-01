@@ -47,15 +47,15 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
   ARCHIVE DESTINATION lib
 )
 
-# Builds the "octovis" viewer based on OpenGL and 
+# Builds the "octovis" viewer based on OpenGL and
 # libQGLViewer, if dependencies available
 SET( BUILD_VIEWER 0)
 
 # Look for required libraries:
 FIND_PACKAGE(OpenGL)
 FIND_PACKAGE(Qt4)
-IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND) 
-	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")	
+IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND)
+	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")
 ELSE()
 	FIND_PACKAGE(QGLViewer)
 	IF(QGLViewer_FOUND)
@@ -70,12 +70,12 @@ ENDIF()
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
   MESSAGE(STATUS "viewer octovis will be built")
-  
+
   set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
   INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
-   
+
   INCLUDE( CMakeLists_src.txt )
-    
+
   # Create an octovis-config.cmake file for the use from the build tree
   set(OCTOVIS_INCLUDE_DIR "${INCLUDE_DIRS}")
   set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -84,8 +84,8 @@ IF(BUILD_VIEWER)
   configure_file(octovis-config.cmake.in
     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config.cmake" @ONLY)
   configure_file(octovis-config-version.cmake.in
-    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config-version.cmake" @ONLY)  
-    
+    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config-version.cmake" @ONLY)
+
   # Create a octovis-config.cmake file for the use from the install tree
   # and install it
   set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
@@ -95,12 +95,17 @@ IF(BUILD_VIEWER)
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake" @ONLY)
   configure_file(octovis-config-version.cmake.in
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" @ONLY)
+  IF(DEFINED NO_ABSOLUTE_PATH_IN_MODULE AND NO_ABSOLUTE_PATH_IN_MODULE)
+    set(OCTOVIS_MODULE_FILE "octovis-config.cmake")
+  ELSE()
+    set(OCTOVIS_MODULE_FILE "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake" )
+  ENDIF()
   install(FILES
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
+    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
+    "${OCTOVIS_MODULE_FILE}"
     DESTINATION share/octovis/)
-    
-    
+
+
   # #installation:
   # # store all header files to install:
   file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
@@ -108,7 +113,7 @@ IF(BUILD_VIEWER)
 
   # Install catkin package.xml
   install(FILES package.xml DESTINATION share/octovis)
-  
+
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
 	MESSAGE ( "This will not affect the compilation of the stand-alone library and tools (octomap)")
