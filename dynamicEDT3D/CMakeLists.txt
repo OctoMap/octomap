@@ -97,7 +97,7 @@ configure_file(dynamicEDT3DConfig-version.cmake.in
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake" 
-  DESTINATION lib/cmake/dynamicEDT3D/)
+  DESTINATION share/dynamicEDT3D/)
 
 # Write pkgconfig-file:
 include(InstallPkgConfigFile)
@@ -105,7 +105,7 @@ install_pkg_config_file(dynamicEDT3D
     CFLAGS
     LIBS -ldynamicEDT3D
     REQUIRES
-    VERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION}.${DYNAMICEDT3D_PATCH_VERSION})
+    VERSION ${DYNAMICEDT3D_VERSION})
 
 
 # Documentation 
