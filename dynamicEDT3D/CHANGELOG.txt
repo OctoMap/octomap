@@ -1,0 +1,6 @@
+v1.6.7: 2014-08-31
+==================
+- Support for SOVERSION in the library for better packaging
+- fixing ${DYNAMICEDT3D_LIBRARIES} to have full path
+- fixing location of dynamicEDT3DConfig.cmake
+- fixing package.xml installation
