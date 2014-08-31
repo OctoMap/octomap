@@ -1,13 +1,13 @@
 
 OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
-http://octomap.github.com/
+http://octomap.github.io
 
-Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
+Copyright (c) 2009-2014, K.M. Wurm and A. Hornung, University of Freiburg
 All rights reserved.
 
 
 License for the "octovis" visualization library: GPL v2.
-octovis requires (and link against libQGLViewer (www.libqglviewer.com)
+octovis requires (and links against) libQGLViewer (www.libqglviewer.com)
 
 
 

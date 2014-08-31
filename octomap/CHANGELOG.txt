@@ -1,3 +1,8 @@
+v1.6.7: 2014-08-31
+==================
+- FSF address in octovis license header for OctoMap package in Fedora
+- Separate build options for octovis and dynamicEDT3D. Thanks to C. Reist!
+
 v1.6.6: 2014-05-26
 ==================
 - Support for SOVERSION in the libraries for better packaging
