@@ -1,3 +1,7 @@
+v1.6.8: 2014-09-06
+==================
+- fixing package.xml installation location, now in /share/dynamic_edt_3d
+
 v1.6.7: 2014-08-31
 ==================
 - Support for SOVERSION in the library for better packaging

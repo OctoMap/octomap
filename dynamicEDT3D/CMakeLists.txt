@@ -6,7 +6,7 @@ ENABLE_TESTING()
 # version (e.g. for packaging)
 set(DYNAMICEDT3D_MAJOR_VERSION 1)
 set(DYNAMICEDT3D_MINOR_VERSION 6)
-set(DYNAMICEDT3D_PATCH_VERSION 7)
+set(DYNAMICEDT3D_PATCH_VERSION 8)
 set(DYNAMICEDT3D_VERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION}.${DYNAMICEDT3D_PATCH_VERSION})
 set(DYNAMICEDT3D_SOVERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION})
 
@@ -51,8 +51,8 @@ ADD_SUBDIRECTORY(src)
 file(GLOB dynamicEDT3D_HDRS ${PROJECT_SOURCE_DIR}/include/dynamicEDT3D/*.h ${PROJECT_SOURCE_DIR}/include/dynamicEDT3D/*.hxx)
 install(FILES ${dynamicEDT3D_HDRS}	DESTINATION include/dynamicEDT3D)
 
-# Install catkin package.xml
-install(FILES package.xml DESTINATION share/dynamicEDT3D)
+# Install catkin package.xml, attention package.xml names the catkin package "dynamic_edt_3d", so this is also the location where it needs to be installed to (and not "dynamicEDT3D")
+install(FILES package.xml DESTINATION share/dynamic_edt_3d)
 
 #TODO: this conflicts with the octomap uninstall
 #it is not only a target name problem, also both will use the same manifest file
