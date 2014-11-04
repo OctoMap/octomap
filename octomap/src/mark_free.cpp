@@ -84,7 +84,7 @@ unsigned int mark_free(USizeOcTree* tree) {
 			root->createChild(i);
 		}
 
-		count += mark_free(root->getChild(i), 2, max_depth, clamping_thres_min, occ_prob_thres_log);
+		count += mark_free(root->getChild(i), 1, max_depth, clamping_thres_min, occ_prob_thres_log);
 	}
 
 	tree->prune();
