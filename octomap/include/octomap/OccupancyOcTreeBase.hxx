@@ -666,7 +666,6 @@ namespace octomap {
         return true;
       }
     } else if(!ignoreUnknown){
-      OCTOMAP_ERROR_STR("Origin node at " << origin << " for raycasting not found, does the node exist?");
       end = this->keyToCoord(current_key);
       return false;
     }
@@ -761,7 +760,6 @@ namespace octomap {
         }
         // otherwise: node is free and valid, raycasting continues
       } else if (!ignoreUnknown){ // no node found, this usually means we are in "unknown" areas
-        OCTOMAP_WARNING_STR("Search failed in OcTree::castRay() => an unknown area was hit in the map: " << end);
         return false;
       }
     } // end while

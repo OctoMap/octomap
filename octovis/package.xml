@@ -1,6 +1,6 @@
 <package>
   <name>octovis</name>
-  <version>1.6.5</version>
+  <version>1.6.8</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
   http://octomap.github.io for details.</description>
 

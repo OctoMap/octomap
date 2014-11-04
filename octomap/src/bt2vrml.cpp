@@ -98,4 +98,5 @@ int main(int argc, char** argv) {
 
   std::cout << "Finished writing "<< count << " voxels to " << vrmlFilename << std::endl;
 
+  return 0;
 }

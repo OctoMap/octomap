@@ -309,16 +309,19 @@ namespace octomap {
      * Performs raycasting in 3d, similar to computeRay(). Can be called in parallel e.g. with OpenMP
      * for a speedup.
      *
-     * A ray is cast from origin with a given direction, the first occupied
-     * cell is returned (as center coordinate). If the starting coordinate is already
-     * occupied in the tree, this coordinate will be returned as a hit.
+     * A ray is cast from 'origin' with a given direction, the first non-free
+     * cell is returned in 'end' (as center coordinate). This could also be the 
+     * origin node if it is occupied or unknown. castRay() returns true if an occupied node
+     * was hit by the raycast. If the raycast returns false you can search() the node at 'end' and
+     * see whether it's unknown space.
+     * 
      *
      * @param[in] origin starting coordinate of ray
-     * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
-     * @param[out] end returns the center of the cell that was hit by the ray, if successful
-     * @param[in] ignoreUnknownCells whether unknown cells are ignored. If false (default), the raycast aborts when an unknown cell is hit.
+     * @param[in] direction A vector pointing in the direction of the raycast (NOT a point in space). Does not need to be normalized.
+     * @param[out] end returns the center of the last cell on the ray. If the function returns true, it is occupied.
+     * @param[in] ignoreUnknownCells whether unknown cells are ignored (= treated as free). If false (default), the raycast aborts when an unknown cell is hit and returns false.
      * @param[in] maxRange Maximum range after which the raycast is aborted (<= 0: no limit, default)
-     * @return whether or not an occupied cell was hit
+     * @return true if an occupied cell was hit, false if the maximum range or octree bounds are reached, or if an unknown node was hit.
      */
     virtual bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;

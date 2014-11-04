@@ -24,8 +24,8 @@ if __name__ == '__main__':
   
   
   
-  manifests=["octomap/package.xml","octovis/package.xml"]
-  cmakelists=["octomap/CMakeLists.txt","octovis/CMakeLists.txt"]
+  manifests=["octomap/package.xml","octovis/package.xml","dynamicEDT3D/package.xml"]
+  cmakelists=["octomap/CMakeLists.txt","octovis/CMakeLists.txt","dynamicEDT3D/CMakeLists.txt"]
   versions = []
 
   # find versions in package.xml
