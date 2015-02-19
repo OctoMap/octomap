@@ -57,6 +57,7 @@ void printUsage(char* self){
             "  -m <maxrange> (optional) \n"
             "  -n <max scan no.> (optional) \n"
             "  -log (enable a detailed log file with statistics) \n"
+            "  -g (nodes are already in global coordinates and no transformation is required) \n"
             "  -compressML (enable maximum-likelihood compression (lossy) after every scan)\n"
             "  -simple (simple scan insertion ray by ray instead of optimized) \n"
             "  -discretize (approximate raycasting on discretized coordinates, speeds up insertion) \n"
@@ -112,6 +113,7 @@ int main(int argc, char** argv) {
   bool detailedLog = false;
   bool simpleUpdate = false;
   bool discretize = false;
+  bool dontTransformNodes = false;
   unsigned char compression = 1;
 
   // get default sensor model values:
@@ -137,6 +139,8 @@ int main(int argc, char** argv) {
       res = atof(argv[++arg]);
     else if (! strcmp(argv[arg], "-log"))
       detailedLog = true;
+    else if (! strcmp(argv[arg], "-g"))
+      dontTransformNodes = true;
     else if (! strcmp(argv[arg], "-simple"))
       simpleUpdate = true;
     else if (! strcmp(argv[arg], "-discretize"))
@@ -205,6 +209,7 @@ int main(int argc, char** argv) {
   }
 
   // transform pointclouds first, so we can directly operate on them later
+  if (!dontTransformNodes)
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
 
     pose6d frame_origin = (*scan_it)->pose;
