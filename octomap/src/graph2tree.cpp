@@ -209,16 +209,17 @@ int main(int argc, char** argv) {
   }
 
   // transform pointclouds first, so we can directly operate on them later
-  if (!dontTransformNodes)
-  for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
+  if (!dontTransformNodes) {
+    for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
 
-    pose6d frame_origin = (*scan_it)->pose;
-    point3d sensor_origin = frame_origin.inv().transform((*scan_it)->pose.trans());
+      pose6d frame_origin = (*scan_it)->pose;
+      point3d sensor_origin = frame_origin.inv().transform((*scan_it)->pose.trans());
 
-    (*scan_it)->scan->transform(frame_origin);
-    point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
-    (*scan_it)->pose = pose6d(transformed_sensor_origin, octomath::Quaternion());
+      (*scan_it)->scan->transform(frame_origin);
+      point3d transformed_sensor_origin = frame_origin.transform(sensor_origin);
+      (*scan_it)->pose = pose6d(transformed_sensor_origin, octomath::Quaternion());
 
+    }
   }
 
 
