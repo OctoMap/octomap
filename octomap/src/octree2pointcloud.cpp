@@ -50,9 +50,6 @@ void printUsage(char* self){
 
 
 int main(int argc, char** argv) {
-  // default values:
-  double res = 0.1;
-
   if (argc != 3)
     printUsage(argv[0]);
 
@@ -68,7 +65,7 @@ int main(int argc, char** argv) {
   res = tree->getResolution();
   std::vector<point3d> pcl;
 
-  for (OcTree::iterator it = tree->begin(res); it != tree->end(); ++it)
+  for (OcTree::iterator it = tree->begin(); it != tree->end(); ++it)
   {
     if(tree->isNodeOccupied(*it))
     {
@@ -90,7 +87,7 @@ int main(int argc, char** argv) {
     << "VIEWPOINT 0 0 0 0 0 0 1" << endl
     << "POINTS " << pcl.size() << endl
     << "DATA ascii" << endl;
-  for(size_t i = 0; i < pcl.size(); i++)
+  for (size_t i = 0; i < pcl.size(); i++)
       f << pcl[i].x() << " " << pcl[i].y() << " " << pcl[i].z() << endl;
   f.close();
   
