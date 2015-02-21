@@ -62,7 +62,6 @@ int main(int argc, char** argv) {
     exit(1);
   }
   
-  res = tree->getResolution();
   std::vector<point3d> pcl;
 
   for (OcTree::iterator it = tree->begin(); it != tree->end(); ++it)
