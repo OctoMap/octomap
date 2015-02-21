@@ -43,8 +43,8 @@ using namespace std;
 using namespace octomap;
 
 void printUsage(char* self){
-  std::cerr << "USAGE: " << self << " <InputFile.bt> <OutputFile.pcd>\n";
-  std::cerr << "This tool creates a point cloud of the occupied cells\n";
+  cerr << "USAGE: " << self << " <InputFile.bt> <OutputFile.pcd>\n";
+  cerr << "This tool creates a point cloud of the occupied cells\n";
   exit(0);
 }
 
@@ -61,14 +61,34 @@ int main(int argc, char** argv) {
     OCTOMAP_ERROR("Could not open file, exiting.\n");
     exit(1);
   }
-  
-  std::vector<point3d> pcl;
 
+  unsigned int maxDepth = tree->getTreeDepth();
+  cout << "tree depth is " << maxDepth << endl;
+  
+  // expand collapsed occupied nodes until all occupied leaves are at maximum depth
+  vector<OcTreeNode*> collapsed_occ_nodes;
+  do {
+    collapsed_occ_nodes.clear();
+    for (OcTree::iterator it = tree->begin(); it != tree->end(); ++it)
+    {
+      if(tree->isNodeOccupied(*it) && it.getDepth() < maxDepth)
+      {
+        collapsed_occ_nodes.push_back(&(*it));
+      }
+    }
+    for (vector<OcTreeNode*>::iterator it = collapsed_occ_nodes.begin(); it != collapsed_occ_nodes.end(); ++it)
+    {
+      (*it)->expandNode();
+    }
+    cout << "expanded " << collapsed_occ_nodes.size() << " nodes" << endl;
+  } while(collapsed_occ_nodes.size() > 0);
+
+  vector<point3d> pcl;
   for (OcTree::iterator it = tree->begin(); it != tree->end(); ++it)
   {
     if(tree->isNodeOccupied(*it))
     {
-      pcl.push_back(point3d(it.getX(), it.getY(), it.getZ()));
+      pcl.push_back(it.getCoordinate());
     }
   }
 
