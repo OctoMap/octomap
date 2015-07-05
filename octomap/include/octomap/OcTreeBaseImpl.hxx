@@ -327,10 +327,10 @@ namespace octomap {
 
     NODE* curNode (root);
 
-    unsigned int diff = tree_depth - depth;
+    int diff = tree_depth - depth;
 
     // follow nodes down to requested level (for diff = 0 it's the last level)
-    for (unsigned i=(tree_depth-1); i>=diff; --i) {
+    for (int i=(tree_depth-1); i>=diff; --i) {
       unsigned int pos = computeChildIdx(key_at_depth, i);
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
