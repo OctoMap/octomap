@@ -57,6 +57,9 @@ TARGET_LINK_LIBRARIES(normals_example octomap)
 ADD_EXECUTABLE(intersection_example intersection_example.cpp)
 TARGET_LINK_LIBRARIES(intersection_example octomap)
 
+ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
+TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
+
 
 # installation:
 # store all header files to install:
