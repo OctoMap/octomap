@@ -32,6 +32,7 @@
  */
 
 #include <bitset>
+#include <algorithm>
 
 #include <octomap/MCTables.h>
 
