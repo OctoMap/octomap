@@ -96,8 +96,10 @@ namespace octomap {
     /// Provides a hash function on Keys
     struct KeyHash{
       size_t operator()(const OcTreeKey& key) const{
-        // a hashing function 
-        return key.k[0] + 1337*key.k[1] + 345637*key.k[2];
+        // a simple hashing function 
+	// explicit casts to size_t to operate on the complete range
+	// constanst will be promoted according to C++ standard
+        return size_t(key.k[0]) + 1447*size_t(key.k[1]) + 345637*size_t(key.k[2]);
       }
     };
     
