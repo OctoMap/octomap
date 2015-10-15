@@ -259,9 +259,6 @@ namespace octomap {
     /// Pruning the tree first produces smaller files (lossless compression)
     std::ostream& writeData(std::ostream &s) const;
 
-    class leaf_iterator;
-    class tree_iterator;
-    class leaf_bbx_iterator;
     typedef leaf_iterator iterator;
 
     /// @return beginning of the tree as leaf iterator
