@@ -29,6 +29,9 @@ TARGET_LINK_LIBRARIES(test_mapcollection octomap octomath)
 ADD_EXECUTABLE(test_pruning test_pruning.cpp)
 TARGET_LINK_LIBRARIES(test_pruning octomap octomath)
 
+ADD_EXECUTABLE(test_octree_x64 test_octree_x64.cpp  octreex64.h octreex64.cpp)
+TARGET_LINK_LIBRARIES(test_octree_x64 octomap)
+
 
 # CTest tests below
 
