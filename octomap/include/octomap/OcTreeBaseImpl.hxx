@@ -327,10 +327,10 @@ namespace octomap {
 
     NODE* curNode (root);
 
-    unsigned int diff = tree_depth - depth;
+    int diff = tree_depth - depth;
 
     // follow nodes down to requested level (for diff = 0 it's the last level)
-    for (unsigned i=(tree_depth-1); i>=diff; --i) {
+    for (int i=(tree_depth-1); i>=diff; --i) {
       unsigned int pos = computeChildIdx(key_at_depth, i);
       if (curNode->childExists(pos)) {
         // cast needed: (nodes need to ensure it's the right pointer)
@@ -856,26 +856,31 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  void OcTreeBaseImpl<NODE,I>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const {
+  void OcTreeBaseImpl<NODE,I>::getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax, unsigned int depth) const {
 
+    assert(depth <= tree_depth);
+    if (depth == 0)
+      depth = tree_depth;
+    
     float diff[3];
     unsigned int steps[3];
+    float step_size = this->resolution * pow(2, tree_depth-depth);
     for (int i=0;i<3;++i) {
       diff[i] = pmax(i) - pmin(i);
-      steps[i] = floor(diff[i] / this->resolution);
+      steps[i] = floor(diff[i] / step_size);
       //      std::cout << "bbx " << i << " size: " << diff[i] << " " << steps[i] << " steps\n";
     }
     
     point3d p = pmin;
     NODE* res;
     for (unsigned int x=0; x<steps[0]; ++x) {
-      p.x() += this->resolution;
+      p.x() += step_size;
       for (unsigned int y=0; y<steps[1]; ++y) {
-        p.y() += this->resolution;
+        p.y() += step_size;
         for (unsigned int z=0; z<steps[2]; ++z) {
           //          std::cout << "querying p=" << p << std::endl;
-          p.z() += this->resolution;
-          res = this->search(p);
+          p.z() += step_size;
+          res = this->search(p,depth);
           if (res == NULL) {
             node_centers.push_back(p);
           }

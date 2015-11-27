@@ -1,3 +1,13 @@
+v1.7.0: 2015-11-27
+==================
+- BBX iterators fixed for empty trees (thx to F. Boniardi)
+- graph2tree tool option for nodes in global frame
+- New octree2pointcloud PCL conversion tool (thx to F. Ferri)
+- Improved change detection / diff calculation (thx to C. Brew)
+- getUnknownLeafCenters now allows queries at a specified depth (thx to 
+  A. Ecins)
+- Fixed hashing overflow with clang (thx to L. Riano)
+
 v1.6.7: 2014-08-31
 ==================
 - FSF address in octovis license header for OctoMap package in Fedora

@@ -123,6 +123,92 @@ double timediff(const timeval& start, const timeval& stop){
   return (stop.tv_sec - start.tv_sec) + 1.0e-6 *(stop.tv_usec - start.tv_usec);
 }
 
+void boundingBoxTest(OcTree* tree){
+  //tree->expand();
+  // test complete tree (should be equal to no bbx)
+  OcTreeKey bbxMinKey, bbxMaxKey;
+  double temp_x,temp_y,temp_z;
+  tree->getMetricMin(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMin(temp_x,temp_y,temp_z);
+
+  tree->getMetricMax(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMax(temp_x,temp_y,temp_z);
+
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
+
+  OcTree::leaf_bbx_iterator it_bbx = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey);
+  EXPECT_TRUE(it_bbx == tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey));
+  OcTree::leaf_bbx_iterator end_bbx = tree->end_leafs_bbx();
+  EXPECT_TRUE(end_bbx == tree->end_leafs_bbx());
+
+  OcTree::leaf_iterator it = tree->begin_leafs();
+  EXPECT_TRUE(it == tree->begin_leafs());
+  OcTree::leaf_iterator end = tree->end_leafs();
+  EXPECT_TRUE(end == tree->end_leafs());
+
+
+  for( ; it!= end && it_bbx != end_bbx; ++it, ++it_bbx){
+    EXPECT_TRUE(it == it_bbx);
+  }
+  EXPECT_TRUE(it == end && it_bbx == end_bbx);
+
+
+  // now test an actual bounding box:
+  tree->expand(); // (currently only works properly for expanded tree (no multires)
+  bbxMin = point3d(-1, -1, - 1);
+  bbxMax = point3d(3, 2, 1);
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
+  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
+
+  typedef unordered_ns::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
+
+  KeyVolumeMap bbxVoxels;
+
+  size_t count = 0;
+  for(OcTree::leaf_bbx_iterator it = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey), end=tree->end_leafs_bbx();
+      it!= end; ++it)
+  {
+    count++;
+    OcTreeKey currentKey = it.getKey();
+    // leaf is actually a leaf:
+    EXPECT_FALSE(it->hasChildren());
+
+    // leaf exists in tree:
+    OcTreeNode* node = tree->search(currentKey);
+    EXPECT_TRUE(node);
+    EXPECT_EQ(node, &(*it));
+    // all leafs are actually in the bbx:
+    for (unsigned i = 0; i < 3; ++i){
+//      if (!(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i])){
+//        std::cout << "Key failed: " << i << " " << currentKey[i] << " "<< bbxMinKey[i] << " "<< bbxMaxKey[i]
+//             << "size: "<< it.getSize()<< std::endl;
+//      }
+      EXPECT_TRUE(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i]);
+    }
+
+    bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, it.getSize()));
+  }
+  EXPECT_EQ(bbxVoxels.size(), count);
+  std::cout << "Bounding box traversed ("<< count << " leaf nodes)\n\n";
+
+
+  // compare with manual BBX check on all leafs:
+  for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
+    OcTreeKey key = it.getKey();
+    if (    key[0] >= bbxMinKey[0] && key[0] <= bbxMaxKey[0]
+         && key[1] >= bbxMinKey[1] && key[1] <= bbxMaxKey[1]
+         && key[2] >= bbxMinKey[2] && key[2] <= bbxMaxKey[2])
+    {
+      KeyVolumeMap::iterator bbxIt = bbxVoxels.find(key);
+      EXPECT_FALSE(bbxIt == bbxVoxels.end());
+      EXPECT_TRUE(key == bbxIt->first);
+      EXPECT_EQ(it.getSize(), bbxIt->second);
+    }
+
+  }
+}
+
 int main(int argc, char** argv) {
 
 
@@ -165,7 +251,6 @@ int main(int argc, char** argv) {
     iteratedNodes++;
   }
   EXPECT_EQ(iteratedNodes, 0);
-
 
   for(OcTree::leaf_iterator l_it = emptyTree.begin_leafs(maxDepth), l_end=emptyTree.end_leafs(); l_it!= l_end; ++l_it){
     iteratedNodes++;
@@ -313,90 +398,11 @@ int main(int argc, char** argv) {
   /**
    * bounding box tests
    */
-  //tree->expand();
-  // test complete tree (should be equal to no bbx)
-  OcTreeKey bbxMinKey, bbxMaxKey;
-  double temp_x,temp_y,temp_z;
-  tree->getMetricMin(temp_x,temp_y,temp_z);
-  octomap::point3d bbxMin(temp_x,temp_y,temp_z);
-
-  tree->getMetricMax(temp_x,temp_y,temp_z);
-  octomap::point3d bbxMax(temp_x,temp_y,temp_z);
-
-  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
-  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
-
-  OcTree::leaf_bbx_iterator it_bbx = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey);
-  EXPECT_TRUE(it_bbx == tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey));
-  OcTree::leaf_bbx_iterator end_bbx = tree->end_leafs_bbx();
-  EXPECT_TRUE(end_bbx == tree->end_leafs_bbx());
-
-  OcTree::leaf_iterator it = tree->begin_leafs();
-  EXPECT_TRUE(it == tree->begin_leafs());
-  OcTree::leaf_iterator end = tree->end_leafs();
-  EXPECT_TRUE(end == tree->end_leafs());
+    boundingBoxTest(tree);
+    boundingBoxTest(&emptyTree);
 
 
-  for( ; it!= end && it_bbx != end_bbx; ++it, ++it_bbx){
-    EXPECT_TRUE(it == it_bbx);
-  }
-  EXPECT_TRUE(it == end && it_bbx == end_bbx);
-
-
-  // now test an actual bounding box:
-  tree->expand(); // (currently only works properly for expanded tree (no multires)
-  bbxMin = point3d(-1, -1, - 1);
-  bbxMax = point3d(3, 2, 1);
-  EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
-  EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));
-
-  typedef unordered_ns::unordered_map<OcTreeKey, double, OcTreeKey::KeyHash> KeyVolumeMap;
-
-  KeyVolumeMap bbxVoxels;
-
-  count = 0;
-  for(OcTree::leaf_bbx_iterator it = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey), end=tree->end_leafs_bbx();
-      it!= end; ++it)
-  {
-    count++;
-    OcTreeKey currentKey = it.getKey();
-    // leaf is actually a leaf:
-    EXPECT_FALSE(it->hasChildren());
-
-    // leaf exists in tree:
-    OcTreeNode* node = tree->search(currentKey);
-    EXPECT_TRUE(node);
-    EXPECT_EQ(node, &(*it));
-    // all leafs are actually in the bbx:
-    for (unsigned i = 0; i < 3; ++i){
-//      if (!(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i])){
-//        std::cout << "Key failed: " << i << " " << currentKey[i] << " "<< bbxMinKey[i] << " "<< bbxMaxKey[i]
-//             << "size: "<< it.getSize()<< std::endl;
-//      }
-      EXPECT_TRUE(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i]);
-    }
-
-    bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, it.getSize()));
-  }
-  EXPECT_EQ(bbxVoxels.size(), count);
-  std::cout << "Bounding box traversed ("<< count << " leaf nodes)\n\n";
-
-
-  // compare with manual BBX check on all leafs:
-  for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
-    OcTreeKey key = it.getKey();
-    if (    key[0] >= bbxMinKey[0] && key[0] <= bbxMaxKey[0]
-         && key[1] >= bbxMinKey[1] && key[1] <= bbxMaxKey[1]
-         && key[2] >= bbxMinKey[2] && key[2] <= bbxMaxKey[2])
-    {
-      KeyVolumeMap::iterator bbxIt = bbxVoxels.find(key);
-      EXPECT_FALSE(bbxIt == bbxVoxels.end());
-      EXPECT_TRUE(key == bbxIt->first);
-      EXPECT_EQ(it.getSize(), bbxIt->second);
-    }
-
-  }
-
+  
   // test tree with one node:
   OcTree simpleTree(0.01);
   simpleTree.updateNode(point3d(10, 10, 10), 5.0f);

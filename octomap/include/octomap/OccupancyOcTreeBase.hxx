@@ -32,6 +32,7 @@
  */
 
 #include <bitset>
+#include <algorithm>
 
 #include <octomap/MCTables.h>
 
@@ -365,13 +366,13 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                                                     unsigned int depth, const float& log_odds_update, bool lazy_eval) {
-    unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
     bool created_node = false;
 
     assert(node);
 
     // follow down to last level
     if (depth < this->tree_depth) {
+      unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
       if (!node->childExists(pos)) {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created ) {
@@ -434,13 +435,13 @@ namespace octomap {
   template <class NODE>
   NODE* OccupancyOcTreeBase<NODE>::setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                                                     unsigned int depth, const float& log_odds_value, bool lazy_eval) {
-    unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
     bool created_node = false;
 
     assert(node);
 
     // follow down to last level
     if (depth < this->tree_depth) {
+      unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
       if (!node->childExists(pos)) {
         // child does not exist, but maybe it's a pruned node?
         if ((!node->hasChildren()) && !node_just_created ) {

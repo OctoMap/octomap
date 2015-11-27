@@ -213,7 +213,7 @@ namespace octomap {
     // -- access tree nodes  ------------------
 
     /// return centers of leafs that do NOT exist (but could) in a given bounding box
-    void getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax) const;
+    void getUnknownLeafCenters(point3d_list& node_centers, point3d pmin, point3d pmax, unsigned int depth = 0) const;
 
 
     // -- raytracing  -----------------------
@@ -259,9 +259,6 @@ namespace octomap {
     /// Pruning the tree first produces smaller files (lossless compression)
     std::ostream& writeData(std::ostream &s) const;
 
-    class leaf_iterator;
-    class tree_iterator;
-    class leaf_bbx_iterator;
     typedef leaf_iterator iterator;
 
     /// @return beginning of the tree as leaf iterator

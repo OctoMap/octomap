@@ -375,9 +375,12 @@
       leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const OcTreeKey& min, const OcTreeKey& max, unsigned char depth=0)
         : iterator_base(tree, depth), minKey(min), maxKey(max)
       {
+        // tree could be empty (= no stack)
+        if (this->stack.size() > 0){
           // advance from root to next valid leaf in bbx:
           this->stack.push(this->stack.top());
           this->operator ++();
+        }
       }
 
       leaf_bbx_iterator(const leaf_bbx_iterator& other) : iterator_base(other) {
