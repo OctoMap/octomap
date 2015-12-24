@@ -58,11 +58,19 @@ namespace octomap {
     bool createChild(unsigned int i);
 
     // overloaded, so that the return type is correct:
-    inline OcTreeNode* getChild(unsigned int i) {
-      return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
+    virtual inline OcTreeNode* getChild(unsigned int i) {
+      OcTreeDataNode<float>* child = OcTreeDataNode<float>::getChild(i);
+      OcTreeNode* toreturn = dynamic_cast<OcTreeNode*> (child);
+      assert(toreturn != NULL);
+      return toreturn;
+//      return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
     }
-    inline const OcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
+    virtual inline const OcTreeNode* getChild(unsigned int i) const {
+      const OcTreeDataNode<float>* child = OcTreeDataNode<float>::getChild(i);
+      const OcTreeNode* toreturn = dynamic_cast<const OcTreeNode*> (child);
+      assert(toreturn != NULL);
+      return toreturn;
+//      return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
     }
 
     // -- node occupancy  ----------------------------
