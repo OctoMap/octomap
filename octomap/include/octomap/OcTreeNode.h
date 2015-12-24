@@ -55,7 +55,7 @@ namespace octomap {
     OcTreeNode();
     ~OcTreeNode();
 
-    bool createChild(unsigned int i);
+    virtual bool createChild(unsigned int i);
 
     // overloaded, so that the return type is correct:
     virtual inline OcTreeNode* getChild(unsigned int i) {
@@ -104,6 +104,7 @@ namespace octomap {
 
   protected:
     // "value" stores log odds occupancy probability
+
   };
 
 } // end namespace
