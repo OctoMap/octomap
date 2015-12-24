@@ -46,6 +46,22 @@ namespace octomap {
   {
   }
 
+  OcTreeNode::OcTreeNode(const OcTreeNode& rhs)
+  {
+    children = NULL;
+    value = rhs.value;
+    if (rhs.hasChildren()){
+      allocChildren();
+      for (unsigned i = 0; i<8; ++i){
+        if (rhs.children[i]) {
+          OcTreeNode* casted_down = dynamic_cast<OcTreeNode*>(rhs.children[i]);
+          assert(casted_down != NULL);
+          children[i] = new OcTreeNode(*casted_down);
+        }
+      }
+    }
+  }
+
   OcTreeNode::~OcTreeNode(){
   }
 

@@ -53,6 +53,7 @@ namespace octomap {
 
   public:
     OcTreeNode();
+    OcTreeNode(const OcTreeNode& rhs);
     ~OcTreeNode();
 
     virtual bool createChild(unsigned int i);
