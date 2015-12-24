@@ -62,7 +62,7 @@ namespace octomap {
     /// Copy constructor, performs a recursive deep-copy of all children
     OcTreeDataNode(const OcTreeDataNode& rhs);
 
-    ~OcTreeDataNode();
+    virtual ~OcTreeDataNode();
 
     /// Equals operator, compares if the stored value is identical
     bool operator==(const OcTreeDataNode& rhs) const;
@@ -72,7 +72,7 @@ namespace octomap {
 
 
     /// initialize i-th child, allocate children array if needed
-    bool createChild(unsigned int i);
+    virtual bool createChild(unsigned int i);
 
     /// Safe test to check of the i-th child exists,
     /// first tests if there are any children.
@@ -80,10 +80,10 @@ namespace octomap {
     bool childExists(unsigned int i) const;
 
     /// \return a pointer to the i-th child of the node. The child needs to exist.
-    OcTreeDataNode<T>* getChild(unsigned int i);
+    virtual OcTreeDataNode<T>* getChild(unsigned int i);
 
     /// \return a const pointer to the i-th child of the node. The child needs to exist.
-    const OcTreeDataNode<T>* getChild(unsigned int i) const;
+    virtual const OcTreeDataNode<T>* getChild(unsigned int i) const;
 
     /// \return true if the node has at least one child
     bool hasChildren() const;
@@ -146,7 +146,7 @@ namespace octomap {
 
 
   protected:
-    void allocChildren();
+    virtual void allocChildren();
 
     /// pointer to array of children, may be NULL
     OcTreeDataNode<T>** children;
