@@ -51,7 +51,12 @@ namespace octomap {
    * This is the base class for nodes used in an OcTree. The used implementation
    * for occupancy mapping is in OcTreeNode.#
    * \tparam T data to be stored in the node (e.g. a float for probabilities)
-   *
+   * 
+   * Note: If you derive a class (directly or indirectly) from OcTreeDataNode, 
+   * you have to implement (at least) the following functions to avoid slicing
+   * errors and memory-related bugs:
+   * createChild(), getChild(), getChild() const, expandNode() 
+   * See ColorOcTreeNode in ColorOcTree.h for an example. 
    */
   template<typename T> class OcTreeDataNode: public AbstractOcTreeNode {
 
