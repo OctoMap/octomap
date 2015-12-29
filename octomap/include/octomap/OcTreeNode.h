@@ -45,8 +45,11 @@ namespace octomap {
    * Nodes to be used in OcTree. They represent 3d occupancy grid cells.
    * "value" stores their log-odds occupancy.
    *
-   * Hint: If a class is derived from OcTreeNode, you have to implement (at least) 
-   * createChild, getChild, and getChild const. See OcTreeNodeLabeled for an example.
+   * Note: If you derive a class (directly or indirectly) from OcTreeNode or 
+   * OcTreeDataNode, you have to implement (at least) the following functions:
+   * createChild(), getChild(), getChild() const, expandNode() to avoid slicing
+   * errors and memory-related bugs.
+   * See ColorOcTreeNode in ColorOcTree.h for an example.
    *
    */
   class OcTreeNode : public OcTreeDataNode<float> {
