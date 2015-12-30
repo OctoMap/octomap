@@ -1,8 +1,11 @@
-if (NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
-    message(FATAL_ERROR "Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
-endif(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+# Ignore empty list items.
+cmake_policy(SET CMP0007 OLD)
 
-file(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
+if (NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: \"@CMAKE_BINARY_DIR@/install_manifest.txt\"")
+endif(NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+
+file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 list(REVERSE files)
 foreach (file ${files})
