@@ -22,6 +22,13 @@ SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
+# output dirs for multi-config builds (MSVC)
+foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+  STRING( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+  SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BASE_DIR}/lib )
+  SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BASE_DIR}/lib )
+  SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BASE_DIR}/bin )
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # We need the main octomap library to link against (same version as octovis)
 # Look at parent directory by default, in case the complete distribution
@@ -79,6 +86,18 @@ IF(BUILD_VIEWER)
   # Create an octovis-config.cmake file for the use from the build tree
   set(OCTOVIS_INCLUDE_DIR "${INCLUDE_DIRS}")
   set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+  # Set library names as absolute paths
+  # Windows, spec. MSVC requires the .lib suffix for imported libs
+  IF(WIN32)
+    set(OCTOVIS_LIBRARIES
+      "@OCTOVIS_LIB_DIR@/@CMAKE_IMPORT_LIBRARY_PREFIX@octovis@CMAKE_IMPORT_LIBRARY_SUFFIX@"
+    )
+  ELSE()
+    set(OCTOVIS_LIBRARIES
+      "@OCTOVIS_LIB_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@octovis@CMAKE_SHARED_LIBRARY_SUFFIX@"
+    )
+  ENDIF()
+
   # not used right now (export depends?)
   #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
   configure_file(octovis-config.cmake.in
