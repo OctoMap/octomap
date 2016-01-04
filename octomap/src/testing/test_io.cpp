@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
   EXPECT_TRUE(tree == *readTreeOt);
 
   // sanity test for "==": flip one node, compare again
-  point3d coord(0.1, 0.1, 0.1);
+  point3d coord(0.1f, 0.1f, 0.1f);
   node = readTreeOt->search(coord);
   if (node && readTreeOt->isNodeOccupied(node))
     readTreeOt->updateNode(coord, false);
@@ -113,8 +113,8 @@ int main(int argc, char** argv) {
   ColorOcTreeNode::Color color_red(255, 0, 0);
   colorNode->setColor(color_red);
   colorTree.setNodeColor(0.0, 0.0, 0.0, 255, 0, 0);
-  colorTree.updateNode(point3d(0.1, 0.1, 0.1), true);
-  colorTree.setNodeColor(0.1, 0.1, 0.1, 0, 0, 255);
+  colorTree.updateNode(point3d(0.1f, 0.1f, 0.1f), true);
+  colorTree.setNodeColor(0.1f, 0.1f, 0.1f, 0, 0, 255);
 
   EXPECT_TRUE(colorTree.write(filenameColor));
   readTreeAbstract = AbstractOcTree::read(filenameColor);

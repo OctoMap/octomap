@@ -7,10 +7,10 @@ using namespace octomap;
 using namespace octomath;
 
 int main(int argc, char** argv) {
-    double res = 0.01;
+    float res = 0.01f;
     OcTree tree(res);
 
-    point3d singlePt(-0.05, -0.02, 1.0);
+    point3d singlePt(-0.05f, -0.02f, 1.0f);
     OcTreeKey singleKey;
     tree.coordToKeyChecked(singlePt, singleKey);
     OcTreeNode* singleNode = tree.updateNode(singleKey, true);
@@ -125,9 +125,9 @@ int main(int argc, char** argv) {
     //tree.write("pruning_test_out1.ot");
 
     // now test larger volume pruning:
-    for (float x=0.005; x <= 0.32; x+=res){
-      for (float y=0.005; y <= 0.32; y+=res){
-        for (float z=0.005; z <= 0.32; z+=res){
+    for (float x=0.005f; x <= 0.32f; x+=res){
+      for (float y=0.005f; y <= 0.32f; y+=res){
+        for (float z=0.005f; z <= 0.32f; z+=res){
           OcTreeNode* node = tree.updateNode(point3d(x,y,z), true);
           EXPECT_TRUE(node);
           EXPECT_TRUE(tree.isNodeOccupied(node));
@@ -146,9 +146,9 @@ int main(int argc, char** argv) {
     tree.prune();
     EXPECT_EQ(27, tree.size());
     // test expansion:
-    for (float x=0.005; x <= 0.32; x+=res){
-      for (float y=0.005; y <= 0.32; y+=res){
-        for (float z=0.005; z <= 0.32; z+=res){
+    for (float x=0.005f; x <= 0.32f; x+=res){
+      for (float y=0.005f; y <= 0.32f; y+=res){
+        for (float z=0.005f; z <= 0.32f; z+=res){
           OcTreeNode* node = tree.search(point3d(x,y,z));
           EXPECT_TRUE(node);
           EXPECT_TRUE(tree.isNodeOccupied(node));
@@ -156,13 +156,13 @@ int main(int argc, char** argv) {
       }
     }
 
-    tree.coordToKeyChecked(point3d(0.1, 0.1, 0.1), singleKey);
+    tree.coordToKeyChecked(point3d(0.1f, 0.1f, 0.1f), singleKey);
 
     EXPECT_TRUE(tree.updateNode(singleKey, true));
 
-    for (float x=0.005; x <= 0.32; x+=res){
-      for (float y=0.005; y <= 0.32; y+=res){
-        for (float z=0.005; z <= 0.32; z+=res){
+    for (float x=0.005f; x <= 0.32f; x+=res){
+      for (float y=0.005f; y <= 0.32f; y+=res){
+        for (float z=0.005f; z <= 0.32f; z+=res){
           OcTreeNode* node = tree.search(point3d(x,y,z));
           EXPECT_TRUE(node);
           EXPECT_TRUE(tree.isNodeOccupied(node));

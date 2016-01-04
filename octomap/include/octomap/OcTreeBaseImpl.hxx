@@ -672,7 +672,7 @@ namespace octomap {
     
     // Note: this can be larger than the adressable memory 
     //   - size_t may not be enough to hold it!
-    return ((size_x/resolution) * (size_y/resolution) * (size_z/resolution)
+    return (unsigned long long)((size_x/resolution) * (size_y/resolution) * (size_z/resolution)
         * sizeof(root->getValue()));
 
   }

@@ -85,9 +85,9 @@ int main(int argc, char** argv) {
   point3d query;
   OcTreeNode* result = NULL;
 
-  for(float z = -0.6; z < -0.21; z += 0.1){
-    for(float y = -0.6; y < -0.21; y += 0.1){
-      for(float x = -0.6; x < -0.21; x += 0.1){
+  for(float z = -0.6f; z < -0.21f; z += 0.1f){
+    for(float y = -0.6f; y < -0.21f; y += 0.1f){
+      for(float x = -0.6f; x < -0.21f; x += 0.1f){
         query = point3d(x, y, z);
         result = tree.search(query);
         print_query_info(query, result);
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
     }
   }
   
-  query = point3d(-0.5, -0.4, -0.4);
+  query = point3d(-0.5f, -0.4f, -0.4f);
   result = tree.search(query);
 	
   vector<point3d> normals;
