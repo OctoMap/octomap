@@ -168,14 +168,14 @@ namespace octomap {
 
 
   template <class MAPNODE>
-  float MapCollection<MAPNODE>::getOccupancy(const point3d& p) {
-    float max_occ_val = 0;
+  double MapCollection<MAPNODE>::getOccupancy(const point3d& p) {
+    double max_occ_val = 0;
     bool is_unknown = true;
     for (const_iterator it = this->begin(); it != this->end(); ++it) {
       point3d ptrans = (*it)->getOrigin().inv().transform(p);
       typename MAPNODE::TreeType::NodeType* n = (*it)->getMap()->search(ptrans);
       if (n) {
-        float occ = n->getOccupancy();
+        double occ = n->getOccupancy();
         if (occ > max_occ_val) max_occ_val = occ;
         is_unknown = false;
       }

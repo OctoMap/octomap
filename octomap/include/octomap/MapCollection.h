@@ -56,7 +56,7 @@ namespace octomap {
     bool isOccupied(const point3d& p) const;
     bool isOccupied(float x, float y, float z) const;
 
-    float getOccupancy(const point3d& p);
+    double getOccupancy(const point3d& p);
 
     bool castRay(const point3d& origin, const point3d& direction, point3d& end,
                  bool ignoreUnknownCells=false, double maxRange=-1.0) const;
