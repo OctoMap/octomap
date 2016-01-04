@@ -174,7 +174,7 @@ namespace octomap {
 
   ScanNode* ScanGraph::addNode(Pointcloud* scan, pose6d pose) {
     if (scan != 0) {
-      nodes.push_back(new ScanNode(scan, pose, unsigned int(nodes.size())));
+      nodes.push_back(new ScanNode(scan, pose, (unsigned int) nodes.size()));
       return nodes.back();
     }
     else {
@@ -326,8 +326,9 @@ namespace octomap {
     // file structure:    n | node_1 | ... | node_n | m | edge_1 | ... | edge_m
 
     // write nodes  ---------------------------------
-    size_t graph_size = this->size();
-    if (graph_size) OCTOMAP_DEBUG("writing %lu nodes to binary file...\n", (unsigned long)graph_size);
+	// note: size is always an unsigned int!
+    unsigned int graph_size = (unsigned int) this->size();
+    if (graph_size) OCTOMAP_DEBUG("writing %u nodes to binary file...\n", graph_size);
     s.write((char*)&graph_size, sizeof(graph_size));
 
     for (ScanGraph::const_iterator it = this->begin(); it != this->end(); it++) {
@@ -337,8 +338,8 @@ namespace octomap {
     if (graph_size) OCTOMAP_DEBUG("done.\n");
 
     // write edges  ---------------------------------
-    size_t num_edges = this->edges.size();
-    if (num_edges) OCTOMAP_DEBUG("writing %lu edges to binary file...\n", (unsigned long)num_edges);
+	unsigned int num_edges = (unsigned int) this->edges.size();
+    if (num_edges) OCTOMAP_DEBUG("writing %u edges to binary file...\n", num_edges);
     s.write((char*)&num_edges, sizeof(num_edges));
 
     for (ScanGraph::const_edge_iterator it = this->edges_begin(); it != this->edges_end(); it++) {
