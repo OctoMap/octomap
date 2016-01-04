@@ -121,7 +121,8 @@ The octomap library and tools can be compiled and used
 under Windows although this has not been tested in-depth. 
 Feedback is welcome.
 
-To compile the library you need cmake (http://www.cmake.org).
+To compile the library you need cmake (http://www.cmake.org)
+and either MinGW or Visual Studio.
 
 ### MinGW ###
 
@@ -129,30 +130,39 @@ To compile the library you need cmake (http://www.cmake.org).
 2. Install C++ compiler and add MingGW/bin to your system PATH
 3. Start the cmake-gui and set the code directory to the 
   library root (e.g. `/octomap`)
-4. Set the build directory to, e.g., `/octomap/build`.
-5. Press "Generate", select the appropriate generator, "MinGW Makefiles".
+4. Create and set the build directory to, e.g., `/octomap/build`.
+5. Press "Configure" then "Generate", select the appropriate generator, "MinGW Makefiles".
 6. Start a command shell and "make" the project:
 
         octomap> cd build
         octomap/build> mingw32-make.exe
     
 
-You can run the unit tests using ctest on the command prompt:
+As verification, you can run the unit tests using ctest on the 
+command prompt:
 
     octomap/build> ctest.exe
 
 
-### Microsoft Visual Studio 2010 ###
+### Microsoft Visual Studio (2013 or later recommended) ###
 
-1. Start the cmake-gui and set the code directory to the 
-  library root (e.g. `/octomap`)
-2. Set the build directory to, e.g., /octomap/build.
-3. Press "Generate", select the appropriate generator, e.g. "Visual Studio 10". 
-      This generates a solution file octomap.sln
-4. Load this file and build the project
+Last tested with MSVC 2013 and 2015 (Community Edition).
 
+1. Start the cmake-gui and set the source code directory to the 
+  library root (e.g. `\octomap`)
+2. Create a build directory and set it in CMake ("Where to build the
+   binaries"), e.g.  `\octomap\build`.
+3. Press "Configure" then "Generate", select the appropriate generator, e.g. "Visual Studio 2015". 
+      This generates a solution file `octomap.sln` in the build directory.
+4. Load this file and build the project `ALL_BUILD` in Visual Studio.
 
-You can run the unit tests using ctest on the command prompt:
+Instead of building the complete distribution (octomap, octovis, and dynamicEDT3D)
+you can only build octomap by proceeding as described above but in the `octomap`
+subdirectory. This can help you getting started when there are problems with
+octovis and Qt4.
+
+As verification, you can run the unit tests in Visual Studio by building the
+`RUN_TESTS` project or by using ctest on the command prompt:
 
     octomap/build> ctest.exe -C Release
 
