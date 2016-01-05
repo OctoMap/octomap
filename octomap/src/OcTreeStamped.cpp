@@ -35,6 +35,11 @@
 
 namespace octomap {
 
+  OcTreeStamped::OcTreeStamped(double resolution)
+   : OccupancyOcTreeBase<OcTreeNodeStamped>(resolution) {
+    ocTreeStampedMemberInit.ensureLinking();
+  }
+
   unsigned int OcTreeStamped::getLastUpdateTime() {
     // this value is updated whenever inner nodes are 
     // updated using updateOccupancyChildren()

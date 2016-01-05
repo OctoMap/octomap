@@ -50,7 +50,7 @@ namespace octomap {
 
   public:
     /// Default constructor, sets resolution of leafs
-    OcTree(double resolution) : OccupancyOcTreeBase<OcTreeNode>(resolution) {};
+    OcTree(double resolution);
 
     /**
      * Reads an OcTree from a binary file 
@@ -79,7 +79,15 @@ namespace octomap {
         OcTree* tree = new OcTree(0.1);
         AbstractOcTree::registerTreeType(tree);
       }
+
+	    /**
+	     * Dummy function to ensure that MSVC does not drop the
+	     * StaticMemberInitializer, causing this tree failing to register.
+	     * Needs to be called from the constructor of this octree.
+	     */
+	    void ensureLinking() {};
     };
+
     /// to ensure static initialization (only once)
     static StaticMemberInitializer ocTreeMemberInit;
   };
