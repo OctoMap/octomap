@@ -55,7 +55,7 @@ namespace octomap {
       allocChildren();
       for (unsigned i = 0; i<8; ++i){
         if (rhs.children[i])
-          children[i] = new OcTreeDataNode<T>(*(rhs.children[i]));
+          children[i] = new OcTreeDataNode<T>(*(static_cast<OcTreeDataNode<T>*>(rhs.children[i])));
 
       }
     }
@@ -67,7 +67,8 @@ namespace octomap {
   {
     if (children != NULL) {
       for (unsigned int i=0; i<8; i++) {
-        if (children[i] != NULL) delete children[i];
+        if (children[i] != NULL)
+          delete static_cast<OcTreeDataNode<T>*>(children[i]);
       }
       delete[] children;
     }
@@ -106,7 +107,7 @@ namespace octomap {
   void OcTreeDataNode<T>::deleteChild(unsigned int i) {
     assert((i < 8) && (children != NULL));
     assert(children[i] != NULL);
-    delete children[i];
+    delete static_cast<OcTreeDataNode<T>*>(children[i]);
     children[i] = NULL;
   }
 
@@ -114,14 +115,14 @@ namespace octomap {
   OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) {
     assert((i < 8) && (children != NULL));
     assert(children[i] != NULL);
-    return children[i];
+    return static_cast<OcTreeDataNode<T>* >(children[i]);
   }
 
   template <typename T>
   const OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) const {
     assert((i < 8) && (children != NULL));
     assert(children[i] != NULL);
-    return children[i];
+    return static_cast<const OcTreeDataNode<T>*>(children[i]);
   }
 
   template <typename T>
@@ -168,7 +169,7 @@ namespace octomap {
 
     // delete children
     for (unsigned int i=0;i<8;i++) {
-      delete children[i];
+      delete static_cast<OcTreeDataNode<T>*>(children[i]);
     }
     delete[] children;
     children = NULL;
@@ -182,7 +183,7 @@ namespace octomap {
 
     for (unsigned int k=0; k<8; k++) {
       createChild(k);
-      children[k]->setValue(value);
+      static_cast<OcTreeDataNode<T>*>(children[k])->setValue(value);
     }
   }
 
@@ -250,7 +251,7 @@ namespace octomap {
   // ============================================================
   template <typename T>
   void OcTreeDataNode<T>::allocChildren() {
-    children = new OcTreeDataNode<T>*[8];
+    children = new void*[8];
     for (unsigned int i=0; i<8; i++) {
       children[i] = NULL;
     }

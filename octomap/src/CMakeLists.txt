@@ -3,7 +3,7 @@ SET (octomap_SRCS
   AbstractOccupancyOcTree.cpp
   Pointcloud.cpp
   ScanGraph.cpp
-  CountingOcTree.cpp
+#  CountingOcTree.cpp # deactivated for now (testing)
   OcTree.cpp
   OcTreeNode.cpp
   OcTreeStamped.cpp
