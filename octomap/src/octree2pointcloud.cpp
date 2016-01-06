@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
     }
     for (vector<OcTreeNode*>::iterator it = collapsed_occ_nodes.begin(); it != collapsed_occ_nodes.end(); ++it)
     {
-      (*it)->expandNode();
+      tree->expandNode(*it);
     }
     cout << "expanded " << collapsed_occ_nodes.size() << " nodes" << endl;
   } while(collapsed_occ_nodes.size() > 0);

@@ -158,35 +158,6 @@ namespace octomap {
     return true;
   }
 
-  template <typename T>
-  bool OcTreeDataNode<T>::pruneNode() {
-
-    if (!this->collapsible())
-      return false;
-
-    // set value to children's values (all assumed equal)
-    setValue(getChild(0)->getValue());
-
-    // delete children
-    for (unsigned int i=0;i<8;i++) {
-      delete static_cast<OcTreeDataNode<T>*>(children[i]);
-    }
-    delete[] children;
-    children = NULL;
-
-    return true;
-  }
-
-  template <typename T>
-  void OcTreeDataNode<T>::expandNode() {
-    assert(!hasChildren());
-
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      static_cast<OcTreeDataNode<T>*>(children[k])->setValue(value);
-    }
-  }
-
   // ============================================================
   // =  File IO           =======================================
   // ============================================================

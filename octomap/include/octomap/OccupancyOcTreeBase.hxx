@@ -378,7 +378,7 @@ namespace octomap {
         if ((!node->hasChildren()) && !node_just_created ) {
           // current node does not have children AND it is not a new node 
           // -> expand pruned node
-          node->expandNode();
+          this->expandNode(node);
           this->tree_size+=8;
           this->size_changed = true;
         }
@@ -397,7 +397,7 @@ namespace octomap {
         NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode()){
+        if (this->pruneNode(node)){
           this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;
@@ -447,7 +447,7 @@ namespace octomap {
         if ((!node->hasChildren()) && !node_just_created ) {
           // current node does not have children AND it is not a new node
           // -> expand pruned node
-          node->expandNode();
+          this->expandNode(node);
           this->tree_size+=8;
           this->size_changed = true;
         }
@@ -466,7 +466,7 @@ namespace octomap {
         NODE* retval = setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode()){
+        if (this->pruneNode(node)){
           this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;

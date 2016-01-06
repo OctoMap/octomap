@@ -108,6 +108,36 @@ namespace octomap {
     inline unsigned int getTreeDepth () const { return tree_depth; }
 
     inline double getNodeSize(unsigned depth) const {assert(depth <= tree_depth); return sizeLookupTable[depth];}
+    
+    
+    // -- Tree structure operations formerly contained in the nodes ---
+    
+    // TODO: createChild(), getChild(), getChild() const, expandNode()  probelmatic => casts!
+    
+    bool createNodeChild(NODE* node, unsigned int childIdx);
+    
+    NODE* getNodeChild(NODE* node, unsigned int childIdx) const;
+    
+    const NODE* getNodeChild(const NODE* node, unsigned int childIdx) const;
+    
+    /**
+     * Expands a node (reverse of pruning): All children are created and
+     * their occupancy probability is set to the node's value.
+     *
+     * You need to verify that this is indeed a pruned node (i.e. not a
+     * leaf at the lowest level)
+     *
+     */
+    void expandNode(NODE* node);
+    
+    /**
+     * Prunes a node when it is collapsible
+     * @return true if pruning was successful
+     */
+    bool pruneNode(NODE* node);
+    
+    
+    // --------
 
     /**
      * \return Pointer to the root node of the tree. This pointer
@@ -464,7 +494,8 @@ namespace octomap {
     /// (const-parameters can't be changed) -  use the copy constructor instead.
     OcTreeBaseImpl<NODE,INTERFACE>& operator=(const OcTreeBaseImpl<NODE,INTERFACE>&);
 
-  protected:
+  protected:  
+    void allocNodeChildren(NODE* node);
 
     NODE* root; ///< Pointer to the root NODE, NULL for empty tree
 

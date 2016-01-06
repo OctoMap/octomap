@@ -45,6 +45,9 @@ namespace octomap {
 
 
   };
+  
+  // forward declaration for friend in OcTreeDataNode
+  template<typename NODE,typename I> class OcTreeBaseImpl;
 
   /**
    * Basic node in the OcTree that can hold arbitrary data of type T in value.
@@ -59,6 +62,8 @@ namespace octomap {
    * See ColorOcTreeNode in ColorOcTree.h for an example. 
    */
   template<typename T> class OcTreeDataNode: public AbstractOcTreeNode {
+    template<typename NODE, typename I>
+    friend class OcTreeBaseImpl;
 
   public:
 
@@ -99,25 +104,6 @@ namespace octomap {
 
     /// Deletes the i-th child of the node
     void deleteChild(unsigned int i);
-
-    // -- pruning of children  -----------------------
-
-
-    /**
-     * Prunes a node when it is collapsible
-     * @return true if pruning was successful
-     */
-    bool pruneNode();
-
-    /**
-     * Expands a node (reverse of pruning): All children are created and
-     * their occupancy probability is set to the node's value.
-     *
-     * You need to verify that this is indeed a pruned node (i.e. not a
-     * leaf at the lowest level)
-     *
-     */
-    void expandNode();
 
     /// @return value stored in the node
     T getValue() const{return value;};

@@ -171,6 +171,67 @@ namespace octomap {
 
     size_changed = true;
   }
+  
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::createNodeChild(NODE* node, unsigned int childIdx){
+    assert(childIdx < 8);
+    if (node->children == NULL) {
+      allocNodeChildren(node);
+    }
+    assert (node.children[childIdx] == NULL);
+    node->children[childIdx] = new NODE();
+    return true;
+  }
+  
+  template <class NODE,class I>  
+  NODE* OcTreeBaseImpl<NODE,I>::getNodeChild(NODE* node, unsigned int childIdx) const{
+    assert((childIdx < 8) && (node->children != NULL));
+    assert(node->children[childIdx] != NULL);
+    return static_cast<NODE*>(node->children[childIdx]);
+  }
+    
+  template <class NODE,class I>
+  const NODE* OcTreeBaseImpl<NODE,I>::getNodeChild(const NODE* node, unsigned int childIdx) const{
+    assert((childIdx < 8) && (node->children != NULL));
+    assert(node->children[childIdx] != NULL);
+    return static_cast<const NODE*>(node->children[childIdx]);
+  }
+    
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::expandNode(NODE* node){
+    assert(!node->hasChildren());
+    
+    for (unsigned int k=0; k<8; k++) {
+      createNodeChild(node, k);
+      static_cast<NODE*>(node->children[k])->setValue(node->getValue()); // TODO: copy ctor for data nodes instead?
+    }
+  }
+  
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::pruneNode(NODE* node){
+    
+    if (!node->collapsible())
+      return false;
+
+    // set value to children's values (all assumed equal)
+    node->setValue(node->getChild(0)->getValue());
+
+    // delete children
+    for (unsigned int i=0;i<8;i++) {
+      delete static_cast<NODE*>(node->children[i]);
+    }
+    delete[] node->children;
+    node->children = NULL;
+
+    return true;
+  }
+  
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::allocNodeChildren(NODE* node){
+    node->allocChildren(); // TODO move here?
+  }
+  
+  
 
   template <class NODE,class I>
   inline unsigned short int OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
@@ -552,7 +613,7 @@ namespace octomap {
       if ((!node->hasChildren()) && (node != this->root)) {
         // current node does not have children AND it's not the root node
         // -> expand pruned node
-        node->expandNode();
+        expandNode(node);
         this->tree_size+=8;
         this->size_changed = true;
       } else { // no branch here, node does not exist
@@ -594,7 +655,7 @@ namespace octomap {
 
     else {
       // max level reached
-      if (node->pruneNode()) {
+      if (pruneNode(node)) {
         num_pruned++;
         tree_size -= 8;
         size_changed = true;
@@ -613,7 +674,7 @@ namespace octomap {
 
     // current node has no children => can be expanded
     if (!node->hasChildren()){
-      node->expandNode();
+      expandNode(node);
       tree_size +=8;
       size_changed = true;
     }
