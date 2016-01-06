@@ -82,7 +82,7 @@ namespace octomap {
 
 
     /// initialize i-th child, allocate children array if needed
-    bool createChild(unsigned int i);
+    bool createChild(unsigned int i); // TODO: only used by read in here => move
 
     /// Safe test to check of the i-th child exists,
     /// first tests if there are any children.
@@ -101,9 +101,6 @@ namespace octomap {
     /// A node is collapsible if all children exist, don't have children of their own
     /// and have the same occupancy value
     bool collapsible() const;
-
-    /// Deletes the i-th child of the node
-    void deleteChild(unsigned int i);
 
     /// @return value stored in the node
     T getValue() const{return value;};

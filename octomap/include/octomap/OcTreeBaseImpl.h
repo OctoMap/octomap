@@ -111,10 +111,12 @@ namespace octomap {
     
     
     // -- Tree structure operations formerly contained in the nodes ---
-    
-    // TODO: createChild(), getChild(), getChild() const, expandNode()  probelmatic => casts!
-    
+   
+   /// Creates (allocates) the i-th child of the node
     bool createNodeChild(NODE* node, unsigned int childIdx);
+    
+    /// Deletes the i-th child of the node
+    void deleteNodeChild(NODE* node, unsigned int childIdx);
     
     NODE* getNodeChild(NODE* node, unsigned int childIdx) const;
     

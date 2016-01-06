@@ -183,6 +183,14 @@ namespace octomap {
     return true;
   }
   
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::deleteNodeChild(NODE* node, unsigned int childIdx){
+    assert((childIdx < 8) && (node->children != NULL));
+    assert(node->children[childIdx] != NULL);
+    delete static_cast<NODE*>(node->children[childIdx]);
+    node->children[childIdx] = NULL;
+  }
+  
   template <class NODE,class I>  
   NODE* OcTreeBaseImpl<NODE,I>::getNodeChild(NODE* node, unsigned int childIdx) const{
     assert((childIdx < 8) && (node->children != NULL));
@@ -625,7 +633,7 @@ namespace octomap {
     bool deleteChild = deleteNodeRecurs(node->getChild(pos), depth+1, max_depth, key);
     if (deleteChild){
       // TODO: lazy eval?
-      node->deleteChild(pos);
+      this->deleteNodeChild(node, pos);
       this->tree_size-=1;
       this->size_changed = true;
       if (!node->hasChildren())

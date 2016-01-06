@@ -68,8 +68,9 @@ namespace octomap {
     if (children != NULL) {
       for (unsigned int i=0; i<8; i++) {
         if (children[i] != NULL)
-          delete static_cast<OcTreeDataNode<T>*>(children[i]);
+          delete static_cast<OcTreeDataNode<T>*>(children[i]); 
       }
+      // TODO: ensure correct destructor is called for each derived node!
       delete[] children;
     }
 
@@ -101,14 +102,6 @@ namespace octomap {
       return true;
     else
       return false;
-  }
-
-  template <typename T>
-  void OcTreeDataNode<T>::deleteChild(unsigned int i) {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    delete static_cast<OcTreeDataNode<T>*>(children[i]);
-    children[i] = NULL;
   }
 
   template <typename T>
