@@ -37,7 +37,6 @@
 
 #include "octomap_types.h"
 #include "assert.h"
-#include <bitset>
 
 namespace octomap {
 
@@ -80,10 +79,6 @@ namespace octomap {
 
     // -- children  ----------------------------------
 
-
-    /// initialize i-th child, allocate children array if needed
-    bool createChild(unsigned int i); // TODO: only used by read in here => move
-
     /// Safe test to check of the i-th child exists,
     /// first tests if there are any children.
     /// \return true if the i-th child exists
@@ -109,24 +104,11 @@ namespace octomap {
 
     // file IO:
 
-    /**
-     * Read node from binary stream (incl. float value),
-     * recursively continue with all children.
-     *
-     * @param s
-     * @return
-     */
-    std::istream& readValue(std::istream &s);
+    /// Read node payload (data only) from binary stream
+    std::istream& readData(std::istream &s);
 
-    /**
-     * Write node to binary stream (incl float value),
-     * recursively continue with all children.
-     * This preserves the complete state of the node.
-     *
-     * @param s
-     * @return
-     */
-    std::ostream& writeValue(std::ostream &s) const;
+    /// Write node payload (data only) to binary stream
+    std::ostream& writeData(std::ostream &s) const;
 
 
     /// Make the templated data type available from the outside

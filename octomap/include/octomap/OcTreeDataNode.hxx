@@ -85,15 +85,6 @@ namespace octomap {
   // =  children          =======================================
   // ============================================================
 
-  template <typename T>
-  bool OcTreeDataNode<T>::createChild(unsigned int i) {
-    if (children == NULL) {
-      allocChildren();
-    }
-    assert (children[i] == NULL);
-    children[i] = new OcTreeDataNode<T>();
-    return true;
-  }
 
   template <typename T>
   bool OcTreeDataNode<T>::childExists(unsigned int i) const {
@@ -156,56 +147,15 @@ namespace octomap {
   // ============================================================
 
   template <typename T>
-  std::istream& OcTreeDataNode<T>::readValue(std::istream &s) {
-
-    char children_char;
-
-    // read data:
+  std::istream& OcTreeDataNode<T>::readData(std::istream &s) {
     s.read((char*) &value, sizeof(value));
-    s.read((char*)&children_char, sizeof(char));
-    std::bitset<8> children ((unsigned long long) children_char);
-
-    // std::cout << "read: " << value << " "
-    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >()
-    //           << std::endl;
-
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1){
-        createChild(i);
-        getChild(i)->readValue(s);
-      }
-    }
     return s;
   }
 
 
   template <typename T>
-  std::ostream& OcTreeDataNode<T>::writeValue(std::ostream &s) const{
-
-    // 1 bit for each children; 0: empty, 1: allocated
-    std::bitset<8> children;
-
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i))
-        children[i] = 1;
-      else
-        children[i] = 0;
-    }
-
-    char children_char = (char) children.to_ulong();
+  std::ostream& OcTreeDataNode<T>::writeData(std::ostream &s) const{
     s.write((const char*) &value, sizeof(value));
-    s.write((char*)&children_char, sizeof(char));
-
-    // std::cout << "wrote: " << value << " "
-    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >() 
-    //           << std::endl;
-
-    // write children's children
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1) {
-        this->getChild(i)->writeValue(s);
-      }
-    }
     return s;
   }
 

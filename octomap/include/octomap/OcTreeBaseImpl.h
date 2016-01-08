@@ -39,7 +39,7 @@
 #include <limits>
 #include <iterator>
 #include <stack>
-
+#include <bitset>
 
 #include "octomap_types.h"
 #include "OcTreeKey.h"
@@ -112,14 +112,16 @@ namespace octomap {
     
     // -- Tree structure operations formerly contained in the nodes ---
    
-   /// Creates (allocates) the i-th child of the node
-    bool createNodeChild(NODE* node, unsigned int childIdx);
+    /// Creates (allocates) the i-th child of the node. @return ptr to newly create NODE
+    NODE* createNodeChild(NODE* node, unsigned int childIdx);
     
     /// Deletes the i-th child of the node
     void deleteNodeChild(NODE* node, unsigned int childIdx);
     
+    /// @return ptr to child number childIdx of node
     NODE* getNodeChild(NODE* node, unsigned int childIdx) const;
     
+    /// @return const ptr to child number childIdx of node
     const NODE* getNodeChild(const NODE* node, unsigned int childIdx) const;
     
     /**
@@ -479,6 +481,12 @@ namespace octomap {
     void calcMinMax();
 
     void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
+    
+    /// recursive call of readData()
+    std::istream& readNodesRecurs(NODE*, std::istream &s);
+    
+    /// recursive call of writeData()
+    std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
 
     /// recursive call of deleteNode()
     bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);

@@ -82,6 +82,7 @@ namespace octomap {
       return true;
     }
 
+    // TODO: move into tree!
     bool pruneNode();
     void expandNode();
     
@@ -104,8 +105,8 @@ namespace octomap {
     ColorOcTreeNode::Color getAverageChildColor() const;
   
     // file I/O
-    std::istream& readValue (std::istream &s);
-    std::ostream& writeValue(std::ostream &s) const;
+    std::istream& readData(std::istream &s);
+    std::ostream& writeData(std::ostream &s) const;
     
   protected:
     Color color;

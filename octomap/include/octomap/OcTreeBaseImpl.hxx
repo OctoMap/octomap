@@ -173,14 +173,15 @@ namespace octomap {
   }
   
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::createNodeChild(NODE* node, unsigned int childIdx){
+  NODE* OcTreeBaseImpl<NODE,I>::createNodeChild(NODE* node, unsigned int childIdx){
     assert(childIdx < 8);
     if (node->children == NULL) {
       allocNodeChildren(node);
     }
     assert (node.children[childIdx] == NULL);
-    node->children[childIdx] = new NODE();
-    return true;
+    NODE* newNode = new NODE();
+    node->children[childIdx] = static_cast<void*>(newNode);
+    return newNode;
   }
   
   template <class NODE,class I>
@@ -210,8 +211,8 @@ namespace octomap {
     assert(!node->hasChildren());
     
     for (unsigned int k=0; k<8; k++) {
-      createNodeChild(node, k);
-      static_cast<NODE*>(node->children[k])->setValue(node->getValue()); // TODO: copy ctor for data nodes instead?
+      NODE* newNode = createNodeChild(node, k);
+      newNode->setValue(node->getValue()); // TODO: copy ctor for data nodes instead?
     }
   }
   
@@ -698,8 +699,38 @@ namespace octomap {
   template <class NODE,class I>
   std::ostream& OcTreeBaseImpl<NODE,I>::writeData(std::ostream &s) const{
     if (root)
-      root->writeValue(s);
+      writeNodesRecurs(root, s);
 
+    return s;
+  }
+  
+  template <class NODE,class I>
+  std::ostream& OcTreeBaseImpl<NODE,I>::writeNodesRecurs(const NODE* node, std::ostream &s) const{
+    node->writeData(s);
+    
+    // 1 bit for each children; 0: empty, 1: allocated
+    std::bitset<8> children;
+    for (unsigned int i=0; i<8; i++) {
+      if (node->childExists(i))
+        children[i] = 1;
+      else
+        children[i] = 0;
+    }
+
+    char children_char = (char) children.to_ulong();
+    s.write((char*)&children_char, sizeof(char));
+
+//     std::cout << "wrote: " << value << " "
+//               << children.to_string<char,std::char_traits<char>,std::allocator<char> >() 
+//               << std::endl;
+
+    // recursively write children
+    for (unsigned int i=0; i<8; i++) {
+      if (children[i] == 1) {
+        this->writeNodesRecurs(getNodeChild(node, i), s);
+      }
+    }
+    
     return s;
   }
 
@@ -720,8 +751,32 @@ namespace octomap {
     }
 
     root = new NODE();
-    root->readValue(s);
+    readNodesRecurs(root, s);
+    
     tree_size = calcNumNodes();  // compute number of nodes
+    return s;
+  }
+  
+  template <class NODE,class I>
+  std::istream& OcTreeBaseImpl<NODE,I>::readNodesRecurs(NODE* node, std::istream &s) {
+    
+    node->readData(s);
+    
+    char children_char;
+    s.read((char*)&children_char, sizeof(char));
+    std::bitset<8> children ((unsigned long long) children_char);
+
+    //std::cout << "read: " << node->getValue() << " "
+    //            << children.to_string<char,std::char_traits<char>,std::allocator<char> >()
+    //            << std::endl;
+
+    for (unsigned int i=0; i<8; i++) {
+      if (children[i] == 1){
+        NODE* newNode = createNodeChild(node, i);
+        readNodesRecurs(newNode, s);
+      }
+    }
+    
     return s;
   }
 

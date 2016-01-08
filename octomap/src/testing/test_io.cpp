@@ -17,6 +17,7 @@ int main(int argc, char** argv) {
     return 1; // exit 1 means failure
   }
 
+  std::cout << "Testing empty OcTree...\n";
   //empty tree
   OcTree emptyTree(0.999);
   EXPECT_EQ(emptyTree.size(), 0);
@@ -34,6 +35,7 @@ int main(int argc, char** argv) {
 
 
 
+  std::cout << "Testing reference OcTree from file ...\n";
   string filename = string(argv[1]);
 
   string filenameOt = "test_io_file.ot";
@@ -44,6 +46,7 @@ int main(int argc, char** argv) {
   OcTree tree (0.1);
   EXPECT_TRUE (tree.readBinary(filename));
 
+  std::cout << "    Copy Constructor / assignment / ==\n";
   // test copy constructor / assignment:
   OcTree* treeCopy = new OcTree(tree);
   EXPECT_TRUE(tree == *treeCopy);
@@ -68,6 +71,7 @@ int main(int argc, char** argv) {
 
   delete treeCopy;
 
+  std::cout << "    Swap\n";
   // test swap:
   OcTree emptyT(tree.getResolution());
   OcTree emptySw(emptyT);
@@ -84,9 +88,10 @@ int main(int argc, char** argv) {
   EXPECT_TRUE(readTreeBt.readBinary(filenameBtOut));
   EXPECT_TRUE(tree == readTreeBt);
 
+  std::cout <<"    Write to .ot / read through AbstractOcTree\n";
   // now write to .ot, read & compare
   EXPECT_TRUE(tree.write(filenameOt));
-
+  
   AbstractOcTree* readTreeAbstract = AbstractOcTree::read(filenameOt);
   EXPECT_TRUE(readTreeAbstract);
 
@@ -105,6 +110,7 @@ int main(int argc, char** argv) {
   EXPECT_FALSE(tree == *readTreeOt);
 
   // simple test for tree headers (color)
+  std::cout << "Testing ColorOcTree...\n";
   double res = 0.02;
   std::string filenameColor = "test_io_color_file.ot";
   ColorOcTree colorTree(res);
