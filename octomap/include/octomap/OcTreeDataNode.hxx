@@ -94,21 +94,7 @@ namespace octomap {
     else
       return false;
   }
-
-  template <typename T>
-  OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    return static_cast<OcTreeDataNode<T>* >(children[i]);
-  }
-
-  template <typename T>
-  const OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) const {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    return static_cast<const OcTreeDataNode<T>*>(children[i]);
-  }
-
+  
   template <typename T>
   bool OcTreeDataNode<T>::hasChildren() const {
     if (children == NULL)
@@ -121,26 +107,6 @@ namespace octomap {
     return false;
   }
 
-  // ============================================================
-  // =  pruning           =======================================
-  // ============================================================
-
-
-  template <typename T>
-  bool OcTreeDataNode<T>::collapsible() const {
-    // all children must exist, must not have children of
-    // their own and have the same occupancy probability
-    if (!childExists(0) || getChild(0)->hasChildren())
-      return false;
-
-    for (unsigned int i = 1; i<8; i++) {
-      // comparison via getChild so that casts of derived classes ensure
-      // that the right == operator gets called
-      if (!childExists(i) || getChild(i)->hasChildren() || !(*(getChild(i)) == *(getChild(0))))
-        return false;
-    }
-    return true;
-  }
 
   // ============================================================
   // =  File IO           =======================================

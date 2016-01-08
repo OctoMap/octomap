@@ -69,11 +69,12 @@ namespace octomap {
     }
     
     // children
+    //TODO remove
     inline ColorOcTreeNode* getChild(unsigned int i) {
-      return static_cast<ColorOcTreeNode*> (OcTreeNode::getChild(i));
+      return static_cast<ColorOcTreeNode*> (children[i]);
     }
     inline const ColorOcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const ColorOcTreeNode*> (OcTreeNode::getChild(i));
+      return static_cast<const ColorOcTreeNode*> (children[i]);
     }
 
     bool createChild(unsigned int i) {

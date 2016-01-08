@@ -154,6 +154,12 @@
 
 
     protected:
+      OcTreeBaseImpl<NodeType,INTERFACE> const* tree; ///< Octree this iterator is working on
+      unsigned char maxDepth; ///< Maximum depth for depth-limited queries
+
+      /// Internal recursion stack. Apparently a stack of vector works fastest here.
+      std::stack<StackElement,std::vector<StackElement> > stack;
+      
       /// One step of depth-first tree traversal.
       /// How this is used depends on the actual iterator.
       void singleIncrement(){
@@ -170,19 +176,13 @@
         for (int i=7; i>=0; --i) {
           if (top.node->childExists(i)) {
             computeChildKey(i, center_offset_key, top.key, s.key);
-            s.node = top.node->getChild(i);
+            s.node = tree->getNodeChild(top.node, i);
             //OCTOMAP_DEBUG_STR("Current depth: " << int(top.depth) << " new: "<< int(s.depth) << " child#" << i <<" ptr: "<<s.node);
             stack.push(s);
             assert(s.depth <= maxDepth);
           }
         }
       }
-
-      OcTreeBaseImpl<NodeType,INTERFACE> const* tree; ///< Octree this iterator is working on
-      unsigned char maxDepth; ///< Maximum depth for depth-limited queries
-
-      /// Internal recursion stack. Apparently a stack of vector works fastest here.
-      std::stack<StackElement,std::vector<StackElement> > stack;
 
     };
 
@@ -439,7 +439,7 @@
                 && (minKey[1] <= (s.key[1] + center_offset_key)) && (maxKey[1] >= (s.key[1] - center_offset_key))
                 && (minKey[2] <= (s.key[2] + center_offset_key)) && (maxKey[2] >= (s.key[2] - center_offset_key)))
             {
-              s.node = top.node->getChild(i);
+              s.node = this->tree->getNodeChild(top.node, i);
               this->stack.push(s);
               assert(s.depth <= this->maxDepth);
             }

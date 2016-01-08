@@ -84,18 +84,8 @@ namespace octomap {
     /// \return true if the i-th child exists
     bool childExists(unsigned int i) const;
 
-    /// \return a pointer to the i-th child of the node. The child needs to exist.
-    OcTreeDataNode<T>* getChild(unsigned int i);
-
-    /// \return a const pointer to the i-th child of the node. The child needs to exist.
-    const OcTreeDataNode<T>* getChild(unsigned int i) const;
-
     /// \return true if the node has at least one child
     bool hasChildren() const;
-
-    /// A node is collapsible if all children exist, don't have children of their own
-    /// and have the same occupancy value
-    bool collapsible() const;
 
     /// @return value stored in the node
     T getValue() const{return value;};

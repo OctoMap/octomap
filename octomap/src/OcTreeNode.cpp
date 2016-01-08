@@ -49,17 +49,7 @@ namespace octomap {
   OcTreeNode::~OcTreeNode(){
   }
 
-  // TODO: Use Curiously Recurring Template Pattern instead of copying full function
-  // (same for getChild)
-  bool OcTreeNode::createChild(unsigned int i) {
-    if (children == NULL) {
-      allocChildren();
-    }
-    assert (children[i] == NULL);
-    children[i] = new OcTreeNode();
-    return true;
-  }
-
+  
   // ============================================================
   // =  occupancy probability  ==================================
   // ============================================================
@@ -69,10 +59,11 @@ namespace octomap {
     char c = 0;
     for (unsigned int i=0; i<8; i++) {
       if (childExists(i)) {
-        mean += getChild(i)->getOccupancy();
+        mean += static_cast<OcTreeNode*>(children[i])->getOccupancy(); // TODO check if works generally
         c++;
       }
     }
+    
     if (c)
       mean /= (double) c;
 
@@ -83,7 +74,7 @@ namespace octomap {
     float max = -std::numeric_limits<float>::max();
     for (unsigned int i=0; i<8; i++) {
       if (childExists(i)) {
-        float l = getChild(i)->getLogOdds();
+        float l = static_cast<OcTreeNode*>(children[i])->getLogOdds(); // TODO check if works generally
         if (l > max)
           max = l;
       }

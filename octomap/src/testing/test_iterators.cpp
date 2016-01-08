@@ -51,9 +51,9 @@ void getLeafNodesRecurs(std::list<OcTreeVolume>& voxels,
         if (node->childExists(i)) {
 
           computeChildCenter(i, center_offset, parent_center, search_center);
-          getLeafNodesRecurs(voxels, max_depth, node->getChild(i), depth+1, search_center, tree_center, tree, occupied);
+          getLeafNodesRecurs(voxels, max_depth, tree->getNodeChild(node, i), depth+1, search_center, tree_center, tree, occupied);
 
-        } // GetChild
+        } 
       }
     }
     else {
@@ -72,7 +72,7 @@ void getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
                                        unsigned int max_depth,
                                        OcTreeNode* node, unsigned int depth,
                                        const point3d& parent_center, const point3d& tree_center,
-                                       double resolution){
+                                       OcTree* tree){
 
   if ((depth <= max_depth) && (node != NULL) ) {
     if (node->hasChildren() && (depth != max_depth)) {
@@ -83,12 +83,12 @@ void getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
       for (unsigned int i = 0; i < 8; i++) {
         if (node->childExists(i)) {
           computeChildCenter(i, (float) center_offset, parent_center, search_center);
-          getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center, tree_center, resolution);
+          getVoxelsRecurs(voxels, max_depth, tree->getNodeChild(node, i), depth + 1, search_center, tree_center, tree);
 
         }
       } // depth
     }
-    double voxelSize = resolution * pow(2., double(16 - depth));
+    double voxelSize = tree->getResolution() * pow(2., double(16 - depth));
     voxels.push_back(std::make_pair(parent_center - tree_center, voxelSize));
   }
 }
@@ -353,7 +353,7 @@ int main(int argc, char** argv) {
   list_depr.clear();
 
   gettimeofday(&start, NULL);  // start timer
-  getVoxelsRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree->getResolution());
+  getVoxelsRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree);
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 

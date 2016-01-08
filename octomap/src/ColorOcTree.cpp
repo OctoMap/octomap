@@ -55,10 +55,12 @@ namespace octomap {
     int mr(0), mg(0), mb(0);
     int c(0);
     for (int i=0; i<8; i++) {
-      if (childExists(i) && getChild(i)->isColorSet()) {
-        mr += getChild(i)->getColor().r;
-        mg += getChild(i)->getColor().g;
-        mb += getChild(i)->getColor().b;
+      ColorOcTreeNode* child = static_cast<ColorOcTreeNode*>(children[i]);
+      
+      if (childExists(i) && child->isColorSet()) {
+        mr += child->getColor().r;
+        mg += child->getColor().g;
+        mb += child->getColor().b;
         ++c;
       }
     }
@@ -82,7 +84,12 @@ namespace octomap {
 
   bool ColorOcTreeNode::pruneNode() {
     // checks for equal occupancy only, color ignored
+    // TODO FIXME move to tree!
+    return false;
+    /**
     if (!this->collapsible()) return false;
+    
+    
     // set occupancy value 
     setLogOdds(getChild(0)->getLogOdds());
     // set color to average color
@@ -94,6 +101,7 @@ namespace octomap {
     delete[] children;
     children = NULL;
     return true;
+    **/
   }
 
   void ColorOcTreeNode::expandNode() {
@@ -171,7 +179,7 @@ namespace octomap {
       if (depth < this->tree_depth){
         for (unsigned int i=0; i<8; i++) {
           if (node->childExists(i)) {
-            updateInnerOccupancyRecurs(node->getChild(i), depth+1);
+            updateInnerOccupancyRecurs(getNodeChild(node, i), depth+1);
           }
         }
       }

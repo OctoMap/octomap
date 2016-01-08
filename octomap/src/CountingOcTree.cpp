@@ -48,6 +48,7 @@ namespace octomap {
 
   }
 
+  // TODO: move to tree
   void CountingOcTreeNode::expandNode(){
     assert(!hasChildren());
 
@@ -58,16 +59,6 @@ namespace octomap {
       children[k]->setValue(childCount);
     }
   }
-
-  bool CountingOcTreeNode::createChild(unsigned int i) {
-    if (children == NULL) {
-      allocChildren();
-    }
-    assert (children[i] == NULL);
-    children[i] = new CountingOcTreeNode();
-    return true;
-  }
-
 
   /// implementation of CountingOcTree  --------------------------------------
 

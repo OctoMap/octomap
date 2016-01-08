@@ -124,6 +124,10 @@ namespace octomap {
     /// @return const ptr to child number childIdx of node
     const NODE* getNodeChild(const NODE* node, unsigned int childIdx) const;
     
+    /// A node is collapsible if all children exist, don't have children of their own
+    /// and have the same occupancy value
+    bool isNodeCollapsible(const NODE* node) const;
+    
     /**
      * Expands a node (reverse of pruning): All children are created and
      * their occupancy probability is set to the node's value.

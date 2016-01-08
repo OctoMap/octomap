@@ -51,22 +51,8 @@ namespace octomap {
 
     bool operator==(const OcTreeNodeStamped& rhs) const{
       return (rhs.value == value && rhs.timestamp == timestamp);
-    }
-    
-    // children
-    inline OcTreeNodeStamped* getChild(unsigned int i) {
-      return static_cast<OcTreeNodeStamped*> (OcTreeNode::getChild(i));
-    }
-    inline const OcTreeNodeStamped* getChild(unsigned int i) const {
-      return static_cast<const OcTreeNodeStamped*> (OcTreeNode::getChild(i));
-    }
-
-    bool createChild(unsigned int i) {
-      if (children == NULL) allocChildren();
-      children[i] = new OcTreeNodeStamped();
-      return true;
-    }
-    
+    }   
+      
     // timestamp
     inline unsigned int getTimestamp() const { return timestamp; }
     inline void updateTimestamp() { timestamp = (unsigned int) time(NULL);}
