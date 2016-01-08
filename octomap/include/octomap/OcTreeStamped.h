@@ -51,7 +51,12 @@ namespace octomap {
 
     bool operator==(const OcTreeNodeStamped& rhs) const{
       return (rhs.value == value && rhs.timestamp == timestamp);
-    }   
+    }
+    
+    void copyData(const OcTreeNodeStamped& from){
+      OcTreeNode::copyData(from);
+      timestamp = from.getTimestamp();
+    }
       
     // timestamp
     inline unsigned int getTimestamp() const { return timestamp; }

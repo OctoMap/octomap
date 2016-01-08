@@ -68,13 +68,22 @@ namespace octomap {
 
     OcTreeDataNode();
     OcTreeDataNode(T initVal);
-    /// Copy constructor, performs a recursive deep-copy of all children
+    
+    /// Copy constructor, performs a recursive deep-copy of all children 
+    /// including node data in "value"
     OcTreeDataNode(const OcTreeDataNode& rhs);
 
     ~OcTreeDataNode();
 
+    /// Copy the payload (data in "value") from rhs into this node
+    /// Opposed to copy ctor, this does not clone the children as well
+    void copyData(const OcTreeDataNode& from);
+    
     /// Equals operator, compares if the stored value is identical
     bool operator==(const OcTreeDataNode& rhs) const;
+    
+    
+    
 
 
     // -- children  ----------------------------------

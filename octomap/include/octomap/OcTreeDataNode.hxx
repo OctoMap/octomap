@@ -60,8 +60,7 @@ namespace octomap {
       }
     }
   }
-
-
+  
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
@@ -74,6 +73,11 @@ namespace octomap {
       delete[] children;
     }
 
+  }
+  
+  template <typename T>
+  void OcTreeDataNode<T>::copyData(const OcTreeDataNode<T>& from){
+    value = from.value;     
   }
 
   template <typename T>

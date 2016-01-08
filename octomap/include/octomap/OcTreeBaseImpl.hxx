@@ -178,7 +178,7 @@ namespace octomap {
     if (node->children == NULL) {
       allocNodeChildren(node);
     }
-    assert (node.children[childIdx] == NULL);
+    assert (node->children[childIdx] == NULL);
     NODE* newNode = new NODE();
     node->children[childIdx] = static_cast<void*>(newNode);
     return newNode;
@@ -233,7 +233,7 @@ namespace octomap {
     
     for (unsigned int k=0; k<8; k++) {
       NODE* newNode = createNodeChild(node, k);
-      newNode->setValue(node->getValue()); // TODO: copy ctor for data nodes instead?
+      newNode->copyData(*node);
     }
   }
   
@@ -244,7 +244,7 @@ namespace octomap {
       return false;
 
     // set value to children's values (all assumed equal)
-    node->setValue(getNodeChild(node, 0)->getValue());
+    node->copyData(*(getNodeChild(node, 0)));
 
     // delete children
     for (unsigned int i=0;i<8;i++) {

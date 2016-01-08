@@ -41,9 +41,13 @@
 
 namespace octomap {
   
+  // forward declaraton for "friend"
+  class ColorOcTree;
+  
   // node definition
   class ColorOcTreeNode : public OcTreeNode {    
   public:
+    friend class ColorOcTree; // needs access to node children (inherited)
     
     class Color {
     public:
@@ -68,25 +72,11 @@ namespace octomap {
       return (rhs.value == value && rhs.color == color);
     }
     
-    // children
-    //TODO remove
-    inline ColorOcTreeNode* getChild(unsigned int i) {
-      return static_cast<ColorOcTreeNode*> (children[i]);
+    void copyData(const ColorOcTreeNode& from){
+      OcTreeNode::copyData(from);
+      this->color =  from.getColor();
     }
-    inline const ColorOcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const ColorOcTreeNode*> (children[i]);
-    }
-
-    bool createChild(unsigned int i) {
-      if (children == NULL) allocChildren();
-      children[i] = new ColorOcTreeNode();
-      return true;
-    }
-
-    // TODO: move into tree!
-    bool pruneNode();
-    void expandNode();
-    
+        
     inline Color getColor() const { return color; }
     inline void  setColor(Color c) {this->color = c; }
     inline void  setColor(unsigned char r, unsigned char g, unsigned char b) {
@@ -126,6 +116,8 @@ namespace octomap {
     ColorOcTree* create() const {return new ColorOcTree(resolution); }
 
     std::string getTreeType() const {return "ColorOcTree";}
+    
+    bool pruneNode(ColorOcTreeNode* node);
    
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 

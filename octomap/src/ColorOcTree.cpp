@@ -80,38 +80,6 @@ namespace octomap {
     color = getAverageChildColor();
   }
 
-  // pruning =============
-
-  bool ColorOcTreeNode::pruneNode() {
-    // checks for equal occupancy only, color ignored
-    // TODO FIXME move to tree!
-    return false;
-    /**
-    if (!this->collapsible()) return false;
-    
-    
-    // set occupancy value 
-    setLogOdds(getChild(0)->getLogOdds());
-    // set color to average color
-    if (isColorSet()) color = getAverageChildColor();
-    // delete children
-    for (unsigned int i=0;i<8;i++) {
-      delete static_cast<ColorOcTreeNode*>(children[i]);
-    }
-    delete[] children;
-    children = NULL;
-    return true;
-    **/
-  }
-
-  void ColorOcTreeNode::expandNode() {
-    assert(!hasChildren());
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      getChild(k)->setValue(value);
-      getChild(k)->setColor(color);
-    }
-  }
 
   // tree implementation  --------------------------------------
 
@@ -124,6 +92,27 @@ namespace octomap {
       n->setColor(r, g, b); 
     }
     return n;
+  }
+  
+  bool ColorOcTree::pruneNode(ColorOcTreeNode* node) {
+    assert(0);
+    if (!isNodeCollapsible(node)) // TODO: overload here, check occupancy only?
+      return false;
+
+    // set value to children's values (all assumed equal)
+    node->copyData(*(getNodeChild(node, 0)));
+    
+    if (node->isColorSet()) // TODO check
+      node->setColor(node->getAverageChildColor());
+
+    // delete children
+    for (unsigned int i=0;i<8;i++) {
+      delete static_cast<ColorOcTreeNode*>(node->children[i]);
+    }
+    delete[] node->children;
+    node->children = NULL;
+
+    return true;
   }
 
   ColorOcTreeNode* ColorOcTree::averageNodeColor(const OcTreeKey& key, 
