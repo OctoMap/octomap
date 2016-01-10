@@ -104,7 +104,10 @@ namespace octomap {
 
     /**
      * Static member object which ensures that this OcTree's prototype
-     * ends up in the classIDMapping only once
+     * ends up in the classIDMapping only once. You need this as a 
+     * static member in any derived octree class in order to read .ot
+     * files through the AbstractOcTree factory. You should also call
+     * ensureLinking() once from the constructor.
      */
     class StaticMemberInitializer{
        public:
