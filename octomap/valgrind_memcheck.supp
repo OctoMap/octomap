@@ -1,0 +1,107 @@
+{
+   static_member_init_std_string
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZNK7octomap*getTreeTypeEv
+   fun:_ZN7octomap14AbstractOcTree16registerTreeTypeEPS0_
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+}
+{
+   static_member_init_class_id_mapping
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+}
+
+{
+   static_member_init_hash_tree
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKSsPN7octomap14AbstractOcTreeEEEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsPN7octomap14AbstractOcTreeEESt10_Select1stIS5_ESt4lessISsESaIS5_EE11_M_get_nodeEv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsPN7octomap14AbstractOcTreeEESt10_Select1stIS5_ESt4lessISsESaIS5_EE14_M_create_nodeERKS5_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsPN7octomap14AbstractOcTreeEESt10_Select1stIS5_ESt4lessISsESaIS5_EE10_M_insert_EPSt18_Rb_tree_node_baseSD_RKS5_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsPN7octomap14AbstractOcTreeEESt10_Select1stIS5_ESt4lessISsESaIS5_EE17_M_insert_unique_ESt23_Rb_tree_const_iteratorIS5_ERKS5_
+   fun:_ZNSt3mapISsPN7octomap14AbstractOcTreeESt4lessISsESaISt4pairIKSsS2_EEE6insertESt17_Rb_tree_iteratorIS7_ERKS7_
+   fun:_ZNSt3mapISsPN7octomap14AbstractOcTreeESt4lessISsESaISt4pairIKSsS2_EEEixERS6_
+   fun:_ZN7octomap14AbstractOcTree16registerTreeTypeEPS0_
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__sub_I_*.cpp
+}
+
+{
+   static_member_init_keyhash
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIPNSt3tr18__detail10_Hash_nodeISt4pairIKN7octomap9OcTreeKeyEbELb0EEEE8allocateEmPKv
+   fun:_ZNSt3tr110_HashtableIN7octomap9OcTreeKeyESt4pairIKS2_bESaIS5_ESt10_Select1stIS5_ESt8equal_toIS2_ENS2_7KeyHashENS_8__detail18_Mod_range_hashingENSC_20_Default_ranged_hashENSC_20_Prime_rehash_policyELb0ELb0ELb1EE19_M_allocate_bucketsEm
+   fun:_ZNSt3tr110_HashtableIN7octomap9OcTreeKeyESt4pairIKS2_bESaIS5_ESt10_Select1stIS5_ESt8equal_toIS2_ENS2_7KeyHashENS_8__detail18_Mod_range_hashingENSC_20_Default_ranged_hashENSC_20_Prime_rehash_policyELb0ELb0ELb1EEC1EmRKSB_RKSD_RKSE_RKSA_RKS8_RKS6_
+   fun:_ZNSt3tr115__unordered_mapIN7octomap9OcTreeKeyEbNS2_7KeyHashESt8equal_toIS2_ESaISt4pairIKS2_bEELb0EEC1EmRKS3_RKS5_RKS9_
+   fun:_ZNSt3tr113unordered_mapIN7octomap9OcTreeKeyEbNS2_7KeyHashESt8equal_toIS2_ESaISt4pairIKS2_bEEEC1EmRKS3_RKS5_RKS9_
+   fun:_ZN7octomap*INS_*EEC1Ed
+   fun:_ZN7octomap*C1Ed
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+}
+
+{
+   static_member_init_keyray
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIN7octomap6KeyRayEE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseIN7octomap6KeyRayESaIS1_EE11_M_allocateEm
+   fun:_ZNSt6vectorIN7octomap6KeyRayESaIS1_EE14_M_fill_insertEN9__gnu_cxx17__normal_iteratorIPS1_S3_EEmRKS1_
+   fun:_ZNSt6vectorIN7octomap6KeyRayESaIS1_EE6insertEN9__gnu_cxx17__normal_iteratorIPS1_S3_EEmRKS1_
+   fun:_ZNSt6vectorIN7octomap6KeyRayESaIS1_EE6resizeEmS1_
+   fun:_ZN7octomap14OcTreeBaseImplINS_*ENS_*EE4initEv
+   fun:_ZN7octomap14OcTreeBaseImplINS_*ENS_*EEC1Ed
+   fun:_ZN7octomap1*INS_*EEC1Ed
+   fun:_ZN7octomap*C1Ed
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+   fun:_Z41__static_initialization_and_destruction_0ii
+}
+
+{
+   static_member_init_keyray2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIdE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseIdSaIdEE11_M_allocateEm
+   fun:_ZNSt6vectorIdSaIdEE14_M_fill_insertEN9__gnu_cxx17__normal_iteratorIPdS1_EEmRKd
+   fun:_ZNSt6vectorIdSaIdEE6insertEN9__gnu_cxx17__normal_iteratorIPdS1_EEmRKd
+   fun:_ZNSt6vectorIdSaIdEE6resizeEmd
+   fun:_ZN7octomap14OcTreeBaseImplINS_*ENS_*EE13setResolutionEd
+   fun:_ZN7octomap14OcTreeBaseImplINS_*ENS_*EE4initEv
+   fun:_ZN7octomap14OcTreeBaseImplINS_*ENS_*EEC1Ed
+   fun:_ZN7octomap*INS_*EEC1Ed
+   fun:_ZN7octomap*C1Ed
+   fun:_ZN7octomap*StaticMemberInitializerC1Ev
+}
+
+
+
