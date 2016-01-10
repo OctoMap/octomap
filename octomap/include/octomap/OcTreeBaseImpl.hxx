@@ -66,10 +66,9 @@ namespace octomap {
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){
-    if (root)
-      delete root;
-
-    root = NULL;
+    if (root){
+      deleteNodeRecurs(root);
+    }
   }
 
 
@@ -188,7 +187,7 @@ namespace octomap {
   void OcTreeBaseImpl<NODE,I>::deleteNodeChild(NODE* node, unsigned int childIdx){
     assert((childIdx < 8) && (node->children != NULL));
     assert(node->children[childIdx] != NULL);
-    delete static_cast<NODE*>(node->children[childIdx]);
+    delete static_cast<NODE*>(node->children[childIdx]); // TODO delete check if empty
     node->children[childIdx] = NULL;
   }
   
@@ -246,9 +245,9 @@ namespace octomap {
     // set value to children's values (all assumed equal)
     node->copyData(*(getNodeChild(node, 0)));
 
-    // delete children
+    // delete children (known to be leafs at this point!)
     for (unsigned int i=0;i<8;i++) {
-      delete static_cast<NODE*>(node->children[i]);
+      deleteNodeChild(node, i);
     }
     delete[] node->children;
     node->children = NULL;
@@ -481,14 +480,12 @@ namespace octomap {
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::clear() {
     if (this->root){
-      delete this->root;
-      this->root = NULL;
+      deleteNodeRecurs(root);
       this->tree_size = 0;
       // max extent of tree changed:
       this->size_changed = true;
     }
   }
-
 
   template <class NODE,class I>
   void OcTreeBaseImpl<NODE,I>::prune() {
@@ -628,6 +625,25 @@ namespace octomap {
     }
     return true;
   }
+  
+  template <class NODE,class I>
+  void OcTreeBaseImpl<NODE,I>::deleteNodeRecurs(NODE* node){
+    assert(node);
+    // TODO: maintain tree size?
+    
+    if (node->children != NULL) {
+      for (unsigned int i=0; i<8; i++) {
+        if (node->children[i] != NULL)
+          this->deleteNodeRecurs(static_cast<NODE*>(node->children[i])); 
+      }
+      delete[] node->children;
+      node->children = NULL;
+    } // else: node has no children
+      
+    delete node;
+    node = NULL;
+  }
+  
 
   template <class NODE,class I>
   bool OcTreeBaseImpl<NODE,I>::deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key){
@@ -655,6 +671,7 @@ namespace octomap {
     bool deleteChild = deleteNodeRecurs(getNodeChild(node, pos), depth+1, max_depth, key);
     if (deleteChild){
       // TODO: lazy eval?
+      // TODO delete check depth, what happens to inner nodes with children?
       this->deleteNodeChild(node, pos);
       this->tree_size-=1;
       this->size_changed = true;
@@ -666,7 +683,6 @@ namespace octomap {
     }
     // node did not lose a child, or still has other children
     return false;
-
   }
 
   template <class NODE,class I>

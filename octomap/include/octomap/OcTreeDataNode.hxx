@@ -64,15 +64,9 @@ namespace octomap {
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
-    if (children != NULL) {
-      for (unsigned int i=0; i<8; i++) {
-        if (children[i] != NULL)
-          delete static_cast<OcTreeDataNode<T>*>(children[i]); 
-      }
-      // TODO: ensure correct destructor is called for each derived node!
-      delete[] children;
-    }
-
+    // Delete only own members. OcTree maintains tree structure and must have deleted 
+    // children already
+    assert(!hasChildren());
   }
   
   template <typename T>

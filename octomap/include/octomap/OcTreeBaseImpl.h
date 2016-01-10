@@ -491,6 +491,9 @@ namespace octomap {
     
     /// recursive call of writeData()
     std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
+    
+    /// recursive delete of node and all children (deallocates memory)
+    void deleteNodeRecurs(NODE* node);
 
     /// recursive call of deleteNode()
     bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);

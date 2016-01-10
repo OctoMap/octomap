@@ -73,6 +73,8 @@ namespace octomap {
     /// including node data in "value"
     OcTreeDataNode(const OcTreeDataNode& rhs);
 
+    /// Delete only own members. 
+    /// OcTree maintains tree structure and must have deleted children already
     ~OcTreeDataNode();
 
     /// Copy the payload (data in "value") from rhs into this node
@@ -118,6 +120,7 @@ namespace octomap {
     void allocChildren();
 
     /// pointer to array of children, may be NULL
+    /// @note The tree class manages this pointer, the array, and the memory for it!
     void** children;
     /// stored data (payload)
     T value;
