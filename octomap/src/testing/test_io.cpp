@@ -3,6 +3,7 @@
 
 #include <octomap/OcTree.h>
 #include <octomap/ColorOcTree.h>
+#include <octomap/OcTreeStamped.h>
 #include <octomap/math/Utils.h>
 #include "testing.h"
  
@@ -39,8 +40,6 @@ int main(int argc, char** argv) {
     EXPECT_TRUE(emptyTree == *readTreeOt);
     delete readTreeOt;
   }
-
-
 
   std::cout << "Testing reference OcTree from file ...\n";
   string filename = string(argv[1]);
@@ -120,9 +119,10 @@ int main(int argc, char** argv) {
     delete readTreeOt;
   }
 
-  // simple test for tree headers (color)
+  // Test for tree headers and IO factory registry (color)
   {
     std::cout << "Testing ColorOcTree...\n";
+
     double res = 0.02;
     std::string filenameColor = "test_io_color_file.ot";
     ColorOcTree colorTree(res);
@@ -147,6 +147,34 @@ int main(int argc, char** argv) {
     delete readColorTree;
   }
 
+  // Test for tree headers and IO factory registry (stamped)
+  {
+    std::cout << "Testing OcTreeStamped...\n";
+    double res = 0.05;
+    std::string filenameStamped = "test_io_stamped_file.ot";
+    OcTreeStamped stampedTree(res);
+    EXPECT_EQ(stampedTree.getTreeType(), "OcTreeStamped");
+    // TODO: add / modify some stamped nodes
+    //ColorOcTreeNode* colorNode = colorTree.updateNode(point3d(0.0, 0.0, 0.0), true);
+    //ColorOcTreeNode::Color color_red(255, 0, 0);
+    //colorNode->setColor(color_red);
+    //colorTree.setNodeColor(0.0, 0.0, 0.0, 255, 0, 0);
+    //colorTree.updateNode(point3d(0.1f, 0.1f, 0.1f), true);
+    //colorTree.setNodeColor(0.1f, 0.1f, 0.1f, 0, 0, 255);
+
+    EXPECT_TRUE(stampedTree.write(filenameStamped));
+    AbstractOcTree* readTreeAbstract = AbstractOcTree::read(filenameStamped);
+    EXPECT_TRUE(readTreeAbstract);
+    EXPECT_EQ(stampedTree.getTreeType(), readTreeAbstract->getTreeType());
+    OcTreeStamped* readStampedTree = dynamic_cast<OcTreeStamped*>(readTreeAbstract);
+    EXPECT_TRUE(readStampedTree);
+    EXPECT_TRUE(stampedTree == *readStampedTree);
+    //colorNode = colorTree.search(0.0, 0.0, 0.0);
+    //EXPECT_TRUE(colorNode);
+    //EXPECT_EQ(colorNode->getColor(), color_red);    
+    
+    delete readStampedTree;    
+  }
 
 
   std::cerr << "Test successful.\n";

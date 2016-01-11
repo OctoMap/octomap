@@ -82,6 +82,10 @@ namespace octomap {
 
 
   // tree implementation  --------------------------------------
+  ColorOcTree::ColorOcTree(double resolution)
+  : OccupancyOcTreeBase<ColorOcTreeNode>(resolution) {
+    colorOcTreeMemberInit.ensureLinking();
+  };
 
   ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key, 
                                              const unsigned char& r, 

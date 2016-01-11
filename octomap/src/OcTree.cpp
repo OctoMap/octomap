@@ -36,6 +36,11 @@
 
 namespace octomap {
 
+	OcTree::OcTree(double resolution) 
+		: OccupancyOcTreeBase<OcTreeNode>(resolution) {
+		ocTreeMemberInit.ensureLinking();
+	};
+
   OcTree::OcTree(std::string _filename)
     : OccupancyOcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file
     readBinary(_filename);

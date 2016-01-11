@@ -61,7 +61,10 @@ namespace octomap {
   }
 
   /// implementation of CountingOcTree  --------------------------------------
-
+  CountingOcTree::CountingOcTree(double resolution)
+   : OcTreeBase<CountingOcTreeNode>(resolution) {
+      countingOcTreeMemberInit.ensureLinking();
+   }
 
   CountingOcTreeNode* CountingOcTree::updateNode(const point3d& value) {
 
