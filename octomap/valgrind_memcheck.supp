@@ -2,7 +2,7 @@
 # Suppresses the "leaks" by the static member initializer which cannot be avoided. 
 # 
 # You can run valgrind on an OctoMap binary (e.g. a unit test) with:
-# valgrind --tool=memcheck --leak-check=full --suppressions=valgrind_memcheck.supp bin/test_....
+# valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --suppressions=valgrind_memcheck.supp bin/test_....
 #
 
 {

@@ -47,6 +47,9 @@
 
 
 namespace octomap {
+  
+  // forward declaration for NODE children array
+  class AbstractOcTreeNode;
 
 
   /**

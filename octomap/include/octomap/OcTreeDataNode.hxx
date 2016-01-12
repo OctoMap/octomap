@@ -129,7 +129,7 @@ namespace octomap {
   // ============================================================
   template <typename T>
   void OcTreeDataNode<T>::allocChildren() {
-    children = new void*[8];
+    children = new AbstractOcTreeNode*[8];
     for (unsigned int i=0; i<8; i++) {
       children[i] = NULL;
     }

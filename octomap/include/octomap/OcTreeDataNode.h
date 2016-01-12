@@ -121,7 +121,8 @@ namespace octomap {
 
     /// pointer to array of children, may be NULL
     /// @note The tree class manages this pointer, the array, and the memory for it!
-    void** children;
+    /// The children of a node are always enforced to be the same type as the node
+    AbstractOcTreeNode** children;
     /// stored data (payload)
     T value;
 

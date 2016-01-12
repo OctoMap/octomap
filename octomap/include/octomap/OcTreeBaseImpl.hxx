@@ -179,7 +179,7 @@ namespace octomap {
     }
     assert (node->children[childIdx] == NULL);
     NODE* newNode = new NODE();
-    node->children[childIdx] = static_cast<void*>(newNode);
+    node->children[childIdx] = static_cast<AbstractOcTreeNode*>(newNode);
     return newNode;
   }
   
