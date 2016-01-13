@@ -375,6 +375,7 @@ namespace octomap {
     //-- change detection on occupancy:
     /// track or ignore changes while inserting scans (default: ignore)
     void enableChangeDetection(bool enable) { use_change_detection = enable; }
+    bool isChangeDetectionEnabled() const { return use_change_detection; }
     /// Reset the set of changed keys. Call this after you obtained all changed nodes.
     void resetChangeDetection() { changed_keys.clear(); }
 
@@ -387,6 +388,9 @@ namespace octomap {
 
     /// Iterator to traverse all keys of changed nodes.
     KeyBoolMap::const_iterator changedKeysEnd() {return changed_keys.end();}
+
+    /// Number of changes since last reset.
+    size_t numChangesDetected() const { return changed_keys.size(); }
 
 
     /**
