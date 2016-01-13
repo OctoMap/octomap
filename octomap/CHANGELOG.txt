@@ -1,3 +1,12 @@
+v1.6.9: 2016-01-13
+==================
+- Maintenance release for ROS: 
+  Added function to determine state of change detection
+
+v1.6.8: 2014-09-06
+==================
+- Fixed package.xml installation location for dynamicEDT3D
+
 v1.6.7: 2014-08-31
 ==================
 - FSF address in octovis license header for OctoMap package in Fedora
