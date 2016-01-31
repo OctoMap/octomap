@@ -1,12 +1,12 @@
 <package>
   <name>octomap</name>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <description>The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++. The map implementation is based on an octree. See
   http://octomap.github.io for details.</description>
 
   <author email="wurm@informatik.uni-freiburg.de">Kai M. Wurm</author>
-  <author email="hornunga@informatik.uni-freiburg.de">Armin Hornung</author>
-  <maintainer email="hornunga@informatik.uni-freiburg.de">Armin Hornung</maintainer>
+  <author email="armin@hornung.io">Armin Hornung</author>
+  <maintainer email="armin@hornung.io">Armin Hornung</maintainer>
   <license>BSD</license>
 
   <url type="website">http://octomap.github.io</url>
