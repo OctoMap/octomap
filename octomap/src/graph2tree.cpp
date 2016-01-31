@@ -198,7 +198,7 @@ int main(int argc, char** argv) {
   if (!graph->readBinary(graphFilename))
     exit(2);
 
-  unsigned int num_points_in_graph = 0;
+  size_t num_points_in_graph = 0;
   if (max_scan_no > 0) {
     num_points_in_graph = graph->getNumPoints(max_scan_no-1);
     cout << "\n Data points in graph up to scan " << max_scan_no << ": " << num_points_in_graph << endl;
@@ -243,8 +243,8 @@ int main(int argc, char** argv) {
 
 
   gettimeofday(&start, NULL);  // start timer
-  unsigned int numScans = graph->size();
-  unsigned int currentScan = 1;
+  size_t numScans = graph->size();
+  size_t currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
     if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
     else cout << "("<<currentScan << "/" << numScans << ") " << flush;

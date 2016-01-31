@@ -44,7 +44,7 @@ void getLeafNodesRecurs(std::list<OcTreeVolume>& voxels,
   if ((depth <= max_depth) && (node != NULL) ) {
     if (node->hasChildren() && (depth != max_depth)) {
 
-      double center_offset = tree_center(0) / pow( 2., (double) depth+1);
+      float center_offset = float(tree_center(0) / pow( 2., (double) depth+1));
       point3d search_center;
 
       for (unsigned int i=0; i<8; i++) {
@@ -129,10 +129,10 @@ void boundingBoxTest(OcTree* tree){
   OcTreeKey bbxMinKey, bbxMaxKey;
   double temp_x,temp_y,temp_z;
   tree->getMetricMin(temp_x,temp_y,temp_z);
-  octomap::point3d bbxMin(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMin = octomap::point3d(float(temp_x), float(temp_y), float(temp_z));
 
   tree->getMetricMax(temp_x,temp_y,temp_z);
-  octomap::point3d bbxMax(temp_x,temp_y,temp_z);
+  octomap::point3d bbxMax = octomap::point3d(float(temp_x), float(temp_y), float(temp_z));
 
   EXPECT_TRUE(tree->coordToKeyChecked(bbxMin, bbxMinKey));
   EXPECT_TRUE(tree->coordToKeyChecked(bbxMax, bbxMaxKey));

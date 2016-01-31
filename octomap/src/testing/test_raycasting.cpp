@@ -117,9 +117,9 @@ int main(int argc, char** argv) {
   double res_2 = res/2.0;
   OcTree cubeTree(res);
   // fill a cube with "free", end is "occupied":
-  for (float x=-0.95; x <= 1.0; x+=res){
-    for (float y=-0.95; y <= 1.0; y+=res){
-      for (float z=-0.95; z <= 1.0; z+=res){
+  for (float x=-0.95f; x <= 1.0f; x+=float(res)){
+    for (float y=-0.95f; y <= 1.0f; y+= float(res)){
+      for (float z=-0.95f; z <= 1.0f; z+= float(res)){
         if (x < 0.9){
           EXPECT_TRUE(cubeTree.updateNode(point3d(x,y,z), false));
         } else{
@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
   EXPECT_NEAR(1.0, (origin - end).norm(), res_2);
 
   // hit bottom:
-  origin = point3d(res_2, res_2, 0.5f);
+  origin = point3d(float(res_2), float(res_2), 0.5f);
   direction = point3d(0.0, 0.0, -1.0f);
   EXPECT_TRUE(cubeTree.castRay(origin, direction, end, false));
   EXPECT_TRUE(cubeTree.isNodeOccupied(cubeTree.search(end)));

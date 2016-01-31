@@ -117,7 +117,7 @@ namespace octomap {
 
   public:
     /// Default constructor, sets resolution of leafs
-    ColorOcTree(double resolution) : OccupancyOcTreeBase<ColorOcTreeNode>(resolution) {};  
+    ColorOcTree(double resolution);
       
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)
@@ -172,7 +172,10 @@ namespace octomap {
 
     /**
      * Static member object which ensures that this OcTree's prototype
-     * ends up in the classIDMapping only once
+     * ends up in the classIDMapping only once. You need this as a 
+     * static member in any derived octree class in order to read .ot
+     * files through the AbstractOcTree factory. You should also call
+     * ensureLinking() once from the constructor.
      */
     class StaticMemberInitializer{
        public:
@@ -180,6 +183,13 @@ namespace octomap {
            ColorOcTree* tree = new ColorOcTree(0.1);
            AbstractOcTree::registerTreeType(tree);
          }
+
+         /**
+         * Dummy function to ensure that MSVC does not drop the
+         * StaticMemberInitializer, causing this tree failing to register.
+         * Needs to be called from the constructor of this octree.
+         */
+         void ensureLinking() {};
     };
     /// static member to ensure static initialization (only once)
     static StaticMemberInitializer colorOcTreeMemberInit;

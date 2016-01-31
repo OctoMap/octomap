@@ -1,12 +1,12 @@
 <package>
   <name>octovis</name>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
   http://octomap.github.io for details.</description>
 
   <author email="wurm@informatik.uni-freiburg.de">Kai M. Wurm</author>
-  <author email="hornunga@informatik.uni-freiburg.de">Armin Hornung</author>
-  <maintainer email="hornunga@informatik.uni-freiburg.de">Armin Hornung</maintainer>
+  <author email="armin@hornung.io">Armin Hornung</author>
+  <maintainer email="armin@hornung.io">Armin Hornung</maintainer>
   <license>GPLv2</license>
 
   <url type="website">http://octomap.github.io</url>

@@ -777,12 +777,12 @@ namespace octomap {
     octomap::point3d normalZ(0, 0, 1);
 
     // One point on each plane, let them be the center for simplicity
-    octomap::point3d pointXNeg(center(0) - this->resolution / 2.0, center(1), center(2));
-    octomap::point3d pointXPos(center(0) + this->resolution / 2.0, center(1), center(2));
-    octomap::point3d pointYNeg(center(0), center(1) - this->resolution / 2.0, center(2));
-    octomap::point3d pointYPos(center(0), center(1) + this->resolution / 2.0, center(2));
-    octomap::point3d pointZNeg(center(0), center(1), center(2) - this->resolution / 2.0);
-    octomap::point3d pointZPos(center(0), center(1), center(2) + this->resolution / 2.0);
+    octomap::point3d pointXNeg(center(0) - float(this->resolution / 2.0), center(1), center(2));
+    octomap::point3d pointXPos(center(0) + float(this->resolution / 2.0), center(1), center(2));
+    octomap::point3d pointYNeg(center(0), center(1) - float(this->resolution / 2.0), center(2));
+    octomap::point3d pointYPos(center(0), center(1) + float(this->resolution / 2.0), center(2));
+    octomap::point3d pointZNeg(center(0), center(1), center(2) - float(this->resolution / 2.0));
+    octomap::point3d pointZPos(center(0), center(1), center(2) + float(this->resolution / 2.0));
 
     double lineDotNormal = 0.0;
     double d = 0.0;
@@ -796,7 +796,7 @@ namespace octomap {
     // if yes keep only the closest (smallest distance to sensor origin).
     if((lineDotNormal = normalX.dot(direction))){
       d = (pointXNeg - origin).dot(normalX) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(1) < (pointYNeg(1) - 1e-6) || intersect(1) > (pointYPos(1) + 1e-6) ||
          intersect(2) < (pointZNeg(2) - 1e-6) || intersect(2) > (pointZPos(2) + 1e-6))){
         outD = std::min(outD, d);
@@ -804,7 +804,7 @@ namespace octomap {
       }
 
       d = (pointXPos - origin).dot(normalX) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(1) < (pointYNeg(1) - 1e-6) || intersect(1) > (pointYPos(1) + 1e-6) ||
          intersect(2) < (pointZNeg(2) - 1e-6) || intersect(2) > (pointZPos(2) + 1e-6))){
         outD = std::min(outD, d);
@@ -814,7 +814,7 @@ namespace octomap {
 
     if((lineDotNormal = normalY.dot(direction))){
       d = (pointYNeg - origin).dot(normalY) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(0) < (pointXNeg(0) - 1e-6) || intersect(0) > (pointXPos(0) + 1e-6) ||
          intersect(2) < (pointZNeg(2) - 1e-6) || intersect(2) > (pointZPos(2) + 1e-6))){
         outD = std::min(outD, d);
@@ -822,7 +822,7 @@ namespace octomap {
       }
 
       d = (pointYPos - origin).dot(normalY) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(0) < (pointXNeg(0) - 1e-6) || intersect(0) > (pointXPos(0) + 1e-6) ||
          intersect(2) < (pointZNeg(2) - 1e-6) || intersect(2) > (pointZPos(2) + 1e-6))){
         outD = std::min(outD, d);
@@ -832,7 +832,7 @@ namespace octomap {
 
     if((lineDotNormal = normalZ.dot(direction))){
       d = (pointZNeg - origin).dot(normalZ) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(0) < (pointXNeg(0) - 1e-6) || intersect(0) > (pointXPos(0) + 1e-6) ||
          intersect(1) < (pointYNeg(1) - 1e-6) || intersect(1) > (pointYPos(1) + 1e-6))){
         outD = std::min(outD, d);
@@ -840,7 +840,7 @@ namespace octomap {
       }
 
       d = (pointZPos - origin).dot(normalZ) / lineDotNormal;
-      intersect = direction * d + origin;
+      intersect = direction * float(d) + origin;
       if(!(intersect(0) < (pointXNeg(0) - 1e-6) || intersect(0) > (pointXPos(0) + 1e-6) ||
          intersect(1) < (pointYNeg(1) - 1e-6) || intersect(1) > (pointYPos(1) + 1e-6))){
         outD = std::min(outD, d);
@@ -851,7 +851,7 @@ namespace octomap {
     // Substract (add) a fraction to ensure no ambiguity on the starting voxel
     // Don't start on a bondary.
     if(found)
-      intersection = direction * (outD + delta) + origin;
+      intersection = direction * float(outD + delta) + origin;
     
     return found;
   }

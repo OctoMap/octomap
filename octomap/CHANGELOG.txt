@@ -1,3 +1,13 @@
+v1.7.1: 2016-01-31
+==================
+- Fixed #82: Enable uninstall target for complete project
+- Fixed #47: Exported CMake library paths for Windows no longer
+  have the Release/Debug prefix and correctly contain the .lib file
+- Fixed #51: IO factory class registry with MSVC. Calling a dummy 
+  function from an OcTree class c'tor enables reading general .ot files
+  when compiling with MSVC
+- Fixed #100: Explicit casts to avoid warnings with MSVC
+
 v1.7.0: 2015-11-27
 ==================
 - BBX iterators fixed for empty trees (thx to F. Boniardi)
@@ -8,6 +18,12 @@ v1.7.0: 2015-11-27
   A. Ecins)
 - Fixed hashing overflow with clang (thx to L. Riano)
 
+
+v1.6.9: 2016-01-13
+==================
+- Maintenance release for ROS: 
+  Added function to determine state of change detection
+  
 v1.6.7: 2014-08-31
 ==================
 - FSF address in octovis license header for OctoMap package in Fedora

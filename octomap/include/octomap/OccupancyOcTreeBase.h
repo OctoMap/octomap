@@ -174,7 +174,7 @@ namespace octomap {
       * octree level
       *
       * @param key OcTreeKey of the NODE that is to be updated
-      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param log_odds_value value to be set as the log_odds value of the node
       * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
       *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
       * @return pointer to the updated NODE
@@ -186,7 +186,7 @@ namespace octomap {
       * Looks up the OcTreeKey corresponding to the coordinate and then calls setNodeValue() with it.
       *
       * @param value 3d coordinate of the NODE that is to be updated
-      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param log_odds_value value to be set as the log_odds value of the node
       * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
       *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
       * @return pointer to the updated NODE
@@ -200,7 +200,7 @@ namespace octomap {
       * @param x
       * @param y
       * @param z
-      * @param log_odds_update value to be added (+) to log_odds value of node
+      * @param log_odds_value value to be set as the log_odds value of the node
       * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
       *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
       * @return pointer to the updated NODE

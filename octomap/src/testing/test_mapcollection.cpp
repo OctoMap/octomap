@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
   query.push_back(point3d(0,0,0));
   query.push_back(point3d(2,0,0));
   query.push_back(point3d(2,0,2));
-  query.push_back(point3d(1.99,0,0));
+  query.push_back(point3d(1.99f,0.0f,0.0f));
   query.push_back(point3d(0,0,3));
   query.push_back(point3d(3,7,13.5));
   query.push_back(point3d(0,-1,-1));

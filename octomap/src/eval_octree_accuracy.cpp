@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
   if (!graph->readBinary(graphFilename))
     exit(2);
   
-  unsigned int num_points_in_graph = 0;
+  size_t num_points_in_graph = 0;
   if (max_scan_no > 0) {
     num_points_in_graph = graph->getNumPoints(max_scan_no-1);
     cout << "\n Data points in graph up to scan " << max_scan_no << ": " << num_points_in_graph << endl;
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
   cout << "\nCreating tree\n===========================\n";
   OcTree* tree = new OcTree(res);
 
-  unsigned int numScans = graph->size();
+  size_t numScans = graph->size();
   unsigned int currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
 
@@ -125,10 +125,10 @@ int main(int argc, char** argv) {
   
   cout << "\nEvaluating scans\n===========================\n";
   currentScan = 1;
-  unsigned num_points = 0;
-  unsigned num_voxels_correct = 0;
-  unsigned num_voxels_wrong = 0;
-  unsigned num_voxels_unknown = 0;
+  size_t num_points = 0;
+  size_t num_voxels_correct = 0;
+  size_t num_voxels_wrong = 0;
+  size_t num_voxels_unknown = 0;
 
 
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {

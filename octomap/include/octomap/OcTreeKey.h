@@ -137,8 +137,8 @@ namespace octomap {
       end_of_ray++;
     }
 
-    unsigned int size() const { return end_of_ray - ray.begin(); }
-    unsigned int sizeMax() const { return 100000; }
+    size_t size() const { return end_of_ray - ray.begin(); }
+    size_t sizeMax() const { return 100000; }
 
     typedef std::vector<OcTreeKey>::iterator iterator;
     typedef std::vector<OcTreeKey>::const_iterator const_iterator;

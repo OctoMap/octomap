@@ -177,8 +177,8 @@ namespace octomap {
     const_iterator begin() const { return nodes.begin(); }
     const_iterator end() const { return nodes.end(); }
 
-    unsigned int size() const { return nodes.size(); }
-    unsigned int getNumPoints(unsigned int max_id = -1) const;
+    size_t size() const { return nodes.size(); }
+    size_t getNumPoints(unsigned int max_id = -1) const;
 
     typedef std::vector<ScanEdge*>::iterator edge_iterator;
     typedef std::vector<ScanEdge*>::const_iterator const_edge_iterator;
