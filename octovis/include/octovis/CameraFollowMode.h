@@ -26,6 +26,7 @@
 #define CAMERAFOLLOWMODE_H_
 
 #include "SceneObject.h"
+#include <QObject>
 
 class CameraFollowMode : public QObject {
   Q_OBJECT
