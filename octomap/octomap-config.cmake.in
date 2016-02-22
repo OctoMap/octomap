@@ -23,9 +23,8 @@
 # ===================================================================================
 
  
-set(OCTOMAP_INCLUDE_DIRS "@OCTOMAP_INCLUDE_DIRS@")
-set(OCTOMAP_LIBRARY_DIRS "@OCTOMAP_LIB_DIR@")
- 
+set(OCTOMAP_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../include")
+set(OCTOMAP_LIBRARY_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../lib")
 
 # Set library names
 set(OCTOMAP_LIBRARIES 
