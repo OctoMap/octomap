@@ -30,6 +30,9 @@ ADD_EXECUTABLE(test_pruning test_pruning.cpp)
 TARGET_LINK_LIBRARIES(test_pruning octomap octomath)
 
 
+ADD_EXECUTABLE(test_bbox_empty_octree test_bbox_empty_octree.cpp)
+TARGET_LINK_LIBRARIES(test_bbox_empty_octree octomap octomath)
+
 # CTest tests below
 
 ADD_EXECUTABLE(unit_tests unit_tests.cpp)
