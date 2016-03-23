@@ -64,7 +64,8 @@
           s.depth = 0;
           s.key[0] = s.key[1] = s.key[2] = tree->tree_max_val;
           stack.push(s);
-        } else{ // construct the same as "end", tree must already be NULL
+        } else{ // construct the same as "end"
+          tree = NULL;
           this->maxDepth = 0;
         }
       }
@@ -349,16 +350,18 @@
       leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const point3d& min, const point3d& max, unsigned char depth=0)
         : iterator_base(tree, depth)
       {
+        if (this->stack.size() > 0){
+          assert(tree);
+          if (!this->tree->coordToKeyChecked(min, minKey) || !this->tree->coordToKeyChecked(max, maxKey)){
+            // coordinates invalid, set to end iterator
+            tree = NULL;
+            this->maxDepth = 0;
+          } else{  // else: keys are generated and stored
 
-        if (!this->tree->coordToKeyChecked(min, minKey) || !this->tree->coordToKeyChecked(max, maxKey)){
-          // coordinates invalid, set to end iterator
-          tree = NULL;
-          this->maxDepth = 0;
-        } else{  // else: keys are generated and stored
-
-          // advance from root to next valid leaf in bbx:
-          this->stack.push(this->stack.top());
-          this->operator ++();
+            // advance from root to next valid leaf in bbx:
+            this->stack.push(this->stack.top());
+            this->operator ++();
+          }
         }
 
       }
