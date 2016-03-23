@@ -77,7 +77,7 @@ namespace octomap {
     bool operator== (const OcTreeKey &other) const { 
       return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
     }
-    bool operator!= (const OcTreeKey &other) const {
+    bool operator!= (const OcTreeKey& other) const {
       return( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) );
     }
     OcTreeKey& operator=(const OcTreeKey& other){
@@ -131,7 +131,7 @@ namespace octomap {
     void reset() {
       end_of_ray = begin();
     }
-    void addKey(OcTreeKey& k) {
+    void addKey(const OcTreeKey& k) {
       assert(end_of_ray != ray.end());
       *end_of_ray = k;
       end_of_ray++;
@@ -167,7 +167,7 @@ namespace octomap {
    * @param[in] parent_key current (parent) key
    * @param[out] child_key  computed child key
    */
-  inline void computeChildKey (const unsigned int& pos, const unsigned short int& center_offset_key,
+  inline void computeChildKey (unsigned int pos, unsigned short int center_offset_key,
                                           const OcTreeKey& parent_key, OcTreeKey& child_key) {
     // x-axis
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
