@@ -1,3 +1,10 @@
+v1.7.2: 2016-03-26
+==================
+- BBX iterators fixed for empty trees (point3d version)
+- Removed qglviewer.h from some public octovis headers
+- Fixed QGLViewer library names for Ubuntu wily and xenial
+- Fixed install path in CMakeConfigs
+
 v1.7.1: 2016-01-31
 ==================
 - Fixed #82: Enable uninstall target for complete project
