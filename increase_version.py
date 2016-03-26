@@ -103,7 +103,8 @@ if __name__ == '__main__':
   print "Finished writing package.xml and CMakeLists.txt files.\n"
   print "Now check the output, adjust CHANGELOG, and \"git commit\".\nFinally, run:"
   print "  git checkout master && git merge --no-ff devel && git tag v%s" % new_version_str
-  print "  git push && git push --tags"
+  print "  git push origin master devel && git push --tags"
+  print "\n(adjust when not on the \"devel\" branch)\n"
 
       
   
