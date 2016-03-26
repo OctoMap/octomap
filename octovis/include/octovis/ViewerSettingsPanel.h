@@ -26,7 +26,7 @@
 #define VIEWERSETTINGSPANEL_H
 
 #include <math.h>
-#include <qglviewer.h>
+#include <QWidget>
 #include "ui_ViewerSettingsPanel.h"
 
 #define _TREE_MAX_DEPTH 16

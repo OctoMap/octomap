@@ -37,7 +37,6 @@
   #include <GL/glu.h>
 #endif
 
-#include <qglviewer.h>
 #include <octomap/octomap.h>
 
 namespace octomap {
