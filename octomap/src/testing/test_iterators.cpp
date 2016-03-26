@@ -256,6 +256,21 @@ int main(int argc, char** argv) {
     iteratedNodes++;
   }
   EXPECT_EQ(iteratedNodes, 0);
+  
+  octomap::point3d ptMinBBX(-0.1, -0.1, -0.1);
+  octomap::point3d ptMaxBBX(0.1, 0.1, 0.1);
+  for(OcTree::leaf_bbx_iterator l_it = emptyTree.begin_leafs_bbx(ptMinBBX, ptMaxBBX, maxDepth), l_end=emptyTree.end_leafs_bbx(); l_it!= l_end; ++l_it){
+    iteratedNodes++;
+  }
+  EXPECT_EQ(iteratedNodes, 0);
+  
+  octomap::OcTreeKey minBBX(10, 10, 16);
+  octomap::OcTreeKey maxBBX(10, 10, 18);
+  for(OcTree::leaf_bbx_iterator l_it = emptyTree.begin_leafs_bbx(minBBX, maxBBX, maxDepth), l_end=emptyTree.end_leafs_bbx(); l_it!= l_end; ++l_it){
+    iteratedNodes++;
+  }
+  EXPECT_EQ(iteratedNodes, 0);
+  
 
 
 
