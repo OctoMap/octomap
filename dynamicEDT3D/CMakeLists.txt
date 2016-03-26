@@ -50,6 +50,9 @@ find_package(octomap REQUIRED
   HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
    ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
+MESSAGE(STATUS "Found octomap version: " ${octomap_VERSION})
+MESSAGE(STATUS "octomap libraries: ${OCTOMAP_LIBRARIES}")
+
 INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
 
 ADD_SUBDIRECTORY(src)
