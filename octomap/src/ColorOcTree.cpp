@@ -52,19 +52,25 @@ namespace octomap {
   }
 
   ColorOcTreeNode::Color ColorOcTreeNode::getAverageChildColor() const {
-    int mr(0), mg(0), mb(0);
-    int c(0);
-    for (int i=0; i<8; i++) {
-      ColorOcTreeNode* child = static_cast<ColorOcTreeNode*>(children[i]);
-      
-      if (childExists(i) && child->isColorSet()) {
-        mr += child->getColor().r;
-        mg += child->getColor().g;
-        mb += child->getColor().b;
-        ++c;
+    int mr = 0;
+    int mg = 0;
+    int mb = 0;
+    int c = 0;
+    
+    if (children != NULL){
+      for (int i=0; i<8; i++) {
+        ColorOcTreeNode* child = static_cast<ColorOcTreeNode*>(children[i]);
+        
+        if (child != NULL && child->isColorSet()) {
+          mr += child->getColor().r;
+          mg += child->getColor().g;
+          mb += child->getColor().b;
+          ++c;
+        }
       }
     }
-    if (c) {
+    
+    if (c > 0) {
       mr /= c;
       mg /= c;
       mb /= c;
@@ -123,7 +129,7 @@ namespace octomap {
                                                  const unsigned char& r, 
                                                  const unsigned char& g, 
                                                  const unsigned char& b) {
-    ColorOcTreeNode* n = search (key);
+    ColorOcTreeNode* n = search(key);
     if (n != 0) {
       if (n->isColorSet()) {
         ColorOcTreeNode::Color prev_color = n->getColor();
@@ -167,11 +173,11 @@ namespace octomap {
 
   void ColorOcTree::updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth) {
     // only recurse and update for inner nodes:
-    if (node->hasChildren()){
+    if (nodeHasChildren(node)){
       // return early for last level:
       if (depth < this->tree_depth){
         for (unsigned int i=0; i<8; i++) {
-          if (node->childExists(i)) {
+          if (nodeChildExists(node, i)) {
             updateInnerOccupancyRecurs(getNodeChild(node, i), depth+1);
           }
         }

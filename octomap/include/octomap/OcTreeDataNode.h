@@ -90,13 +90,14 @@ namespace octomap {
 
     // -- children  ----------------------------------
 
-    /// Safe test to check of the i-th child exists,
-    /// first tests if there are any children.
+    /// Test whether the i-th child exists. 
+    /// @deprecated Replaced by tree->nodeChildExists(...)
     /// \return true if the i-th child exists
-    bool childExists(unsigned int i) const;
+    OCTOMAP_DEPRECATED(bool childExists(unsigned int i) const);
 
+    /// @deprecated Replaced by tree->nodeHasChildren(...)
     /// \return true if the node has at least one child
-    bool hasChildren() const;
+    OCTOMAP_DEPRECATED(bool hasChildren() const);
 
     /// @return value stored in the node
     T getValue() const{return value;};

@@ -51,7 +51,7 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
    : children(NULL), value(rhs.value)
   {
-    if (rhs.hasChildren()){
+    if (rhs.children){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){
         if (rhs.children[i])
@@ -66,7 +66,7 @@ namespace octomap {
   {
     // Delete only own members. OcTree maintains tree structure and must have deleted 
     // children already
-    assert(!hasChildren());
+    assert(children == NULL);
   }
   
   template <typename T>

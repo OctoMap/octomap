@@ -57,10 +57,12 @@ namespace octomap {
   double OcTreeNode::getMeanChildLogOdds() const{
     double mean = 0;
     char c = 0;
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i)) {
-        mean += static_cast<OcTreeNode*>(children[i])->getOccupancy(); // TODO check if works generally
-        c++;
+    if (children !=NULL){
+      for (unsigned int i=0; i<8; i++) {
+        if (children[i] != NULL) {
+          mean += static_cast<OcTreeNode*>(children[i])->getOccupancy(); // TODO check if works generally
+          ++c;
+        }
       }
     }
     
@@ -72,11 +74,14 @@ namespace octomap {
 
   float OcTreeNode::getMaxChildLogOdds() const{
     float max = -std::numeric_limits<float>::max();
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i)) {
-        float l = static_cast<OcTreeNode*>(children[i])->getLogOdds(); // TODO check if works generally
-        if (l > max)
-          max = l;
+    
+    if (children !=NULL){
+      for (unsigned int i=0; i<8; i++) {
+        if (children[i] != NULL) {
+          float l = static_cast<OcTreeNode*>(children[i])->getLogOdds(); // TODO check if works generally
+          if (l > max)
+            max = l;
+        }
       }
     }
     return max;

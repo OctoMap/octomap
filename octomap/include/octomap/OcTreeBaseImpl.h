@@ -131,6 +131,19 @@ namespace octomap {
     /// and have the same occupancy value
     bool isNodeCollapsible(const NODE* node) const;
     
+    /** 
+     * Safe test if node has a child at index childIdx.
+     * First tests if there are any children. Replaces node->childExists(...)
+     * \return true if the child at childIdx exists
+     */
+    bool nodeChildExists(const NODE* node, unsigned int childIdx) const;
+    
+    /** 
+     * Safe test if node has any children. Replaces node->hasChildren(...)
+     * \return true if node has at least one child
+     */
+    bool nodeHasChildren(const NODE* node) const;
+    
     /**
      * Expands a node (reverse of pruning): All children are created and
      * their occupancy probability is set to the node's value.
