@@ -51,10 +51,10 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
    : children(NULL), value(rhs.value)
   {
-    if (rhs.children){
+    if (rhs.children != NULL){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){
-        if (rhs.children[i])
+        if (rhs.children[i] != NULL)
           children[i] = new OcTreeDataNode<T>(*(static_cast<OcTreeDataNode<T>*>(rhs.children[i])));
 
       }

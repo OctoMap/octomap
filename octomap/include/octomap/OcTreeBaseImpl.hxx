@@ -66,9 +66,7 @@ namespace octomap {
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){
-    if (root){
-      deleteNodeRecurs(root);
-    }
+    clear();
   }
 
 
