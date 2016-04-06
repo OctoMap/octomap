@@ -66,15 +66,15 @@ namespace octomap {
    * @see OcTreeBaseImpl::coordToKey() and OcTreeBaseImpl::keyToCoord() for conversions.
    */
   class OcTreeKey {
-    
-  public:  
+
+  public:
     OcTreeKey () {}
-    OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c)
+    OcTreeKey (unsigned int a, unsigned int b, unsigned int c)
       { k[0] = a; k[1] = b; k[2] = c; }
     OcTreeKey(const OcTreeKey& other){
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
     }
-    bool operator== (const OcTreeKey &other) const { 
+    bool operator== (const OcTreeKey &other) const {
       return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
     }
     bool operator!= (const OcTreeKey& other) const {
@@ -84,27 +84,36 @@ namespace octomap {
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
       return *this;
     }
-    const unsigned short int& operator[] (unsigned int i) const { 
+    const unsigned int& operator[] (unsigned int i) const {
       return k[i];
     }
-    unsigned short int& operator[] (unsigned int i) { 
+    unsigned int& operator[] (unsigned int i) {
       return k[i];
     }
 
-    unsigned short int k[3];
+    unsigned int k[3];
 
     /// Provides a hash function on Keys
     struct KeyHash{
       size_t operator()(const OcTreeKey& key) const{
-        // a simple hashing function 
-	// explicit casts to size_t to operate on the complete range
-	// constanst will be promoted according to C++ standard
-        return size_t(key.k[0]) + 1447*size_t(key.k[1]) + 345637*size_t(key.k[2]);
+        // a hashing function
+
+        // The hash keys are only used by octomap::KeySet and octomap::KeyBoolMap.
+        // They both only operate on the current point cloud. Wherever the
+        // robot is inside the very large octree-cube, these point's coordinates
+        // will only differ in their last bits. So instead of coding every
+        // coordinate with the full 32bit, we only use the last 16bit of each.
+        // This way a unique 64bit hash key can be generated for all points of
+        // _one_ pointcloud (from a range-limited sensor).
+        return
+            static_cast< std::size_t >( key.k[0] & 0xFFFF )
+            + ( static_cast< std::size_t >( key.k[1] & 0xFFFF ) << 16 )
+            + ( static_cast< std::size_t >( key.k[2] & 0xFFFF ) << 32 );
       }
     };
-    
+
   };
-  
+
   /**
    * Data structure to efficiently compute the nodes to update from a scan
    * insertion using a hash set.
@@ -123,7 +132,7 @@ namespace octomap {
 
   class KeyRay {
   public:
-    
+
     KeyRay () {
       ray.resize(100000);
       reset();
@@ -143,7 +152,7 @@ namespace octomap {
     typedef std::vector<OcTreeKey>::iterator iterator;
     typedef std::vector<OcTreeKey>::const_iterator const_iterator;
     typedef std::vector<OcTreeKey>::reverse_iterator reverse_iterator;
-    
+
     iterator begin() { return ray.begin(); }
     iterator end() { return end_of_ray; }
     const_iterator begin() const { return ray.begin(); }
@@ -167,7 +176,7 @@ namespace octomap {
    * @param[in] parent_key current (parent) key
    * @param[out] child_key  computed child key
    */
-  inline void computeChildKey (unsigned int pos, unsigned short int center_offset_key,
+  inline void computeChildKey (const unsigned int& pos, const unsigned int& center_offset_key,
                                           const OcTreeKey& parent_key, OcTreeKey& child_key) {
     // x-axis
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
@@ -179,7 +188,7 @@ namespace octomap {
     if (pos & 4) child_key[2] = parent_key[2] + center_offset_key;
     else         child_key[2] = parent_key[2] - center_offset_key - (center_offset_key ? 0 : 1);
   }
-  
+
   /// generate child index (between 0 and 7) from key at given tree depth
   inline unsigned char computeChildIdx(const OcTreeKey& key, int depth){
     unsigned char pos = 0;
@@ -196,11 +205,11 @@ namespace octomap {
    * @param key input indexing key (at lowest resolution / level)
    * @return key corresponding to the input key at the given level
    */
-  inline OcTreeKey computeIndexKey(unsigned short int level, const OcTreeKey& key) {
+  inline OcTreeKey computeIndexKey(unsigned int level, const OcTreeKey& key) {
     if (level == 0)
       return key;
     else {
-      unsigned short int mask = 65535 << level;
+      unsigned int mask = 4294967295 << level;
       OcTreeKey result = key;
       result[0] &= mask;
       result[1] &= mask;

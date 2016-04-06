@@ -166,7 +166,7 @@
         StackElement s;
         s.depth = top.depth +1;
 
-        unsigned short int center_offset_key = tree->tree_max_val >> s.depth;
+        unsigned int center_offset_key = tree->tree_max_val >> s.depth;
         // push on stack in reverse order
         for (int i=7; i>=0; --i) {
           if (top.node->childExists(i)) {
@@ -431,7 +431,7 @@
 
         typename iterator_base::StackElement s;
         s.depth = top.depth +1;
-        unsigned short int center_offset_key = this->tree->tree_max_val >> s.depth;
+        unsigned int center_offset_key = this->tree->tree_max_val >> s.depth;
         // push on stack in reverse order
         for (int i=7; i>=0; --i) {
           if (top.node->childExists(i)) {

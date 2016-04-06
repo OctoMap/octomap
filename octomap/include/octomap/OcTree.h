@@ -52,8 +52,12 @@ namespace octomap {
     /// Default constructor, sets resolution of leafs
     OcTree(double resolution);
 
+    /// Constructor to enable derived classes to change tree constants.
+    OcTree(double resolution, unsigned int tree_depth, unsigned int tree_max_val)
+        : OccupancyOcTreeBase<OcTreeNode>(resolution,tree_depth, tree_max_val) {};
+
     /**
-     * Reads an OcTree from a binary file 
+     * Reads an OcTree from a binary file
     * @param _filename
      *
      */

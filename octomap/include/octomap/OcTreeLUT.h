@@ -44,21 +44,21 @@ namespace octomap {
 
   //! comparator for keys
   struct equal_keys {
-    bool operator() (const unsigned short int* key1, const unsigned short int* key2) const {
+    bool operator() (const unsigned int* key1, const unsigned int* key2) const {
       return ((key1[0]==key2[0]) && (key1[1] == key2[1]) && (key1[2] == key2[2]));
     }
   };
 
   struct hash_key {
-    unsigned short int operator()(const unsigned short int* key) const {
+    long unsigned int operator()(const unsigned int* key) const {
       return (((31 + key[0]) * 31 + key[1]) * 31 + key[2]);
     }
   };
 
 
-  
+
   /**
-   *   Implements a lookup table that allows to computer keys of neighbor cells directly, 
+   *   Implements a lookup table that allows to computer keys of neighbor cells directly,
    *   see: Samet 1989, "Implementing ray tracing with octrees and neighbor finding"
    */
   class OcTreeLUT {
@@ -82,7 +82,7 @@ namespace octomap {
 
     OcTreeLUT(unsigned int _max_depth);
     ~OcTreeLUT();
-    
+
     bool genNeighborKey(const OcTreeKey& node_key, const signed char& dir,
                         OcTreeKey& neighbor_key) const;
 
@@ -91,7 +91,7 @@ namespace octomap {
     void initLUT();
 
     unsigned int genPos(const OcTreeKey& key, const int& i) const;
-    void changeKey(const int& val, OcTreeKey& key, const unsigned short int& i) const;
+    void changeKey(const int& val, OcTreeKey& key, const unsigned int& i) const;
 
   protected:
 
@@ -100,7 +100,7 @@ namespace octomap {
     signed char nf_values[8][26];
     signed char nf_rec_values[8][26];
     signed char nf_multiple_values[26][4];
-  }; 
+  };
 
 } // namespace
 

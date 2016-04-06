@@ -534,7 +534,7 @@ namespace octomap {
   /*
    * used internally to generate neighbor key from a given key
    */
-  void OcTreeLUT::changeKey(const int& val, OcTreeKey& key, const unsigned short int& i) const {
+  void OcTreeLUT::changeKey(const int& val, OcTreeKey& key, const unsigned int& i) const {
     switch (val) {
     case 0:
       key.k[0] &= ~(1 << i);
@@ -582,14 +582,14 @@ namespace octomap {
 
   bool OcTreeLUT::genNeighborKey(const OcTreeKey& node_key, const signed char& dir,
                                  OcTreeKey& neighbor_key) const {
-    
+
     neighbor_key.k[0] = node_key.k[0];
     neighbor_key.k[1] = node_key.k[1];
     neighbor_key.k[2] = node_key.k[2];
 
     unsigned int depth = 0;
     signed char curDir = dir;
-    
+
     signed char pos;
     while (depth < max_depth) {
       pos = static_cast<signed char>(genPos(neighbor_key, depth));
@@ -598,8 +598,8 @@ namespace octomap {
       if (nf_rec_values[pos][curDir] != LUT_NO_REC) { // recurs
         curDir -= nf_rec_values[pos][curDir];
         depth++;
-      } 
-      else { 
+      }
+      else {
         return true;
       }
     }

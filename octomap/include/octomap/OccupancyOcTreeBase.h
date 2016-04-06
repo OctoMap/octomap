@@ -54,10 +54,10 @@ namespace octomap {
    * Each class used as NODE type needs to be derived from
    * OccupancyOcTreeNode.
    *
-   * This tree implementation has a maximum depth of 16. 
+   * This tree implementation has a maximum depth of 16.
    * At a resolution of 1 cm, values have to be < +/- 327.68 meters (2^15)
    *
-   * This limitation enables the use of an efficient key generation 
+   * This limitation enables the use of an efficient key generation
    * method which uses the binary representation of the data.
    *
    * \note The tree does not save individual points.
@@ -71,6 +71,11 @@ namespace octomap {
   public:
     /// Default constructor, sets resolution of leafs
     OccupancyOcTreeBase(double resolution);
+
+    /// Constructor to enable derived classes to change tree constants.
+    /// This usually requires a re-implementation of some core tree-traversal functions as well!
+    OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
+
     virtual ~OccupancyOcTreeBase();
 
     /// Copy constructor
@@ -304,17 +309,17 @@ namespace octomap {
      * @return success of operation
      */
     virtual bool insertRay(const point3d& origin, const point3d& end, double maxrange=-1.0, bool lazy_eval = false);
-    
+
     /**
      * Performs raycasting in 3d, similar to computeRay(). Can be called in parallel e.g. with OpenMP
      * for a speedup.
      *
      * A ray is cast from 'origin' with a given direction, the first non-free
-     * cell is returned in 'end' (as center coordinate). This could also be the 
+     * cell is returned in 'end' (as center coordinate). This could also be the
      * origin node if it is occupied or unknown. castRay() returns true if an occupied node
      * was hit by the raycast. If the raycast returns false you can search() the node at 'end' and
      * see whether it's unknown space.
-     * 
+     *
      *
      * @param[in] origin starting coordinate of ray
      * @param[in] direction A vector pointing in the direction of the raycast (NOT a point in space). Does not need to be normalized.
@@ -329,7 +334,7 @@ namespace octomap {
     /**
      * Retrieves the entry point of a ray into a voxel. This is the closest intersection point of the ray
      * originating from origin and a plane of the axis aligned cube.
-     * 
+     *
      * @param[in] origin Starting point of ray
      * @param[in] direction A vector pointing in the direction of the raycast. Does not need to be normalized.
      * @param[in] center The center of the voxel where the ray terminated. This is the output of castRay.
@@ -340,18 +345,18 @@ namespace octomap {
     virtual bool getRayIntersection(const point3d& origin, const point3d& direction, const point3d& center,
                  point3d& intersection, double delta=0.0) const;
 
-		/**
-		 * Performs a step of the marching cubes surface reconstruction algorithm
-		 * to retreive the normal of the triangles that fall in the cube
-		 * formed by the voxels located at the vertex of a given voxel.
-		 *
-		 * @param[in] voxel for which retreive the normals
-		 * @param[out] triangles normals
-		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
-		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
-		 */
-		bool getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
-	
+        /**
+         * Performs a step of the marching cubes surface reconstruction algorithm
+         * to retreive the normal of the triangles that fall in the cube
+         * formed by the voxels located at the vertex of a given voxel.
+         *
+         * @param[in] voxel for which retreive the normals
+         * @param[out] triangles normals
+         * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
+         * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
+         */
+        bool getNormals(const point3d& point, std::vector<point3d>& normals, bool unknownStatus=true) const;
+
     //-- set BBX limit (limits tree updates to this bounding box)
 
     ///  use or ignore BBX limit (default: ignore)
@@ -487,9 +492,6 @@ namespace octomap {
     virtual void nodeToMaxLikelihood(NODE& occupancyNode) const;
 
   protected:
-    /// Constructor to enable derived classes to change tree constants.
-    /// This usually requires a re-implementation of some core tree-traversal functions as well!
-    OccupancyOcTreeBase(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
 
     /**
      * Traces a ray from origin to end and updates all voxels on the
@@ -502,12 +504,12 @@ namespace octomap {
 
     NODE* updateNodeRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, const float& log_odds_update, bool lazy_eval = false);
-    
+
     NODE* setNodeValueRecurs(NODE* node, bool node_just_created, const OcTreeKey& key,
                            unsigned int depth, const float& log_odds_value, bool lazy_eval = false);
 
     void updateInnerOccupancyRecurs(NODE* node, unsigned int depth);
-    
+
     void toMaxLikelihoodRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
 
 
@@ -521,7 +523,7 @@ namespace octomap {
     bool use_change_detection;
     /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
     KeyBoolMap changed_keys;
-    
+
 
   };
 

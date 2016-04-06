@@ -47,7 +47,7 @@ namespace octomap {
     I(), root(NULL), tree_depth(16), tree_max_val(32768),
     resolution(resolution), tree_size(0)
   {
-    
+
     init();
 
     // no longer create an empty root node - only on demand
@@ -160,7 +160,7 @@ namespace octomap {
     resolution = r;
     resolution_factor = 1. / resolution;
 
-    tree_center(0) = tree_center(1) = tree_center(2) 
+    tree_center(0) = tree_center(1) = tree_center(2)
       = (float) (((double) tree_max_val) / resolution_factor);
 
     // init node size lookup table:
@@ -173,7 +173,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  inline unsigned short int OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
+  inline unsigned int OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
     assert (depth <= tree_depth);
     int keyval = ((int) floor(resolution_factor * coordinate));
 
@@ -186,7 +186,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -201,7 +201,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& keyval) const {
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned depth, unsigned int& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -260,7 +260,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  unsigned short int OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
+  unsigned int OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(unsigned int key, unsigned int depth) const{
     unsigned int diff = tree_depth - depth;
 
     if(diff == 0)
@@ -270,7 +270,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  double OcTreeBaseImpl<NODE,I>::keyToCoord(unsigned short int key, unsigned depth) const{
+  double OcTreeBaseImpl<NODE,I>::keyToCoord(unsigned int key, unsigned depth) const{
     assert(depth <= tree_depth);
 
     // root is centered on 0 = 0.0
@@ -420,7 +420,7 @@ namespace octomap {
 
   template <class NODE,class I>
   bool OcTreeBaseImpl<NODE,I>::computeRayKeys(const point3d& origin,
-                                          const point3d& end, 
+                                          const point3d& end,
                                           KeyRay& ray) const {
 
     // see "A Faster Voxel Traversal Algorithm for Ray Tracing" by Amanatides & Woo
@@ -436,7 +436,7 @@ namespace octomap {
       return false;
     }
 
-    
+
     if (key_origin == key_end)
       return true; // same tree cell, we're done.
 
@@ -452,7 +452,7 @@ namespace octomap {
     double tMax[3];
     double tDelta[3];
 
-    OcTreeKey current_key = key_origin; 
+    OcTreeKey current_key = key_origin;
 
     for(unsigned int i=0; i < 3; ++i) {
       // compute step direction
@@ -514,14 +514,14 @@ namespace octomap {
           done = true;
           break;
         }
-        
+
         else {  // continue to add freespace cells
           ray.addKey(current_key);
         }
       }
 
       assert ( ray.size() < ray.sizeMax() - 1);
-      
+
     } // end while
 
     return true;
@@ -666,11 +666,11 @@ namespace octomap {
 
     double size_x, size_y, size_z;
     this->getMetricSize(size_x, size_y,size_z);
-    
+
     // assuming best case (one big array and efficient addressing)
     // we can avoid "ceil" since size already accounts for voxels
-    
-    // Note: this can be larger than the adressable memory 
+
+    // Note: this can be larger than the adressable memory
     //   - size_t may not be enough to hold it!
     return (unsigned long long)((size_x/resolution) * (size_y/resolution) * (size_z/resolution)
         * sizeof(root->getValue()));
@@ -678,7 +678,7 @@ namespace octomap {
   }
 
 
-  // non-const versions, 
+  // non-const versions,
   // change min/max/size_changed members
 
   template <class NODE,class I>
@@ -789,7 +789,7 @@ namespace octomap {
         if (y < my) my = y;
         if (z < mz) mz = z;
       }
-    } // end if size changed 
+    } // end if size changed
     else {
       mx = min_value[0];
       my = min_value[1];
@@ -817,7 +817,7 @@ namespace octomap {
         if (y > my) my = y;
         if (z > mz) mz = z;
       }
-    } 
+    }
     else {
       mx = max_value[0];
       my = max_value[1];
@@ -870,7 +870,7 @@ namespace octomap {
       steps[i] = floor(diff[i] / step_size);
       //      std::cout << "bbx " << i << " size: " << diff[i] << " " << steps[i] << " steps\n";
     }
-    
+
     point3d p = pmin;
     NODE* res;
     for (unsigned int x=0; x<steps[0]; ++x) {
@@ -907,7 +907,7 @@ namespace octomap {
 
     if (!parent->hasChildren()) // this is a leaf -> terminate
       return 1;
-    
+
     size_t sum_leafs_children = 0;
     for (unsigned int i=0; i<8; ++i) {
       if (parent->childExists(i)) {

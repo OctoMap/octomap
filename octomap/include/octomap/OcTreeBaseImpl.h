@@ -78,7 +78,7 @@ namespace octomap {
     // the actual iterator implementation is included here
     // as a member from this file
     #include <octomap/OcTreeIterator.hxx>
-    
+
     OcTreeBaseImpl(double resolution);
     virtual ~OcTreeBaseImpl();
 
@@ -116,7 +116,7 @@ namespace octomap {
      */
     inline NODE* getRoot() const { return root; }
 
-    /** 
+    /**
      *  Search node at specified depth given a 3d point (depth=0: search full tree depth).
      *  You need to check if the returned node is NULL, since it can be in unknown space.
      *  @return pointer to node if found, NULL otherwise
@@ -144,14 +144,14 @@ namespace octomap {
      */
     bool deleteNode(double x, double y, double z, unsigned int depth = 0);
 
-    /** 
+    /**
      *  Delete a node (if exists) given a 3d point. Will always
      *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
      *  Pruned nodes at level "depth" will directly be deleted as a whole.
      */
     bool deleteNode(const point3d& value, unsigned int depth = 0);
 
-    /** 
+    /**
      *  Delete a node (if exists) given an addressing key. Will always
      *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
      *  Pruned nodes at level "depth" will directly be deleted as a whole.
@@ -236,7 +236,7 @@ namespace octomap {
     * coordinates of all nodes traversed by the beam. You still need to check
     * if a node at that coordinate exists (e.g. with search()).
     * @note: use the faster computeRayKeys method if possible.
-    * 
+    *
     * @param origin start coordinate of ray
     * @param end end coordinate of ray
     * @param ray KeyRay structure that holds the keys of all nodes traversed by the ray, excluding "end"
@@ -292,12 +292,12 @@ namespace octomap {
     //
 
     /// Converts from a single coordinate into a discrete key
-    inline unsigned short int coordToKey(double coordinate) const{
+    inline unsigned int coordToKey(double coordinate) const{
       return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
     }
 
     /// Converts from a single coordinate into a discrete key at a given depth
-    unsigned short int coordToKey(double coordinate, unsigned depth) const;
+    unsigned int coordToKey(double coordinate, unsigned depth) const;
 
 
     /// Converts from a 3D coordinate into a 3D addressing key
@@ -350,7 +350,7 @@ namespace octomap {
      * @param depth Target depth level for the new key
      * @return Key for the new depth level
      */
-    unsigned short int adjustKeyAtDepth(unsigned short int key, unsigned int depth) const;
+    unsigned int adjustKeyAtDepth(unsigned int key, unsigned int depth) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
@@ -401,7 +401,7 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, unsigned int& key) const;
 
     /**
      * Converts a single coordinate into a discrete addressing key, with boundary checking.
@@ -411,15 +411,15 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, unsigned depth, unsigned int& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
-    double keyToCoord(unsigned short int key, unsigned depth) const;
+    double keyToCoord(unsigned int key, unsigned depth) const;
 
     /// converts from a discrete key at the lowest tree level into a coordinate
     /// corresponding to the key's center
-    inline double keyToCoord(unsigned short int key) const{
+    inline double keyToCoord(unsigned int key) const{
       return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
     }
 
@@ -456,7 +456,7 @@ namespace octomap {
 
     /// recursive call of expand()
     void expandRecurs(NODE* node, unsigned int depth, unsigned int max_depth);
-    
+
     size_t getNumLeafNodesRecurs(const NODE* parent) const;
 
   private:
@@ -473,7 +473,7 @@ namespace octomap {
     const unsigned int tree_max_val;
     double resolution;  ///< in meters
     double resolution_factor; ///< = 1. / resolution
-  
+
     size_t tree_size; ///< number of nodes in tree
     /// flag to denote whether the octree extent changed (for lazy min/max eval)
     bool size_changed;
