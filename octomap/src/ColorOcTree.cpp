@@ -37,56 +37,40 @@ namespace octomap {
 
 
   // node implementation  --------------------------------------
-  std::ostream& ColorOcTreeNode::writeValue (std::ostream &s) const {
-    // 1 bit for each children; 0: empty, 1: allocated
-    std::bitset<8> children;
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i)) children[i] = 1;
-      else                children[i] = 0;
-    }
-    char children_char = (char) children.to_ulong();
-    
-    // write node data
+  std::ostream& ColorOcTreeNode::writeData(std::ostream &s) const {
     s.write((const char*) &value, sizeof(value)); // occupancy
     s.write((const char*) &color, sizeof(Color)); // color
-    s.write((char*)&children_char, sizeof(char)); // child existence
-
-    // write existing children
-    for (unsigned int i=0; i<8; ++i) 
-      if (children[i] == 1) this->getChild(i)->writeValue(s);    
+    
     return s;
   }
 
-  std::istream& ColorOcTreeNode::readValue (std::istream &s) {
-    // read node data
-    char children_char;
+  std::istream& ColorOcTreeNode::readData(std::istream &s) {        
     s.read((char*) &value, sizeof(value)); // occupancy
     s.read((char*) &color, sizeof(Color)); // color
-    s.read((char*)&children_char, sizeof(char)); // child existence
-
-    // read existing children
-    std::bitset<8> children ((unsigned long long) children_char);
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1){
-        createChild(i);
-        getChild(i)->readValue(s);
-      }
-    }
+    
     return s;
   }
 
   ColorOcTreeNode::Color ColorOcTreeNode::getAverageChildColor() const {
-    int mr(0), mg(0), mb(0);
-    int c(0);
-    for (int i=0; i<8; i++) {
-      if (childExists(i) && getChild(i)->isColorSet()) {
-        mr += getChild(i)->getColor().r;
-        mg += getChild(i)->getColor().g;
-        mb += getChild(i)->getColor().b;
-        ++c;
+    int mr = 0;
+    int mg = 0;
+    int mb = 0;
+    int c = 0;
+    
+    if (children != NULL){
+      for (int i=0; i<8; i++) {
+        ColorOcTreeNode* child = static_cast<ColorOcTreeNode*>(children[i]);
+        
+        if (child != NULL && child->isColorSet()) {
+          mr += child->getColor().r;
+          mg += child->getColor().g;
+          mb += child->getColor().b;
+          ++c;
+        }
       }
     }
-    if (c) {
+    
+    if (c > 0) {
       mr /= c;
       mg /= c;
       mb /= c;
@@ -102,32 +86,6 @@ namespace octomap {
     color = getAverageChildColor();
   }
 
-  // pruning =============
-
-  bool ColorOcTreeNode::pruneNode() {
-    // checks for equal occupancy only, color ignored
-    if (!this->collapsible()) return false;
-    // set occupancy value 
-    setLogOdds(getChild(0)->getLogOdds());
-    // set color to average color
-    if (isColorSet()) color = getAverageChildColor();
-    // delete children
-    for (unsigned int i=0;i<8;i++) {
-      delete children[i];
-    }
-    delete[] children;
-    children = NULL;
-    return true;
-  }
-
-  void ColorOcTreeNode::expandNode() {
-    assert(!hasChildren());
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      children[k]->setValue(value);
-      getChild(k)->setColor(color);
-    }
-  }
 
   // tree implementation  --------------------------------------
   ColorOcTree::ColorOcTree(double resolution)
@@ -145,12 +103,33 @@ namespace octomap {
     }
     return n;
   }
+  
+  bool ColorOcTree::pruneNode(ColorOcTreeNode* node) {
+    assert(0);
+    if (!isNodeCollapsible(node)) // TODO: overload here, check occupancy only?
+      return false;
+
+    // set value to children's values (all assumed equal)
+    node->copyData(*(getNodeChild(node, 0)));
+    
+    if (node->isColorSet()) // TODO check
+      node->setColor(node->getAverageChildColor());
+
+    // delete children
+    for (unsigned int i=0;i<8;i++) {
+      delete static_cast<ColorOcTreeNode*>(node->children[i]);
+    }
+    delete[] node->children;
+    node->children = NULL;
+
+    return true;
+  }
 
   ColorOcTreeNode* ColorOcTree::averageNodeColor(const OcTreeKey& key, 
                                                  const unsigned char& r, 
                                                  const unsigned char& g, 
                                                  const unsigned char& b) {
-    ColorOcTreeNode* n = search (key);
+    ColorOcTreeNode* n = search(key);
     if (n != 0) {
       if (n->isColorSet()) {
         ColorOcTreeNode::Color prev_color = n->getColor();
@@ -194,12 +173,12 @@ namespace octomap {
 
   void ColorOcTree::updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth) {
     // only recurse and update for inner nodes:
-    if (node->hasChildren()){
+    if (nodeHasChildren(node)){
       // return early for last level:
       if (depth < this->tree_depth){
         for (unsigned int i=0; i<8; i++) {
-          if (node->childExists(i)) {
-            updateInnerOccupancyRecurs(node->getChild(i), depth+1);
+          if (nodeChildExists(node, i)) {
+            updateInnerOccupancyRecurs(getNodeChild(node, i), depth+1);
           }
         }
       }

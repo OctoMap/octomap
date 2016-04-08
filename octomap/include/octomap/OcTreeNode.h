@@ -58,16 +58,7 @@ namespace octomap {
     OcTreeNode();
     ~OcTreeNode();
 
-    bool createChild(unsigned int i);
-
-    // overloaded, so that the return type is correct:
-    inline OcTreeNode* getChild(unsigned int i) {
-      return static_cast<OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
-    }
-    inline const OcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const OcTreeNode*> (OcTreeDataNode<float>::getChild(i));
-    }
-
+    
     // -- node occupancy  ----------------------------
 
     /// \return occupancy probability of node

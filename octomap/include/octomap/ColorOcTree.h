@@ -41,9 +41,13 @@
 
 namespace octomap {
   
+  // forward declaraton for "friend"
+  class ColorOcTree;
+  
   // node definition
   class ColorOcTreeNode : public OcTreeNode {    
   public:
+    friend class ColorOcTree; // needs access to node children (inherited)
     
     class Color {
     public:
@@ -68,23 +72,11 @@ namespace octomap {
       return (rhs.value == value && rhs.color == color);
     }
     
-    // children
-    inline ColorOcTreeNode* getChild(unsigned int i) {
-      return static_cast<ColorOcTreeNode*> (OcTreeNode::getChild(i));
+    void copyData(const ColorOcTreeNode& from){
+      OcTreeNode::copyData(from);
+      this->color =  from.getColor();
     }
-    inline const ColorOcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const ColorOcTreeNode*> (OcTreeNode::getChild(i));
-    }
-
-    bool createChild(unsigned int i) {
-      if (children == NULL) allocChildren();
-      children[i] = new ColorOcTreeNode();
-      return true;
-    }
-
-    bool pruneNode();
-    void expandNode();
-    
+        
     inline Color getColor() const { return color; }
     inline void  setColor(Color c) {this->color = c; }
     inline void  setColor(unsigned char r, unsigned char g, unsigned char b) {
@@ -104,8 +96,8 @@ namespace octomap {
     ColorOcTreeNode::Color getAverageChildColor() const;
   
     // file I/O
-    std::istream& readValue (std::istream &s);
-    std::ostream& writeValue(std::ostream &s) const;
+    std::istream& readData(std::istream &s);
+    std::ostream& writeData(std::ostream &s) const;
     
   protected:
     Color color;
@@ -124,6 +116,8 @@ namespace octomap {
     ColorOcTree* create() const {return new ColorOcTree(resolution); }
 
     std::string getTreeType() const {return "ColorOcTree";}
+    
+    bool pruneNode(ColorOcTreeNode* node);
    
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 

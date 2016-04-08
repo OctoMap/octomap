@@ -373,18 +373,18 @@ namespace octomap {
     // follow down to last level
     if (depth < this->tree_depth) {
       unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
-      if (!node->childExists(pos)) {
+      if (!this->nodeChildExists(node, pos)) {
         // child does not exist, but maybe it's a pruned node?
-        if ((!node->hasChildren()) && !node_just_created ) {
+        if (!this->nodeHasChildren(node) && !node_just_created ) {
           // current node does not have children AND it is not a new node 
           // -> expand pruned node
-          node->expandNode();
+          this->expandNode(node);
           this->tree_size+=8;
           this->size_changed = true;
         }
         else {
           // not a pruned node, create requested child
-          node->createChild(pos);
+          this->createNodeChild(node, pos);
           this->tree_size++;
           this->size_changed = true;
           created_node = true;
@@ -392,12 +392,12 @@ namespace octomap {
       }
 
       if (lazy_eval)
-        return updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
+        return updateNodeRecurs(this->getNodeChild(node, pos), created_node, key, depth+1, log_odds_update, lazy_eval);
       else {
-        NODE* retval = updateNodeRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_update, lazy_eval);
+        NODE* retval = updateNodeRecurs(this->getNodeChild(node, pos), created_node, key, depth+1, log_odds_update, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode()){
+        if (this->pruneNode(node)){
           this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;
@@ -442,18 +442,18 @@ namespace octomap {
     // follow down to last level
     if (depth < this->tree_depth) {
       unsigned int pos = computeChildIdx(key, this->tree_depth -1 - depth);
-      if (!node->childExists(pos)) {
+      if (!this->nodeChildExists(node, pos)) {
         // child does not exist, but maybe it's a pruned node?
-        if ((!node->hasChildren()) && !node_just_created ) {
+        if (!this->nodeHasChildren(node) && !node_just_created ) {
           // current node does not have children AND it is not a new node
           // -> expand pruned node
-          node->expandNode();
+          this->expandNode(node);
           this->tree_size+=8;
           this->size_changed = true;
         }
         else {
           // not a pruned node, create requested child
-          node->createChild(pos);
+          this->createNodeChild(node, pos);
           this->tree_size++;
           this->size_changed = true;
           created_node = true;
@@ -461,12 +461,12 @@ namespace octomap {
       }
 
       if (lazy_eval)
-        return setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+        return setNodeValueRecurs(this->getNodeChild(node, pos), created_node, key, depth+1, log_odds_value, lazy_eval);
       else {
-        NODE* retval = setNodeValueRecurs(node->getChild(pos), created_node, key, depth+1, log_odds_value, lazy_eval);
+        NODE* retval = setNodeValueRecurs(this->getNodeChild(node, pos), created_node, key, depth+1, log_odds_value, lazy_eval);
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
-        if (node->pruneNode()){
+        if (this->pruneNode(node)){
           this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;
@@ -511,12 +511,12 @@ namespace octomap {
     assert(node);
 
     // only recurse and update for inner nodes:
-    if (node->hasChildren()){
+    if (this->nodeHasChildren(node)){
       // return early for last level:
       if (depth < this->tree_depth){
         for (unsigned int i=0; i<8; i++) {
-          if (node->childExists(i)) {
-            updateInnerOccupancyRecurs(node->getChild(i), depth+1);
+          if (this->nodeChildExists(node, i)) {
+            updateInnerOccupancyRecurs(this->getNodeChild(node, i), depth+1);
           }
         }
       }
@@ -546,8 +546,8 @@ namespace octomap {
 
     if (depth < max_depth) {
       for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
-          toMaxLikelihoodRecurs(node->getChild(i), depth+1, max_depth);
+        if (this->nodeChildExists(node, i)) {
+          toMaxLikelihoodRecurs(this->getNodeChild(node, i), depth+1, max_depth);
         }
       }
     }
@@ -961,7 +961,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  std::istream& OccupancyOcTreeBase<NODE>::readBinaryNode(std::istream &s, NODE* node) const {
+  std::istream& OccupancyOcTreeBase<NODE>::readBinaryNode(std::istream &s, NODE* node){
 
     assert(node);
 
@@ -984,43 +984,43 @@ namespace octomap {
     for (unsigned int i=0; i<4; i++) {
       if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 0)) {
         // child is free leaf
-        node->createChild(i);
-        node->getChild(i)->setLogOdds(this->clamping_thres_min);
+        this->createNodeChild(node, i);
+        this->getNodeChild(node, i)->setLogOdds(this->clamping_thres_min);
       }
       else if ((child1to4[i*2] == 0) && (child1to4[i*2+1] == 1)) {
         // child is occupied leaf
-        node->createChild(i);
-        node->getChild(i)->setLogOdds(this->clamping_thres_max);
+        this->createNodeChild(node, i);
+        this->getNodeChild(node, i)->setLogOdds(this->clamping_thres_max);
       }
       else if ((child1to4[i*2] == 1) && (child1to4[i*2+1] == 1)) {
         // child has children
-        node->createChild(i);
-        node->getChild(i)->setLogOdds(-200.); // child is unkown, we leave it uninitialized
+        this->createNodeChild(node, i);
+        this->getNodeChild(node, i)->setLogOdds(-200.); // child is unkown, we leave it uninitialized
       }
     }
     for (unsigned int i=0; i<4; i++) {
       if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 0)) {
         // child is free leaf
-        node->createChild(i+4);
-        node->getChild(i+4)->setLogOdds(this->clamping_thres_min);
+        this->createNodeChild(node, i+4);
+        this->getNodeChild(node, i+4)->setLogOdds(this->clamping_thres_min);
       }
       else if ((child5to8[i*2] == 0) && (child5to8[i*2+1] == 1)) {
         // child is occupied leaf
-        node->createChild(i+4);
-        node->getChild(i+4)->setLogOdds(this->clamping_thres_max);
+        this->createNodeChild(node, i+4);
+        this->getNodeChild(node, i+4)->setLogOdds(this->clamping_thres_max);
       }
       else if ((child5to8[i*2] == 1) && (child5to8[i*2+1] == 1)) {
         // child has children
-        node->createChild(i+4);
-        node->getChild(i+4)->setLogOdds(-200.); // set occupancy when all children have been read
+        this->createNodeChild(node, i+4);
+        this->getNodeChild(node, i+4)->setLogOdds(-200.); // set occupancy when all children have been read
       }
       // child is unkown, we leave it uninitialized
     }
 
     // read children's children and set the label
     for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        NODE* child = node->getChild(i);
+      if (this->nodeChildExists(node, i)) {
+        NODE* child = this->getNodeChild(node, i);
         if (fabs(child->getLogOdds() + 200.)<1e-3) {
           readBinaryNode(s, child);
           child->setLogOdds(child->getMaxChildLogOdds());
@@ -1050,9 +1050,9 @@ namespace octomap {
     //          can be one logic expression per bit
 
     for (unsigned int i=0; i<4; i++) {
-      if (node->childExists(i)) {
-        const NODE* child = node->getChild(i);
-        if      (child->hasChildren())  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
+      if (this->nodeChildExists(node, i)) {
+        const NODE* child = this->getNodeChild(node, i);
+        if      (this->nodeHasChildren(child))  { child1to4[i*2] = 1; child1to4[i*2+1] = 1; }
         else if (this->isNodeOccupied(child)) { child1to4[i*2] = 0; child1to4[i*2+1] = 1; }
         else                            { child1to4[i*2] = 1; child1to4[i*2+1] = 0; }
       }
@@ -1062,9 +1062,9 @@ namespace octomap {
     }
 
     for (unsigned int i=0; i<4; i++) {
-      if (node->childExists(i+4)) {
-        const NODE* child = node->getChild(i+4);
-        if      (child->hasChildren())  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
+      if (this->nodeChildExists(node, i+4)) {
+        const NODE* child = this->getNodeChild(node, i+4);
+        if      (this->nodeHasChildren(child))  { child5to8[i*2] = 1; child5to8[i*2+1] = 1; }
         else if (this->isNodeOccupied(child)) { child5to8[i*2] = 0; child5to8[i*2+1] = 1; }
         else                            { child5to8[i*2] = 1; child5to8[i*2+1] = 0; }
       }
@@ -1084,9 +1084,9 @@ namespace octomap {
 
     // write children's children
     for (unsigned int i=0; i<8; i++) {
-      if (node->childExists(i)) {
-        const NODE* child = node->getChild(i);
-        if (child->hasChildren()) {
+      if (this->nodeChildExists(node, i)) {
+        const NODE* child = this->getNodeChild(node, i);
+        if (this->nodeHasChildren(child)) {
           writeBinaryNode(s, child);
         }
       }

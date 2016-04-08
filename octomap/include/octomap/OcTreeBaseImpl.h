@@ -39,7 +39,7 @@
 #include <limits>
 #include <iterator>
 #include <stack>
-
+#include <bitset>
 
 #include "octomap_types.h"
 #include "OcTreeKey.h"
@@ -47,6 +47,9 @@
 
 
 namespace octomap {
+  
+  // forward declaration for NODE children array
+  class AbstractOcTreeNode;
 
 
   /**
@@ -108,6 +111,57 @@ namespace octomap {
     inline unsigned int getTreeDepth () const { return tree_depth; }
 
     inline double getNodeSize(unsigned depth) const {assert(depth <= tree_depth); return sizeLookupTable[depth];}
+    
+    
+    // -- Tree structure operations formerly contained in the nodes ---
+   
+    /// Creates (allocates) the i-th child of the node. @return ptr to newly create NODE
+    NODE* createNodeChild(NODE* node, unsigned int childIdx);
+    
+    /// Deletes the i-th child of the node
+    void deleteNodeChild(NODE* node, unsigned int childIdx);
+    
+    /// @return ptr to child number childIdx of node
+    NODE* getNodeChild(NODE* node, unsigned int childIdx) const;
+    
+    /// @return const ptr to child number childIdx of node
+    const NODE* getNodeChild(const NODE* node, unsigned int childIdx) const;
+    
+    /// A node is collapsible if all children exist, don't have children of their own
+    /// and have the same occupancy value
+    bool isNodeCollapsible(const NODE* node) const;
+    
+    /** 
+     * Safe test if node has a child at index childIdx.
+     * First tests if there are any children. Replaces node->childExists(...)
+     * \return true if the child at childIdx exists
+     */
+    bool nodeChildExists(const NODE* node, unsigned int childIdx) const;
+    
+    /** 
+     * Safe test if node has any children. Replaces node->hasChildren(...)
+     * \return true if node has at least one child
+     */
+    bool nodeHasChildren(const NODE* node) const;
+    
+    /**
+     * Expands a node (reverse of pruning): All children are created and
+     * their occupancy probability is set to the node's value.
+     *
+     * You need to verify that this is indeed a pruned node (i.e. not a
+     * leaf at the lowest level)
+     *
+     */
+    void expandNode(NODE* node);
+    
+    /**
+     * Prunes a node when it is collapsible
+     * @return true if pruning was successful
+     */
+    bool pruneNode(NODE* node);
+    
+    
+    // --------
 
     /**
      * \return Pointer to the root node of the tree. This pointer
@@ -447,6 +501,15 @@ namespace octomap {
     void calcMinMax();
 
     void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
+    
+    /// recursive call of readData()
+    std::istream& readNodesRecurs(NODE*, std::istream &s);
+    
+    /// recursive call of writeData()
+    std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
+    
+    /// recursive delete of node and all children (deallocates memory)
+    void deleteNodeRecurs(NODE* node);
 
     /// recursive call of deleteNode()
     bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);
@@ -464,7 +527,8 @@ namespace octomap {
     /// (const-parameters can't be changed) -  use the copy constructor instead.
     OcTreeBaseImpl<NODE,INTERFACE>& operator=(const OcTreeBaseImpl<NODE,INTERFACE>&);
 
-  protected:
+  protected:  
+    void allocNodeChildren(NODE* node);
 
     NODE* root; ///< Pointer to the root NODE, NULL for empty tree
 

@@ -444,7 +444,7 @@ namespace octomap {
      * This will set the log_odds_occupancy value of
      * all leaves to either free or occupied.
      */
-    std::istream& readBinaryNode(std::istream &s, NODE* node) const;
+    std::istream& readBinaryNode(std::istream &s, NODE* node);
 
     /**
      * Write node to binary stream (max-likelihood value),
