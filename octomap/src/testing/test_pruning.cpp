@@ -171,8 +171,72 @@ int main(int argc, char** argv) {
     }
     EXPECT_EQ(tree.calcNumNodes(), tree.size());
     EXPECT_EQ(67, tree.size());
+    
+    // test deletion / pruning of single nodes
+    {
+      std::cout << "\nCreating / deleting nodes\n===============================\n";
+      size_t initialSize = tree.size();
+      EXPECT_EQ(initialSize, tree.calcNumNodes());
+      EXPECT_EQ(initialSize, 67);
+            
+      point3d newCoord(-2.0, -2.0, -2.0);
+      OcTreeNode* newNode = tree.updateNode(newCoord, true);
+      EXPECT_TRUE(newNode != NULL);
+      
+      size_t insertedSize = tree.size();
+      std::cout << "Size after one insertion: " << insertedSize << std::endl;
+      EXPECT_EQ(insertedSize, tree.calcNumNodes());
+      EXPECT_EQ(insertedSize, 83);
+      
+      // find parent of newly inserted node:
+      OcTreeNode* parentNode = tree.search(newCoord, tree.getTreeDepth() -1);
+      EXPECT_TRUE(parentNode);
+      EXPECT_TRUE(tree.nodeHasChildren(parentNode));
+      
+      // only one child exists:
+      for (size_t i = 0; i < 7; ++i){
+        EXPECT_FALSE(tree.nodeChildExists(parentNode, i));
+      }
+      EXPECT_TRUE(tree.nodeChildExists(parentNode, 7));
+      
+      // create another new node manually:
+      OcTreeNode* newNodeCreated = tree.createNodeChild(parentNode, 0);
+      EXPECT_TRUE(newNodeCreated != NULL);
+      EXPECT_TRUE(tree.nodeChildExists(parentNode, 0));
+      const float value = 0.123f;
+      newNodeCreated->setValue(value);
+      tree.write("pruning_test_edited.ot");
+      
+      // currently fails!
+      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize+1);
+      tree.prune();
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize+1);
+      
+      tree.deleteNodeChild(parentNode, 0);
+      tree.deleteNodeChild(parentNode, 7);
+      
+      // currently fails!
+      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);
+      
+      tree.prune();
+      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);
+                
+      tree.expandNode(parentNode);
+      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize+7);
+      
+      
+      EXPECT_TRUE(tree.pruneNode(parentNode));
+      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);    
+      
+      
+    }
 
-    //tree.write("pruning_test_out.ot");
+    tree.write("pruning_test_out.ot");
     std::cerr << "Test successful.\n";
     return 0;
 
