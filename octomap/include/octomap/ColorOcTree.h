@@ -117,8 +117,16 @@ namespace octomap {
 
     std::string getTreeType() const {return "ColorOcTree";}
     
-    bool pruneNode(ColorOcTreeNode* node);
-   
+     /**
+     * Prunes a node when it is collapsible. This overloaded
+     * version only considers the node occupancy for pruning,
+     * different colors of child nodes are ignored.
+     * @return true if pruning was successful
+     */
+    virtual bool pruneNode(ColorOcTreeNode* node);
+    
+    virtual bool isNodeCollapsible(const ColorOcTreeNode* node) const;
+       
     // set node color at given key or coordinate. Replaces previous color.
     ColorOcTreeNode* setNodeColor(const OcTreeKey& key, const unsigned char& r, 
                                  const unsigned char& g, const unsigned char& b);

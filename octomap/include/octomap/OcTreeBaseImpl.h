@@ -129,7 +129,7 @@ namespace octomap {
     
     /// A node is collapsible if all children exist, don't have children of their own
     /// and have the same occupancy value
-    bool isNodeCollapsible(const NODE* node) const;
+    virtual bool isNodeCollapsible(const NODE* node) const;
     
     /** 
      * Safe test if node has a child at index childIdx.
@@ -152,13 +152,13 @@ namespace octomap {
      * leaf at the lowest level)
      *
      */
-    void expandNode(NODE* node);
+    virtual void expandNode(NODE* node);
     
     /**
      * Prunes a node when it is collapsible
      * @return true if pruning was successful
      */
-    bool pruneNode(NODE* node);
+    virtual bool pruneNode(NODE* node);
     
     
     // --------

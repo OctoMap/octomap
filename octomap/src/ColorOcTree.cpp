@@ -105,8 +105,7 @@ namespace octomap {
   }
   
   bool ColorOcTree::pruneNode(ColorOcTreeNode* node) {
-    assert(0);
-    if (!isNodeCollapsible(node)) // TODO: overload here, check occupancy only?
+    if (!isNodeCollapsible(node)) 
       return false;
 
     // set value to children's values (all assumed equal)
@@ -122,6 +121,25 @@ namespace octomap {
     delete[] node->children;
     node->children = NULL;
 
+    return true;
+  }
+  
+  bool ColorOcTree::isNodeCollapsible(const ColorOcTreeNode* node) const{
+    // all children must exist, must not have children of
+    // their own and have the same occupancy probability
+    if (!nodeChildExists(node, 0))
+      return false;
+    
+    const ColorOcTreeNode* firstChild = getNodeChild(node, 0);
+    if (nodeHasChildren(firstChild))
+      return false;
+
+    for (unsigned int i = 1; i<8; i++) {
+      // compare nodes only using their occupancy, ignoring color for pruning
+      if (!nodeChildExists(node, i) || nodeHasChildren(getNodeChild(node, i)) || !(getNodeChild(node, i)->getValue() == firstChild->getValue()))
+        return false;
+    }
+    
     return true;
   }
 
