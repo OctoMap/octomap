@@ -207,31 +207,29 @@ int main(int argc, char** argv) {
       newNodeCreated->setValue(value);
       tree.write("pruning_test_edited.ot");
       
-      // currently fails!
-      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
-      EXPECT_EQ(tree.calcNumNodes(), insertedSize+1);
+      EXPECT_EQ(tree.size(), tree.calcNumNodes());
+      EXPECT_EQ(tree.size(), insertedSize+1);
       tree.prune();
       EXPECT_EQ(tree.calcNumNodes(), insertedSize+1);
       
       tree.deleteNodeChild(parentNode, 0);
       tree.deleteNodeChild(parentNode, 7);
       
-      // currently fails!
-      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
-      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);
+      EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.size(), insertedSize-1);
       
       tree.prune();
-      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
-      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);
+      EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.size(), insertedSize-1);
                 
       tree.expandNode(parentNode);
-      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
-      EXPECT_EQ(tree.calcNumNodes(), insertedSize+7);
+      EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.size(), insertedSize+7);
       
       
       EXPECT_TRUE(tree.pruneNode(parentNode));
-      //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
-      EXPECT_EQ(tree.calcNumNodes(), insertedSize-1);    
+      EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+      EXPECT_EQ(tree.size(), insertedSize-1);    
       
       
     }

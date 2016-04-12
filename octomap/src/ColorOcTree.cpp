@@ -116,7 +116,7 @@ namespace octomap {
 
     // delete children
     for (unsigned int i=0;i<8;i++) {
-      delete static_cast<ColorOcTreeNode*>(node->children[i]);
+      deleteNodeChild(node, i);
     }
     delete[] node->children;
     node->children = NULL;

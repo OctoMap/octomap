@@ -379,14 +379,10 @@ namespace octomap {
           // current node does not have children AND it is not a new node 
           // -> expand pruned node
           this->expandNode(node);
-          this->tree_size+=8;
-          this->size_changed = true;
         }
         else {
           // not a pruned node, create requested child
           this->createNodeChild(node, pos);
-          this->tree_size++;
-          this->size_changed = true;
           created_node = true;
         }
       }
@@ -398,7 +394,6 @@ namespace octomap {
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
         if (this->pruneNode(node)){
-          this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;
         } else{
@@ -448,14 +443,10 @@ namespace octomap {
           // current node does not have children AND it is not a new node
           // -> expand pruned node
           this->expandNode(node);
-          this->tree_size+=8;
-          this->size_changed = true;
         }
         else {
           // not a pruned node, create requested child
           this->createNodeChild(node, pos);
-          this->tree_size++;
-          this->size_changed = true;
           created_node = true;
         }
       }
@@ -467,7 +458,6 @@ namespace octomap {
         // prune node if possible, otherwise set own probability
         // note: combining both did not lead to a speedup!
         if (this->pruneNode(node)){
-          this->tree_size -= 8;
           // return pointer to current parent (pruned), the just updated node no longer exists
           retval = node;
         } else{

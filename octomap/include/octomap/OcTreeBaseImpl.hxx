@@ -178,6 +178,10 @@ namespace octomap {
     assert (node->children[childIdx] == NULL);
     NODE* newNode = new NODE();
     node->children[childIdx] = static_cast<AbstractOcTreeNode*>(newNode);
+    
+    tree_size++;
+    size_changed = true;
+    
     return newNode;
   }
   
@@ -187,6 +191,9 @@ namespace octomap {
     assert(node->children[childIdx] != NULL);
     delete static_cast<NODE*>(node->children[childIdx]); // TODO delete check if empty
     node->children[childIdx] = NULL;
+    
+    tree_size--;
+    size_changed = true;
   }
   
   template <class NODE,class I>  
@@ -684,8 +691,7 @@ namespace octomap {
         // current node does not have children AND it's not the root node
         // -> expand pruned node
         expandNode(node);
-        this->tree_size+=8;
-        this->size_changed = true;
+        // tree_size and size_changed adjusted in createNodeChild(...)
       } else { // no branch here, node does not exist
         return false;
       }
@@ -697,8 +703,7 @@ namespace octomap {
       // TODO: lazy eval?
       // TODO delete check depth, what happens to inner nodes with children?
       this->deleteNodeChild(node, pos);
-      this->tree_size-=1;
-      this->size_changed = true;
+
       if (!nodeHasChildren(node))
         return true;
       else{
@@ -727,8 +732,6 @@ namespace octomap {
       // max level reached
       if (pruneNode(node)) {
         num_pruned++;
-        tree_size -= 8;
-        size_changed = true;
       }
     }
   }
@@ -745,8 +748,6 @@ namespace octomap {
     // current node has no children => can be expanded
     if (!nodeHasChildren(node)){
       expandNode(node);
-      tree_size +=8;
-      size_changed = true;
     }
     // recursively expand children
     for (unsigned int i=0; i<8; i++) {

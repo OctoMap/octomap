@@ -77,7 +77,6 @@ namespace octomap {
       // requested node does not exist
       if (!nodeChildExists(curNode, pos)) {
         createNodeChild(curNode, pos);
-        tree_size++;
       }
       // descent tree
       curNode = getNodeChild(curNode, pos);
