@@ -46,6 +46,14 @@ int main(int argc, char** argv) {
   // set inner node colors
   tree.updateInnerOccupancy();
 
+  // should already be pruned
+  EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+  const size_t initialSize = tree.size();
+  EXPECT_EQ(initialSize, 1034);
+  tree.prune();
+  EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+  EXPECT_EQ(initialSize, tree.size());
+  
   cout << endl;
 
   std::cout << "\nWriting to / from file\n===============================\n";
@@ -113,7 +121,7 @@ int main(int argc, char** argv) {
   
   {
     std::cout << "\nPruning / expansion\n===============================\n";
-    size_t initialSize = tree.size();
+    EXPECT_EQ(initialSize, tree.size());
     EXPECT_EQ(initialSize, tree.calcNumNodes());
     std::cout << "Initial size: " << tree.size() << std::endl;
     
@@ -146,8 +154,9 @@ int main(int argc, char** argv) {
     newNode->setColor(255,0,0);
     EXPECT_TRUE(newNode != NULL);
     
-    size_t insertedSize = tree.size();
+    const size_t insertedSize = tree.size();
     std::cout << "Size after one insertion: " << insertedSize << std::endl;
+    EXPECT_EQ(insertedSize, initialSize+6);
     EXPECT_EQ(insertedSize, tree.calcNumNodes());
     
     // find parent of newly inserted node:
@@ -162,18 +171,20 @@ int main(int argc, char** argv) {
     }
     
     tree.deleteNodeChild(parentNode, 0);
-    std::cout << "Size after deleting one child: " << tree.calcNumNodes() << std::endl;
-    // currently fails!
-    //EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+    EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+    EXPECT_EQ(tree.size(), insertedSize - 1);
     
     tree.prune();
-    std::cout << "Size after prune: " << tree.calcNumNodes() << std::endl;
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize - 1);
     
-    tree.expandNode(parentNode);   
-    std::cout << "Size after expanding one node: " << tree.calcNumNodes() << std::endl;
+    tree.expandNode(parentNode);
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize + 7);
     
     EXPECT_TRUE(tree.pruneNode(parentNode));
-    std::cout << "Size after pruning one node: " << tree.calcNumNodes() << std::endl;
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize - 1);
     
     EXPECT_TRUE(tree.write("simple_color_tree_ed.ot"));
     
