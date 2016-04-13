@@ -36,6 +36,7 @@
 #include <math.h>
 #include <fstream>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include <octomap/OcTreeNode.h>
 
@@ -56,7 +57,7 @@ namespace octomap {
 
   double OcTreeNode::getMeanChildLogOdds() const{
     double mean = 0;
-    char c = 0;
+    uint8_t c = 0;
     if (children !=NULL){
       for (unsigned int i=0; i<8; i++) {
         if (children[i] != NULL) {
@@ -66,7 +67,7 @@ namespace octomap {
       }
     }
     
-    if (c)
+    if (c > 0)
       mean /= (double) c;
 
     return log(mean/(1-mean));

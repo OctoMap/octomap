@@ -184,11 +184,17 @@ namespace octomap {
   }
   
   /// generate child index (between 0 and 7) from key at given tree depth
-  inline unsigned char computeChildIdx(const OcTreeKey& key, int depth){
-    unsigned char pos = 0;
-    if (key.k[0] & (1 << depth)) pos += 1;
-    if (key.k[1] & (1 << depth)) pos += 2;
-    if (key.k[2] & (1 << depth)) pos += 4;
+  inline uint8_t computeChildIdx(const OcTreeKey& key, int depth){
+    uint8_t pos = 0;
+    if (key.k[0] & (1 << depth)) 
+      pos += 1;
+    
+    if (key.k[1] & (1 << depth)) 
+      pos += 2;
+    
+    if (key.k[2] & (1 << depth)) 
+      pos += 4;
+    
     return pos;
   }
 

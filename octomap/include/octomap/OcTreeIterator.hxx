@@ -52,7 +52,7 @@
        * @param tree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
-      iterator_base(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, unsigned char depth=0)
+      iterator_base(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, uint8_t depth=0)
         : tree((tree && tree->root) ? tree : NULL), maxDepth(depth)
       {
         if (tree && maxDepth == 0)
@@ -150,13 +150,13 @@
       struct StackElement{
         NodeType* node;
         OcTreeKey key;
-        unsigned char depth;
+        uint8_t depth;
       };
 
 
     protected:
       OcTreeBaseImpl<NodeType,INTERFACE> const* tree; ///< Octree this iterator is working on
-      unsigned char maxDepth; ///< Maximum depth for depth-limited queries
+      uint8_t maxDepth; ///< Maximum depth for depth-limited queries
 
       /// Internal recursion stack. Apparently a stack of vector works fastest here.
       std::stack<StackElement,std::vector<StackElement> > stack;
@@ -213,7 +213,7 @@
        * @param tree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
-      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {};
+      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, uint8_t depth=0) : iterator_base(tree, depth) {};
 
       /// postfix increment operator of iterator (it++)
       tree_iterator operator++(int){
@@ -270,7 +270,7 @@
           * @param tree OcTreeBaseImpl on which the iterator is used on
           * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
           */
-          leaf_iterator(OcTreeBaseImpl<NodeType, INTERFACE> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {
+          leaf_iterator(OcTreeBaseImpl<NodeType, INTERFACE> const* tree, uint8_t depth=0) : iterator_base(tree, depth) {
             // tree could be empty (= no stack)
             if (this->stack.size() > 0){
               // skip forward to next valid leaf node:
@@ -350,7 +350,7 @@
       * @param max Maximum point3d of the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
       */
-      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const point3d& min, const point3d& max, unsigned char depth=0)
+      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const point3d& min, const point3d& max, uint8_t depth=0)
         : iterator_base(tree, depth)
       {
         if (this->stack.size() > 0){
@@ -378,7 +378,7 @@
       * @param max Maximum OcTreeKey to be included in the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
       */
-      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const OcTreeKey& min, const OcTreeKey& max, unsigned char depth=0)
+      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const OcTreeKey& min, const OcTreeKey& max, uint8_t depth=0)
         : iterator_base(tree, depth), minKey(min), maxKey(max)
       {
         // tree could be empty (= no stack)
