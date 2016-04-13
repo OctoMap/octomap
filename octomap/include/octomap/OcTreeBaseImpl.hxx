@@ -294,7 +294,7 @@ namespace octomap {
   
 
   template <class NODE,class I>
-  inline unsigned short int OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
+  inline key_type OcTreeBaseImpl<NODE,I>::coordToKey(double coordinate, unsigned depth) const{
     assert (depth <= tree_depth);
     int keyval = ((int) floor(resolution_factor * coordinate));
 
@@ -307,7 +307,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned short int& keyval) const {
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, key_type& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -322,7 +322,7 @@ namespace octomap {
 
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& keyval) const {
+  bool OcTreeBaseImpl<NODE,I>::coordToKeyChecked(double coordinate, unsigned depth, key_type& keyval) const {
 
     // scale to resolution and shift center for tree_max_val
     int scaled_coord =  ((int) floor(resolution_factor * coordinate)) + tree_max_val;
@@ -381,7 +381,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  unsigned short int OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(unsigned short int key, unsigned int depth) const{
+  key_type OcTreeBaseImpl<NODE,I>::adjustKeyAtDepth(key_type key, unsigned int depth) const{
     unsigned int diff = tree_depth - depth;
 
     if(diff == 0)
@@ -391,7 +391,7 @@ namespace octomap {
   }
 
   template <class NODE,class I>
-  double OcTreeBaseImpl<NODE,I>::keyToCoord(unsigned short int key, unsigned depth) const{
+  double OcTreeBaseImpl<NODE,I>::keyToCoord(key_type key, unsigned depth) const{
     assert(depth <= tree_depth);
 
     // root is centered on 0 = 0.0

@@ -346,12 +346,12 @@ namespace octomap {
     //
 
     /// Converts from a single coordinate into a discrete key
-    inline unsigned short int coordToKey(double coordinate) const{
+    inline key_type coordToKey(double coordinate) const{
       return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
     }
 
     /// Converts from a single coordinate into a discrete key at a given depth
-    unsigned short int coordToKey(double coordinate, unsigned depth) const;
+    key_type coordToKey(double coordinate, unsigned depth) const;
 
 
     /// Converts from a 3D coordinate into a 3D addressing key
@@ -404,7 +404,7 @@ namespace octomap {
      * @param depth Target depth level for the new key
      * @return Key for the new depth level
      */
-    unsigned short int adjustKeyAtDepth(unsigned short int key, unsigned int depth) const;
+    key_type adjustKeyAtDepth(key_type key, unsigned int depth) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
@@ -455,7 +455,7 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, key_type& key) const;
 
     /**
      * Converts a single coordinate into a discrete addressing key, with boundary checking.
@@ -465,15 +465,15 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, unsigned depth, key_type& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
-    double keyToCoord(unsigned short int key, unsigned depth) const;
+    double keyToCoord(key_type key, unsigned depth) const;
 
     /// converts from a discrete key at the lowest tree level into a coordinate
     /// corresponding to the key's center
-    inline double keyToCoord(unsigned short int key) const{
+    inline double keyToCoord(key_type key) const{
       return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
     }
 

@@ -40,6 +40,7 @@
 #include <ciso646>
 
 #include <assert.h>
+#include <inttypes.h>
 
 /* Libc++ does not implement the TR1 namespace, all c++11 related functionality
  * is instead implemented in the std namespace.
@@ -60,6 +61,8 @@
 
 namespace octomap {
 
+  typedef uint16_t key_type;
+  
   /**
    * OcTreeKey is a container class for internal key addressing. The keys count the
    * number of cells (voxels) from the origin as discrete address of a voxel.
@@ -69,7 +72,7 @@ namespace octomap {
     
   public:  
     OcTreeKey () {}
-    OcTreeKey (unsigned short int a, unsigned short int b, unsigned short int c)
+    OcTreeKey (key_type a, key_type b, key_type c)
       { k[0] = a; k[1] = b; k[2] = c; }
     OcTreeKey(const OcTreeKey& other){
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
@@ -84,14 +87,14 @@ namespace octomap {
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
       return *this;
     }
-    const unsigned short int& operator[] (unsigned int i) const { 
+    const key_type& operator[] (unsigned int i) const { 
       return k[i];
     }
-    unsigned short int& operator[] (unsigned int i) { 
+    key_type& operator[] (unsigned int i) { 
       return k[i];
     }
 
-    unsigned short int k[3];
+    key_type k[3];
 
     /// Provides a hash function on Keys
     struct KeyHash{
@@ -167,7 +170,7 @@ namespace octomap {
    * @param[in] parent_key current (parent) key
    * @param[out] child_key  computed child key
    */
-  inline void computeChildKey (unsigned int pos, unsigned short int center_offset_key,
+  inline void computeChildKey (unsigned int pos, key_type center_offset_key,
                                           const OcTreeKey& parent_key, OcTreeKey& child_key) {
     // x-axis
     if (pos & 1) child_key[0] = parent_key[0] + center_offset_key;
@@ -196,11 +199,11 @@ namespace octomap {
    * @param key input indexing key (at lowest resolution / level)
    * @return key corresponding to the input key at the given level
    */
-  inline OcTreeKey computeIndexKey(unsigned short int level, const OcTreeKey& key) {
+  inline OcTreeKey computeIndexKey(key_type level, const OcTreeKey& key) {
     if (level == 0)
       return key;
     else {
-      unsigned short int mask = 65535 << level;
+      key_type mask = 65535 << level;
       OcTreeKey result = key;
       result[0] &= mask;
       result[1] &= mask;
