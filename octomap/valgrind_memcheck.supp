@@ -15,14 +15,13 @@
    fun:_ZNSsC1EPKcRKSaIcE
    fun:_ZNK7octomap*getTreeTypeEv
    fun:_ZN7octomap14AbstractOcTree16registerTreeTypeEPS0_
-   fun:_ZN7octomap*StaticMemberInitializerC1Ev
-   fun:_Z41__static_initialization_and_destruction_0ii
-   fun:_GLOBAL__sub_I_*.cpp
+   ...
    fun:call_init.part.0
    fun:call_init
    fun:_dl_init
    obj:/lib/x86_64-linux-gnu/ld-2.19.so
 }
+
 {
    static_member_init_class_id_mapping
    Memcheck:Leak
@@ -31,6 +30,33 @@
    ...
    fun:_ZN7octomap*StaticMemberInitializerC1Ev
    fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+}
+
+
+{
+   static_member_init_class_id_mapping_opt
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN7octomap14AbstractOcTree14classIDMappingEv
+   fun:_ZN7octomap14AbstractOcTree16registerTreeTypeEPS0_
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+}
+
+{
+   global_sub_opt
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
    fun:_GLOBAL__sub_I_*.cpp
    fun:call_init.part.0
    fun:call_init
@@ -54,6 +80,19 @@
    fun:_ZN7octomap*StaticMemberInitializerC1Ev
    fun:_Z41__static_initialization_and_destruction_0ii
    fun:_GLOBAL__sub_I_*.cpp
+}
+
+{
+   static_member_init_hash_tree_opt
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsPN7octomap14AbstractOcTreeEESt10_Select1stIS5_ESt4lessISsESaIS5_EE17_M_insert_unique_ESt23_Rb_tree_const_iteratorIS5_ERKS5_
+   fun:_ZN7octomap14AbstractOcTree16registerTreeTypeEPS0_
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
 }
 
 {
@@ -93,6 +132,22 @@
 }
 
 {
+   static_member_init_keyray_opt
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZNSt6vectorIN7octomap6KeyRayESaIS1_EE14_M_fill_insertEN9__gnu_cxx17__normal_iteratorIPS1_S3_EEmRKS1_
+   ...
+   fun:_ZN7octomap*C1Ed
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+}
+
+
+{
    static_member_init_keyray2
    Memcheck:Leak
    match-leak-kinds: reachable
@@ -108,6 +163,21 @@
    fun:_ZN7octomap*INS_*EEC1Ed
    fun:_ZN7octomap*C1Ed
    fun:_ZN7octomap*StaticMemberInitializerC1Ev
+}
+
+{
+   static_member_init_keyray2_opt
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZNSt6vectorIdSaIdEE14_M_fill_insertEN9__gnu_cxx17__normal_iteratorIPdS1_EEmRKd
+   fun:_ZN7octomap*INS_*EEC1Ed
+   fun:_ZN7octomap*C1Ed
+   fun:_GLOBAL__sub_I_*.cpp
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
 }
 
 
