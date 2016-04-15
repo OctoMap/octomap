@@ -72,24 +72,35 @@ namespace octomap {
     
   public:  
     OcTreeKey () {}
-    OcTreeKey (key_type a, key_type b, key_type c)
-      { k[0] = a; k[1] = b; k[2] = c; }
-    OcTreeKey(const OcTreeKey& other){
-      k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
+    OcTreeKey (key_type a, key_type b, key_type c){ 
+      k[0] = a; 
+      k[1] = b; 
+      k[2] = c;         
     }
+    
+    OcTreeKey(const OcTreeKey& other){
+      k[0] = other.k[0]; 
+      k[1] = other.k[1]; 
+      k[2] = other.k[2];
+    }
+    
     bool operator== (const OcTreeKey &other) const { 
       return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
     }
+    
     bool operator!= (const OcTreeKey& other) const {
       return( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) );
     }
+    
     OcTreeKey& operator=(const OcTreeKey& other){
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
       return *this;
     }
+    
     const key_type& operator[] (unsigned int i) const { 
       return k[i];
     }
+    
     key_type& operator[] (unsigned int i) { 
       return k[i];
     }
@@ -128,20 +139,28 @@ namespace octomap {
   public:
     
     KeyRay () {
-      ray.resize(100000);
+      ray.resize(maxSize);
       reset();
     }
+    
+    KeyRay(const KeyRay& other){
+      ray = other.ray;
+      size_t dSize = other.end() - other.begin();
+      end_of_ray = ray.begin() + dSize;
+    }
+    
     void reset() {
       end_of_ray = begin();
     }
+    
     void addKey(const OcTreeKey& k) {
       assert(end_of_ray != ray.end());
       *end_of_ray = k;
-      end_of_ray++;
+      ++end_of_ray;
     }
 
     size_t size() const { return end_of_ray - ray.begin(); }
-    size_t sizeMax() const { return 100000; }
+    size_t sizeMax() const { return maxSize; }
 
     typedef std::vector<OcTreeKey>::iterator iterator;
     typedef std::vector<OcTreeKey>::const_iterator const_iterator;
@@ -155,10 +174,10 @@ namespace octomap {
     reverse_iterator rbegin() { return (reverse_iterator) end_of_ray; }
     reverse_iterator rend() { return ray.rend(); }
 
-  public:
-
+  private:
     std::vector<OcTreeKey> ray;
     std::vector<OcTreeKey>::iterator end_of_ray;
+    const static size_t maxSize = 100000;
   };
 
   /**
