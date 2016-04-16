@@ -107,6 +107,7 @@ namespace octomap {
     public:
       StaticMemberInitializer() {
         OcTreeStamped* tree = new OcTreeStamped(0.1);
+        tree->clearKeyRays();
         AbstractOcTree::registerTreeType(tree);
       }
 

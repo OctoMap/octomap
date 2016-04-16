@@ -62,7 +62,7 @@ namespace octomap {
 
     // no longer create an empty root node - only on demand
   }
-
+  
 
   template <class NODE,class I>
   OcTreeBaseImpl<NODE,I>::~OcTreeBaseImpl(){

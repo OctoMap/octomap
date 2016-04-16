@@ -101,6 +101,7 @@ namespace octomap {
        public:
          StaticMemberInitializer() {
            CountingOcTree* tree = new CountingOcTree(0.1);
+           tree->clearKeyRays();
            AbstractOcTree::registerTreeType(tree);
          }
 

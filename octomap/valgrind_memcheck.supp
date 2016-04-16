@@ -148,7 +148,7 @@
 
 
 {
-   static_member_init_keyray2
+   static_member_init_sizeLookupTable
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:_Znwm
@@ -166,7 +166,7 @@
 }
 
 {
-   static_member_init_keyray2_opt
+   static_member_init_sizeLookupTable_opt
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:_Znwm

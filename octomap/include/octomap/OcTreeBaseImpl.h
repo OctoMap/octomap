@@ -112,6 +112,14 @@ namespace octomap {
 
     inline double getNodeSize(unsigned depth) const {assert(depth <= tree_depth); return sizeLookupTable[depth];}
     
+    /**
+     * Clear KeyRay vector to minimize unneeded memory. This is only
+     * useful for the StaticMemberInitializer classes, don't call it for
+     * an octree that is actually used.
+     */
+    void clearKeyRays(){
+      keyrays.clear();
+    }
     
     // -- Tree structure operations formerly contained in the nodes ---
    

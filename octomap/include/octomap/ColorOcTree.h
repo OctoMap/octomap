@@ -183,6 +183,7 @@ namespace octomap {
        public:
          StaticMemberInitializer() {
            ColorOcTree* tree = new ColorOcTree(0.1);
+           tree->clearKeyRays();
            AbstractOcTree::registerTreeType(tree);
          }
 
