@@ -14,9 +14,6 @@ TARGET_LINK_LIBRARIES(test_changedkeys octomap)
 ADD_EXECUTABLE(test_scans test_scans.cpp)
 TARGET_LINK_LIBRARIES(test_scans octomap)
 
-ADD_EXECUTABLE(test_lut test_lut.cpp)
-TARGET_LINK_LIBRARIES(test_lut octomap)
-
 ADD_EXECUTABLE(test_color_tree test_color_tree.cpp)
 TARGET_LINK_LIBRARIES(test_color_tree octomap)
 
