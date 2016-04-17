@@ -131,30 +131,6 @@ namespace octomap {
     */
     virtual void insertPointCloud(const ScanNode& scan, double maxrange=-1., bool lazy_eval = false, bool discretize = false);
 
-    /// @note Deprecated, use insertPointCloud() instead. pruning is now done automatically.
-    OCTOMAP_DEPRECATED(virtual void insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                   double maxrange=-1., bool pruning=true, bool lazy_eval = false))
-    {
-      this->insertPointCloud(scan, sensor_origin, maxrange, lazy_eval);
-    }
-
-    /// @note Deprecated, use insertPointCloud() instead. pruning is now done automatically.
-    OCTOMAP_DEPRECATED(virtual void insertScan(const Pointcloud& scan, const point3d& sensor_origin,
-                    const pose6d& frame_origin, double maxrange=-1., bool pruning = true, bool lazy_eval = false))
-    {
-      this->insertPointCloud(scan, sensor_origin, frame_origin, maxrange, lazy_eval);
-    }
-
-     /// @note Deprecated, use insertPointCloud() instead. pruning is now done automatically.
-     OCTOMAP_DEPRECATED(virtual void insertScan(const ScanNode& scan, double maxrange=-1., bool pruning = true, bool lazy_eval = false)){
-       this->insertPointCloud(scan, maxrange, lazy_eval);
-     }
-
-     /// @note Deprecated, use insertPointCloudRays instead. pruning is now done automatically.
-     OCTOMAP_DEPRECATED( virtual void insertScanNaive(const Pointcloud& scan, const point3d& sensor_origin, double maxrange, bool lazy_eval = false)){
-       this->insertPointCloudRays(scan, sensor_origin, maxrange, lazy_eval);
-     }
-
     /**
      * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
      * This function simply inserts all rays of the point clouds as batch operation.
