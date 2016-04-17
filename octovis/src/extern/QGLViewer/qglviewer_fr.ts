@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>ImageInterface</name>
     <message>
@@ -110,7 +110,7 @@
         <translation>Affiche ou non la grille XY</translation>
     </message>
     <message>
-        <source>Changes camera mode (revolve or fly)</source>
+        <source>Changes camera mode (observe or fly)</source>
         <comment>CAMERA_MODE action description</comment>
         <translation>Change le mode de la caméra (observateur ou vol)</translation>
     </message>
@@ -189,10 +189,6 @@
         <translation>Affichage en stéréo non supporté sur cette machine.</translation>
     </message>
     <message>
-        <source>(no button)</source>
-        <translation>(pas de bouton)</translation>
-    </message>
-    <message>
         <source>Rotates</source>
         <comment>ROTATE mouse action</comment>
         <translation>Tourne</translation>
@@ -263,17 +259,17 @@
         <translation>Sélectionne</translation>
     </message>
     <message>
-        <source>Sets revolve around point</source>
+        <source>Sets pivot point</source>
         <comment>RAP_FROM_PIXEL click action</comment>
         <translation>Définit le point de rotation</translation>
     </message>
     <message>
-        <source>Resets revolve around point</source>
+        <source>Resets pivot point</source>
         <comment>RAP_IS_CENTER click action</comment>
         <translation>Restaure le point de rotation</translation>
     </message>
     <message>
-        <source>Centers frame</source>
+        <source>Centers manipulated frame</source>
         <comment>CENTER_FRAME click action</comment>
         <translation>Centre le repère manipulé</translation>
     </message>
@@ -288,7 +284,7 @@
         <translation>Affiche toute la scène</translation>
     </message>
     <message>
-        <source>Aligns frame</source>
+        <source>Aligns manipulated frame</source>
         <comment>ALIGN_FRAME click action</comment>
         <translation>Aligne le repère manipulé</translation>
     </message>
@@ -298,9 +294,9 @@
         <translation>Aligne la caméra</translation>
     </message>
     <message>
-        <source>Camera paths are controlled using %1 (noted &lt;i&gt;Fx&lt;/i&gt; below):</source>
+        <source>Camera paths are controlled using the %1 keys (noted &lt;i&gt;Fx&lt;/i&gt; below):</source>
         <comment>Help window key tab camera keys</comment>
-        <translation>Les chemins de caméra sont contrôlés avec %1 (noté &lt;i&gt;Fx&lt;/i&gt; ci-dessous) :</translation>
+        <translation>Les chemins de caméra sont contrôlés avec les touches %1 (notées &lt;i&gt;Fx&lt;/i&gt; ci-dessous) :</translation>
     </message>
     <message>
         <source>Key(s)</source>
@@ -390,7 +386,7 @@
         <translation>Position %1 sauvegardée</translation>
     </message>
     <message>
-        <source>Camera in revolve around mode</source>
+        <source>Camera in observer mode</source>
         <comment>Feedback message</comment>
         <translation>Caméra en mode observateur</translation>
     </message>
@@ -523,7 +519,7 @@
     <message>
         <source>&amp;About</source>
         <comment>Help window about title</comment>
-        <translation>À propos</translation>
+        <translation>À &amp;propos</translation>
     </message>
     <message>
         <source>&lt;h1&gt;libQGLViewer&lt;/h1&gt;&lt;h3&gt;Version %1&lt;/h3&gt;&lt;br&gt;A versatile 3D viewer based on OpenGL and Qt&lt;br&gt;Copyright 2002-%2 Gilles Debunne&lt;br&gt;&lt;code&gt;%3&lt;/code&gt;</source>

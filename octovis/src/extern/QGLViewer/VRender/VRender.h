@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -46,13 +46,8 @@
 #define _VRENDER_H_
 
 #include "../config.h"
-#if QT_VERSION >= 0x040000
-# include <QTextStream>
-# include <QString>
-#else
-# include <qtextstream.h>
-# include <qstring.h>
-#endif
+#include <QTextStream>
+#include <QString>
 
 #include "../qglviewer.h"
 

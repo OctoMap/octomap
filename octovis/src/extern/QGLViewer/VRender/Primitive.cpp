@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -50,22 +50,23 @@
 using namespace vrender ;
 using namespace std ;
 
+
 Point::Point(const Feedback3DColor& f)
 	: _position_and_color(f)
 {
 }
 
-const Vector3& Point::vertex(int) const
+const Vector3& Point::vertex(size_t) const
 {
 	return _position_and_color.pos() ;
 }
 
-const Feedback3DColor& Point::sommet3DColor(int) const
+const Feedback3DColor& Point::sommet3DColor(size_t) const
 {
 	return _position_and_color ;
 }
 
-const Feedback3DColor& Segment::sommet3DColor(int i) const
+const Feedback3DColor& Segment::sommet3DColor(size_t i) const
 {
 	return ( (i&1)==0 )?P1:P2 ;
 }
@@ -75,7 +76,7 @@ AxisAlignedBox_xyz Point::bbox() const
 	return AxisAlignedBox_xyz(_position_and_color.pos(),_position_and_color.pos()) ;
 }
 
-const Vector3& Segment::vertex(int i) const
+const Vector3& Segment::vertex(size_t i) const
 {
 	return ( (i&1)==0 )?P1.pos():P2.pos() ;
 }
@@ -88,12 +89,12 @@ AxisAlignedBox_xyz Segment::bbox() const
 	return B ;
 }
 
-const Feedback3DColor& Polygone::sommet3DColor(int i) const
+const Feedback3DColor& Polygone::sommet3DColor(size_t i) const
 {
 	return _vertices[i % nbVertices()] ;
 }
 
-const Vector3& Polygone::vertex(int i) const
+const Vector3& Polygone::vertex(size_t i) const
 {
 	return _vertices[i % nbVertices()].pos() ;
 }
@@ -104,7 +105,7 @@ Polygone::Polygone(const vector<Feedback3DColor>& fc)
 {
 	initNormal() ;
 
-	for(unsigned int i=0;i<fc.size();i++)
+	for(size_t i=0;i<fc.size();i++)
 		_bbox.include(fc[i].pos()) ;
 }
 
@@ -124,7 +125,7 @@ void Polygone::initNormal()
 	Vector3 normalmax = Vector3(0.0,0.0,0.0) ;
 	FLOAT v12norm = (vertex(1)-vertex(0)).norm() ;
 
-        for(unsigned int i=0;i<nbVertices();i++)
+        for(size_t i=0;i<nbVertices();i++)
 	{
 		Vector3 v1(vertex(i)) ;
 		Vector3 v2(vertex(i+1));

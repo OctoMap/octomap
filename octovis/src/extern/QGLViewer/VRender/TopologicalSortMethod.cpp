@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -62,44 +62,44 @@ namespace vrender
 class TopologicalSortUtils
 {
 	public:
-		static void buildPrecedenceGraph(vector<PtrPrimitive>& primitive_tab, vector< vector<int> >& precedence_graph) ;
+		static void buildPrecedenceGraph(vector<PtrPrimitive>& primitive_tab, vector< vector<size_t> >& precedence_graph) ;
 
 		static void recursFindNeighbors(	const vector<PtrPrimitive>& primitive_tab,
-													const vector<int>& pindices,
-													vector< vector<int> >& precedence_graph,
+													const vector<size_t>& pindices,
+													vector< vector<size_t> >& precedence_graph,
 													const AxisAlignedBox_xy&,int) ;
 
-		static void checkAndAddEdgeToGraph(int a,int b,vector< vector<int> >& precedence_graph) ;
-		static void suppressPrecedence(int a,int b,vector< vector<int> >& precedence_graph) ;
+		static void checkAndAddEdgeToGraph(size_t a,size_t b,vector< vector<size_t> >& precedence_graph) ;
+		static void suppressPrecedence(size_t a,size_t b,vector< vector<size_t> >& precedence_graph) ;
 
-		static void recursTopologicalSort(vector< vector<int> >& precedence_graph,
+		static void recursTopologicalSort(vector< vector<size_t> >& precedence_graph,
 													 vector<PtrPrimitive>& primitive_tab,
 													 vector<bool>& alread_rendered,
 													 vector<bool>& alread_visited,
-													 vector<PtrPrimitive>&,int,int&,
+													 vector<PtrPrimitive>&,size_t,size_t&,
 													 VRenderParams& vparams,
-													 int info_cnt,int& nbrendered) ;
+													 size_t info_cnt,size_t& nbrendered) ;
 
-		static void recursTopologicalSort(vector< vector<int> >& precedence_graph,
+		static void recursTopologicalSort(vector< vector<size_t> >& precedence_graph,
 													 vector<PtrPrimitive>& primitive_tab,
 													 vector<bool>& alread_rendered,
 													 vector<bool>& alread_visited,
-													 vector<PtrPrimitive>&,int,
-													 vector<int>& ancestors,
-													 int&, int&,
+													 vector<PtrPrimitive>&,size_t,
+													 vector<size_t>& ancestors,
+													 size_t&, size_t&,
 													 VRenderParams& vparams,
-													 int info_cnt,int& nbrendered) ;
+													 size_t info_cnt,size_t& nbrendered) ;
 
-		static void topologicalSort(	vector< vector<int> >& precedence_graph,
+		static void topologicalSort(	vector< vector<size_t> >& precedence_graph,
 												vector<PtrPrimitive>& primitive_tab,
 												VRenderParams&) ;
 
-		static void topologicalSortBreakCycles(vector< vector<int> >& precedence_graph,
+		static void topologicalSortBreakCycles(vector< vector<size_t> >& precedence_graph,
 															vector<PtrPrimitive>& primitive_tab,
 															VRenderParams&) ;
 
 #ifdef DEBUG_TS
-		static void printPrecedenceGraph(const vector< vector<int> >& precedence_graph,
+		static void printPrecedenceGraph(const vector< vector<size_t> >& precedence_graph,
 													const vector<PtrPrimitive>& primitive_tab) ;
 #endif
 };
@@ -116,10 +116,10 @@ void TopologicalSortMethod::sortPrimitives(vector<PtrPrimitive>& primitive_tab,V
 #ifdef DEBUG_TS
 	cout << "Computing precedence graph." << endl ;
 	cout << "Old order: " ;
-	for(unsigned int i=0;i<primitive_tab.size();++i) cout << (void *)(primitive_tab[i]) << " " ;
+	for(size_t i=0;i<primitive_tab.size();++i) cout << (void *)(primitive_tab[i]) << " " ;
 	cout << endl ;
 #endif
-	vector< vector<int> > precedence_graph(primitive_tab.size());
+	vector< vector<size_t> > precedence_graph(primitive_tab.size());
 	TopologicalSortUtils::buildPrecedenceGraph(primitive_tab,precedence_graph) ;
 
 #ifdef DEBUG_TS
@@ -138,19 +138,19 @@ void TopologicalSortMethod::sortPrimitives(vector<PtrPrimitive>& primitive_tab,V
 
 #ifdef DEBUG_TS
 	cout << "New order: " ;
-	for(unsigned int i=0;i<primitive_tab.size();++i) cout << (void *)(primitive_tab[i]) << " " ;
+	for(size_t i=0;i<primitive_tab.size();++i) cout << (void *)(primitive_tab[i]) << " " ;
 	cout << endl ;
 #endif
 }
 
 #ifdef DEBUG_TS
-void TopologicalSortUtils::printPrecedenceGraph(const vector< vector<int> >& precedence_graph,
+void TopologicalSortUtils::printPrecedenceGraph(const vector< vector<size_t> >& precedence_graph,
 																const vector<PtrPrimitive>& primitive_tab)
 {
-	for(unsigned int i=0;i<precedence_graph.size();++i)
+	for(size_t i=0;i<precedence_graph.size();++i)
 	{
 		cout << i << " (" << primitive_tab[i]->nbVertices() << ") : " ;
-		for(unsigned int j=0;j<precedence_graph[i].size();++j)
+		for(size_t j=0;j<precedence_graph[i].size();++j)
 			cout << precedence_graph[i][j] << " " ;
 
 		cout << endl ;
@@ -159,7 +159,7 @@ void TopologicalSortUtils::printPrecedenceGraph(const vector< vector<int> >& pre
 #endif
 
 void TopologicalSortUtils::buildPrecedenceGraph(vector<PtrPrimitive>& primitive_tab,
-																vector< vector<int> >& precedence_graph)
+																vector< vector<size_t> >& precedence_graph)
 {
 	// The precedence graph is constructed by first conservatively determining which
 	// primitives can possibly intersect using a quadtree. Candidate pairs of
@@ -173,7 +173,7 @@ void TopologicalSortUtils::buildPrecedenceGraph(vector<PtrPrimitive>& primitive_
 
 	AxisAlignedBox_xy BBox ;
 
-	for(unsigned int i=0;i<primitive_tab.size();++i)
+	for(size_t i=0;i<primitive_tab.size();++i)
 	{
 		BBox.include(Vector2(primitive_tab[i]->bbox().mini().x(),primitive_tab[i]->bbox().mini().y())) ;
 		BBox.include(Vector2(primitive_tab[i]->bbox().maxi().x(),primitive_tab[i]->bbox().maxi().y())) ;
@@ -181,30 +181,30 @@ void TopologicalSortUtils::buildPrecedenceGraph(vector<PtrPrimitive>& primitive_
 
 	// 1 - recursively find pairs.
 
-	vector<int> pindices(primitive_tab.size()) ;
-	for(unsigned int j=0;j<pindices.size();++j)
+	vector<size_t> pindices(primitive_tab.size()) ;
+	for(size_t j=0;j<pindices.size();++j)
 		pindices[j] = j ;
 
 	recursFindNeighbors(primitive_tab, pindices, precedence_graph, BBox,0) ;
 }
 
 void TopologicalSortUtils::recursFindNeighbors(const vector<PtrPrimitive>& primitive_tab,
-																const vector<int>& pindices,
-																vector< vector<int> >& precedence_graph,
+																const vector<size_t>& pindices,
+																vector< vector<size_t> >& precedence_graph,
 																const AxisAlignedBox_xy& bbox,
 																int depth)
 {
-	static const unsigned int MAX_PRIMITIVES_IN_CELL = 5 ;
+	static const size_t MAX_PRIMITIVES_IN_CELL = 5 ;
 
 	// Refinment: first decide which sub-cell each primitive meets, then call
 	// algorithm recursively.
 
 	if(primitive_tab.size() > MAX_PRIMITIVES_IN_CELL)
 	{
-		vector<int> p_indices_min_min ;
-		vector<int> p_indices_min_max ;
-		vector<int> p_indices_max_min ;
-		vector<int> p_indices_max_max ;
+		vector<size_t> p_indices_min_min ;
+		vector<size_t> p_indices_min_max ;
+		vector<size_t> p_indices_max_min ;
+		vector<size_t> p_indices_max_max ;
 
 		double xmin = bbox.mini().x() ;
 		double ymin = bbox.mini().y() ;
@@ -214,7 +214,7 @@ void TopologicalSortUtils::recursFindNeighbors(const vector<PtrPrimitive>& primi
 		double xMean = 0.5*(xmin+xmax) ;
 		double yMean = 0.5*(ymin+ymax) ;
 
-		for(unsigned int i=0;i<pindices.size();++i)
+		for(size_t i=0;i<pindices.size();++i)
 		{
 			bool left  = primitive_tab[pindices[i]]->bbox().mini().x() <= xMean ;
 			bool right = primitive_tab[pindices[i]]->bbox().maxi().x() >= xMean ;
@@ -243,8 +243,8 @@ void TopologicalSortUtils::recursFindNeighbors(const vector<PtrPrimitive>& primi
 	// No refinment either because it could not be possible, or because the number of primitives is below
 	// the predefined limit.
 
-	for(unsigned int i=0;i<pindices.size();++i)
-		for(unsigned int j=i+1;j<pindices.size();++j)
+	for(size_t i=0;i<pindices.size();++i)
+		for(size_t j=i+1;j<pindices.size();++j)
 		{
 			// Compute the position of j as regard to i
 
@@ -255,14 +255,14 @@ void TopologicalSortUtils::recursFindNeighbors(const vector<PtrPrimitive>& primi
 		}
 }
 
-void TopologicalSortUtils::checkAndAddEdgeToGraph(int a,int b,vector< vector<int> >& precedence_graph)
+void TopologicalSortUtils::checkAndAddEdgeToGraph(size_t a,size_t b,vector< vector<size_t> >& precedence_graph)
 {
 #ifdef DEBUG_TS
 	cout << "Trying to add " << a << " -> " << b << " " ;
 #endif
 	bool found = false ;
 
-	for(unsigned int k=0;k<precedence_graph[a].size() && !found;++k)
+	for(size_t k=0;k<precedence_graph[a].size() && !found;++k)
 		if(precedence_graph[a][k] == b)
 			found = true ;
 
@@ -276,12 +276,12 @@ void TopologicalSortUtils::checkAndAddEdgeToGraph(int a,int b,vector< vector<int
 		precedence_graph[a].push_back(b) ;
 }
 
-void TopologicalSortUtils::suppressPrecedence(int a,int b,vector< vector<int> >& precedence_graph)
+void TopologicalSortUtils::suppressPrecedence(size_t a,size_t b,vector< vector<size_t> >& precedence_graph)
 {
-	vector<int> prec_tab = vector<int>(precedence_graph[a]) ;
+	vector<size_t> prec_tab = vector<size_t>(precedence_graph[a]) ;
 	bool trouve = false ;
 
-	for(unsigned int k=0;k<prec_tab.size();++k)
+	for(size_t k=0;k<prec_tab.size();++k)
 		if(prec_tab[k] == b)
 		{
 			prec_tab[k] = prec_tab[prec_tab.size()-1] ;
@@ -292,21 +292,21 @@ void TopologicalSortUtils::suppressPrecedence(int a,int b,vector< vector<int> >&
 		throw runtime_error("Unexpected error in suppressPrecedence") ;
 }
 
-void TopologicalSortUtils::topologicalSort(vector< vector<int> >& precedence_graph,
+void TopologicalSortUtils::topologicalSort(vector< vector<size_t> >& precedence_graph,
 														 vector<PtrPrimitive>& primitive_tab,
 														 VRenderParams& vparams)
 {
 	vector<PtrPrimitive> new_pr_tab ;
 	vector<bool> already_visited(primitive_tab.size(),false) ;
 	vector<bool> already_rendered(primitive_tab.size(),false) ;
-	int nb_skews = 0 ;
+	size_t nb_skews = 0 ;
 
-        unsigned int info_cnt = primitive_tab.size()/200 + 1 ;
-	int nbrendered = 0 ;
+        size_t info_cnt = primitive_tab.size()/200 + 1 ;
+	size_t nbrendered = 0 ;
 
 	// 1 - sorts primitives by rendering order
 
-	for(unsigned int i=0;i<primitive_tab.size();++i)
+	for(size_t i=0;i<primitive_tab.size();++i)
 		if(!already_rendered[i])
 			recursTopologicalSort(precedence_graph,primitive_tab,already_rendered,already_visited,new_pr_tab,i,nb_skews,vparams,info_cnt,nbrendered);
 
@@ -319,23 +319,23 @@ void TopologicalSortUtils::topologicalSort(vector< vector<int> >& precedence_gra
 	primitive_tab = new_pr_tab ;
 }
 
-void TopologicalSortUtils::topologicalSortBreakCycles(vector< vector<int> >& precedence_graph,
+void TopologicalSortUtils::topologicalSortBreakCycles(vector< vector<size_t> >& precedence_graph,
 																		vector<PtrPrimitive>& primitive_tab,
 																		VRenderParams& vparams)
 {
 	vector<PtrPrimitive> new_pr_tab ;
 	vector<bool> already_visited(primitive_tab.size(),false) ;
 	vector<bool> already_rendered(primitive_tab.size(),false) ;
-	vector<int> ancestors ;
-	int nb_skews = 0 ;
-	int ancestors_backward_index ;
+	vector<size_t> ancestors ;
+	size_t nb_skews = 0 ;
+	size_t ancestors_backward_index ;
 
-	int info_cnt = primitive_tab.size()/200 + 1 ;
-	int nbrendered = 0 ;
+	size_t info_cnt = primitive_tab.size()/200 + 1 ;
+	size_t nbrendered = 0 ;
 
 	// 1 - sorts primitives by rendering order
 
-	for(unsigned int i=0;i<primitive_tab.size();++i)
+	for(size_t i=0;i<primitive_tab.size();++i)
 		if(!already_rendered[i])
 			recursTopologicalSort(precedence_graph,primitive_tab,already_rendered,already_visited,
 										new_pr_tab,i,ancestors,ancestors_backward_index,nb_skews,vparams,info_cnt,nbrendered) ;
@@ -349,22 +349,22 @@ void TopologicalSortUtils::topologicalSortBreakCycles(vector< vector<int> >& pre
 	primitive_tab = new_pr_tab ;
 }
 
-void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precedence_graph,
+void TopologicalSortUtils::recursTopologicalSort(	vector< vector<size_t> >& precedence_graph,
 																	vector<PtrPrimitive>& primitive_tab,
 																	vector<bool>& already_rendered,
 																	vector<bool>& already_visited,
 																	vector<PtrPrimitive>& new_pr_tab,
-																	int indx,
-																	int& nb_cycles,
+																	size_t indx,
+																	size_t& nb_cycles,
 																	VRenderParams& vparams,
-																	int info_cnt,int& nbrendered)
+																	size_t info_cnt,size_t& nbrendered)
 {
 	// One must first render the primitives indicated by the precedence graph,
 	// then render the current primitive. Skews are detected, but and treated.
 
 	already_visited[indx] = true ;
 
-	for(unsigned int j=0;j<precedence_graph[indx].size();++j)
+	for(size_t j=0;j<precedence_graph[indx].size();++j)
 	{
 		// Both tests are important. If we ommit the second one, the recursion is
 		// always performed down to the next cycle, although this is useless if
@@ -392,17 +392,17 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 	already_visited[indx] = false ;
 }
 
-void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precedence_graph,
+void TopologicalSortUtils::recursTopologicalSort(	vector< vector<size_t> >& precedence_graph,
 																	vector<PtrPrimitive>& primitive_tab,
 																	vector<bool>& already_rendered,
 																	vector<bool>& already_visited,
 																	vector<PtrPrimitive>& new_pr_tab,
-																	int indx,
-																	vector<int>& ancestors,
-																	int& ancestors_backward_index,
-																	int& nb_cycles,
+																	size_t indx,
+																	vector<size_t>& ancestors,
+																	size_t& ancestors_backward_index,
+																	size_t& nb_cycles,
 																	VRenderParams& vparams,
-																	int info_cnt,int& nbrendered)
+																	size_t info_cnt,size_t& nbrendered)
 {
 	// One must first render the primitives indicated by the precedence graph,
 	// then render the current primitive. Skews are detected, but and treated.
@@ -410,7 +410,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 	already_visited[indx] = true ;
 	ancestors.push_back(indx) ;
 
-	for(unsigned int j=0;j<precedence_graph[indx].size();++j)
+	for(size_t j=0;j<precedence_graph[indx].size();++j)
 	{
 		// Both tests are important. If we ommit the second one, the recursion is
 		// always performed down to the next cycle, although this is useless if
@@ -423,7 +423,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 				recursTopologicalSort(	precedence_graph,primitive_tab,already_rendered,already_visited,
 												new_pr_tab,precedence_graph[indx][j],ancestors,ancestors_backward_index,nb_cycles,vparams,info_cnt,nbrendered) ;
 
-				if(ancestors_backward_index != INT_MAX && ancestors.size() > (unsigned int)(ancestors_backward_index+1))
+				if(ancestors_backward_index != INT_MAX && ancestors.size() > (size_t)(ancestors_backward_index+1))
 				{
 #ifdef DEBUG_TS
 					cout << "Returning early" << endl ;
@@ -449,13 +449,13 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 
 			// 0.5 - determine cycle beginning
 
-			int cycle_beginning_index = -1 ;
-                        for(int i=(int)(ancestors.size())-1; i >= 0 && cycle_beginning_index < 0;--i)
+			long cycle_beginning_index = -1 ;
+            for(size_t i=ancestors.size()-1; long(i) >= 0 && cycle_beginning_index < 0;--i)
 				if(ancestors[i] == precedence_graph[indx][j])
-					cycle_beginning_index = i ;
+					cycle_beginning_index = (long)i ;
 #ifdef DEBUG_TS
 			cout << "Unbreaking cycle : " ;
-			for(unsigned int i=0;i<ancestors.size();++i)
+			for(size_t i=0;i<ancestors.size();++i)
 				cout << ancestors[i] << " " ;
 			cout << precedence_graph[indx][j] << endl ;
 #endif
@@ -464,16 +464,16 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 #endif
 			// 1 - determine splitting plane
 
-			int split_prim_ancestor_indx = -1 ;
-			int split_prim_indx = -1 ;
+			long split_prim_ancestor_indx = -1 ;
+			long split_prim_indx = -1 ;
 
 			// Go down ancestors tab, starting from the skewing primitive, and stopping at it.
 
-			for(unsigned int i2=cycle_beginning_index;i2<ancestors.size() && split_prim_ancestor_indx < 0;++i2)
+			for(size_t i2=(size_t)cycle_beginning_index;i2<ancestors.size() && split_prim_ancestor_indx < 0;++i2)
 				if(primitive_tab[ancestors[i2]]->nbVertices() > 2)
 				{
-					split_prim_ancestor_indx = i2 ;
-					split_prim_indx = ancestors[i2] ;
+					split_prim_ancestor_indx = (long)i2 ;
+					split_prim_indx = (long)ancestors[i2] ;
 				}
 
 #ifdef DEBUG_TS
@@ -484,15 +484,15 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 
 			// 2 - split all necessary primitives
 
-			const Polygone *P = dynamic_cast<const Polygone *>(primitive_tab[split_prim_indx]) ;
+			const Polygone *P = dynamic_cast<const Polygone *>(primitive_tab[(size_t)split_prim_indx]) ;
 			const NVector3& normal = NVector3(P->normal()) ;
 			double c(P->c()) ;
 			ancestors.push_back(precedence_graph[indx][j]) ;				// sentinel
-			ancestors.push_back(ancestors[cycle_beginning_index+1]) ;	// sentinel
+			ancestors.push_back(ancestors[(size_t)cycle_beginning_index+1]) ;	// sentinel
 			bool cycle_broken = false ;
 
-			for(unsigned int i3=cycle_beginning_index+1;i3<ancestors.size()-1 && !cycle_broken;++i3)
-				if(ancestors[i3] != split_prim_indx)
+			for(size_t i3=(size_t)cycle_beginning_index+1;i3<ancestors.size()-1 && !cycle_broken;++i3)
+				if(ancestors[i3] != (size_t)split_prim_indx)
 				{
 					bool prim_lower_ante_contains_im1 = false ;
 					bool prim_upper_ante_contains_im1 = false ;
@@ -510,17 +510,17 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 					cout << "Splitted primitive " << ancestors[i3] << endl ;
 #endif
 
-					vector<int> prim_upper_prec ;
-					vector<int> prim_lower_prec ;
+					vector<size_t> prim_upper_prec ;
+					vector<size_t> prim_lower_prec ;
 
-					vector<int> old_prec = vector<int>(precedence_graph[ancestors[i3]]) ;
+					vector<size_t> old_prec = vector<size_t>(precedence_graph[ancestors[i3]]) ;
 
-                                        unsigned int upper_indx = precedence_graph.size() ;
-					int lower_indx = ancestors[i3] ;
+                                        size_t upper_indx = precedence_graph.size() ;
+					size_t lower_indx = ancestors[i3] ;
 
 					//  Updates the precedence graph downwards.
 
-					for(unsigned int k=0;k<old_prec.size();++k)
+					for(size_t k=0;k<old_prec.size();++k)
 					{
 						int prp1 = PrimitivePositioning::computeRelativePosition(prim_upper,primitive_tab[old_prec[k]]) ;
 #ifdef DEBUG_TS
@@ -570,9 +570,9 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 					// dual precedence graph. For now it's O(n^2). This test can not
 					// be skipped because upper can still be lower to ancestors[i-1].
 
-					for(unsigned int l=0;l<precedence_graph.size();++l)
-						if(l != (unsigned int)lower_indx)
-							for(int k=0;k<(int)precedence_graph[l].size();++k)
+					for(size_t l=0;l<precedence_graph.size();++l)
+						if(l != (size_t)lower_indx)
+							for(size_t k=0;k<precedence_graph[l].size();++k)
 								if(precedence_graph[l][k] == ancestors[i3])
 								{
 									int prp1 = PrimitivePositioning::computeRelativePosition(prim_upper,primitive_tab[l]) ;
@@ -586,7 +586,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 
 										precedence_graph[l].push_back(upper_indx) ;
 
-										if(l == (unsigned int)ancestors[i3-1])
+										if(l == (size_t)ancestors[i3-1])
 											prim_upper_ante_contains_im1 = true ;
 									}
 									// If the primitive is not upper anymore there is
@@ -601,7 +601,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 #ifdef DEBUG_TS
 										cout << " > " << endl ;
 #endif
-										if(l == (unsigned int)ancestors[i3-1])						 // The index is the same => nothing to change.
+										if(l == (size_t)ancestors[i3-1])						 // The index is the same => nothing to change.
 											prim_lower_ante_contains_im1 = true ;
 									}
 									else
@@ -654,7 +654,7 @@ void TopologicalSortUtils::recursTopologicalSort(	vector< vector<int> >& precede
 
 			if(cycle_broken)
 			{
-				ancestors_backward_index = cycle_beginning_index ;
+				ancestors_backward_index = (size_t)cycle_beginning_index ;
 #ifdef DEBUG_TS
 				cout << "Cycle broken. Jumping back to rank " << ancestors_backward_index << endl ;
 #endif

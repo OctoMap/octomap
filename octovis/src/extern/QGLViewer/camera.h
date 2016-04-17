@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -23,11 +23,14 @@
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
 
-#include "manipulatedCameraFrame.h"
 #include "keyFrameInterpolator.h"
+class QGLViewer;
 
 namespace qglviewer {
-  /*! \brief A perspective or orthographic camera.
+
+class ManipulatedCameraFrame;
+
+/*! \brief A perspective or orthographic camera.
   \class Camera camera.h QGLViewer/camera.h
 
   A Camera defines some intrinsic parameters (fieldOfView(), position(), viewDirection(),
@@ -49,7 +52,7 @@ namespace qglviewer {
 
   The default button binding are: QGLViewer::ROTATE (left), QGLViewer::ZOOM (middle) and
   QGLViewer::TRANSLATE (right). With this configuration, the Camera \e observes a scene and rotates
-  around its revolveAroundPoint(). You can switch between this mode and a fly mode using the
+  around its pivotPoint(). You can switch between this mode and a fly mode using the
   QGLViewer::CAMERA_MODE (see QGLViewer::toggleCameraMode()) keyboard shortcut (default is 'Space').
 
   <h3>Other functionalities</h3>
@@ -78,488 +81,431 @@ namespace qglviewer {
   A Camera can also be used outside of a QGLViewer or even without OpenGL for its coordinate system
   conversion capabilities. Note however that some of them explicitly rely on the presence of a
   Z-buffer. \nosubgrouping */
-  class QGLVIEWER_EXPORT Camera : public QObject
-  {
+class QGLVIEWER_EXPORT Camera : public QObject
+{
 #ifndef DOXYGEN
-    friend class ::QGLViewer;
+	friend class ::QGLViewer;
 #endif
 
-    Q_OBJECT
+	Q_OBJECT
 
-  public:
-    Camera();
-    virtual ~Camera();
+public:
+	Camera();
+	virtual ~Camera();
 
-    Camera(const Camera& camera);
-    Camera& operator=(const Camera& camera);
+	Camera(const Camera& camera);
+	Camera& operator=(const Camera& camera);
 
 
-    /*! Enumerates the two possible types of Camera.
+	/*! Enumerates the two possible types of Camera.
 
-    See type() and setType(). This type mainly defines different Camera projection matrix (see
-    loadProjectionMatrix()). Many other methods (pointUnderPixel(), convertClickToLine(),
-    projectedCoordinatesOf(), pixelGLRatio()...) take this Type into account. */
-    enum Type { PERSPECTIVE, ORTHOGRAPHIC };
+	See type() and setType(). This type mainly defines different Camera projection matrix (see
+	loadProjectionMatrix()). Many other methods (pointUnderPixel(), convertClickToLine(),
+	projectedCoordinatesOf(), pixelGLRatio()...) are affected by this Type. */
+	enum Type { PERSPECTIVE, ORTHOGRAPHIC };
 
-    /*! @name Position and orientation */
-    //@{
-  public:
-    /*! Returns the Camera position (the eye), defined in the world coordinate system.
+	/*! @name Position and orientation */
+	//@{
+public:
+	Vec position() const;
+	Vec upVector() const;
+	Vec viewDirection() const;
+	Vec rightVector() const;
+	Quaternion orientation() const;
 
-    Use setPosition() to set the Camera position. Other convenient methods are showEntireScene() or
-    fitSphere(). Actually returns \c frame()->position().
-
-    This position corresponds to the projection center of a Camera::PERSPECTIVE Camera. It is not
-    located in the image plane, which is at a zNear() distance ahead. */
-    Vec position() const { return frame()->position(); };
-
-    /*! Returns the normalized up vector of the Camera, defined in the world coordinate system.
-
-    Set using setUpVector() or setOrientation(). It is orthogonal to viewDirection() and to
-    rightVector().
-
-    It corresponds to the Y axis of the associated frame() (actually returns
-    frame()->inverseTransformOf(Vec(0.0, 1.0, 0.0)) ). */
-    Vec upVector() const
-    {
-      return frame()->inverseTransformOf(Vec(0.0, 1.0, 0.0));
-    }
-    /*! Returns the normalized view direction of the Camera, defined in the world coordinate system.
-
-    Change this value using setViewDirection(), lookAt() or setOrientation(). It is orthogonal to
-    upVector() and to rightVector().
-
-    This corresponds to the negative Z axis of the frame() ( frame()->inverseTransformOf(Vec(0.0,
-    0.0, -1.0)) ). */
-    Vec viewDirection() const { return frame()->inverseTransformOf(Vec(0.0, 0.0, -1.0)); };
-
-    /*! Returns the normalized right vector of the Camera, defined in the world coordinate system.
-
-    This vector lies in the Camera horizontal plane, directed along the X axis (orthogonal to
-    upVector() and to viewDirection()). Set using setUpVector(), lookAt() or setOrientation().
-
-    Simply returns frame()->inverseTransformOf(Vec(1.0, 0.0, 0.0)). */
-    Vec rightVector() const
-    {
-      return frame()->inverseTransformOf(Vec(1.0, 0.0, 0.0));
-    }
-
-    /*! Returns the Camera orientation, defined in the world coordinate system.
-
-    Actually returns \c frame()->orientation(). Use setOrientation(), setUpVector() or lookAt() to
-    set the Camera orientation. */
-    Quaternion orientation() const { return frame()->orientation(); };
-
-    void setFromModelViewMatrix(const GLdouble* const modelViewMatrix);
-    void setFromProjectionMatrix(const float matrix[12]);
-
-  public Q_SLOTS:
-    /*! Sets the Camera position() (the eye), defined in the world coordinate system. */
-    void setPosition(const Vec& pos) { frame()->setPosition(pos); };
-    void setOrientation(const Quaternion& q);
-    void setOrientation(float theta, float phi);
-    void setUpVector(const Vec& up, bool noMove=true);
-    void setViewDirection(const Vec& direction);
-    //@}
-
-
-    /*! @name Positioning tools */
-    //@{
-  public Q_SLOTS:
-    void lookAt(const Vec& target);
-    void showEntireScene();
-    void fitSphere(const Vec& center, float radius);
-    void fitBoundingBox(const Vec& min, const Vec& max);
-    void fitScreenRegion(const QRect& rectangle);
-    void centerScene();
-    void interpolateToZoomOnPixel(const QPoint& pixel);
-    void interpolateToFitScene();
-    void interpolateTo(const Frame& fr, float duration);
-    //@}
-
-
-    /*! @name Frustum */
-    //@{
-  public:
-    /*! Returns the Camera::Type of the Camera.
-
-    Set by setType(). Mainly used by loadProjectionMatrix().
-
-    A Camera::PERSPECTIVE Camera uses a classical projection mainly defined by its fieldOfView().
-
-    With a Camera::ORTHOGRAPHIC type(), the fieldOfView() is meaningless and the width and height of
-    the Camera frustum are inferred from the distance to the revolveAroundPoint() using
-    getOrthoWidthHeight().
-
-    Both types use zNear() and zFar() (to define their clipping planes) and aspectRatio() (for
-    frustum shape). */
-    Type type() const { return type_; };
-
-    /*! Returns the vertical field of view of the Camera (in radians).
-
-    Value is set using setFieldOfView(). Default value is pi/4 radians. This value is meaningless if
-    the Camera type() is Camera::ORTHOGRAPHIC.
-
-    The field of view corresponds the one used in \c gluPerspective (see manual). It sets the Y
-    (vertical) aperture of the Camera. The X (horizontal) angle is inferred from the window aspect
-    ratio (see aspectRatio() and horizontalFieldOfView()).
-
-    Use setFOVToFitScene() to adapt the fieldOfView() to a given scene. */
-    float fieldOfView() const { return fieldOfView_; };
-
-    /*! Returns the horizontal field of view of the Camera (in radians).
-
-    Value is set using setHorizontalFieldOfView() or setFieldOfView(). These values
-    are always linked by:
-    \code
-    horizontalFieldOfView() = 2.0 * atan ( tan(fieldOfView()/2.0) * aspectRatio() ).
-    \endcode */
-    float horizontalFieldOfView() const { return 2.0 * atan ( tan(fieldOfView()/2.0) * aspectRatio() ); };
-
-    /*! Returns the Camera aspect ratio defined by screenWidth() / screenHeight().
-
-    When the Camera is attached to a QGLViewer, these values and hence the aspectRatio() are
-    automatically fitted to the viewer's window aspect ratio using setScreenWidthAndHeight(). */
-    float aspectRatio() const { return static_cast<float>(screenWidth_)/static_cast<float>(screenHeight_); };
-    /*! Returns the width (in pixels) of the Camera screen.
-
-    Set using setScreenWidthAndHeight(). This value is automatically fitted to the QGLViewer's
-    window dimensions when the Camera is attached to a QGLViewer. See also QGLWidget::width() */
-    int screenWidth() const { return screenWidth_; };
-    /*! Returns the height (in pixels) of the Camera screen.
-
-    Set using setScreenWidthAndHeight(). This value is automatically fitted to the QGLViewer's
-    window dimensions when the Camera is attached to a QGLViewer. See also QGLWidget::height() */
-    int screenHeight() const { return screenHeight_; };
-    void getViewport(GLint viewport[4]) const;
-    float pixelGLRatio(const Vec& position) const;
-
-    /*! Returns the coefficient which is used to set zNear() when the Camera is inside the sphere
-    defined by sceneCenter() and zClippingCoefficient() * sceneRadius().
-
-    In that case, the zNear() value is set to zNearCoefficient() * zClippingCoefficient() *
-    sceneRadius(). See the zNear() documentation for details.
-
-    Default value is 0.005, which is appropriate for most applications. In case you need a high
-    dynamic ZBuffer precision, you can increase this value (~0.1). A lower value will prevent
-    clipping of very close objects at the expense of a worst Z precision.
-
-    Only meaningful when Camera type is Camera::PERSPECTIVE. */
-    float zNearCoefficient() const { return zNearCoef_; };
-    /*! Returns the coefficient used to position the near and far clipping planes.
-
-    The near (resp. far) clipping plane is positioned at a distance equal to zClippingCoefficient() *
-    sceneRadius() in front of (resp. behind) the sceneCenter(). This garantees an optimal use of
-    the z-buffer range and minimizes aliasing. See the zNear() and zFar() documentations.
-
-    Default value is square root of 3.0 (so that a cube of size sceneRadius() is not clipped).
-
-    However, since the sceneRadius() is used for other purposes (see showEntireScene(), flySpeed(),
-    ...) and you may want to change this value to define more precisely the location of the clipping
-    planes. See also zNearCoefficient().
-
-    For a total control on clipping planes' positions, an other option is to overload the zNear()
-    and zFar() methods. See the <a href="../examples/standardCamera.html">standardCamera example</a>.
-
-    \attention When QGLViewer::cameraPathAreEdited(), this value is set to 5.0 so that the Camera
-    paths are not clipped. The previous zClippingCoefficient() value is restored back when you leave
-    this mode. */
-    float zClippingCoefficient() const { return zClippingCoef_; }
-
-    virtual float zNear() const;
-    virtual float zFar()  const;
-    virtual void getOrthoWidthHeight(GLdouble& halfWidth, GLdouble& halfHeight) const;
-    void getFrustumPlanesCoefficients(GLdouble coef[6][4]) const;
-
-  public Q_SLOTS:
-    void setType(Type type);
-
-    /*! Sets the vertical fieldOfView() of the Camera (in radians).
-
-    Note that focusDistance() is set to sceneRadius() / tan(fieldOfView()/2) by this method. */
-    void setFieldOfView(float fov) { fieldOfView_ = fov; setFocusDistance(sceneRadius() / tan(fov/2.0)); };
-
-    /*! Sets the horizontalFieldOfView() of the Camera (in radians).
-
-    horizontalFieldOfView() and fieldOfView() are linked by the aspectRatio(). This method actually
-    calls setFieldOfView(( 2.0 * atan (tan(hfov / 2.0) / aspectRatio()) )) so that a call to
-    horizontalFieldOfView() returns the expected value. */
-    void setHorizontalFieldOfView(float hfov) { setFieldOfView( 2.0 * atan (tan(hfov / 2.0) / aspectRatio()) ); };
-
-    void setFOVToFitScene();
-
-    /*! Defines the Camera aspectRatio().
-
-    This value is actually inferred from the screenWidth() / screenHeight() ratio. You should use
-    setScreenWidthAndHeight() instead.
-
-    This method might however be convenient when the Camera is not associated with a QGLViewer. It
-    actually sets the screenHeight() to 100 and the screenWidth() accordingly. See also
-    setFOVToFitScene().
-
-    \note If you absolutely need an aspectRatio() that does not correspond to your viewer's window
-    dimensions, overload loadProjectionMatrix() or multiply the created GL_PROJECTION matrix by a
-    scaled diagonal matrix in your QGLViewer::draw() method. */
-    void setAspectRatio(float aspect) { setScreenWidthAndHeight(int(100.0*aspect), 100); };
-
-    void setScreenWidthAndHeight(int width, int height);
-    /*! Sets the zNearCoefficient() value. */
-    void setZNearCoefficient(float coef) { zNearCoef_ = coef; };
-    /*! Sets the zClippingCoefficient() value. */
-    void setZClippingCoefficient(float coef) { zClippingCoef_ = coef; }
-    //@}
-
-
-    /*! @name Scene radius and center */
-    //@{
-  public:
-    /*! Returns the radius of the scene observed by the Camera.
-
-    You need to provide such an approximation of the scene dimensions so that the Camera can adapt
-    its zNear() and zFar() values. See the sceneCenter() documentation.
-
-    See also setSceneBoundingBox().
-
-    Note that QGLViewer::sceneRadius() (resp. QGLViewer::setSceneRadius()) simply call this method
-    (resp. setSceneRadius()) on its associated QGLViewer::camera(). */
-    float sceneRadius() const { return sceneRadius_; };
-
-    /*! Returns the position of the scene center, defined in the world coordinate system.
-
-    The scene observed by the Camera should be roughly centered on this position, and included in a
-    sceneRadius() sphere. This approximate description of the scene permits a zNear() and zFar()
-    clipping planes definition, and allows convenient positioning methods such as showEntireScene().
-
-    Default value is (0,0,0) (world origin). Use setSceneCenter() to change it. See also
-    setSceneBoundingBox().
-
-    Note that QGLViewer::sceneCenter() (resp. QGLViewer::setSceneCenter()) simply call this method
-    (resp. setSceneCenter()) on its associated QGLViewer::camera(). */
-    Vec sceneCenter() const { return sceneCenter_; };
-    float distanceToSceneCenter() const;
-
-  public Q_SLOTS:
-    void setSceneRadius(float radius);
-    void setSceneCenter(const Vec& center);
-    bool setSceneCenterFromPixel(const QPoint& pixel);
-    void setSceneBoundingBox(const Vec& min, const Vec& max);
-    //@}
-
-
-    /*! @name Revolve Around Point */
-    //@{
- public Q_SLOTS:
-    void setRevolveAroundPoint(const Vec& rap);
-    bool setRevolveAroundPointFromPixel(const QPoint& pixel);
-
-  public:
-    /*! The point the Camera revolves around with the QGLViewer::ROTATE mouse binding. Defined in world coordinate system.
-
-    Default value is the sceneCenter().
-
-    \attention setSceneCenter() changes this value. */
-    Vec revolveAroundPoint() const { return frame()->revolveAroundPoint(); };
-    //@}
-
-
-    /*! @name Associated frame */
-    //@{
-  public:
-    /*! Returns the ManipulatedCameraFrame attached to the Camera.
-
-    This ManipulatedCameraFrame defines its position() and orientation() and can translate mouse
-    events into Camera displacement. Set using setFrame(). */
-    ManipulatedCameraFrame* frame() const { return frame_; };
-  public Q_SLOTS:
-    void setFrame(ManipulatedCameraFrame* const mcf);
-    //@}
-
-
-    /*! @name KeyFramed paths */
-    //@{
-   public:
-    KeyFrameInterpolator* keyFrameInterpolator(int i) const;
+	void setFromModelViewMatrix(const GLdouble* const modelViewMatrix);
+	void setFromProjectionMatrix(const qreal matrix[12]);
 
 public Q_SLOTS:
-    void setKeyFrameInterpolator(int i, KeyFrameInterpolator* const kfi);
-
-    virtual void addKeyFrameToPath(int i);
-    virtual void playPath(int i);
-    virtual void deletePath(int i);
-    virtual void resetPath(int i);
-    virtual void drawAllPaths();
-    //@}
+	void setPosition(const Vec& pos);
+	void setOrientation(const Quaternion& q);
+	void setOrientation(qreal theta, qreal phi);
+	void setUpVector(const Vec& up, bool noMove=true);
+	void setViewDirection(const Vec& direction);
+	//@}
 
 
-    /*! @name OpenGL matrices */
-    //@{
-  public:
-    virtual void loadProjectionMatrix(bool reset=true) const;
-    virtual void loadModelViewMatrix(bool reset=true) const;
-    void computeProjectionMatrix() const;
-    void computeModelViewMatrix() const;
+	/*! @name Positioning tools */
+	//@{
+public Q_SLOTS:
+	void lookAt(const Vec& target);
+	void showEntireScene();
+	void fitSphere(const Vec& center, qreal radius);
+	void fitBoundingBox(const Vec& min, const Vec& max);
+	void fitScreenRegion(const QRect& rectangle);
+	void centerScene();
+	void interpolateToZoomOnPixel(const QPoint& pixel);
+	void interpolateToFitScene();
+	void interpolateTo(const Frame& fr, qreal duration);
+	//@}
 
-    virtual void loadProjectionMatrixStereo(bool leftBuffer=true) const;
-    virtual void loadModelViewMatrixStereo(bool leftBuffer=true) const;
 
-    void getProjectionMatrix(GLdouble m[16]) const;
-    void getModelViewMatrix(GLdouble m[16]) const;
+	/*! @name Frustum */
+	//@{
+public:
+	/*! Returns the Camera::Type of the Camera.
+
+	Set by setType(). Mainly used by loadProjectionMatrix().
+
+	A Camera::PERSPECTIVE Camera uses a classical projection mainly defined by its fieldOfView().
+
+	With a Camera::ORTHOGRAPHIC type(), the fieldOfView() is meaningless and the width and height of
+	the Camera frustum are inferred from the distance to the pivotPoint() using
+	getOrthoWidthHeight().
+
+	Both types use zNear() and zFar() (to define their clipping planes) and aspectRatio() (for
+	frustum shape). */
+	Type type() const { return type_; }
+
+	/*! Returns the vertical field of view of the Camera (in radians).
+
+	Value is set using setFieldOfView(). Default value is pi/4 radians. This value is meaningless if
+	the Camera type() is Camera::ORTHOGRAPHIC.
+
+	The field of view corresponds the one used in \c gluPerspective (see manual). It sets the Y
+	(vertical) aperture of the Camera. The X (horizontal) angle is inferred from the window aspect
+	ratio (see aspectRatio() and horizontalFieldOfView()).
+
+	Use setFOVToFitScene() to adapt the fieldOfView() to a given scene. */
+	qreal fieldOfView() const { return fieldOfView_; }
+
+	/*! Returns the horizontal field of view of the Camera (in radians).
+
+	Value is set using setHorizontalFieldOfView() or setFieldOfView(). These values
+	are always linked by:
+	\code
+	horizontalFieldOfView() = 2.0 * atan ( tan(fieldOfView()/2.0) * aspectRatio() ).
+	\endcode */
+	qreal horizontalFieldOfView() const { return 2.0 * atan ( tan(fieldOfView()/2.0) * aspectRatio() ); }
+
+	/*! Returns the Camera aspect ratio defined by screenWidth() / screenHeight().
+
+	When the Camera is attached to a QGLViewer, these values and hence the aspectRatio() are
+	automatically fitted to the viewer's window aspect ratio using setScreenWidthAndHeight(). */
+	qreal aspectRatio() const { return screenWidth_ / static_cast<qreal>(screenHeight_); }
+	/*! Returns the width (in pixels) of the Camera screen.
+
+	Set using setScreenWidthAndHeight(). This value is automatically fitted to the QGLViewer's
+	window dimensions when the Camera is attached to a QGLViewer. See also QGLWidget::width() */
+	int screenWidth() const { return screenWidth_; }
+	/*! Returns the height (in pixels) of the Camera screen.
+
+	Set using setScreenWidthAndHeight(). This value is automatically fitted to the QGLViewer's
+	window dimensions when the Camera is attached to a QGLViewer. See also QGLWidget::height() */
+	int screenHeight() const { return screenHeight_; }
+	void getViewport(GLint viewport[4]) const;
+	qreal pixelGLRatio(const Vec& position) const;
+
+	/*! Returns the coefficient which is used to set zNear() when the Camera is inside the sphere
+	defined by sceneCenter() and zClippingCoefficient() * sceneRadius().
+
+	In that case, the zNear() value is set to zNearCoefficient() * zClippingCoefficient() *
+	sceneRadius(). See the zNear() documentation for details.
+
+	Default value is 0.005, which is appropriate for most applications. In case you need a high
+	dynamic ZBuffer precision, you can increase this value (~0.1). A lower value will prevent
+	clipping of very close objects at the expense of a worst Z precision.
+
+	Only meaningful when Camera type is Camera::PERSPECTIVE. */
+	qreal zNearCoefficient() const { return zNearCoef_; }
+	/*! Returns the coefficient used to position the near and far clipping planes.
+
+	The near (resp. far) clipping plane is positioned at a distance equal to zClippingCoefficient() *
+	sceneRadius() in front of (resp. behind) the sceneCenter(). This garantees an optimal use of
+	the z-buffer range and minimizes aliasing. See the zNear() and zFar() documentations.
+
+	Default value is square root of 3.0 (so that a cube of size sceneRadius() is not clipped).
+
+	However, since the sceneRadius() is used for other purposes (see showEntireScene(), flySpeed(),
+	...) and you may want to change this value to define more precisely the location of the clipping
+	planes. See also zNearCoefficient().
+
+	For a total control on clipping planes' positions, an other option is to overload the zNear()
+	and zFar() methods. See the <a href="../examples/standardCamera.html">standardCamera example</a>.
+
+	\attention When QGLViewer::cameraPathAreEdited(), this value is set to 5.0 so that the Camera
+	paths are not clipped. The previous zClippingCoefficient() value is restored back when you leave
+	this mode. */
+	qreal zClippingCoefficient() const { return zClippingCoef_; }
+
+	virtual qreal zNear() const;
+	virtual qreal zFar()  const;
+	virtual void getOrthoWidthHeight(GLdouble& halfWidth, GLdouble& halfHeight) const;
+	void getFrustumPlanesCoefficients(GLdouble coef[6][4]) const;
+
+public Q_SLOTS:
+	void setType(Type type);
+
+	void setFieldOfView(qreal fov);
+
+	/*! Sets the horizontalFieldOfView() of the Camera (in radians).
+
+	horizontalFieldOfView() and fieldOfView() are linked by the aspectRatio(). This method actually
+	calls setFieldOfView(( 2.0 * atan (tan(hfov / 2.0) / aspectRatio()) )) so that a call to
+	horizontalFieldOfView() returns the expected value. */
+	void setHorizontalFieldOfView(qreal hfov) { setFieldOfView( 2.0 * atan (tan(hfov / 2.0) / aspectRatio()) ); }
+
+	void setFOVToFitScene();
+
+	/*! Defines the Camera aspectRatio().
+
+	This value is actually inferred from the screenWidth() / screenHeight() ratio. You should use
+	setScreenWidthAndHeight() instead.
+
+	This method might however be convenient when the Camera is not associated with a QGLViewer. It
+	actually sets the screenHeight() to 100 and the screenWidth() accordingly. See also
+	setFOVToFitScene().
+
+	\note If you absolutely need an aspectRatio() that does not correspond to your viewer's window
+	dimensions, overload loadProjectionMatrix() or multiply the created GL_PROJECTION matrix by a
+	scaled diagonal matrix in your QGLViewer::draw() method. */
+	void setAspectRatio(qreal aspect) { setScreenWidthAndHeight(int(100.0*aspect), 100); }
+
+	void setScreenWidthAndHeight(int width, int height);
+	/*! Sets the zNearCoefficient() value. */
+	void setZNearCoefficient(qreal coef) { zNearCoef_ = coef; projectionMatrixIsUpToDate_ = false; }
+	/*! Sets the zClippingCoefficient() value. */
+	void setZClippingCoefficient(qreal coef) { zClippingCoef_ = coef; projectionMatrixIsUpToDate_ = false; }
+	//@}
+
+
+	/*! @name Scene radius and center */
+	//@{
+public:
+	/*! Returns the radius of the scene observed by the Camera.
+
+	You need to provide such an approximation of the scene dimensions so that the Camera can adapt
+	its zNear() and zFar() values. See the sceneCenter() documentation.
+
+	See also setSceneBoundingBox().
+
+	Note that QGLViewer::sceneRadius() (resp. QGLViewer::setSceneRadius()) simply call this method
+	(resp. setSceneRadius()) on its associated QGLViewer::camera(). */
+	qreal sceneRadius() const { return sceneRadius_; }
+
+	/*! Returns the position of the scene center, defined in the world coordinate system.
+
+	The scene observed by the Camera should be roughly centered on this position, and included in a
+	sceneRadius() sphere. This approximate description of the scene permits a zNear() and zFar()
+	clipping planes definition, and allows convenient positioning methods such as showEntireScene().
+
+	Default value is (0,0,0) (world origin). Use setSceneCenter() to change it. See also
+	setSceneBoundingBox().
+
+	Note that QGLViewer::sceneCenter() (resp. QGLViewer::setSceneCenter()) simply calls this method
+	(resp. setSceneCenter()) on its associated QGLViewer::camera(). */
+	Vec sceneCenter() const { return sceneCenter_; }
+	qreal distanceToSceneCenter() const;
+
+public Q_SLOTS:
+	void setSceneRadius(qreal radius);
+	void setSceneCenter(const Vec& center);
+	bool setSceneCenterFromPixel(const QPoint& pixel);
+	void setSceneBoundingBox(const Vec& min, const Vec& max);
+	//@}
+
+
+	/*! @name Pivot Point */
+	//@{
+public Q_SLOTS:
+	void setPivotPoint(const Vec& point);
+	bool setPivotPointFromPixel(const QPoint& pixel);
+
+public:
+	Vec pivotPoint() const;
+
+#ifndef DOXYGEN
+public Q_SLOTS:
+	void setRevolveAroundPoint(const Vec& point);
+	bool setRevolveAroundPointFromPixel(const QPoint& pixel);
+public:
+	Vec revolveAroundPoint() const;
+#endif
+	//@}
+
+
+	/*! @name Associated frame */
+	//@{
+public:
+	/*! Returns the ManipulatedCameraFrame attached to the Camera.
+
+	This ManipulatedCameraFrame defines its position() and orientation() and can translate mouse
+	events into Camera displacement. Set using setFrame(). */
+	ManipulatedCameraFrame* frame() const { return frame_; }
+public Q_SLOTS:
+	void setFrame(ManipulatedCameraFrame* const mcf);
+	//@}
+
+
+	/*! @name KeyFramed paths */
+	//@{
+public:
+	KeyFrameInterpolator* keyFrameInterpolator(unsigned int i) const;
+
+public Q_SLOTS:
+	void setKeyFrameInterpolator(unsigned int i, KeyFrameInterpolator* const kfi);
+
+	virtual void addKeyFrameToPath(unsigned int i);
+	virtual void playPath(unsigned int i);
+	virtual void deletePath(unsigned int i);
+	virtual void resetPath(unsigned int i);
+	virtual void drawAllPaths();
+	//@}
+
+
+	/*! @name OpenGL matrices */
+	//@{
+public:
+	virtual void loadProjectionMatrix(bool reset=true) const;
+	virtual void loadModelViewMatrix(bool reset=true) const;
+	void computeProjectionMatrix() const;
+	void computeModelViewMatrix() const;
+
+	virtual void loadProjectionMatrixStereo(bool leftBuffer=true) const;
+	virtual void loadModelViewMatrixStereo(bool leftBuffer=true) const;
+
+	void getProjectionMatrix(GLfloat m[16]) const;
+	void getProjectionMatrix(GLdouble m[16]) const;
+
+	void getModelViewMatrix(GLfloat m[16]) const;
+	void getModelViewMatrix(GLdouble m[16]) const;
+
+	void getModelViewProjectionMatrix(GLfloat m[16]) const;
 	void getModelViewProjectionMatrix(GLdouble m[16]) const;
+	//@}
 
+
+	/*! @name Drawing */
+	//@{
 #ifndef DOXYGEN
-    // Required for windows which otherwise silently fills
-    void getProjectionMatrix(GLfloat m[16]) const;
-    void getModelViewMatrix(GLfloat m[16]) const;
+	static void drawCamera(qreal scale=1.0, qreal aspectRatio=1.33, qreal fieldOfView=qreal(M_PI)/4.0);
 #endif
-    //@}
-
-    
-    /*! @name Drawing */
-    //@{
-#ifndef DOXYGEN
-    static void drawCamera(float scale=1.0, float aspectRatio=1.33, float fieldOfView=M_PI/4.0);
-#endif
-    virtual void draw(bool drawFarPlane=true, float scale=1.0) const;
-    //@}
-
-    
-    /*! @name World to Camera coordinate systems conversions */
-    //@{
-  public:
-    /*! Returns the Camera frame coordinates of a point \p src defined in world coordinates.
-
-    worldCoordinatesOf() performs the inverse transformation.
-
-    Note that the point coordinates are simply converted in a different coordinate system. They are
-    not projected on screen. Use projectedCoordinatesOf() for that. */
-    Vec cameraCoordinatesOf(const Vec& src) const { return frame()->coordinatesOf(src); };
-    /*! Returns the world coordinates of the point whose position \p src is defined in the Camera
-    coordinate system.
-
-    cameraCoordinatesOf() performs the inverse transformation. */
-    Vec worldCoordinatesOf(const Vec& src) const { return frame()->inverseCoordinatesOf(src); };
-    void getCameraCoordinatesOf(const float src[3], float res[3]) const;
-    void getWorldCoordinatesOf(const float src[3], float res[3]) const;
-    //@}
+	virtual void draw(bool drawFarPlane=true, qreal scale=1.0) const;
+	//@}
 
 
-    /*! @name 2D screen to 3D world coordinate systems conversions */
-    //@{
-  public:
-    Vec projectedCoordinatesOf(const Vec& src, const Frame* frame=NULL) const;
-    Vec unprojectedCoordinatesOf(const Vec& src, const Frame* frame=NULL) const;
-    void getProjectedCoordinatesOf(const float src[3], float res[3], const Frame* frame=NULL) const;
-    void getUnprojectedCoordinatesOf(const float src[3], float res[3], const Frame* frame=NULL) const;
-    void convertClickToLine(const QPoint& pixel, Vec& orig, Vec& dir) const;
-    Vec pointUnderPixel(const QPoint& pixel, bool& found) const;
-    //@}
+	/*! @name World to Camera coordinate systems conversions */
+	//@{
+public:
+	Vec cameraCoordinatesOf(const Vec& src) const;
+	Vec worldCoordinatesOf(const Vec& src) const;
+	void getCameraCoordinatesOf(const qreal src[3], qreal res[3]) const;
+	void getWorldCoordinatesOf(const qreal src[3], qreal res[3]) const;
+	//@}
 
 
-    /*! @name Fly speed */
-    //@{
-  public:
-    /*! Returns the fly speed of the Camera.
-
-    Simply returns frame()->flySpeed(). See the ManipulatedCameraFrame::flySpeed() documentation.
-    This value is only meaningful when the MouseAction bindings is QGLViewer::MOVE_FORWARD or
-    QGLViewer::MOVE_BACKWARD.
-
-    Set to 1% of the sceneRadius() by setSceneRadius(). See also setFlySpeed(). */
-    float flySpeed() const { return frame()->flySpeed(); };
-  public Q_SLOTS:
-    /*! Sets the Camera flySpeed().
-
-    \attention This value is modified by setSceneRadius(). */
-    void setFlySpeed(float speed) { frame()->setFlySpeed(speed); };
-    //@}
+	/*! @name 2D screen to 3D world coordinate systems conversions */
+	//@{
+public:
+	Vec projectedCoordinatesOf(const Vec& src, const Frame* frame=NULL) const;
+	Vec unprojectedCoordinatesOf(const Vec& src, const Frame* frame=NULL) const;
+	void getProjectedCoordinatesOf(const qreal src[3], qreal res[3], const Frame* frame=NULL) const;
+	void getUnprojectedCoordinatesOf(const qreal src[3], qreal res[3], const Frame* frame=NULL) const;
+	void convertClickToLine(const QPoint& pixel, Vec& orig, Vec& dir) const;
+	Vec pointUnderPixel(const QPoint& pixel, bool& found) const;
+	//@}
 
 
-    /*! @name Stereo parameters */
-    //@{
-  public:
-    /*! Returns the user's inter-ocular distance (in meters). Default value is 0.062m, which fits most people.
+	/*! @name Fly speed */
+	//@{
+public:
+	qreal flySpeed() const;
+public Q_SLOTS:
+	void setFlySpeed(qreal speed);
+	//@}
 
-    loadProjectionMatrixStereo() uses this value to define the Camera offset and frustum. See
-    setIODistance(). */
-    float IODistance() const { return IODistance_; };
 
-    /*! Returns the physical distance between the user's eyes and the screen (in meters).
+	/*! @name Stereo parameters */
+	//@{
+public:
+	/*! Returns the user's inter-ocular distance (in meters). Default value is 0.062m, which fits most people.
 
-    physicalDistanceToScreen() and focusDistance() represent the same distance. The former is
-    expressed in physical real world units, while the latter is expressed in OpenGL virtual world
-    units.
+	loadProjectionMatrixStereo() uses this value to define the Camera offset and frustum. See
+	setIODistance(). */
+	qreal IODistance() const { return IODistance_; }
+
+	/*! Returns the physical distance between the user's eyes and the screen (in meters).
+
+	physicalDistanceToScreen() and focusDistance() represent the same distance. The former is
+	expressed in physical real world units, while the latter is expressed in OpenGL virtual world
+	units.
 
 	This is a helper function. It simply returns physicalScreenWidth() / 2.0 / tan(horizontalFieldOfView() / 2.0); */
-    float physicalDistanceToScreen() const { return physicalScreenWidth() / 2.0f / tan(horizontalFieldOfView() / 2.0); };
+	qreal physicalDistanceToScreen() const { return physicalScreenWidth() / 2.0 / tan(horizontalFieldOfView() / 2.0); }
 
-    /*! Returns the physical screen width, in meters. Default value is 0.5m (average monitor width).
+	/*! Returns the physical screen width, in meters. Default value is 0.5m (average monitor width).
 
-    Used for stereo display only (see loadModelViewMatrixStereo() and loadProjectionMatrixStereo()).
-    Set using setPhysicalScreenWidth(). */
-    float physicalScreenWidth() const { return physicalScreenWidth_; };
+	Used for stereo display only (see loadModelViewMatrixStereo() and loadProjectionMatrixStereo()).
+	Set using setPhysicalScreenWidth(). */
+	qreal physicalScreenWidth() const { return physicalScreenWidth_; }
 
-    /*! Returns the focus distance used by stereo display, expressed in OpenGL units.
+	/*! Returns the focus distance used by stereo display, expressed in OpenGL units.
 
-    This is the distance in the virtual world between the Camera and the plane where the horizontal
-    stereo parallax is null (the stereo left and right cameras' lines of sigth cross at this distance).
+	This is the distance in the virtual world between the Camera and the plane where the horizontal
+	stereo parallax is null (the stereo left and right cameras' lines of sigth cross at this distance).
 
-    This distance is the virtual world equivalent of the real-world physicalDistanceToScreen().
+	This distance is the virtual world equivalent of the real-world physicalDistanceToScreen().
 
-    \attention This value is modified by QGLViewer::setSceneRadius(), setSceneRadius() and
-    setFieldOfView(). When one of these values is modified, focusDistance() is set to sceneRadius()
-    / tan(fieldOfView()/2), which provides good results. */
-    float focusDistance() const { return focusDistance_; };
-  public Q_SLOTS:
-    /*! Sets the IODistance(). */
-    void setIODistance(float distance) { IODistance_ = distance; };
+	\attention This value is modified by QGLViewer::setSceneRadius(), setSceneRadius() and
+	setFieldOfView(). When one of these values is modified, focusDistance() is set to sceneRadius()
+	/ tan(fieldOfView()/2), which provides good results. */
+	qreal focusDistance() const { return focusDistance_; }
+public Q_SLOTS:
+	/*! Sets the IODistance(). */
+	void setIODistance(qreal distance) { IODistance_ = distance; }
 
 #ifndef DOXYGEN
 	/*! This method is deprecated. Use setPhysicalScreenWidth() instead. */
-	void setPhysicalDistanceToScreen(float distance) { Q_UNUSED(distance); qWarning("setPhysicalDistanceToScreen is deprecated, use setPhysicalScreenWidth instead"); };
+	void setPhysicalDistanceToScreen(qreal distance) { Q_UNUSED(distance); qWarning("setPhysicalDistanceToScreen is deprecated, use setPhysicalScreenWidth instead"); }
 #endif
 
-    /*! Sets the physical screen (monitor or projected wall) width (in meters). */
-    void setPhysicalScreenWidth(float width) { physicalScreenWidth_ = width; };
+	/*! Sets the physical screen (monitor or projected wall) width (in meters). */
+	void setPhysicalScreenWidth(qreal width) { physicalScreenWidth_ = width; }
 
-    /*! Sets the focusDistance(), in OpenGL scene units. */
-    void setFocusDistance(float distance) { focusDistance_ = distance; };
-    //@}
-
-
-    /*! @name XML representation */
-    //@{
-  public:
-    virtual QDomElement domElement(const QString& name, QDomDocument& document) const;
-  public Q_SLOTS:
-    virtual void initFromDOMElement(const QDomElement& element);
-    //@}
+	/*! Sets the focusDistance(), in OpenGL scene units. */
+	void setFocusDistance(qreal distance) { focusDistance_ = distance; }
+	//@}
 
 
-  private:
-    // F r a m e
-    ManipulatedCameraFrame* frame_;
+	/*! @name XML representation */
+	//@{
+public:
+	virtual QDomElement domElement(const QString& name, QDomDocument& document) const;
+public Q_SLOTS:
+	virtual void initFromDOMElement(const QDomElement& element);
+	//@}
 
-    // C a m e r a   p a r a m e t e r s
-    int screenWidth_, screenHeight_;  // size of the window, in pixels
-    float fieldOfView_; // in radians
-    Vec sceneCenter_;
-    float sceneRadius_; // OpenGL units
-    float zNearCoef_;
-    float zClippingCoef_;
-    float orthoCoef_;
-    Type type_; // PERSPECTIVE or ORTHOGRAPHIC
-    mutable GLdouble modelViewMatrix_[16]; // Buffered model view matrix.
-    mutable GLdouble projectionMatrix_[16]; // Buffered projection matrix.
 
-    // S t e r e o   p a r a m e t e r s
-    float IODistance_;		     // inter-ocular distance, in meters
-    float focusDistance_;	     // in scene units
-    float physicalScreenWidth_;	     // in meters
+private Q_SLOTS:
+	void onFrameModified();
 
-    // P o i n t s   o f   V i e w s   a n d   K e y F r a m e s
-    QMap<int, KeyFrameInterpolator*> kfi_;
-    KeyFrameInterpolator* interpolationKfi_;
-  };
+private:
+	// F r a m e
+	ManipulatedCameraFrame* frame_;
+
+	// C a m e r a   p a r a m e t e r s
+	int screenWidth_, screenHeight_;  // size of the window, in pixels
+	qreal fieldOfView_; // in radians
+	Vec sceneCenter_;
+	qreal sceneRadius_; // OpenGL units
+	qreal zNearCoef_;
+	qreal zClippingCoef_;
+	qreal orthoCoef_;
+	Type type_; // PERSPECTIVE or ORTHOGRAPHIC
+	mutable GLdouble modelViewMatrix_[16]; // Buffered model view matrix.
+	mutable bool modelViewMatrixIsUpToDate_;
+	mutable GLdouble projectionMatrix_[16]; // Buffered projection matrix.
+	mutable bool projectionMatrixIsUpToDate_;
+
+	// S t e r e o   p a r a m e t e r s
+	qreal IODistance_;		     // inter-ocular distance, in meters
+	qreal focusDistance_;	     // in scene units
+	qreal physicalScreenWidth_;	     // in meters
+
+	// P o i n t s   o f   V i e w s   a n d   K e y F r a m e s
+	QMap<unsigned int, KeyFrameInterpolator*> kfi_;
+	KeyFrameInterpolator* interpolationKfi_;
+};
 
 } // namespace qglviewer
 
