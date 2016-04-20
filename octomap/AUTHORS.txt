@@ -10,3 +10,6 @@ Further contributors:
 * C. Dornhege, University of Freiburg
 * F-M. de Rainville, Universite Laval Quebec
 * B. Jensen, TU Munich
+* A. Ecins, University of Maryland
+* C. Brew
+* F. Boniardi, University of Freiburg

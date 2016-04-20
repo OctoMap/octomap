@@ -1,3 +1,31 @@
+v1.8.0: 2016-04-20
+==================
+- Fixed #98: The tree structure in memory is now maintained in OcTreeBaseImpl to 
+  enable safely deriving custom node classes. The following functions were 
+  moved from OcTreeDataNode into OcTreeBaseImpl:
+    createChild(...) -> OcTreeBaseImpl::createNodeChild(...)
+    getChild(...)    -> OcTreeBaseImpl::getNodeChild(...)
+    expandNode()     -> OcTreeBaseImpl::expandNode(...)
+    pruneNode()      -> OcTreeBaseImpl::pruneNode(...)
+    hasChildren()    -> OcTreeBaseImpl::nodeHasChildren(...)
+    childExists(...) -> OcTreeBaseImpl::nodeChildExist(...)
+    collapsible()    -> OcTreeBaseImpl::isNodeCollapsible(...)
+  If you use custom derived node classes, you need to adjust your code to the 
+  new API (have a look at ColorOcTree.h as an example). In particular, you 
+  should no longer use the above node member functions in your nodes.
+- Extended unit tests for the new memory management
+- Added valgrind memcheck suppression file with known ("wanted") leaks due to 
+  StaticMemberInitializer.
+- Replaced `unsigned short int` for key values with octomap::key_type 
+  (=uint16_t) and unsigned char with uint8_t in API.
+- Cleaned up OcTreeKey and KeyRay API (used internally)
+- Reduced unneeded memory for StaticMemberInitializer 
+- Cleaned up const refs to primitive types in ColorOcTree interface
+- Removed deprecated insertScan functions (replaced by insertPointCloud)
+- Removed no longer used ROS logging macros and unmaintained  OcTreeLUT, 
+  OcTreeBaseSE classes
+- octovis: Internal version of libQGLViewer updated to 2.6.3
+
 v1.7.2: 2016-03-26
 ==================
 - BBX iterators fixed for empty trees (point3d version)
