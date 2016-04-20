@@ -7,7 +7,6 @@ SET (octomap_SRCS
   OcTree.cpp
   OcTreeNode.cpp
   OcTreeStamped.cpp
-  OcTreeLUT.cpp
   ColorOcTree.cpp
   )
 
@@ -59,12 +58,6 @@ TARGET_LINK_LIBRARIES(intersection_example octomap)
 
 ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
 TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
-
-
-# installation:
-# store all header files to install:
-# file(GLOB octomap_impl_HDRS *.h *.hxx *.hpp)
-# install(FILES ${octomap_impl_HDRS} DESTINATION include/octomap)
 
 install(TARGETS 
 	octomap

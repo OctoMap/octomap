@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -45,6 +45,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include <math.h>
+#include <algorithm>
 
 #ifdef WIN32
 # include <windows.h>
@@ -136,11 +137,11 @@ std::ostream& operator<< (std::ostream& out,const Vector2& u)
 
 Vector2 Vector2::mini(const Vector2& v1,const Vector2& v2)
 {
-  return Vector2(min(v1[0],v2[0]),min(v1[1],v2[1])) ;
+  return Vector2(std::min(v1[0],v2[0]),std::min(v1[1],v2[1])) ;
 }
 
 Vector2 Vector2::maxi(const Vector2& v1,const Vector2& v2)
 {
-  return Vector2(max(v1[0],v2[0]),max(v1[1],v2[1])) ;
+  return Vector2(std::max(v1[0],v2[0]),std::max(v1[1],v2[1])) ;
 }
 

@@ -48,27 +48,6 @@ namespace octomap {
 
   }
 
-  void CountingOcTreeNode::expandNode(){
-    assert(!hasChildren());
-
-    // divide "counts" evenly to children
-    unsigned int childCount = (unsigned int)(value/ 8.0 +0.5);
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      children[k]->setValue(childCount);
-    }
-  }
-
-  bool CountingOcTreeNode::createChild(unsigned int i) {
-    if (children == NULL) {
-      allocChildren();
-    }
-    assert (children[i] == NULL);
-    children[i] = new CountingOcTreeNode();
-    return true;
-  }
-
-
   /// implementation of CountingOcTree  --------------------------------------
   CountingOcTree::CountingOcTree(double resolution)
    : OcTreeBase<CountingOcTreeNode>(resolution) {
@@ -96,12 +75,11 @@ namespace octomap {
       unsigned int pos = computeChildIdx(k, i);
 
       // requested node does not exist
-      if (!curNode->childExists(pos)) {
-        curNode->createChild(pos);
-        tree_size++;
+      if (!nodeChildExists(curNode, pos)) {
+        createNodeChild(curNode, pos);
       }
       // descent tree
-      curNode = static_cast<CountingOcTreeNode*> (curNode->getChild(pos));
+      curNode = getNodeChild(curNode, pos);
       curNode->increaseCount(); // modify traversed nodes
     }
 
@@ -123,15 +101,15 @@ namespace octomap {
                                                 CountingOcTreeNode* node, unsigned int depth,
                                                 const OcTreeKey& parent_key) const {
 
-    if (depth < max_depth && node->hasChildren()) {
+    if (depth < max_depth && nodeHasChildren(node)) {
 
-      unsigned short int center_offset_key = this->tree_max_val >> (depth + 1);
+      key_type center_offset_key = this->tree_max_val >> (depth + 1);
       OcTreeKey search_key;
 
       for (unsigned int i=0; i<8; ++i) {
-        if (node->childExists(i)) {
+        if (nodeChildExists(node,i)) {
           computeChildKey(i, center_offset_key, parent_key, search_key);
-          getCentersMinHitsRecurs(node_centers, min_hits, max_depth, node->getChild(i), depth+1, search_key);
+          getCentersMinHitsRecurs(node_centers, min_hits, max_depth, getNodeChild(node,i), depth+1, search_key);
         }
       }
     }

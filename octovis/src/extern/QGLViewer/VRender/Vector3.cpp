@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -46,6 +46,7 @@
 #include "Vector3.h"
 #include "NVector3.h"
 #include <math.h>
+#include <algorithm>
 
 #ifdef WIN32
 # include <windows.h>
@@ -145,7 +146,7 @@ double Vector3::squareNorm () const
 //! Infinite norm
 double Vector3::infNorm() const
 {
-  return max(max(fabs(_xyz[0]),fabs(_xyz[1])),fabs(_xyz[2])) ;
+  return std::max(std::max(fabs(_xyz[0]),fabs(_xyz[1])),fabs(_xyz[2])) ;
 }
 
 
@@ -159,11 +160,11 @@ std::ostream& vrender::operator<< (std::ostream& out,const Vector3& u)
 
 Vector3 Vector3::mini(const Vector3& v1,const Vector3& v2)
 {
-  return Vector3(min(v1[0],v2[0]),min(v1[1],v2[1]),min(v1[2],v2[2])) ;
+  return Vector3(std::min(v1[0],v2[0]),std::min(v1[1],v2[1]),std::min(v1[2],v2[2])) ;
 }
 
 Vector3 Vector3::maxi(const Vector3& v1,const Vector3& v2)
 {
-  return Vector3(max(v1[0],v2[0]),max(v1[1],v2[1]),max(v1[2],v2[2])) ;
+  return Vector3(std::max(v1[0],v2[0]),std::max(v1[1],v2[1]),std::max(v1[2],v2[2])) ;
 }
 

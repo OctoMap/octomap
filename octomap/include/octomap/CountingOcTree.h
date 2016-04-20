@@ -56,22 +56,11 @@ namespace octomap {
 
     CountingOcTreeNode();
     ~CountingOcTreeNode();
-    bool createChild(unsigned int i);
-
-    inline CountingOcTreeNode* getChild(unsigned int i) {
-      return static_cast<CountingOcTreeNode*> (OcTreeDataNode<unsigned int>::getChild(i));
-    }
-
-    inline const CountingOcTreeNode* getChild(unsigned int i) const {
-      return static_cast<const CountingOcTreeNode*> (OcTreeDataNode<unsigned int>::getChild(i));
-    }
-
+    
     inline unsigned int getCount() const { return getValue(); }
     inline void increaseCount() { value++; }
     inline void setCount(unsigned c) {this->setValue(c); }
 
-    // overloaded:
-    void expandNode();
   };
 
 
@@ -82,8 +71,7 @@ namespace octomap {
    * Count is recursive, parent nodes have the summed count of their
    * children.
    *
-   * \note In our mapping system this data structure is used in
-   *       the sensor model only. Do not use, e.g., insertScan.
+   * \note Was only used internally, not used anymore
    */
   class CountingOcTree : public OcTreeBase <CountingOcTreeNode> {
 
@@ -113,6 +101,7 @@ namespace octomap {
        public:
          StaticMemberInitializer() {
            CountingOcTree* tree = new CountingOcTree(0.1);
+           tree->clearKeyRays();
            AbstractOcTree::registerTreeType(tree);
          }
 

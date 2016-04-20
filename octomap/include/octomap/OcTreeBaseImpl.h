@@ -39,7 +39,7 @@
 #include <limits>
 #include <iterator>
 #include <stack>
-
+#include <bitset>
 
 #include "octomap_types.h"
 #include "OcTreeKey.h"
@@ -47,6 +47,9 @@
 
 
 namespace octomap {
+  
+  // forward declaration for NODE children array
+  class AbstractOcTreeNode;
 
 
   /**
@@ -108,6 +111,65 @@ namespace octomap {
     inline unsigned int getTreeDepth () const { return tree_depth; }
 
     inline double getNodeSize(unsigned depth) const {assert(depth <= tree_depth); return sizeLookupTable[depth];}
+    
+    /**
+     * Clear KeyRay vector to minimize unneeded memory. This is only
+     * useful for the StaticMemberInitializer classes, don't call it for
+     * an octree that is actually used.
+     */
+    void clearKeyRays(){
+      keyrays.clear();
+    }
+    
+    // -- Tree structure operations formerly contained in the nodes ---
+   
+    /// Creates (allocates) the i-th child of the node. @return ptr to newly create NODE
+    NODE* createNodeChild(NODE* node, unsigned int childIdx);
+    
+    /// Deletes the i-th child of the node
+    void deleteNodeChild(NODE* node, unsigned int childIdx);
+    
+    /// @return ptr to child number childIdx of node
+    NODE* getNodeChild(NODE* node, unsigned int childIdx) const;
+    
+    /// @return const ptr to child number childIdx of node
+    const NODE* getNodeChild(const NODE* node, unsigned int childIdx) const;
+    
+    /// A node is collapsible if all children exist, don't have children of their own
+    /// and have the same occupancy value
+    virtual bool isNodeCollapsible(const NODE* node) const;
+    
+    /** 
+     * Safe test if node has a child at index childIdx.
+     * First tests if there are any children. Replaces node->childExists(...)
+     * \return true if the child at childIdx exists
+     */
+    bool nodeChildExists(const NODE* node, unsigned int childIdx) const;
+    
+    /** 
+     * Safe test if node has any children. Replaces node->hasChildren(...)
+     * \return true if node has at least one child
+     */
+    bool nodeHasChildren(const NODE* node) const;
+    
+    /**
+     * Expands a node (reverse of pruning): All children are created and
+     * their occupancy probability is set to the node's value.
+     *
+     * You need to verify that this is indeed a pruned node (i.e. not a
+     * leaf at the lowest level)
+     *
+     */
+    virtual void expandNode(NODE* node);
+    
+    /**
+     * Prunes a node when it is collapsible
+     * @return true if pruning was successful
+     */
+    virtual bool pruneNode(NODE* node);
+    
+    
+    // --------
 
     /**
      * \return Pointer to the root node of the tree. This pointer
@@ -292,12 +354,12 @@ namespace octomap {
     //
 
     /// Converts from a single coordinate into a discrete key
-    inline unsigned short int coordToKey(double coordinate) const{
+    inline key_type coordToKey(double coordinate) const{
       return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
     }
 
     /// Converts from a single coordinate into a discrete key at a given depth
-    unsigned short int coordToKey(double coordinate, unsigned depth) const;
+    key_type coordToKey(double coordinate, unsigned depth) const;
 
 
     /// Converts from a 3D coordinate into a 3D addressing key
@@ -350,7 +412,7 @@ namespace octomap {
      * @param depth Target depth level for the new key
      * @return Key for the new depth level
      */
-    unsigned short int adjustKeyAtDepth(unsigned short int key, unsigned int depth) const;
+    key_type adjustKeyAtDepth(key_type key, unsigned int depth) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
@@ -401,7 +463,7 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, key_type& key) const;
 
     /**
      * Converts a single coordinate into a discrete addressing key, with boundary checking.
@@ -411,15 +473,15 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned depth, unsigned short int& key) const;
+    bool coordToKeyChecked(double coordinate, unsigned depth, key_type& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
-    double keyToCoord(unsigned short int key, unsigned depth) const;
+    double keyToCoord(key_type key, unsigned depth) const;
 
     /// converts from a discrete key at the lowest tree level into a coordinate
     /// corresponding to the key's center
-    inline double keyToCoord(unsigned short int key) const{
+    inline double keyToCoord(key_type key) const{
       return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
     }
 
@@ -447,6 +509,15 @@ namespace octomap {
     void calcMinMax();
 
     void calcNumNodesRecurs(NODE* node, size_t& num_nodes) const;
+    
+    /// recursive call of readData()
+    std::istream& readNodesRecurs(NODE*, std::istream &s);
+    
+    /// recursive call of writeData()
+    std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
+    
+    /// recursive delete of node and all children (deallocates memory)
+    void deleteNodeRecurs(NODE* node);
 
     /// recursive call of deleteNode()
     bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);
@@ -464,7 +535,8 @@ namespace octomap {
     /// (const-parameters can't be changed) -  use the copy constructor instead.
     OcTreeBaseImpl<NODE,INTERFACE>& operator=(const OcTreeBaseImpl<NODE,INTERFACE>&);
 
-  protected:
+  protected:  
+    void allocNodeChildren(NODE* node);
 
     NODE* root; ///< Pointer to the root NODE, NULL for empty tree
 

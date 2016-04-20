@@ -80,6 +80,7 @@ namespace octomap {
     public:
       StaticMemberInitializer() {
         OcTree* tree = new OcTree(0.1);
+        tree->clearKeyRays();
         AbstractOcTree::registerTreeType(tree);
       }
 

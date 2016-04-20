@@ -42,18 +42,18 @@ void getLeafNodesRecurs(std::list<OcTreeVolume>& voxels,
     OcTree* tree, bool occupied)
 {
   if ((depth <= max_depth) && (node != NULL) ) {
-    if (node->hasChildren() && (depth != max_depth)) {
+    if (tree->nodeHasChildren(node) && (depth != max_depth)) {
 
       float center_offset = float(tree_center(0) / pow( 2., (double) depth+1));
       point3d search_center;
 
       for (unsigned int i=0; i<8; i++) {
-        if (node->childExists(i)) {
+        if (tree->nodeChildExists(node, i)) {
 
           computeChildCenter(i, center_offset, parent_center, search_center);
-          getLeafNodesRecurs(voxels, max_depth, node->getChild(i), depth+1, search_center, tree_center, tree, occupied);
+          getLeafNodesRecurs(voxels, max_depth, tree->getNodeChild(node, i), depth+1, search_center, tree_center, tree, occupied);
 
-        } // GetChild
+        } 
       }
     }
     else {
@@ -72,23 +72,23 @@ void getVoxelsRecurs(std::list<OcTreeVolume>& voxels,
                                        unsigned int max_depth,
                                        OcTreeNode* node, unsigned int depth,
                                        const point3d& parent_center, const point3d& tree_center,
-                                       double resolution){
+                                       OcTree* tree){
 
   if ((depth <= max_depth) && (node != NULL) ) {
-    if (node->hasChildren() && (depth != max_depth)) {
+    if (tree->nodeHasChildren(node) && (depth != max_depth)) {
 
       double center_offset = tree_center(0) / pow(2., (double) depth + 1);
       point3d search_center;
 
       for (unsigned int i = 0; i < 8; i++) {
-        if (node->childExists(i)) {
+        if (tree->nodeChildExists(node, i)) {
           computeChildCenter(i, (float) center_offset, parent_center, search_center);
-          getVoxelsRecurs(voxels, max_depth, node->getChild(i), depth + 1, search_center, tree_center, resolution);
+          getVoxelsRecurs(voxels, max_depth, tree->getNodeChild(node, i), depth + 1, search_center, tree_center, tree);
 
         }
       } // depth
     }
-    double voxelSize = resolution * pow(2., double(16 - depth));
+    double voxelSize = tree->getResolution() * pow(2., double(16 - depth));
     voxels.push_back(std::make_pair(parent_center - tree_center, voxelSize));
   }
 }
@@ -172,7 +172,7 @@ void boundingBoxTest(OcTree* tree){
     count++;
     OcTreeKey currentKey = it.getKey();
     // leaf is actually a leaf:
-    EXPECT_FALSE(it->hasChildren());
+    EXPECT_FALSE(tree->nodeHasChildren(&(*it)));
 
     // leaf exists in tree:
     OcTreeNode* node = tree->search(currentKey);
@@ -368,7 +368,7 @@ int main(int argc, char** argv) {
   list_depr.clear();
 
   gettimeofday(&start, NULL);  // start timer
-  getVoxelsRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree->getResolution());
+  getVoxelsRecurs(list_depr,maxDepth,tree->getRoot(), 0, tree_center, tree_center, tree);
   gettimeofday(&stop, NULL);  // stop timer
   time_depr = timediff(start, stop);
 

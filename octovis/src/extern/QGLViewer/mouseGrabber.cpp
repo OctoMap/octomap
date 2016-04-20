@@ -1,8 +1,8 @@
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -25,19 +25,15 @@
 using namespace qglviewer;
 
 // Static private variable
-#if QT_VERSION >= 0x040000
 QList<MouseGrabber*> MouseGrabber::MouseGrabberPool_;
-#else
-QPtrList<MouseGrabber> MouseGrabber::MouseGrabberPool_;
-#endif
 
 /*! Default constructor.
 
 Adds the created MouseGrabber in the MouseGrabberPool(). grabsMouse() is set to \c false. */
 MouseGrabber::MouseGrabber()
-  : grabsMouse_(false)
+	: grabsMouse_(false)
 {
-  addInMouseGrabberPool();
+	addInMouseGrabberPool();
 }
 
 /*! Adds the MouseGrabber in the MouseGrabberPool().
@@ -50,8 +46,8 @@ tested with checkIfGrabsMouse() by the QGLViewer, and hence can no longer grab m
 isInMouseGrabberPool() to know the current state of the MouseGrabber. */
 void MouseGrabber::addInMouseGrabberPool()
 {
-  if (!isInMouseGrabberPool())
-    MouseGrabber::MouseGrabberPool_.append(this);
+	if (!isInMouseGrabberPool())
+		MouseGrabber::MouseGrabberPool_.append(this);
 }
 
 /*! Removes the MouseGrabber from the MouseGrabberPool().
@@ -60,12 +56,8 @@ See addInMouseGrabberPool() for details. Removing a MouseGrabber that is not in 
 has no effect. */
 void MouseGrabber::removeFromMouseGrabberPool()
 {
-  if (isInMouseGrabberPool())
-#if QT_VERSION >= 0x040000
-    MouseGrabber::MouseGrabberPool_.removeAll(const_cast<MouseGrabber*>(this));
-#else
-    MouseGrabber::MouseGrabberPool_.removeRef(this);
-#endif
+	if (isInMouseGrabberPool())
+		MouseGrabber::MouseGrabberPool_.removeAll(const_cast<MouseGrabber*>(this));
 }
 
 /*! Clears the MouseGrabberPool().
@@ -78,11 +70,7 @@ void MouseGrabber::removeFromMouseGrabberPool()
  (use this only if you're sure of what you do). */
 void MouseGrabber::clearMouseGrabberPool(bool autoDelete)
 {
-#if QT_VERSION >= 0x040000
-  if (autoDelete)
-    qDeleteAll(MouseGrabber::MouseGrabberPool_);
-#else
-  MouseGrabber::MouseGrabberPool_.setAutoDelete(autoDelete);
-#endif
-  MouseGrabber::MouseGrabberPool_.clear();
+	if (autoDelete)
+		qDeleteAll(MouseGrabber::MouseGrabberPool_);
+	MouseGrabber::MouseGrabberPool_.clear();
 }

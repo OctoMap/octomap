@@ -53,20 +53,11 @@ namespace octomap {
       return (rhs.value == value && rhs.timestamp == timestamp);
     }
     
-    // children
-    inline OcTreeNodeStamped* getChild(unsigned int i) {
-      return static_cast<OcTreeNodeStamped*> (OcTreeNode::getChild(i));
+    void copyData(const OcTreeNodeStamped& from){
+      OcTreeNode::copyData(from);
+      timestamp = from.getTimestamp();
     }
-    inline const OcTreeNodeStamped* getChild(unsigned int i) const {
-      return static_cast<const OcTreeNodeStamped*> (OcTreeNode::getChild(i));
-    }
-
-    bool createChild(unsigned int i) {
-      if (children == NULL) allocChildren();
-      children[i] = new OcTreeNodeStamped();
-      return true;
-    }
-    
+      
     // timestamp
     inline unsigned int getTimestamp() const { return timestamp; }
     inline void updateTimestamp() { timestamp = (unsigned int) time(NULL);}
@@ -116,6 +107,7 @@ namespace octomap {
     public:
       StaticMemberInitializer() {
         OcTreeStamped* tree = new OcTreeStamped(0.1);
+        tree->clearKeyRays();
         AbstractOcTree::registerTreeType(tree);
       }
 

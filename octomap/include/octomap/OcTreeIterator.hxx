@@ -52,7 +52,7 @@
        * @param tree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
-      iterator_base(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, unsigned char depth=0)
+      iterator_base(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, uint8_t depth=0)
         : tree((tree && tree->root) ? tree : NULL), maxDepth(depth)
       {
         if (tree && maxDepth == 0)
@@ -150,11 +150,17 @@
       struct StackElement{
         NodeType* node;
         OcTreeKey key;
-        unsigned char depth;
+        uint8_t depth;
       };
 
 
     protected:
+      OcTreeBaseImpl<NodeType,INTERFACE> const* tree; ///< Octree this iterator is working on
+      uint8_t maxDepth; ///< Maximum depth for depth-limited queries
+
+      /// Internal recursion stack. Apparently a stack of vector works fastest here.
+      std::stack<StackElement,std::vector<StackElement> > stack;
+      
       /// One step of depth-first tree traversal.
       /// How this is used depends on the actual iterator.
       void singleIncrement(){
@@ -166,24 +172,18 @@
         StackElement s;
         s.depth = top.depth +1;
 
-        unsigned short int center_offset_key = tree->tree_max_val >> s.depth;
+        key_type center_offset_key = tree->tree_max_val >> s.depth;
         // push on stack in reverse order
         for (int i=7; i>=0; --i) {
-          if (top.node->childExists(i)) {
+          if (tree->nodeChildExists(top.node,i)) {
             computeChildKey(i, center_offset_key, top.key, s.key);
-            s.node = top.node->getChild(i);
+            s.node = tree->getNodeChild(top.node, i);
             //OCTOMAP_DEBUG_STR("Current depth: " << int(top.depth) << " new: "<< int(s.depth) << " child#" << i <<" ptr: "<<s.node);
             stack.push(s);
             assert(s.depth <= maxDepth);
           }
         }
       }
-
-      OcTreeBaseImpl<NodeType,INTERFACE> const* tree; ///< Octree this iterator is working on
-      unsigned char maxDepth; ///< Maximum depth for depth-limited queries
-
-      /// Internal recursion stack. Apparently a stack of vector works fastest here.
-      std::stack<StackElement,std::vector<StackElement> > stack;
 
     };
 
@@ -213,7 +213,7 @@
        * @param tree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
-      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {};
+      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, uint8_t depth=0) : iterator_base(tree, depth) {};
 
       /// postfix increment operator of iterator (it++)
       tree_iterator operator++(int){
@@ -237,7 +237,9 @@
       }
 
       /// @return whether the current node is a leaf, i.e. has no children or is at max level
-      bool isLeaf() const{ return (!this->stack.top().node->hasChildren() || this->stack.top().depth == this->maxDepth); }
+      bool isLeaf() const{ 
+        return (!this->tree->nodeHasChildren(this->stack.top().node) || this->stack.top().depth == this->maxDepth); 
+      }
     };
 
     /**
@@ -268,7 +270,7 @@
           * @param tree OcTreeBaseImpl on which the iterator is used on
           * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
           */
-          leaf_iterator(OcTreeBaseImpl<NodeType, INTERFACE> const* tree, unsigned char depth=0) : iterator_base(tree, depth) {
+          leaf_iterator(OcTreeBaseImpl<NodeType, INTERFACE> const* tree, uint8_t depth=0) : iterator_base(tree, depth) {
             // tree could be empty (= no stack)
             if (this->stack.size() > 0){
               // skip forward to next valid leaf node:
@@ -296,8 +298,9 @@
               this->stack.pop();
 
               // skip forward to next leaf
-              while(!this->stack.empty()  && this->stack.top().depth < this->maxDepth
-                  && this->stack.top().node->hasChildren())
+              while(!this->stack.empty()  
+                  && this->stack.top().depth < this->maxDepth
+                  && this->tree->nodeHasChildren(this->stack.top().node))
               {
                 this->singleIncrement();
               }
@@ -347,7 +350,7 @@
       * @param max Maximum point3d of the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
       */
-      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const point3d& min, const point3d& max, unsigned char depth=0)
+      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const point3d& min, const point3d& max, uint8_t depth=0)
         : iterator_base(tree, depth)
       {
         if (this->stack.size() > 0){
@@ -375,7 +378,7 @@
       * @param max Maximum OcTreeKey to be included in the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
       */
-      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const OcTreeKey& min, const OcTreeKey& max, unsigned char depth=0)
+      leaf_bbx_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* tree, const OcTreeKey& min, const OcTreeKey& max, uint8_t depth=0)
         : iterator_base(tree, depth), minKey(min), maxKey(max)
       {
         // tree could be empty (= no stack)
@@ -409,8 +412,9 @@
           this->stack.pop();
 
           // skip forward to next leaf
-          while(!this->stack.empty()  && this->stack.top().depth < this->maxDepth
-              && this->stack.top().node->hasChildren())
+          while(!this->stack.empty()  
+              && this->stack.top().depth < this->maxDepth
+              && this->tree->nodeHasChildren(this->stack.top().node))
           {
             this->singleIncrement();
           }
@@ -431,10 +435,10 @@
 
         typename iterator_base::StackElement s;
         s.depth = top.depth +1;
-        unsigned short int center_offset_key = this->tree->tree_max_val >> s.depth;
+        key_type center_offset_key = this->tree->tree_max_val >> s.depth;
         // push on stack in reverse order
         for (int i=7; i>=0; --i) {
-          if (top.node->childExists(i)) {
+          if (this->tree->nodeChildExists(top.node, i)) {
             computeChildKey(i, center_offset_key, top.key, s.key);
 
             // overlap of query bbx and child bbx?
@@ -442,7 +446,7 @@
                 && (minKey[1] <= (s.key[1] + center_offset_key)) && (maxKey[1] >= (s.key[1] - center_offset_key))
                 && (minKey[2] <= (s.key[2] + center_offset_key)) && (maxKey[2] >= (s.key[2] - center_offset_key)))
             {
-              s.node = top.node->getChild(i);
+              s.node = this->tree->getNodeChild(top.node, i);
               this->stack.push(s);
               assert(s.depth <= this->maxDepth);
             }

@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
       for (int z=-20; z<20; z++) {
         point3d endpoint ((float) x*0.05f+0.01f, (float) y*0.05f+0.01f, (float) z*0.05f+0.01f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, true); 
-        n->setColor(z*5+100,x*5+100,y*5+100); // set color to red
+        n->setColor(z*5+100,x*5+100,y*5+100); 
       }
     }
   }
@@ -46,9 +46,17 @@ int main(int argc, char** argv) {
   // set inner node colors
   tree.updateInnerOccupancy();
 
+  // should already be pruned
+  EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+  const size_t initialSize = tree.size();
+  EXPECT_EQ(initialSize, 1034);
+  tree.prune();
+  EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+  EXPECT_EQ(initialSize, tree.size());
+  
   cout << endl;
 
-
+  std::cout << "\nWriting to / from file\n===============================\n";
   std::string filename ("simple_color_tree.ot");
   std::cout << "Writing color tree to " << filename << std::endl;
   // write color tree
@@ -65,10 +73,12 @@ int main(int argc, char** argv) {
   ColorOcTree* read_color_tree = dynamic_cast<ColorOcTree*>(read_tree);
   EXPECT_TRUE(read_color_tree);
 
+  EXPECT_TRUE(tree == *read_color_tree);
 
-  cout << "Performing some queries:" << endl;
-  
+ 
   {
+    cout << "Performing some queries:" << endl;
+    // TODO: some more meaningful tests
     point3d query (0., 0., 0.);
     ColorOcTreeNode* result = tree.search (query);
     ColorOcTreeNode* result2 = read_color_tree->search (query);
@@ -104,10 +114,81 @@ int main(int argc, char** argv) {
     print_query_info(query, result2);
     EXPECT_FALSE(result);
     EXPECT_FALSE(result2);
-
   }
 
   delete read_tree;
+  read_tree = NULL;
+  
+  {
+    std::cout << "\nPruning / expansion\n===============================\n";
+    EXPECT_EQ(initialSize, tree.size());
+    EXPECT_EQ(initialSize, tree.calcNumNodes());
+    std::cout << "Initial size: " << tree.size() << std::endl;
+    
+    // tree should already be pruned during insertion:
+    tree.prune();
+    EXPECT_EQ(initialSize, tree.size());
+    EXPECT_EQ(initialSize, tree.calcNumNodes());
+        
+    tree.expand();
+    std::cout << "Size after expansion: " << tree.size() << std::endl;
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    
+    // prune again, should be same as initial size
+    
+    tree.prune();
+    EXPECT_EQ(initialSize, tree.size());
+    EXPECT_EQ(initialSize, tree.calcNumNodes());
+        
+  }
+  
+  // delete / create some nodes
+  {
+    std::cout << "\nCreating / deleting nodes\n===============================\n";
+    size_t initialSize = tree.size();
+    EXPECT_EQ(initialSize, tree.calcNumNodes());
+    std::cout << "Initial size: " << initialSize << std::endl;
+    
+    point3d newCoord(-2.0, -2.0, -2.0);
+    ColorOcTreeNode* newNode = tree.updateNode(newCoord, true);
+    newNode->setColor(255,0,0);
+    EXPECT_TRUE(newNode != NULL);
+    
+    const size_t insertedSize = tree.size();
+    std::cout << "Size after one insertion: " << insertedSize << std::endl;
+    EXPECT_EQ(insertedSize, initialSize+6);
+    EXPECT_EQ(insertedSize, tree.calcNumNodes());
+    
+    // find parent of newly inserted node:
+    ColorOcTreeNode* parentNode = tree.search(newCoord, tree.getTreeDepth() -1);
+    EXPECT_TRUE(parentNode);
+    EXPECT_TRUE(tree.nodeHasChildren(parentNode));
+    
+    // only one child exists:
+    EXPECT_TRUE(tree.nodeChildExists(parentNode, 0));
+    for (size_t i = 1; i < 8; ++i){
+      EXPECT_FALSE(tree.nodeChildExists(parentNode, i));
+    }
+    
+    tree.deleteNodeChild(parentNode, 0);
+    EXPECT_EQ(tree.size(), tree.calcNumNodes()); 
+    EXPECT_EQ(tree.size(), insertedSize - 1);
+    
+    tree.prune();
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize - 1);
+    
+    tree.expandNode(parentNode);
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize + 7);
+    
+    EXPECT_TRUE(tree.pruneNode(parentNode));
+    EXPECT_EQ(tree.size(), tree.calcNumNodes());
+    EXPECT_EQ(tree.size(), insertedSize - 1);
+    
+    EXPECT_TRUE(tree.write("simple_color_tree_ed.ot"));
+    
+  }
 
   return 0;
 }

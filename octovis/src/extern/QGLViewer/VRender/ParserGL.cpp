@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2013 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.4.0.
+ This file is part of the QGLViewer library version 2.6.3.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -221,9 +221,9 @@ PtrPrimitive ParserUtils::checkPolygon(Polygone *& P)
 	{
 		// On ne traite que le cas du triangle plat, vu qu'on est sur d'avoir un triangle
 
-		int n = P->nbVertices() ;
+		size_t n = P->nbVertices() ;
 
-		for(int i=0;i<n;++i)
+		for(size_t i=0;i<n;++i)
 			if( (P->vertex(i) - P->vertex((i+1)%n)).norm() > EGALITY_EPS)
 			{
 				Segment *pp = new Segment(P->sommet3DColor((i+1)%n),P->sommet3DColor((i+2)%n)) ;
@@ -250,10 +250,8 @@ PtrPrimitive ParserUtils::checkPolygon(Polygone *& P)
 
 void ParserUtils::print3DcolorVertex(GLint size, GLint * count, GLfloat * buffer)
 {
-	int i;
-
 	printf("  ");
-	for (i = 0; i < Feedback3DColor::sizeInBuffer(); i++)
+	for (size_t i = 0; i < Feedback3DColor::sizeInBuffer(); i++)
 	{
 		printf("%4.2f ", buffer[size - (*count)]);
 		*count = *count - 1;

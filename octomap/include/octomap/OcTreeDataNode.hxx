@@ -51,27 +51,27 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
    : children(NULL), value(rhs.value)
   {
-    if (rhs.hasChildren()){
+    if (rhs.children != NULL){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){
-        if (rhs.children[i])
-          children[i] = new OcTreeDataNode<T>(*(rhs.children[i]));
+        if (rhs.children[i] != NULL)
+          children[i] = new OcTreeDataNode<T>(*(static_cast<OcTreeDataNode<T>*>(rhs.children[i])));
 
       }
     }
   }
-
-
+  
   template <typename T>
   OcTreeDataNode<T>::~OcTreeDataNode()
   {
-    if (children != NULL) {
-      for (unsigned int i=0; i<8; i++) {
-        if (children[i] != NULL) delete children[i];
-      }
-      delete[] children;
-    }
-
+    // Delete only own members. OcTree maintains tree structure and must have deleted 
+    // children already
+    assert(children == NULL);
+  }
+  
+  template <typename T>
+  void OcTreeDataNode<T>::copyData(const OcTreeDataNode<T>& from){
+    value = from.value;     
   }
 
   template <typename T>
@@ -83,15 +83,6 @@ namespace octomap {
   // =  children          =======================================
   // ============================================================
 
-  template <typename T>
-  bool OcTreeDataNode<T>::createChild(unsigned int i) {
-    if (children == NULL) {
-      allocChildren();
-    }
-    assert (children[i] == NULL);
-    children[i] = new OcTreeDataNode<T>();
-    return true;
-  }
 
   template <typename T>
   bool OcTreeDataNode<T>::childExists(unsigned int i) const {
@@ -101,29 +92,7 @@ namespace octomap {
     else
       return false;
   }
-
-  template <typename T>
-  void OcTreeDataNode<T>::deleteChild(unsigned int i) {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    delete children[i];
-    children[i] = NULL;
-  }
-
-  template <typename T>
-  OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    return children[i];
-  }
-
-  template <typename T>
-  const OcTreeDataNode<T>* OcTreeDataNode<T>::getChild(unsigned int i) const {
-    assert((i < 8) && (children != NULL));
-    assert(children[i] != NULL);
-    return children[i];
-  }
-
+  
   template <typename T>
   bool OcTreeDataNode<T>::hasChildren() const {
     if (children == NULL)
@@ -136,111 +105,21 @@ namespace octomap {
     return false;
   }
 
-  // ============================================================
-  // =  pruning           =======================================
-  // ============================================================
-
-
-  template <typename T>
-  bool OcTreeDataNode<T>::collapsible() const {
-    // all children must exist, must not have children of
-    // their own and have the same occupancy probability
-    if (!childExists(0) || getChild(0)->hasChildren())
-      return false;
-
-    for (unsigned int i = 1; i<8; i++) {
-      // comparison via getChild so that casts of derived classes ensure
-      // that the right == operator gets called
-      if (!childExists(i) || getChild(i)->hasChildren() || !(*(getChild(i)) == *(getChild(0))))
-        return false;
-    }
-    return true;
-  }
-
-  template <typename T>
-  bool OcTreeDataNode<T>::pruneNode() {
-
-    if (!this->collapsible())
-      return false;
-
-    // set value to children's values (all assumed equal)
-    setValue(getChild(0)->getValue());
-
-    // delete children
-    for (unsigned int i=0;i<8;i++) {
-      delete children[i];
-    }
-    delete[] children;
-    children = NULL;
-
-    return true;
-  }
-
-  template <typename T>
-  void OcTreeDataNode<T>::expandNode() {
-    assert(!hasChildren());
-
-    for (unsigned int k=0; k<8; k++) {
-      createChild(k);
-      children[k]->setValue(value);
-    }
-  }
 
   // ============================================================
   // =  File IO           =======================================
   // ============================================================
 
   template <typename T>
-  std::istream& OcTreeDataNode<T>::readValue(std::istream &s) {
-
-    char children_char;
-
-    // read data:
+  std::istream& OcTreeDataNode<T>::readData(std::istream &s) {
     s.read((char*) &value, sizeof(value));
-    s.read((char*)&children_char, sizeof(char));
-    std::bitset<8> children ((unsigned long long) children_char);
-
-    // std::cout << "read: " << value << " "
-    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >()
-    //           << std::endl;
-
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1){
-        createChild(i);
-        getChild(i)->readValue(s);
-      }
-    }
     return s;
   }
 
 
   template <typename T>
-  std::ostream& OcTreeDataNode<T>::writeValue(std::ostream &s) const{
-
-    // 1 bit for each children; 0: empty, 1: allocated
-    std::bitset<8> children;
-
-    for (unsigned int i=0; i<8; i++) {
-      if (childExists(i))
-        children[i] = 1;
-      else
-        children[i] = 0;
-    }
-
-    char children_char = (char) children.to_ulong();
+  std::ostream& OcTreeDataNode<T>::writeData(std::ostream &s) const{
     s.write((const char*) &value, sizeof(value));
-    s.write((char*)&children_char, sizeof(char));
-
-    // std::cout << "wrote: " << value << " "
-    //           << children.to_string<char,std::char_traits<char>,std::allocator<char> >() 
-    //           << std::endl;
-
-    // write children's children
-    for (unsigned int i=0; i<8; i++) {
-      if (children[i] == 1) {
-        this->getChild(i)->writeValue(s);
-      }
-    }
     return s;
   }
 
@@ -250,7 +129,7 @@ namespace octomap {
   // ============================================================
   template <typename T>
   void OcTreeDataNode<T>::allocChildren() {
-    children = new OcTreeDataNode<T>*[8];
+    children = new AbstractOcTreeNode*[8];
     for (unsigned int i=0; i<8; i++) {
       children[i] = NULL;
     }
