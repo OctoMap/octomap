@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classiterator__base.html" title="Base class for OcTree iterators. " alt="" coords="118,56,215,83"/>
+<area shape="rect" id="node3" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator. " alt="" coords="265,5,383,32"/>
+<area shape="rect" id="node4" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree. " alt="" coords="279,56,369,83"/>
+<area shape="rect" id="node5" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs). " alt="" coords="279,107,369,133"/>
+</map>

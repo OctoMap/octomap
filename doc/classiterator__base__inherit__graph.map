@@ -1,0 +1,5 @@
+<map id="iterator_base" name="iterator_base">
+<area shape="rect" id="node3" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator. " alt="" coords="5,184,123,211"/>
+<area shape="rect" id="node4" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree. " alt="" coords="148,184,239,211"/>
+<area shape="rect" id="node5" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs). " alt="" coords="263,184,353,211"/>
+</map>

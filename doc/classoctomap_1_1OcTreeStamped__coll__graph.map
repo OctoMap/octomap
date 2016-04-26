@@ -1,0 +1,21 @@
+<map id="octomap::OcTreeStamped" name="octomap::OcTreeStamped">
+<area shape="rect" id="node2" href="$classoctomap_1_1OccupancyOcTreeBase.html" title="octomap::OccupancyOcTree\lBase\&lt; OcTreeNodeStamped \&gt;" alt="" coords="1635,423,1837,465"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; OcTreeNodeStamped, Abstract\lOccupancyOcTree \&gt;" alt="" coords="1278,261,1495,317"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOccupancyOcTree.html" title="Interface class for all octree types that store occupancy. " alt="" coords="897,50,1092,91"/>
+<area shape="rect" id="node5" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="611,5,783,32"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="367,41,447,68"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="43,34,170,75"/>
+<area shape="rect" id="node8" href="$classoctomap_1_1OcTreeNodeStamped.html" title="octomap::OcTreeNodeStamped" alt="" coords="891,117,1098,144"/>
+<area shape="rect" id="node9" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree. " alt="" coords="620,119,775,145"/>
+<area shape="rect" id="node10" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; float \&gt;" alt="" coords="315,111,498,153"/>
+<area shape="rect" id="node11" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="5,113,208,140"/>
+<area shape="rect" id="node12" href="$classleaf__bbx__iterator.html" title="Bounding&#45;box leaf iterator. " alt="" coords="935,285,1054,312"/>
+<area shape="rect" id="node13" href="$classiterator__base.html" title="Base class for OcTree iterators. " alt="" coords="649,285,746,312"/>
+<area shape="rect" id="node19" href="$classleaf__iterator.html" title="Iterator to iterate over all leafs of the tree. " alt="" coords="949,235,1040,261"/>
+<area shape="rect" id="node20" href="$classtree__iterator.html" title="Iterator over the complete tree (inner nodes and leafs). " alt="" coords="949,336,1040,363"/>
+<area shape="rect" id="node16" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator. " alt="" coords="13,351,200,377"/>
+<area shape="rect" id="node18" href="$classoctomap_1_1KeyRay.html" title="octomap::KeyRay" alt="" coords="634,176,761,203"/>
+<area shape="rect" id="node21" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector. " alt="" coords="930,392,1059,419"/>
+<area shape="rect" id="node24" href="$classoctomap_1_1OcTreeKey.html" title="OcTreeKey is a container class for internal key addressing. " alt="" coords="921,537,1068,564"/>
+<area shape="rect" id="node25" href="$classoctomap_1_1OcTreeStamped_1_1StaticMemberInitializer.html" title="Static member object which ensures that this OcTree&#39;s prototype ends up in the classIDMapping only on..." alt="" coords="1649,489,1823,530"/>
+</map>

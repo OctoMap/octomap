@@ -1,0 +1,5 @@
+<map id="octomap::Pointcloud" name="octomap::Pointcloud">
+<area shape="rect" id="node2" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object. " alt="" coords="23,104,152,131"/>
+<area shape="rect" id="node3" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion. " alt="" coords="5,5,152,32"/>
+<area shape="rect" id="node4" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector. " alt="" coords="182,5,311,32"/>
+</map>
