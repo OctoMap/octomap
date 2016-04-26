@@ -1,5 +1,0 @@
-<map id="octomap::OcTreeBase&lt; NODE &gt;" name="octomap::OcTreeBase&lt; NODE &gt;">
-<area shape="rect" id="node7" href="$classoctomap_1_1OcTreeBaseSE.html" title="octomap::OcTreeBaseSE\l\&lt; NODE \&gt;" alt="" coords="12,275,183,322"/>
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; NODE, AbstractOcTree \&gt;" alt="" coords="5,83,189,130"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="12,5,183,35"/>
-</map>

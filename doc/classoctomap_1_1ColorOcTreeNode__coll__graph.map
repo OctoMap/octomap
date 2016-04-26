@@ -1,6 +1,0 @@
-<map id="octomap::ColorOcTreeNode" name="octomap::ColorOcTreeNode">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree." alt="" coords="29,193,184,223"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; float \&gt;" alt="" coords="16,86,197,133"/>
-<area shape="rect" id="node6" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="5,5,208,35"/>
-<area shape="rect" id="node9" href="$classoctomap_1_1ColorOcTreeNode_1_1Color.html" title="octomap::ColorOcTreeNode\l::Color" alt="" coords="208,185,392,231"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="octomap::ScanEdge" name="octomap::ScanEdge">
-<area shape="rect" id="node2" href="$classoctomap_1_1ScanNode.html" title="A 3D scan as Pointcloud, performed from a Pose6D." alt="" coords="191,312,332,341"/>
-<area shape="rect" id="node4" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object." alt="" coords="231,111,361,140"/>
-<area shape="rect" id="node10" href="$classoctomap_1_1Pointcloud.html" title="A collection of 3D coordinates (point3d), which are regarded as endpoints of a 3D laser scan..." alt="" coords="77,216,219,245"/>
-<area shape="rect" id="node6" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion." alt="" coords="223,5,369,35"/>
-<area shape="rect" id="node8" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="31,5,159,35"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="octomap::OcTree" name="octomap::OcTree">
-<area shape="rect" id="node2" href="$classoctomap_1_1OccupancyOcTreeBase.html" title="octomap::OccupancyOcTree\lBase\&lt; OcTreeNode \&gt;" alt="" coords="24,118,213,165"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1OcTreeBaseImpl.html" title="OcTree base class, to be used with with any kind of OcTreeDataNode." alt="" coords="5,5,232,69"/>
-</map>

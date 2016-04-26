@@ -1,6 +1,0 @@
-<map id="include/octomap/OcTreeBase.h" name="include/octomap/OcTreeBase.h">
-<area shape="rect" id="node3" href="$CountingOcTree_8h.html" title="include/octomap/Counting\lOcTree.h" alt="" coords="91,83,264,130"/>
-<area shape="rect" id="node9" href="$OcTreeBaseSE_8h.html" title="include/octomap/OcTreeBaseSE.h" alt="" coords="288,92,509,121"/>
-<area shape="rect" id="node5" href="$AbstractOcTree_8cpp.html" title="src/AbstractOcTree.cpp" alt="" coords="5,179,165,208"/>
-<area shape="rect" id="node7" href="$CountingOcTree_8cpp.html" title="src/CountingOcTree.cpp" alt="" coords="189,179,352,208"/>
-</map>

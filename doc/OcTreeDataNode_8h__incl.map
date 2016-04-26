@@ -1,8 +1,0 @@
-<map id="include/octomap/OcTreeDataNode.h" name="include/octomap/OcTreeDataNode.h">
-<area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="161,101,284,131"/>
-<area shape="rect" id="node31" href="$OcTreeDataNode_8hxx.html" title="octomap/OcTreeDataNode.hxx" alt="" coords="479,101,681,131"/>
-<area shape="rect" id="node11" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="227,333,392,363"/>
-<area shape="rect" id="node17" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="203,179,368,208"/>
-<area shape="rect" id="node25" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="443,179,651,208"/>
-<area shape="rect" id="node20" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="148,256,244,285"/>
-</map>
