@@ -1,17 +1,17 @@
-# - Config file for the OctoMap package
-# (example from http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file)
 # It defines the following variables
 #  OCTOVIS_INCLUDE_DIRS - include directories for OctoMap viewer
 #  OCTOVIS_LIBRARY_DIRS - library directories for OctoMap viewer 
 #  OCTOVIS_LIBRARIES    - libraries to link against
  
-set(OCTOVIS_INCLUDE_DIRS "@QGLViewer_INCLUDE_DIR@" "@OCTOVIS_INCLUDE_DIR@")
-set(OCTOVIS_LIBRARY_DIRS "@QGLViewer_LIBRARY_DIR@" "@OCTOVIS_LIB_DIR@")
+@PACKAGE_INIT@
+
+set(OCTOVIS_INCLUDE_DIRS "@QGLViewer_INCLUDE_DIR@" "@PACKAGE_OCTOVIS_INCLUDE_DIRS@")
+set(OCTOVIS_LIBRARY_DIRS "@QGLViewer_LIBRARY_DIR@" "@PACKAGE_OCTOVIS_LIB_DIR@")
 
 
 # Set library names as absolute paths:
 set(OCTOVIS_LIBRARIES
   "@QGLViewer_LIBRARIES@"
   "@QT_LIBRARIES@"
-  "@OCTOVIS_LIB_DIR@/@OCTOVIS_LIBRARY@"
+  "@PACKAGE_OCTOVIS_LIB_DIR@/@OCTOVIS_LIBRARY@"
 )
