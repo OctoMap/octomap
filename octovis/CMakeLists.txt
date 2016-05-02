@@ -99,6 +99,19 @@ IF(BUILD_VIEWER)
     )
   ENDIF()
 
+  include(CMakePackageConfigHelpers)
+
+  CONFIGURE_PACKAGE_CONFIG_FILE(
+    octovis-config.cmake.in
+    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config.cmake"
+    PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
+    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
+
+  WRITE_BASIC_PACKAGE_VERSION_FILE(
+    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config-version.cmake"
+    VERSION ${OCTOVIS_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
   # not used right now (export depends?)
   #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
     
@@ -107,8 +120,6 @@ IF(BUILD_VIEWER)
   set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
   set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
   #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
-
-  include(CMakePackageConfigHelpers)
 
   CONFIGURE_PACKAGE_CONFIG_FILE(
     octovis-config.cmake.in

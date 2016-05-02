@@ -103,14 +103,24 @@ ENDIF()
 
 # not used right now (export depends?)
 #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
+include(CMakePackageConfigHelpers)
+
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  octomap-config.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-config.cmake"
+  PATH_VARS OCTOMAP_INCLUDE_DIRS OCTOMAP_LIB_DIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octomap)
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-config-version.cmake"
+  VERSION ${OCTOMAP_VERSION}
+  COMPATIBILITY AnyNewerVersion)
 
 # Create a octomap-config.cmake file for the use from the install tree
 # and install it
 set(OCTOMAP_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
 set(OCTOMAP_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
-
-include(CMakePackageConfigHelpers)
 
 CONFIGURE_PACKAGE_CONFIG_FILE(
   octomap-config.cmake.in
