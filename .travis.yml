@@ -8,7 +8,10 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libqt4-dev libqt4-opengl-dev libqglviewer-dev  
 before_script:
-  - mkdir build
-  - cd build
-  - cmake ..
-script: make && make test
+script: travis_build_jobs.sh $COMPONENT
+env:
+  matrix:
+    - COMPONENT=octomap
+    - COMPONENT=dynamicEDT3D
+    - COMPONENT=octovis
+    - COMPONENT=.
