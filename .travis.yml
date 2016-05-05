@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libqt4-dev libqt4-opengl-dev libqglviewer-dev  
 before_script:
-script: ./travis_build_jobs.sh $VARIANT
+script: ./scripts/travis_build_jobs.sh $VARIANT
 env:
   - VARIANT=dist
   - VARIANT=components
