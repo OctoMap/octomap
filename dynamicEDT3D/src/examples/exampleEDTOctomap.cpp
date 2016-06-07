@@ -35,9 +35,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <dynamicEDT3D/dynamicEDTOctomap.h>
+
 #include <iostream>
 
-#include <dynamicEDT3D/dynamicEDTOctomap.h>
+
 
 int main( int argc, char *argv[] ) {
   if(argc<=1){
@@ -45,9 +47,8 @@ int main( int argc, char *argv[] ) {
     exit(0);
   }
 
-  typedef octomap::OcTree OcTreeType;
-  OcTreeType *tree = NULL;
-  tree = new OcTreeType(0.05);
+  octomap::OcTree *tree = NULL;
+  tree = new octomap::OcTree(0.05);
 
   //read in octotree
   tree->readBinary(argv[1]);
@@ -65,12 +66,12 @@ int main( int argc, char *argv[] ) {
   bool unknownAsOccupied = true;
   unknownAsOccupied = false;
   float maxDist = 1.0;
-  //- the first argument is the max distance at which distance computations are clamped
+  //- the first argument ist the max distance at which distance computations are clamped
   //- the second argument is the octomap
   //- arguments 3 and 4 can be used to restrict the distance map to a subarea
   //- argument 5 defines whether unknown space is treated as occupied or free
   //The constructor copies data but does not yet compute the distance map
-  DynamicEDTOctomap<OcTreeType> distmap(maxDist, tree, min, max, unknownAsOccupied);
+  DynamicEDTOctomap distmap(maxDist, tree, min, max, unknownAsOccupied);
 
   //This computes the distance map
   distmap.update(); 

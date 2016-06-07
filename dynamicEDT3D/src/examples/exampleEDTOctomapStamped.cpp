@@ -72,7 +72,7 @@ int main( int argc, char *argv[] ) {
   //- arguments 3 and 4 can be used to restrict the distance map to a subarea
   //- argument 5 defines whether unknown space is treated as occupied or free
   //The constructor copies data but does not yet compute the distance map
-  DynamicEDTOctomap<OcTreeType> distmap(maxDist, tree, min, max, unknownAsOccupied);
+  DynamicEDTOctomapStamped distmap(maxDist, tree, min, max, unknownAsOccupied);
 
   //This computes the distance map
   distmap.update(); 
