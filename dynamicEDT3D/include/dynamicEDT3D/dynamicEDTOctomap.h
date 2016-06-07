@@ -40,8 +40,10 @@
 
 #include "dynamicEDT3D.h"
 #include <octomap/OcTree.h>
+#include <octomap/OcTreeStamped.h>
 
 /// A DynamicEDTOctomap object connects a DynamicEDT3D object to an octomap.
+template <class TREE = octomap::OcTree>
 class DynamicEDTOctomap: private DynamicEDT3D {
 public:
     /** Create a DynamicEDTOctomap object that maintains a distance transform in the bounding box given by bbxMin, bbxMax and clamps distances at maxdist.
@@ -51,7 +53,7 @@ public:
      *
      *  The distance map is maintained in a full three-dimensional array, i.e., there exists a float field in memory for every voxel inside the bounding box given by bbxMin and bbxMax. Consider this when computing distance maps for large octomaps, they will use much more memory than the octomap itself!
      */
-	DynamicEDTOctomap(float maxdist, octomap::OcTree* _octree, octomap::point3d bbxMin, octomap::point3d bbxMax, bool treatUnknownAsOccupied);
+	DynamicEDTOctomap(float maxdist, TREE* _octree, octomap::point3d bbxMin, octomap::point3d bbxMax, bool treatUnknownAsOccupied);
 
 	virtual ~DynamicEDTOctomap();
 
@@ -111,7 +113,7 @@ private:
 	void mapToWorld(int x, int y, int z, octomap::point3d &p) const;
 	void mapToWorld(int x, int y, int z, octomap::OcTreeKey &key) const;
 
-	octomap::OcTree* octree;
+	TREE* octree;
 	bool unknownOccupied;
 	int treeDepth;
 	double treeResolution;
@@ -119,5 +121,7 @@ private:
 	octomap::OcTreeKey boundingBoxMaxKey;
 	int offsetX, offsetY, offsetZ;
 };
+
+#include "dynamicEDTOctomap.hxx"
 
 #endif /* DYNAMICEDTOCTOMAP_H_ */

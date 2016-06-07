@@ -1,6 +1,5 @@
 SET( dynamicEDT3D_SRCS
    dynamicEDT3D.cpp
-   dynamicEDTOctomap.cpp
    )
 
 add_library(dynamicedt3d SHARED ${dynamicEDT3D_SRCS})

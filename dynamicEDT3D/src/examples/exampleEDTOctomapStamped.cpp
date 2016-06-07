@@ -35,9 +35,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <dynamicEDT3D/dynamicEDTOctomap.h>
+
 #include <iostream>
 
-#include <dynamicEDT3D/dynamicEDTOctomap.h>
+
 
 int main( int argc, char *argv[] ) {
   if(argc<=1){
@@ -45,7 +47,7 @@ int main( int argc, char *argv[] ) {
     exit(0);
   }
 
-  typedef octomap::OcTree OcTreeType;
+  typedef octomap::OcTreeStamped OcTreeType;
   OcTreeType *tree = NULL;
   tree = new OcTreeType(0.05);
 
