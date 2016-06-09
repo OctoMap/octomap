@@ -43,7 +43,7 @@
 #include <octomap/OcTreeStamped.h>
 
 /// A DynamicEDTOctomapBase object connects a DynamicEDT3D object to an octomap.
-template <class TREE, class NODE>
+template <class TREE>
 class DynamicEDTOctomapBase: private DynamicEDT3D {
 public:
     /** Create a DynamicEDTOctomapBase object that maintains a distance transform in the bounding box given by bbxMin, bbxMax and clamps distances at maxdist.
@@ -122,8 +122,8 @@ private:
 	int offsetX, offsetY, offsetZ;
 };
 
-typedef DynamicEDTOctomapBase<octomap::OcTree, octomap::OcTreeNode> DynamicEDTOctomap;
-typedef DynamicEDTOctomapBase<octomap::OcTreeStamped, octomap::OcTreeNodeStamped> DynamicEDTOctomapStamped;
+typedef DynamicEDTOctomapBase<octomap::OcTree> DynamicEDTOctomap;
+typedef DynamicEDTOctomapBase<octomap::OcTreeStamped> DynamicEDTOctomapStamped;
 
 #include "dynamicEDTOctomap.hxx"
 
