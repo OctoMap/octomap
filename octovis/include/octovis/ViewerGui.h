@@ -51,7 +51,7 @@ namespace octomap {
     Q_OBJECT
    
   public:
-    ViewerGui(const std::string& filename="", QWidget *parent = 0);
+    ViewerGui(const std::string& filename="", unsigned int initTreeDepth = 16, QWidget *parent = 0);
     ~ViewerGui();
 
     static const unsigned int LASERTYPE_URG  = 0;

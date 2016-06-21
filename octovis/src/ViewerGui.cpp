@@ -36,12 +36,13 @@
 
 namespace octomap{
 
-ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
+ViewerGui::ViewerGui(const std::string& filename, unsigned int initDepth, QWidget *parent)
 : QMainWindow(parent), m_scanGraph(NULL),
   m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL),
   m_cameraFollowMode(NULL),
   m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
-  m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
+  m_max_tree_depth(initDepth > 0 && initDepth <= 16 ? initDepth : 16), 
+  m_laserType(LASERTYPE_SICK),
   m_cameraStored(false), m_filename("") {
 
   ui.setupUi(this);
@@ -50,6 +51,7 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
 
   // Settings panel at the right side
   ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
+  settingsPanel->setTreeDepth(initDepth);
   QDockWidget* settingsDock = new QDockWidget("Octree / Scan graph settings", this);
   settingsDock->setWidget(settingsPanel);
   this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
@@ -393,6 +395,7 @@ void ViewerGui::openFile(){
 
     QString temp = QString(m_filename.c_str());
     QFileInfo fileinfo(temp);
+    this->setWindowTitle(fileinfo.fileName());
     if (fileinfo.suffix() == "graph"){
       openGraph();
     }else if (fileinfo.suffix() == "bt"){
