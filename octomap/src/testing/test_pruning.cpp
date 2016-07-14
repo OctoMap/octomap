@@ -9,6 +9,10 @@ using namespace octomath;
 int main(int argc, char** argv) {
     float res = 0.01f;
     OcTree tree(res);
+    
+    EXPECT_EQ(tree.size(), 0);
+    tree.prune();
+    EXPECT_EQ(tree.size(), 0);
 
     point3d singlePt(-0.05f, -0.02f, 1.0f);
     OcTreeKey singleKey;
@@ -232,6 +236,25 @@ int main(int argc, char** argv) {
       EXPECT_EQ(tree.size(), insertedSize-1);    
       
       
+    }
+    
+    tree.write("pruning_test_out.ot");
+    
+    {
+      std::cout << "\nClearing tree / recursive delete\n===============================\n";
+      
+      OcTree emptyTree(0.1234);
+      EXPECT_EQ(emptyTree.size(), 0);
+      emptyTree.clear();
+      EXPECT_EQ(emptyTree.size(), emptyTree.calcNumNodes());
+      EXPECT_EQ(emptyTree.size(), 0);
+    
+      tree.clear();
+      EXPECT_EQ(tree.size(), 0);
+      EXPECT_EQ(tree.size(), tree.calcNumNodes());
+      
+      tree.prune();
+      EXPECT_EQ(tree.size(), 0);      
     }
 
     tree.write("pruning_test_out.ot");

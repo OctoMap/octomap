@@ -513,6 +513,7 @@ namespace octomap {
     if (this->root){
       deleteNodeRecurs(root);
       this->tree_size = 0;
+      this->root = NULL;
       // max extent of tree changed:
       this->size_changed = true;
     }
@@ -664,15 +665,15 @@ namespace octomap {
     
     if (node->children != NULL) {
       for (unsigned int i=0; i<8; i++) {
-        if (node->children[i] != NULL)
-          this->deleteNodeRecurs(static_cast<NODE*>(node->children[i])); 
+        if (node->children[i] != NULL){
+          this->deleteNodeRecurs(static_cast<NODE*>(node->children[i]));
+        }
       }
       delete[] node->children;
       node->children = NULL;
     } // else: node has no children
       
     delete node;
-    node = NULL;
   }
   
 
