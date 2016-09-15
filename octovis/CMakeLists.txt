@@ -10,6 +10,10 @@ set(OCTOVIS_SOVERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION})
 # get rid of a useless warning:
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  if(POLICY CMP0042)
+    # Enable MACOSX_RPATH by default.
+    cmake_policy(SET CMP0042 NEW)
+  endif(POLICY CMP0042)
 endif(COMMAND cmake_policy)
 
 SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
