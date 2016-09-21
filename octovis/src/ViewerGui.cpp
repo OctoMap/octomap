@@ -43,7 +43,9 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
   m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
   m_max_tree_depth(initDepth > 0 && initDepth <= 16 ? initDepth : 16), 
   m_laserType(LASERTYPE_SICK),
-  m_cameraStored(false), m_filename("") {
+  m_cameraStored(false),
+  m_filename("") 
+{
 
   ui.setupUi(this);
   m_glwidget = new ViewerWidget(this);
@@ -1045,6 +1047,13 @@ void ViewerGui::on_actionHideBackground_toggled(bool checked) {
     if (checked) m_glwidget->removeSceneObject(r->octree_drawer);
     else         m_glwidget->addSceneObject(r->octree_drawer);
     m_glwidget->updateGL();
+  }
+}
+
+void ViewerGui::on_actionAlternateRendering_toggled(bool checked) {
+  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    //std::cout << "Setting Octree " << it->first << " to " << (checked ? "alternate" : "regular") << " rendering.";
+    it->second.octree_drawer->setAlternativeDrawing(checked);
   }
 }
 
