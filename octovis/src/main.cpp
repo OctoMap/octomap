@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
   QApplication app(argc, argv);
 
-  octomap::ViewerGui gui(filename, depth);
+  octomap::ViewerGui gui(filename, NULL, depth);
   gui.show(); 
   return app.exec();
 }

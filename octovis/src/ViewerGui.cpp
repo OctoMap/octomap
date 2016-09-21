@@ -36,7 +36,7 @@
 
 namespace octomap{
 
-ViewerGui::ViewerGui(const std::string& filename, unsigned int initDepth, QWidget *parent)
+ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int initDepth)
 : QMainWindow(parent), m_scanGraph(NULL),
   m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL),
   m_cameraFollowMode(NULL),
