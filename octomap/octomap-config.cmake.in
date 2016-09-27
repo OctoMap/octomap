@@ -16,17 +16,25 @@
 #      - OCTOMAP_LIBRARY_DIRS   : The directory where lib files are. Calling
 #                                 LINK_DIRECTORIES with this path is NOT needed.
 #      - OCTOMAP_INCLUDE_DIRS   : The OctoMap include directories.
+#      - OCTOMAP_MAJOR_VERSION  : Major version.
+#      - OCTOMAP_MINOR_VERSION  : Minor version.
+#      - OCTOMAP_PATCH_VERSION  : Patch version.
+#      - OCTOMAP_VERSION        : Major.Minor.Patch version.
 #
 # ===================================================================================
 
 @PACKAGE_INIT@
 
+set(OCTOMAP_MAJOR_VERSION "@OCTOMAP_MAJOR_VERSION@")
+set(OCTOMAP_MINOR_VERSION "@OCTOMAP_MINOR_VERSION@")
+set(OCTOMAP_PATCH_VERSION "@OCTOMAP_PATCH_VERSION@")
+set(OCTOMAP_VERSION "@OCTOMAP_VERSION@")
+
 set_and_check(OCTOMAP_INCLUDE_DIRS "@PACKAGE_OCTOMAP_INCLUDE_DIRS@")
 set_and_check(OCTOMAP_LIBRARY_DIRS "@PACKAGE_OCTOMAP_LIB_DIR@")
- 
 
 # Set library names
-set(OCTOMAP_LIBRARIES 
+set(OCTOMAP_LIBRARIES
   "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
   "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
 )
