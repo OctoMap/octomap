@@ -1,13 +1,21 @@
 # It defines the following variables
-#  OCTOVIS_INCLUDE_DIRS - include directories for OctoMap viewer
-#  OCTOVIS_LIBRARY_DIRS - library directories for OctoMap viewer 
-#  OCTOVIS_LIBRARIES    - libraries to link against
- 
+#  OCTOVIS_INCLUDE_DIRS  - include directories for OctoMap viewer
+#  OCTOVIS_LIBRARY_DIRS  - library directories for OctoMap viewer
+#  OCTOVIS_LIBRARIES     - libraries to link against
+#  OCTOVIS_MAJOR_VERSION - major version
+#  OCTOVIS_MINOR_VERSION - minor version
+#  OCTOVIS_PATCH_VERSION - patch version
+#  OCTOVIS_VERSION       - major.minor.patch version
+
 @PACKAGE_INIT@
+
+set(OCTOVIS_MAJOR_VERSION "@OCTOVIS_MAJOR_VERSION@")
+set(OCTOVIS_MINOR_VERSION "@OCTOVIS_MINOR_VERSION@")
+set(OCTOVIS_PATCH_VERSION "@OCTOVIS_PATCH_VERSION@")
+set(OCTOVIS_VERSION "@OCTOVIS_VERSION@")
 
 set_and_check(OCTOVIS_INCLUDE_DIRS "@PACKAGE_OCTOVIS_INCLUDE_DIRS@" "@QGLViewer_INCLUDE_DIR@")
 set_and_check(OCTOVIS_LIBRARY_DIRS "@PACKAGE_OCTOVIS_LIB_DIR@" "@QGLViewer_LIBRARY_DIR@")
-
 
 # Set library names as absolute paths:
 set(OCTOVIS_LIBRARIES
