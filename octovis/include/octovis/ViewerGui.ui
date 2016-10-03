@@ -76,6 +76,8 @@
     <addaction name="actionAxes"/>
     <addaction name="actionHideBackground"/>
     <addaction name="separator"/>
+    <addaction name="actionAlternateRendering"/>
+    <addaction name="separator"/>
     <addaction name="actionReset_view"/>
     <addaction name="actionStore_camera"/>
     <addaction name="actionRestore_camera"/>
@@ -245,6 +247,14 @@
    </property>
    <property name="shortcut">
     <string>0</string>
+   </property>
+  </action>
+  <action name="actionSwitchRenderMode">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Alternative rendering</string>
    </property>
   </action>
   <action name="actionClear">
@@ -539,6 +549,17 @@
    </property>
    <property name="text">
      <string>With &quot;occupied&quot; (only unknown)</string>
+   </property>
+  </action>
+  <action name="actionAlternateRendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Alternate Rendering</string>
+   </property>
+   <property name="toolTip">
+    <string>Uses precompiled rendering of the octomap. Faster and requires less CPU but more memory on your graphics card. The first rendering takes longer.</string>
    </property>
   </action>
  </widget>

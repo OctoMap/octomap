@@ -43,13 +43,13 @@ public slots:
     void setNumberOfScans(unsigned scans);
     void setCurrentScan(unsigned scan);
     void setResolution(double resolution);
+    void setTreeDepth(int depth);
 
 private slots:
     void on_firstScanButton_clicked();
     void on_lastScanButton_clicked();
     void on_nextScanButton_clicked();
     void on_fastFwdScanButton_clicked();
-    void setTreeDepth(int depth);
 
 signals:
   void treeDepthChanged(int depth);

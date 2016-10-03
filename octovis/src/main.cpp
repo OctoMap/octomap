@@ -25,17 +25,22 @@
 #include <QtGui>
 #include <QApplication>
 #include <octovis/ViewerGui.h>
+#include <stdlib.h> //strtol
 
 int main(int argc, char *argv[]) {
 
   std::string filename = "";
-  if (argc == 2) {
-    filename = std::string(argv[1]);
+  int depth = 0;
+  if (argc == 1) { 
+    std::cout << "Usage: " << argv[0] << " [mapfile] [tree depth cutoff]\n"; 
+    std::cout << "Where the optional [tree depth cutoff] is an integer from 1 to 16\n"; 
   }
+  if (argc >= 2) { filename = std::string(argv[1]); }
+  if (argc >= 3) { depth = std::strtol(argv[2], NULL, 10); }//zero on parse error
 
   QApplication app(argc, argv);
 
-  octomap::ViewerGui gui(filename);
+  octomap::ViewerGui gui(filename, NULL, depth);
   gui.show(); 
   return app.exec();
 }
