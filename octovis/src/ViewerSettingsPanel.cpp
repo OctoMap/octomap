@@ -114,6 +114,8 @@ void ViewerSettingsPanel::setResolution(double resolution){
 void ViewerSettingsPanel::setTreeDepth(int depth){
   emit treeDepthChanged(depth);
   m_treeDepth = depth;
+  ui.treeDepth->setValue(depth);
+  ui.treeDepthSlider->setValue(depth);
   leafSizeChanged();
 }
 
