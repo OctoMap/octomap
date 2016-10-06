@@ -40,6 +40,8 @@ namespace octomap {
     m_drawFree = false;
     m_drawSelection = true;
     m_displayAxes = false;
+    m_update = true;
+    m_alternativeDrawing = false;
 
     m_occupiedArray = NULL;
     m_freeArray = NULL;
@@ -59,50 +61,77 @@ namespace octomap {
   }
 
   void OcTreeDrawer::draw() const {
+    static int gl_list_index = -1;
+    if(m_alternativeDrawing && gl_list_index < 0){ 
+      gl_list_index = glGenLists(1); 
+      m_update = true;
+    }
+    if(!m_alternativeDrawing && gl_list_index != -1){//Free video card memory
+      //std::cerr << "Freeing VRAM\n";
+      glDeleteLists(gl_list_index,1);
+      gl_list_index = -1;
+    }
+    if(m_update || !m_alternativeDrawing)
+    { 
+      if(m_alternativeDrawing) { 
+        std::cout << "Preparing batch rendering, please wait ...\n";
+        glNewList(gl_list_index, GL_COMPILE_AND_EXECUTE); 
+      }
 
-    // push current status
-    glPushMatrix();
-    // octomap::pose6d relative_transform = origin * initial_origin.inv();
+      // push current status
+      glPushMatrix();
+      // octomap::pose6d relative_transform = origin * initial_origin.inv();
 
-    octomap::pose6d relative_transform = origin;// * initial_origin;
+      octomap::pose6d relative_transform = origin;// * initial_origin;
 
-    // apply relative transform
-    const octomath::Quaternion& q = relative_transform.rot();
-    glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
+      // apply relative transform
+      const octomath::Quaternion& q = relative_transform.rot();
+      glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
+      
+      // convert quaternion to angle/axis notation
+      float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+      if (scale) {
+        float axis_x = q.x() / scale;
+        float axis_y = q.y() / scale;
+        float axis_z = q.z() / scale;
+        float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
+        glRotatef(angle, axis_x, axis_y, axis_z);
+      }
+
+      glEnableClientState(GL_VERTEX_ARRAY);
+
+        if (m_drawOccupied)
+          drawOccupiedVoxels();
+        if (m_drawFree)
+          drawFreeVoxels();
+        if (m_drawOcTreeGrid)
+          drawOctreeGrid();
+        if (m_drawSelection)
+          drawSelection();
+
+        if (m_displayAxes) {
+          drawAxes();
+        }
+
+      glDisableClientState(GL_VERTEX_ARRAY);
+
+      // reset previous status
+      glPopMatrix();
+      if(m_alternativeDrawing) { 
+        glEndList(); 
+        std::cout << "Finished preparation of batch rendering.\n";
+      }
+      m_update = false;
+    }
+    else
+    {
+      glCallList(gl_list_index);
+    }
     
-    // convert quaternion to angle/axis notation
-    float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
-    if (scale) {
-      float axis_x = q.x() / scale;
-      float axis_y = q.y() / scale;
-      float axis_z = q.z() / scale;
-      float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
-      glRotatef(angle, axis_x, axis_y, axis_z);
-    }
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    if (m_drawOccupied)
-      drawOccupiedVoxels();
-    if (m_drawFree)
-      drawFreeVoxels();
-    if (m_drawOcTreeGrid)
-      drawOctreeGrid();
-    if (m_drawSelection)
-      drawSelection();
-
-    if (m_displayAxes) {
-      drawAxes();
-    }
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    // reset previous status
-    glPopMatrix();
-
   }
 
   void OcTreeDrawer::setAlphaOccupied(double alpha){
+    m_update = true;
     m_alphaOccupied = alpha;
   }
 
@@ -209,10 +238,12 @@ namespace octomap {
   }
 
   void OcTreeDrawer::setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedVoxels){
+    m_update = true;
     generateCubes(selectedVoxels, &m_selectionArray, m_selectionSize, this->origin);
   }
 
   void OcTreeDrawer::clearOcTreeSelection(){
+    m_update = true;
     clearCubes(&m_selectionArray, m_selectionSize);
   }
 
@@ -818,6 +849,7 @@ namespace octomap {
   }
 
   void OcTreeDrawer::enableOcTree(bool enabled) {
+    m_update = true;
     m_drawOcTreeGrid = enabled;
     if(m_drawOcTreeGrid && !m_octree_grid_vis_initialized) {
       initOctreeGridVis();
