@@ -106,6 +106,7 @@ namespace octomap {
     void on_actionSelected_toggled(bool enabled);
     void on_actionAxes_toggled(bool checked);
     void on_actionHideBackground_toggled(bool checked);
+    void on_actionAlternateRendering_toggled(bool checked);
     void on_actionClear_triggered();
 
     void on_action_bg_black_triggered();
