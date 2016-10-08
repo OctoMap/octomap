@@ -21,6 +21,9 @@ SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap")
 
 TARGET_LINK_LIBRARIES(octomap octomath)
 
+export(TARGETS octomap octomap-static
+  APPEND FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-targets.cmake")
+
 ADD_SUBDIRECTORY( testing )
 
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
@@ -59,9 +62,14 @@ TARGET_LINK_LIBRARIES(intersection_example octomap)
 ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
 TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
 
-install(TARGETS 
-	octomap
-	octomap-static 
+install(TARGETS octomap octomap-static
+  EXPORT octomap-targets
+  INCLUDES DESTINATION include
+  ${INSTALL_TARGETS_DEFAULT_ARGS}
+)
+install(EXPORT octomap-targets DESTINATION share/octomap/)
+
+install(TARGETS
 	graph2tree
 	log2graph
 	binvox2bt

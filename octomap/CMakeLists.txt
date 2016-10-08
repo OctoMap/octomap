@@ -126,6 +126,9 @@ set(OCTOMAP_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
 set(OCTOMAP_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
+set(OCTOMAP_INCLUDE_TARGETS
+  "include(\${CMAKE_CURRENT_LIST_DIR}/octomap-targets.cmake)")
+
 CONFIGURE_PACKAGE_CONFIG_FILE(
   octomap-config.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake"

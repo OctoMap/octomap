@@ -17,5 +17,11 @@ SET_TARGET_PROPERTIES( octomath PROPERTIES
 ADD_LIBRARY( octomath-static STATIC ${octomath_SRCS})
 SET_TARGET_PROPERTIES(octomath-static PROPERTIES OUTPUT_NAME "octomath")
 
-install(TARGETS octomath octomath-static ${INSTALL_TARGETS_DEFAULT_ARGS})
- 
+export(TARGETS octomath octomath-static
+  APPEND FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-targets.cmake")
+
+install(TARGETS octomath octomath-static
+  EXPORT octomap-targets
+  INCLUDES DESTINATION include
+  ${INSTALL_TARGETS_DEFAULT_ARGS}
+)
