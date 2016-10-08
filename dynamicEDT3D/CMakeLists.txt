@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT(dynamicEDT3D)
 
-ENABLE_TESTING()
+include(CTest)
 
 # version (e.g. for packaging)
 set(DYNAMICEDT3D_MAJOR_VERSION 1)

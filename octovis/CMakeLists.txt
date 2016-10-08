@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT( octovis )
 
+include(CTest)
+
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
 set(OCTOVIS_MINOR_VERSION 8)
