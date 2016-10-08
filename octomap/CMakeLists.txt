@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT( octomap )
 
-ENABLE_TESTING()
+include(CTest)
 
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
