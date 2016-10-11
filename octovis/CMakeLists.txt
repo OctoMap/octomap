@@ -127,6 +127,9 @@ IF(BUILD_VIEWER)
   set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
   #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
+  set(OCTOVIS_INCLUDE_TARGETS
+    "include(\${CMAKE_CURRENT_LIST_DIR}/octovis-targets.cmake)")
+
   CONFIGURE_PACKAGE_CONFIG_FILE(
     octovis-config.cmake.in
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"

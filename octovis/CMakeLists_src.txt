@@ -113,11 +113,15 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-install(TARGETS octovis
-  octovis-static
-  octovis-shared
+export(TARGETS octovis octovis-static octovis-shared
+  FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-targets.cmake")
+
+install(TARGETS octovis octovis-static octovis-shared
+  EXPORT octovis-targets
+  INCLUDES DESTINATION include
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
+install(EXPORT octovis-targets DESTINATION share/octovis/)
 
 file(GLOB octovis_HDRS ${PROJECT_SOURCE_DIR}/include/octovis/*.h)
 # filter generated headers for GUI:
