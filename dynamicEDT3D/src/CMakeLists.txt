@@ -14,6 +14,10 @@ target_link_libraries(dynamicedt3d-static ${OCTOMAP_LIBRARIES})
 
 SET_TARGET_PROPERTIES(dynamicedt3d-static PROPERTIES OUTPUT_NAME "dynamicedt3d") 
 
+if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D")
+  file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D")
+endif()
+
 export(TARGETS dynamicedt3d dynamicedt3d-static
   FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DTargets.cmake")
 
