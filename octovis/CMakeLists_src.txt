@@ -113,6 +113,10 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
+if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis")
+  file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis")
+endif()
+
 export(TARGETS octovis octovis-static octovis-shared
   FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-targets.cmake")
 
