@@ -13,8 +13,6 @@
 #
 #    This file will define the following variables:
 #      - OCTOMAP_LIBRARIES      : The list of libraries to links against.
-#      - OCTOMAP_LIBRARY_DIRS   : The directory where lib files are. Calling
-#                                 LINK_DIRECTORIES with this path is NOT needed.
 #      - OCTOMAP_INCLUDE_DIRS   : The OctoMap include directories.
 #      - OCTOMAP_MAJOR_VERSION  : Major version.
 #      - OCTOMAP_MINOR_VERSION  : Minor version.
@@ -31,12 +29,18 @@ set(OCTOMAP_PATCH_VERSION "@OCTOMAP_PATCH_VERSION@")
 set(OCTOMAP_VERSION "@OCTOMAP_VERSION@")
 
 set_and_check(OCTOMAP_INCLUDE_DIRS "@PACKAGE_OCTOMAP_INCLUDE_DIRS@")
-set_and_check(OCTOMAP_LIBRARY_DIRS "@PACKAGE_OCTOMAP_LIB_DIR@")
 
 # Set library names
-set(OCTOMAP_LIBRARIES
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
-)
+foreach(lib octomap;octomath)
+  set(onelib "${lib}-NOTFOUND")
+  find_library(onelib ${lib}
+    PATHS "@OCTOMAP_LIB_DIR@"
+    NO_DEFAULT_PATH
+  )
+  if(NOT onelib)
+    message(FATAL_ERROR "Library '${lib}' in package octomap is not installed properly")
+  endif()
+  list(APPEND OCTOMAP_LIBRARIES ${onelib})
+endforeach()
 
 @OCTOMAP_INCLUDE_TARGETS@
