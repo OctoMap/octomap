@@ -1,3 +1,9 @@
+v1.8.1: 2017-01-13
+==================
+- Disambiguated isnan (C++11)
+- Fixed #123: Set root=NULL in clear()
+- Fixed #131: Portable binary read/write of Pointcloud and ScanGraph (uint32_t)
+
 v1.8.0: 2016-04-20
 ==================
 - Fixed #98: The tree structure in memory is now maintained in OcTreeBaseImpl to 
