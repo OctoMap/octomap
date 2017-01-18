@@ -1049,16 +1049,19 @@ namespace octomap {
     if (depth == 0)
       depth = tree_depth;
     
+    point3d pmin_clamped = this->keyToCoord(this->coordToKey(pmin, depth), depth);
+    point3d pmax_clamped = this->keyToCoord(this->coordToKey(pmax, depth), depth);    
+    
     float diff[3];
     unsigned int steps[3];
     float step_size = this->resolution * pow(2, tree_depth-depth);
     for (int i=0;i<3;++i) {
-      diff[i] = pmax(i) - pmin(i);
+      diff[i] = pmax_clamped(i) - pmin_clamped(i);
       steps[i] = floor(diff[i] / step_size);
       //      std::cout << "bbx " << i << " size: " << diff[i] << " " << steps[i] << " steps\n";
     }
     
-    point3d p = pmin;
+    point3d p = pmin_clamped;
     NODE* res;
     for (unsigned int x=0; x<steps[0]; ++x) {
       p.x() += step_size;
@@ -1072,9 +1075,9 @@ namespace octomap {
             node_centers.push_back(p);
           }
         }
-        p.z() = pmin.z();
+        p.z() = pmin_clamped.z();
       }
-      p.y() = pmin.y();
+      p.y() = pmin_clamped.y();
     }
   }
 
