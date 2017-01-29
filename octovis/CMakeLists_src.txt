@@ -68,30 +68,47 @@ QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 # the UI file won't be wrapped!
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
+# Source code not set up for shared symbol export under Windows. Skip shared build.
+IF(WIN32)
+  set(SKIP_SHARED YES)
+ENDIF(WIN32)
 
-# Library target 
+
+# Library target
 add_library(octovis-static STATIC ${viewerlib_SRCS})
 target_link_libraries(octovis-static)
 set_target_properties(octovis-static PROPERTIES OUTPUT_NAME octovis)
+set_target_properties(octovis-static PROPERTIES OUTPUT_NAME_DEBUG octovisd)
 
-add_library(octovis-shared SHARED ${viewerlib_SRCS})
-target_link_libraries(octovis-shared 
-  ${OPENGL_gl_LIBRARY} 
-  ${OPENGL_glu_LIBRARY} 
-  ${OCTOMAP_LIBRARIES}
-  ${QGLViewer_LIBRARIES}
-)
-set_target_properties(octovis-shared PROPERTIES
-  OUTPUT_NAME octovis
-  VERSION ${OCTOVIS_VERSION}
-  SOVERSION ${OCTOVIS_SOVERSION}
-)
+if(NOT SKIP_SHARED)
+  add_library(octovis-shared SHARED ${viewerlib_SRCS})
+  target_link_libraries(octovis-shared
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    ${OCTOMAP_LIBRARIES}
+    ${QGLViewer_LIBRARIES}
+    ${QT_LIBRARIES}
+  )
+  set_target_properties(octovis-shared PROPERTIES
+    OUTPUT_NAME octovis
+    VERSION ${OCTOVIS_VERSION}
+    SOVERSION ${OCTOVIS_SOVERSION}
+  )
+
+  set(OCTOVIS_TARGETS octovis octovis-static octovis-shared)
+else(NOT SKIP_SHARED)
+  set(OCTOVIS_TARGETS octovis octovis-static)
+endif(NOT SKIP_SHARED)
 
 # directly depend on the octomap library target when building the
 # complete distribution, so it is recompiled as needed
 if (CMAKE_PROJECT_NAME STREQUAL "octomap-distribution")
-  ADD_DEPENDENCIES(octovis-static octomap-static)
-  ADD_DEPENDENCIES(octovis-shared octomap)
+  if(NOT SKIP_SHARED)
+    ADD_DEPENDENCIES(octovis-static octomap-static)
+    ADD_DEPENDENCIES(octovis-shared octomap)
+  else(NOTSKIP_SHAREDWIN32)
+    ADD_DEPENDENCIES(octovis-static octomap-static)
+  endif(NOT SKIP_SHARED)
 endif()
 
 
@@ -99,12 +116,21 @@ endif()
 # If this is NOT done, then the ui_*.h files will not be generated
 add_executable(octovis ${viewer_SRCS} ${viewer_UIS_H} ${viewer_MOC_SRCS} ${viewer_RES})
 
-target_link_libraries(octovis 
-#  ${QGLViewer_LIBRARIES}
-  ${QT_LIBRARIES}
-  ${OCTOMAP_LIBRARIES}
-  octovis-shared
-)
+if(NOT SKIP_SHARED)
+  target_link_libraries(octovis
+  #  ${QGLViewer_LIBRARIES}
+    ${QT_LIBRARIES}
+    ${OCTOMAP_LIBRARIES}
+    octovis-shared
+  )
+else(NOT SKIP_SHARED)
+  target_link_libraries(octovis
+      ${QGLViewer_LIBRARIES}
+      ${QT_LIBRARIES}
+      ${OCTOMAP_LIBRARIES}
+      octovis-static
+    )
+endif(NOT SKIP_SHARED)
 
 # special handling of MacOS X:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -117,10 +143,10 @@ if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis")
   file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis")
 endif()
 
-export(TARGETS octovis octovis-static octovis-shared
+export(TARGETS ${OCTOVIS_TARGETS}
   FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-targets.cmake")
 
-install(TARGETS octovis octovis-static octovis-shared
+install(TARGETS ${OCTOVIS_TARGETS}
   EXPORT octovis-targets
   INCLUDES DESTINATION include
   ${INSTALL_TARGETS_DEFAULT_ARGS}
