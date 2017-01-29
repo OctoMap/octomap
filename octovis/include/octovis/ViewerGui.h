@@ -25,7 +25,12 @@
 #ifndef VIEWERGUI_H
 #define VIEWERGUI_H
 
+#include <qglobal.h>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets/QMainWindow>
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtGui/QMainWindow>
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDockWidget>

@@ -25,7 +25,12 @@
 #ifndef VIEWERSETTINGS_H
 #define VIEWERSETTINGS_H
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets/QDialog>
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtGui/QDialog>
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include "ui_ViewerSettings.h"
 
 class ViewerSettings : public QDialog

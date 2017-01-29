@@ -1,9 +1,26 @@
-# Qt4-support (more info: http://qtnode.net/wiki?title=Qt_with_cmake)
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTOPENGL TRUE)
-set(QT_USE_QTXML TRUE)
-# include the files enabled above
-include(${QT_USE_FILE})
+
+if(OCTOVIS_QT5)
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Gui REQUIRED)
+  find_package(Qt5OpenGL REQUIRED)
+  find_package(Qt5Widgets REQUIRED)
+  find_package(Qt5Xml REQUIRED)
+  set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Xml "${OPENGL_gl_LIBRARY}" "${OPENGL_glu_LIBRARY}")
+  include_directories(
+    "${Qt5Core_INCLUDE_DIRS}"
+    "${Qt5Gui_INCLUDE_DIRS}"
+    "${Qt5OpenGL_INCLUDE_DIRS}"
+    "${Qt5Widgets_INCLUDE_DIRS}"
+    "${Qt5Xml_INCLUDE_DIRS}"
+    )
+else(OCTOVIS_QT5)
+  # Qt4-support (more info: http://qtnode.net/wiki?title=Qt_with_cmake)
+  find_package(Qt4 REQUIRED)
+  set(QT_USE_QTOPENGL TRUE)
+  set(QT_USE_QTXML TRUE)
+  # include the files enabled above
+  include(${QT_USE_FILE})
+endif(OCTOVIS_QT5)
 
 # Mac OS X seems to require special linker flags:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -34,7 +51,11 @@ set(viewer_SRCS
 )	
 
 # Resource files (icons, ...)
-QT4_ADD_RESOURCES(viewer_RES src/icons.qrc)
+if(OCTOVIS_QT5)
+  QT5_ADD_RESOURCES(viewer_RES src/icons.qrc)
+else(OCTOVIS_QT5)
+  QT4_ADD_RESOURCES(viewer_RES src/icons.qrc)
+endif(OCTOVIS_QT5)
 
 #found QGLViewer lib dir
 link_directories(${QGLViewer_LIBRARY_DIR})
@@ -53,7 +74,11 @@ SET(viewer_MOC_HDRS
 )
 
 # generate list of MOC srcs:
-QT4_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
+if(OCTOVIS_QT5)
+  QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
+else(OCTOVIS_QT5)
+  QT4_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
+endif(OCTOVIS_QT5)
 
 # let cmake generate ui*.h files from .ui files (Qt Designer):
 SET(viewer_UIS
@@ -62,7 +87,11 @@ SET(viewer_UIS
     ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanel.ui
     ${PROJECT_SOURCE_DIR}/include/octovis/ViewerSettingsPanelCamera.ui
 )
-QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
+if(OCTOVIS_QT5)
+  QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
+else(OCTOVIS_QT5)
+  QT4_WRAP_UI(viewer_UIS_H ${viewer_UIS})
+endif(OCTOVIS_QT5)
 
 # Don't forget to include output directory, otherwise
 # the UI file won't be wrapped!
@@ -108,8 +137,8 @@ target_link_libraries(octovis
 
 # special handling of MacOS X:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  add_custom_command(TARGET octovis POST_BUILD 
-  	COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/octovis
+  add_custom_command(TARGET octovis POST_BUILD
+    COMMAND install_name_tool -change libQGLViewer.2.dylib /opt/local/lib/libQGLViewer.2.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/octovis
   )
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
