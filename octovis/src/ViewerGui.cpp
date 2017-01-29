@@ -30,6 +30,7 @@
 #include <octovis/ColorOcTreeDrawer.h>
 #include <octomap/MapCollection.h>
 
+#include <QVector>
 
 #define _MAXRANGE_URG 5.1
 #define _MAXRANGE_SICK 50.0
@@ -71,8 +72,12 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
   // status bar
   m_mapSizeStatus = new QLabel("Map size", this);
   m_mapMemoryStatus = new QLabel("Memory consumption", this);
+  m_buildingStatus = new QLabel("", this);
   m_mapSizeStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   m_mapMemoryStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  m_buildingStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  m_buildingStatus->setVisible(false);
+  statusBar()->addPermanentWidget(m_buildingStatus);
   statusBar()->addPermanentWidget(m_mapSizeStatus);
   statusBar()->addPermanentWidget(m_mapMemoryStatus);
 
@@ -83,6 +88,8 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
   connect(settingsPanel, SIGNAL(treeDepthChanged(int)), this, SLOT(changeTreeDepth(int)));
   connect(settingsPanel, SIGNAL(addNextScans(unsigned)), this, SLOT(addNextScans(unsigned)));
   connect(settingsPanel, SIGNAL(gotoFirstScan()), this, SLOT(gotoFirstScan()));
+  connect(settingsPanel, SIGNAL(recaculateCutoff(double)), this, SLOT(recalculateOccupancy(double)));
+  settingsPanel->setOccupancyCutoff(m_occupancyThresh, false);
 
   connect(settingsCameraPanel, SIGNAL(jumpToFrame(unsigned)), m_cameraFollowMode, SLOT(jumpToFrame(unsigned)));
   connect(settingsCameraPanel, SIGNAL(play()), m_cameraFollowMode, SLOT(play()));
@@ -121,6 +128,13 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
           m_glwidget, SLOT(setCamPose(const octomath::Pose6D&)));
 
   connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
+
+  QTimer *updateTimer = new QTimer(this);
+  connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateDrawers()));
+  updateTimer->start(1000/30);
+
+  // Force registration of the ColorOcTree type. Required for statically linked Windows builds.
+  ColorOcTree t(1);
 
   if (filename != ""){
     m_filename = filename;
@@ -180,6 +194,11 @@ bool ViewerGui::getOctreeRecord(int id, OcTreeRecord*& otr) {
 }
 
 void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id, octomap::pose6d origin) {
+  if (OcTree *octree = dynamic_cast<OcTree*>(tree)) {
+    octree->setOccupancyThres(m_occupancyThresh);
+  } else if (ColorOcTree *octree = dynamic_cast<ColorOcTree*>(tree)) {
+    octree->setOccupancyThres(m_occupancyThresh);
+  }
   // is id in use?
       OcTreeRecord* r;
       bool foundRecord = getOctreeRecord(id, r);
@@ -188,10 +207,12 @@ void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id, octomap::pose6d
         delete r->octree_drawer;
         if (dynamic_cast<OcTree*>(tree)) {
           r->octree_drawer = new OcTreeDrawer();
+          r->octree_drawer->setOccupancyThreshold(m_occupancyThresh);
           //        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
         }
         else if (dynamic_cast<ColorOcTree*>(tree)) {
           r->octree_drawer = new ColorOcTreeDrawer();
+          r->octree_drawer->setOccupancyThreshold(m_occupancyThresh);
         } else{
           OCTOMAP_ERROR("Could not create drawer for tree type %s\n", tree->getTreeType().c_str());
         }
@@ -212,10 +233,12 @@ void ViewerGui::addOctree(octomap::AbstractOcTree* tree, int id, octomap::pose6d
         otr.id = id;
         if (dynamic_cast<OcTree*>(tree)) {
           otr.octree_drawer = new OcTreeDrawer();
+          otr.octree_drawer->setOccupancyThreshold(m_occupancyThresh);
           //        fprintf(stderr, "adding new OcTreeDrawer for node %d\n", id);
         }
         else if (dynamic_cast<ColorOcTree*>(tree)) {
           otr.octree_drawer = new ColorOcTreeDrawer();
+          otr.octree_drawer->setOccupancyThreshold(m_occupancyThresh);
         } else{
           OCTOMAP_ERROR("Could not create drawer for tree type %s\n", tree->getTreeType().c_str());
         }
@@ -356,6 +379,30 @@ void ViewerGui::gotoFirstScan(){
     QApplication::restoreOverrideCursor();
     showOcTree();
   }
+}
+
+void ViewerGui::recalculateOccupancy(double cutoff){
+  m_occupancyThresh = cutoff;
+  std::map<int, OcTreeRecord>::iterator iter;
+
+  // Process viable trees, adjust thresholds and build a dirty list.
+  // We don't update the trees in this loop because it would invalidate the iterator.
+  for (iter = m_octrees.begin(); iter != m_octrees.end(); ++iter){
+    iter->second.octree_drawer->setOccupancyThreshold(m_occupancyThresh);
+    //if (OcTree *octree = dynamic_cast<OcTree*>(iter->second.octree)){
+    //  octree->setOccupancyThres(m_occupancyThresh);
+    //  delete iter->second.octree_drawer;
+    //  iter->second.octree_drawer = new OcTreeDrawer();
+    //  m_glwidget->addSceneObject(iter->second.octree_drawer);
+    //} else if (ColorOcTree *octree = dynamic_cast<ColorOcTree*>(iter->second.octree)){
+    //  octree->setOccupancyThres(m_occupancyThresh);
+    //  delete iter->second.octree_drawer;
+    //  iter->second.octree_drawer = new ColorOcTreeDrawer();
+    //  m_glwidget->addSceneObject(iter->second.octree_drawer);
+    //}
+  }
+
+  //showOcTree();
 }
 
 void ViewerGui::addNextScan(){
@@ -621,6 +668,45 @@ void ViewerGui::changeTreeDepth(int depth){
     showOcTree();
 }
 
+void ViewerGui::updateDrawers(){
+  // Update tree drawers for amortised voxel construction.
+  std::map<int, OcTreeRecord>::iterator iter;
+
+  //m_buildingStatus->setText(QString());
+  //m_buildingStatus->setVisible(false);
+
+  OcTreeDrawer::BuildPhase phase = OcTreeDrawer::NONE;
+  unsigned int progress = 0;
+  unsigned int maxProgress = 0;
+  for (iter = m_octrees.begin(); iter != m_octrees.end(); ++iter){
+    unsigned int p = 0, mp = 0;
+    OcTreeDrawer::BuildPhase ph = OcTreeDrawer::NONE;
+    phase = iter->second.octree_drawer->update(1000 / 30, &progress, &maxProgress);
+    if (phase != OcTreeDrawer::NONE){
+      // Set the status
+      switch (phase)
+      {
+      case OcTreeDrawer::COUNT:
+        m_buildingStatus->setText(tr("Counting voxels %1/%2").arg(progress).arg(maxProgress));
+        m_buildingStatus->setVisible(true);
+        break;
+      case OcTreeDrawer::BUILD:
+        m_buildingStatus->setText(tr("Building voxels %1/%2").arg(progress).arg(maxProgress));
+        m_buildingStatus->setVisible(true);
+        m_glwidget->updateGL();
+        break;
+      default:
+      case OcTreeDrawer::COMPLETE:
+        m_buildingStatus->setText(QString());
+        m_buildingStatus->setVisible(false);
+        m_glwidget->updateGL();
+        break;
+      }
+
+      return;
+    }
+  }
+}
 
 void ViewerGui::on_actionExit_triggered(){
   this->close();

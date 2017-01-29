@@ -43,16 +43,21 @@ public slots:
     void setNumberOfScans(unsigned scans);
     void setCurrentScan(unsigned scan);
     void setResolution(double resolution);
+    void setOccupancyCutoff(double cutoff, bool dirty = true);
     void setTreeDepth(int depth);
+    void changeOccupancyCutoff(int cutoff);
+    void changeOccupancyCutoff(double cutoff);
 
 private slots:
     void on_firstScanButton_clicked();
     void on_lastScanButton_clicked();
     void on_nextScanButton_clicked();
     void on_fastFwdScanButton_clicked();
+    void on_recalculateOccupancyButton_clicked();
 
 signals:
   void treeDepthChanged(int depth);
+  void recaculateCutoff(double cutoff);
   void addNextScans(unsigned scans);
   void gotoFirstScan();
 
@@ -65,6 +70,8 @@ private:
     unsigned m_numberScans;
     unsigned m_treeDepth;
     double m_resolution;
+    double m_occupancyCutoff;
+    bool m_notifyCutoff;
 };
 
 #endif // VIEWERSETTINGSPANEL_H

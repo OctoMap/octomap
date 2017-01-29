@@ -24,17 +24,100 @@
 
 #include <octovis/OcTreeDrawer.h>
 #include <qglviewer.h>
+#include <QElapsedTimer>
 
 #define OTD_RAD2DEG 57.2957795
 
 namespace octomap {
+  OcTreeDrawer::OcTreeIterator::OcTreeIterator(const OcTree* tree) : m_tree(tree)
+  {
+  }
+
+  void OcTreeDrawer::OcTreeIterator::setOccupancyThres(double threshold){
+    // TODO: need a better way than using a const cast for this.
+    const_cast<OcTree*>(m_tree)->setOccupancyThres(threshold);
+  }
+
+  double OcTreeDrawer::OcTreeIterator::getOccupancyThres() const {
+    return m_tree->getOccupancyThres();
+  }
+
+  unsigned int OcTreeDrawer::OcTreeIterator::getTreeSize() const {
+    return m_tree->size();
+  }
+
+  void OcTreeDrawer::OcTreeIterator::getMetricMin(double& x, double& y, double& z) const {
+    return m_tree->getMetricMin(x, y, z);
+  }
+
+  void OcTreeDrawer::OcTreeIterator::getMetricMax(double& x, double& y, double& z) const {
+    return m_tree->getMetricMax(x, y, z);
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::isValid() const {
+    return m_it != m_tree->end_tree();
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::begin(unsigned int max_tree_depth){
+    m_it = m_tree->begin_tree(max_tree_depth);
+    return m_it != m_tree->end_tree();
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::moveNext(){
+    ++m_it;
+    return m_it != m_tree->end_tree();
+  }
+
+  float OcTreeDrawer::OcTreeIterator::getOccupancy() const{
+    return m_it->getOccupancy();
+  }
+
+  point3d OcTreeDrawer::OcTreeIterator::getCoordinate() const{
+    return m_it.getCoordinate();
+  }
+
+  double OcTreeDrawer::OcTreeIterator::getSize() const{
+    return m_it.getSize();
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::isLeaf() const{
+    return m_it.isLeaf();
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::isOccupied() const{
+    return m_tree->isNodeOccupied(*m_it);
+  }
+
+  bool OcTreeDrawer::OcTreeIterator::isAtThreshold() const{
+    return m_tree->isNodeAtThreshold(*m_it);
+  }
+
+
+  OcTreeDrawer::Regeneration::Regeneration() : phase(OcTreeDrawer::NONE),
+                                               showAll(false), uses_origin(false),
+                                               progress(0), maxProgress(0),
+                                               cnt_occupied(0), cnt_occupied_thres(0),
+                                               cnt_free(0), cnt_free_thres(0),
+                                               it(NULL)
+  {
+  }
+
+  OcTreeDrawer::Regeneration::~Regeneration(){
+    delete it;
+  }
 
   OcTreeDrawer::OcTreeDrawer() : SceneObject(),
                                  m_occupiedThresSize(0), m_freeThresSize(0),
                                  m_occupiedSize(0), m_freeSize(0), m_selectionSize(0),
-                                 octree_grid_vertex_size(0), m_alphaOccupied(0.8), map_id(0)
+                                 octree_grid_vertex_size(0),
+                                 m_max_tree_depth(0),
+                                 m_alphaOccupied(0.8),
+                                 m_occupancyThreshold(0.5),
+                                 map_id(0)
   {
+    m_occupiedCap = m_occupiedThresCap = m_freeCap = m_freeThresCap = m_occupiedColorSize = m_occupiedThresColorSize = 0;
     m_octree_grid_vis_initialized = false;
+    m_gridVoxelsBuilt = false;
     m_drawOccupied = true;
     m_drawOcTreeGrid = false;
     m_drawFree = false;
@@ -50,6 +133,8 @@ namespace octomap {
     m_occupiedColorArray = NULL;
     m_occupiedThresColorArray = NULL;
     m_selectionArray = NULL;
+    octree_grid_vertex_array = NULL;
+    octree_grid_vertex_size = 0;
 
     // origin and movement
     initial_origin = octomap::pose6d(0,0,0,0,0,0);
@@ -58,6 +143,14 @@ namespace octomap {
 
   OcTreeDrawer::~OcTreeDrawer() {
     clear();
+  }
+
+  OcTreeDrawer::BuildPhase OcTreeDrawer::update(unsigned int timeout, unsigned int* progress, unsigned int* maxProgress) {
+    // Continue amortised construction.
+    buildVoxels(timeout);
+    if (progress) *progress = m_regeneration.progress;
+    if (maxProgress) *maxProgress = m_regeneration.maxProgress;
+    return m_regeneration.phase;
   }
 
   void OcTreeDrawer::draw() const {
@@ -78,42 +171,42 @@ namespace octomap {
         glNewList(gl_list_index, GL_COMPILE_AND_EXECUTE); 
       }
 
-      // push current status
-      glPushMatrix();
-      // octomap::pose6d relative_transform = origin * initial_origin.inv();
+    // push current status
+    glPushMatrix();
+    // octomap::pose6d relative_transform = origin * initial_origin.inv();
 
-      octomap::pose6d relative_transform = origin;// * initial_origin;
+    octomap::pose6d relative_transform = origin;// * initial_origin;
 
-      // apply relative transform
-      const octomath::Quaternion& q = relative_transform.rot();
-      glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
-      
-      // convert quaternion to angle/axis notation
-      float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
-      if (scale) {
-        float axis_x = q.x() / scale;
-        float axis_y = q.y() / scale;
-        float axis_z = q.z() / scale;
-        float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
-        glRotatef(angle, axis_x, axis_y, axis_z);
-      }
+    // apply relative transform
+    const octomath::Quaternion& q = relative_transform.rot();
+    glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
+    
+    // convert quaternion to angle/axis notation
+    float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+    if (scale) {
+      float axis_x = q.x() / scale;
+      float axis_y = q.y() / scale;
+      float axis_z = q.z() / scale;
+      float angle = acos(q.u()) * 2.0f * OTD_RAD2DEG;  //  opengl expects DEG
+      glRotatef(angle, axis_x, axis_y, axis_z);
+    }
 
-      glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-        if (m_drawOccupied)
-          drawOccupiedVoxels();
-        if (m_drawFree)
-          drawFreeVoxels();
-        if (m_drawOcTreeGrid)
-          drawOctreeGrid();
-        if (m_drawSelection)
-          drawSelection();
+    if (m_drawOccupied)
+      drawOccupiedVoxels();
+    if (m_drawFree)
+      drawFreeVoxels();
+    if (m_drawOcTreeGrid)
+      drawOctreeGrid();
+    if (m_drawSelection)
+      drawSelection();
 
-        if (m_displayAxes) {
-          drawAxes();
-        }
+    if (m_displayAxes) {
+      drawAxes();
+    }
 
-      glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
       // reset previous status
       glPopMatrix();
@@ -148,93 +241,15 @@ namespace octomap {
     this->origin = origin;
     
     // maximum size to prevent crashes on large maps: (should be checked in a better way than a constant)
-    bool showAll = (octree.size() < 5 * 1e6);
-    bool uses_origin = ( (origin.rot().x() != 0.) && (origin.rot().y() != 0.)
+    m_regeneration.showAll = (octree.size() < 5 * 1e6);
+    m_regeneration.uses_origin = ( (origin.rot().x() != 0.) && (origin.rot().y() != 0.)
         && (origin.rot().z() != 0.) && (origin.rot().u() != 1.) );
 
-    // walk the tree one to find the number of nodes in each category
-    // (this is used to set up the OpenGL arrays)
-    // TODO: this step may be left out, if we maintained the GLArrays in std::vectors instead...
-    unsigned int cnt_occupied(0), cnt_occupied_thres(0), cnt_free(0), cnt_free_thres(0);
-    for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
-            end=octree.end_tree(); it!= end; ++it) {
-      if (it.isLeaf()) { 
-        if (octree.isNodeOccupied(*it)){ // occupied voxels
-          if (octree.isNodeAtThreshold(*it)) ++cnt_occupied_thres;
-          else                               ++cnt_occupied;
-        }
-        else if (showAll) { // freespace voxels
-          if (octree.isNodeAtThreshold(*it)) ++cnt_free_thres;
-          else                               ++cnt_free;
-        }
-      }        
-    }    
-    // setup GL arrays for cube quads and cube colors
-    initGLArrays(cnt_occupied      , m_occupiedSize     , &m_occupiedArray     , &m_occupiedColorArray);
-    initGLArrays(cnt_occupied_thres, m_occupiedThresSize, &m_occupiedThresArray, &m_occupiedThresColorArray);
-    initGLArrays(cnt_free          , m_freeSize         , &m_freeArray, NULL);
-    initGLArrays(cnt_free_thres    , m_freeThresSize    , &m_freeThresArray, NULL);
-
-    double minX, minY, minZ, maxX, maxY, maxZ;
-    octree.getMetricMin(minX, minY, minZ);
-    octree.getMetricMax(maxX, maxY, maxZ);
-
-    // set min/max Z for color height map
-    m_zMin = minZ;
-    m_zMax = maxZ;
-
-    std::vector<octomath::Vector3> cube_template;
-    initCubeTemplate(origin, cube_template);
-
-    unsigned int idx_occupied(0), idx_occupied_thres(0), idx_free(0), idx_free_thres(0);
-    unsigned int color_idx_occupied(0), color_idx_occupied_thres(0);
-
-    m_grid_voxels.clear();
-    OcTreeVolume voxel; // current voxel, possibly transformed 
-    for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
-            end=octree.end_tree(); it!= end; ++it) {
-
-      if (it.isLeaf()) { // voxels for leaf nodes
-        if (uses_origin) 
-          voxel = OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize());
-        else 
-          voxel = OcTreeVolume(it.getCoordinate(), it.getSize());
-        
-        if (octree.isNodeOccupied(*it)){ // occupied voxels
-          if (octree.isNodeAtThreshold(*it)) {
-            idx_occupied_thres = generateCube(voxel, cube_template, idx_occupied_thres, &m_occupiedThresArray);
-            color_idx_occupied_thres = setCubeColorHeightmap(voxel, color_idx_occupied_thres, &m_occupiedThresColorArray);
-          }
-          else {
-            idx_occupied = generateCube(voxel, cube_template, idx_occupied, &m_occupiedArray);
-            color_idx_occupied = setCubeColorHeightmap(voxel, color_idx_occupied, &m_occupiedColorArray);
-          }
-        }
-        else if (showAll) { // freespace voxels
-          if (octree.isNodeAtThreshold(*it)) {
-            idx_free_thres = generateCube(voxel, cube_template, idx_free_thres, &m_freeThresArray);
-          }
-          else {
-            idx_free = generateCube(voxel, cube_template, idx_free, &m_freeArray);
-          }
-        }
-      }
-      
-      else { // inner node voxels (for grid structure only)
-        if (showAll) {
-          if (uses_origin)
-            voxel = OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize());
-          else
-            voxel = OcTreeVolume(it.getCoordinate(), it.getSize());
-          m_grid_voxels.push_back(voxel);
-        }
-      }      
-    } // end for all voxels
-
-    m_octree_grid_vis_initialized = false;
-
-    if(m_drawOcTreeGrid)
-      initOctreeGridVis();
+    // Start amortised construction of the voxels.
+    delete m_regeneration.it;
+    m_regeneration.it = new OcTreeIterator(&octree);
+    m_regeneration.phase = OcTreeDrawer::INIT;
+    buildVoxels();
   }
 
   void OcTreeDrawer::setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedVoxels){
@@ -245,6 +260,16 @@ namespace octomap {
   void OcTreeDrawer::clearOcTreeSelection(){
     m_update = true;
     clearCubes(&m_selectionArray, m_selectionSize);
+  }
+
+  void OcTreeDrawer::setOccupancyThreshold(double threshold){
+    if (threshold != m_occupancyThreshold){
+      m_occupancyThreshold = threshold;
+      clear();
+      // Need to rebuild the voxels.
+      m_regeneration.phase = OcTreeDrawer::INIT;
+      buildVoxels();
+    }
   }
 
   void OcTreeDrawer::initGLArrays(const unsigned int& num_cubes,
@@ -528,20 +553,38 @@ namespace octomap {
     }
   }
 
-  void OcTreeDrawer::initOctreeGridVis() {
+  void OcTreeDrawer::initOctreeGridVis(bool expand) {
 
     if (m_octree_grid_vis_initialized) return;
 
-    clearOcTreeStructure();
+    unsigned int previousSize = octree_grid_vertex_size;
+    GLfloat* previousArray = octree_grid_vertex_array;
+
+    if (!expand){
+      clearOcTreeStructure();
+    }
     // allocate arrays for octree grid visualization
     octree_grid_vertex_size = m_grid_voxels.size() * 12 * 2 * 3;
     octree_grid_vertex_array = new GLfloat[octree_grid_vertex_size];
 
+    unsigned voxelOffset = 0;
+    if (expand && previousSize && previousSize <= octree_grid_vertex_size){
+      memcpy(octree_grid_vertex_array, previousArray, sizeof(GLfloat) * previousSize);
+      delete [] previousArray;
+      // Determine which voxel we continue building at.
+      voxelOffset = previousSize / (12 * 2 * 3);
+      previousArray = NULL;
+      previousSize = 0u;
+    }
+
     // generate the cubes, 12 lines each
-    std::list<octomap::OcTreeVolume>::iterator it_rec;
-    unsigned int i = 0;
+    std::list<octomap::OcTreeVolume>::iterator it_rec = m_grid_voxels.begin();
+    unsigned int i = voxelOffset * 12 * 2 * 3;
+    while (voxelOffset-- > 0) {
+      ++it_rec;
+    }
     double x,y,z;
-    for (it_rec=m_grid_voxels.begin(); it_rec != m_grid_voxels.end(); it_rec++) {
+    for (; it_rec != m_grid_voxels.end(); it_rec++) {
 
       x = it_rec->first.x();
       y = it_rec->first.y();
@@ -663,11 +706,13 @@ namespace octomap {
 
   void OcTreeDrawer::clear() {
     //clearOcTree();
-    clearCubes(&m_occupiedArray, m_occupiedSize, &m_occupiedColorArray);
-    clearCubes(&m_occupiedThresArray, m_occupiedThresSize, &m_occupiedThresColorArray);
-    clearCubes(&m_freeArray, m_freeSize);
-    clearCubes(&m_freeThresArray, m_freeThresSize);
+    clearCubes(&m_occupiedArray, m_occupiedCap, &m_occupiedColorArray);
+    clearCubes(&m_occupiedThresArray, m_occupiedThresCap, &m_occupiedThresColorArray);
+    clearCubes(&m_freeArray, m_freeCap);
+    clearCubes(&m_freeThresArray, m_freeThresCap);
     clearCubes(&m_selectionArray, m_selectionSize);
+    m_occupiedSize = m_occupiedThresSize = m_freeSize = m_freeThresSize = m_selectionSize = 0u;
+    m_occupiedThresColorSize = m_occupiedColorSize = 0u;
     clearOcTreeStructure();
   }
 
@@ -919,6 +964,167 @@ namespace octomap {
       glDisable(GL_LIGHTING);
 
     glPopMatrix();
+  }
+
+  void OcTreeDrawer::buildVoxels(unsigned int timeout){
+    QElapsedTimer timer;
+    timer.start();
+
+    switch (m_regeneration.phase)
+    {
+    case OcTreeDrawer::NONE:
+    default:
+      break;
+
+    case OcTreeDrawer::INIT:
+      m_regeneration.cnt_occupied = m_regeneration.cnt_occupied_thres = m_regeneration.cnt_free = m_regeneration.cnt_free_thres = 0;
+      m_regeneration.it->begin(m_max_tree_depth);
+      m_regeneration.phase = OcTreeDrawer::COUNT;
+      m_regeneration.progress = 0;
+      m_regeneration.maxProgress = m_regeneration.it->getTreeSize();
+      if (!m_gridVoxelsBuilt){
+        clearOcTreeStructure();
+        m_grid_voxels.clear();
+      }
+      // Don't break;
+    case OcTreeDrawer::COUNT:
+      {
+        // TODO: resolve a better way to temporarily change the occupancy threshold.
+        double occupancyThresCache = m_regeneration.it->getOccupancyThres();
+        m_regeneration.it->setOccupancyThres(m_occupancyThreshold);
+
+        // walk the tree one to find the number of nodes in each category
+        // (this is used to set up the OpenGL arrays)
+        // TODO: this step may be left out, if we maintained the GLArrays in std::vectors instead...
+        while (m_regeneration.it->isValid() && (timeout == 0 || timer.elapsed() < timeout)){
+          ++m_regeneration.progress;
+          if (m_regeneration.it->isLeaf()) { 
+            if (m_regeneration.it->isOccupied()){ // occupied voxels
+              if (m_regeneration.it->isAtThreshold()) ++m_regeneration.cnt_occupied_thres;
+              else                               ++m_regeneration.cnt_occupied;
+            }
+            else if (m_regeneration.showAll) { // freespace voxels
+              if (m_regeneration.it->isAtThreshold()) ++m_regeneration.cnt_free_thres;
+              else                               ++m_regeneration.cnt_free;
+            }
+          }
+          m_regeneration.it->moveNext();
+        }    
+        // Restore occupancy threshold.
+        m_regeneration.it->setOccupancyThres(occupancyThresCache);
+        
+        if (!m_regeneration.it->isValid()){
+          // Done counting. Setup GL arrays and move to the next phase.
+          m_regeneration.phase = OcTreeDrawer::BUILD;
+          m_regeneration.progress = 0;
+          // setup GL arrays for cube quads and cube colors
+          initGLArrays(m_regeneration.cnt_occupied      , m_occupiedCap     , &m_occupiedArray     , &m_occupiedColorArray);
+          initGLArrays(m_regeneration.cnt_occupied_thres, m_occupiedThresCap, &m_occupiedThresArray, &m_occupiedThresColorArray);
+          initGLArrays(m_regeneration.cnt_free          , m_freeCap         , &m_freeArray, NULL);
+          initGLArrays(m_regeneration.cnt_free_thres    , m_freeThresCap    , &m_freeThresArray, NULL);
+
+          m_occupiedThresSize = m_freeThresSize = m_occupiedSize = m_freeSize = m_selectionSize = 0u;
+          m_occupiedThresColorSize = m_occupiedColorSize = 0u;
+
+          m_regeneration.it->begin(this->m_max_tree_depth);
+        }
+      }
+      break;
+
+    case OcTreeDrawer::BUILD:
+      {
+        // TODO: resolve a better way to temporarily change the occupancy threshold.
+        double occupancyThresCache = m_regeneration.it->getOccupancyThres();
+        m_regeneration.it->setOccupancyThres(m_occupancyThreshold);
+
+        double minX, minY, minZ, maxX, maxY, maxZ;
+        m_regeneration.it->getMetricMin(minX, minY, minZ);
+        m_regeneration.it->getMetricMax(maxX, maxY, maxZ);
+
+        // set min/max Z for color height map
+        m_zMin = minZ;
+        m_zMax = maxZ;
+
+        std::vector<octomath::Vector3> cube_template;
+        initCubeTemplate(origin, cube_template);
+
+        OcTreeVolume voxel; // current voxel, possibly transformed 
+        while (m_regeneration.it->isValid() && (timeout == 0 || timer.elapsed() < timeout)) {
+            ++m_regeneration.progress;
+            if (m_regeneration.it->isLeaf()) { // voxels for leaf nodes
+              if (m_regeneration.uses_origin) 
+                voxel = OcTreeVolume(origin.rot().rotate(m_regeneration.it->getCoordinate()), m_regeneration.it->getSize());
+              else 
+                voxel = OcTreeVolume(m_regeneration.it->getCoordinate(), m_regeneration.it->getSize());
+
+              if (m_regeneration.it->isOccupied()){ // occupied voxels
+                if (m_regeneration.it->isAtThreshold()) {
+                  m_occupiedThresSize = generateCube(voxel, cube_template, m_occupiedThresSize, &m_occupiedThresArray);
+                  unsigned char r, g, b;
+                  if (!m_regeneration.it->getColor(r, g, b)){
+                    m_occupiedThresColorSize = setCubeColorHeightmap(voxel, m_occupiedThresColorSize, &m_occupiedThresColorArray);
+                  } else {
+                    m_occupiedThresColorSize = setCubeColorRGBA(r, g, b, 
+                                                                (unsigned char) (m_regeneration.it->getOccupancy() * 255.),
+                                                                m_occupiedThresColorSize, &m_occupiedThresColorArray);
+                  }
+                }
+                else {
+                  m_occupiedSize = generateCube(voxel, cube_template, m_occupiedSize, &m_occupiedArray);
+                  unsigned char r, g, b;
+                  if (!m_regeneration.it->getColor(r, g, b)){
+                    m_occupiedColorSize = setCubeColorHeightmap(voxel, m_occupiedColorSize, &m_occupiedColorArray);
+                  } else {
+                    m_occupiedColorSize = setCubeColorRGBA(r, g, b, 
+                                                           (unsigned char)(m_regeneration.it->getOccupancy() * 255.),
+                                                           m_occupiedColorSize, &m_occupiedColorArray);
+                  }
+                }
+              }
+              else if (m_regeneration.showAll) { // freespace voxels
+                if (m_regeneration.it->isAtThreshold()) {
+                  m_freeThresSize = generateCube(voxel, cube_template, m_freeThresSize, &m_freeThresArray);
+                }
+                else {
+                  m_freeSize = generateCube(voxel, cube_template, m_freeSize, &m_freeArray);
+                }
+              }
+            }
+
+            else { // inner node voxels (for grid structure only)
+              if (!m_gridVoxelsBuilt){
+                if (m_regeneration.showAll) {
+                  if (m_regeneration.uses_origin)
+                    voxel = OcTreeVolume(origin.rot().rotate(m_regeneration.it->getCoordinate()), m_regeneration.it->getSize());
+                  else
+                    voxel = OcTreeVolume(m_regeneration.it->getCoordinate(), m_regeneration.it->getSize());
+                  m_grid_voxels.push_back(voxel);
+                }
+              }
+            }      
+            m_regeneration.it->moveNext();
+        } // end for all voxels
+        // Restore occupancy threshold.
+        m_regeneration.it->setOccupancyThres(occupancyThresCache);
+
+        // Expand octree grid.
+        m_octree_grid_vis_initialized = false;
+
+        if(m_drawOcTreeGrid)
+          initOctreeGridVis(true);
+
+        if (!m_regeneration.it->isValid()){
+          m_gridVoxelsBuilt = true;
+          m_regeneration.phase = OcTreeDrawer::COMPLETE;
+          m_regeneration.progress = m_regeneration.maxProgress = 0;
+        }
+      }
+      break;
+
+    case OcTreeDrawer::COMPLETE:
+      m_regeneration.phase = OcTreeDrawer::NONE;
+      break;
+    }
   }
 
 } // namespace
