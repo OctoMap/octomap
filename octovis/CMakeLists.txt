@@ -48,7 +48,7 @@ ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 MESSAGE(STATUS "Found octomap version: " ${octomap_VERSION})
 
-INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(BEFORE SYSTEM ${OCTOMAP_INCLUDE_DIRS})
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
