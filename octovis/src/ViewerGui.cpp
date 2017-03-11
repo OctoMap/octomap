@@ -1197,14 +1197,22 @@ void ViewerGui::on_action_bg_gray_triggered() {
 void ViewerGui::on_savecampose_triggered() {
   QString filename = QFileDialog::getSaveFileName(this, "Save Viewer State", "camera.xml", "Camera/State file (*.xml)");
   if (!filename.isEmpty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    saveCameraPosition(filename.toLatin1().constData());
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     saveCameraPosition(filename.toAscii().constData());
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
   }
 }
 
 void ViewerGui::on_loadcampose_triggered() {
   QString filename = QFileDialog::getOpenFileName(this, "Load Viewer State", "camera.xml", "Camera/State file (*.xml)");
   if (!filename.isEmpty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    loadCameraPosition(filename.toLatin1().constData());
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     loadCameraPosition(filename.toAscii().constData());
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
   }
 }
 

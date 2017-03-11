@@ -66,7 +66,9 @@ SET( BUILD_VIEWER 0)
 
 # Look for required libraries:
 FIND_PACKAGE(OpenGL)
-FIND_PACKAGE(Qt4)
+if(NOT OCTOVIS_QT5)
+  FIND_PACKAGE(Qt4)
+endif(NOT OCTOVIS_QT5)
 
 IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND) 
 	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")	
