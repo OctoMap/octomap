@@ -25,7 +25,7 @@ INCLUDE(CompilerSettings)
 
 
 # Set output directories for libraries and executables
-SET( BASE_DIR ${PROJECT_SOURCE_DIR} )
+SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
@@ -51,8 +51,8 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 )
 
 find_package(octomap REQUIRED
-  PATHS ${PROJECT_SOURCE_DIR}/../octomap/lib/cmake/octomap
-  NO_DEFAULT_PATH
+  HINTS ${CMAKE_SOURCE_DIR}/lib/cmake/octomap
+   ${CMAKE_SOURCE_DIR}/../octomap/lib/cmake/octomap
 )
 MESSAGE(STATUS "Found octomap version: " ${octomap_VERSION})
 MESSAGE(STATUS "octomap libraries: ${OCTOMAP_LIBRARIES}")
