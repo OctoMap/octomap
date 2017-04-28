@@ -1,3 +1,24 @@
+v1.9.0: 2017-04-28
+==================
+- Fixed getUnknownLeafCenters to return true leaf centers (thx to A. Ecins)
+- dynamicEDT3D templated over OctoMap type (thx to J.V. Gomez)
+- Added optimized rendering option and command line option for tree cutoff 
+  in octovis (thx to F. Endres)
+- Added optional Qt5 support in octovis (thx to K. Stepanas)
+- Improved the generation of config.cmake and version.cmake files, make them
+  relocatable via CONFIGURE_PACKAGE_CONFIG_FILE (thx to J.V. Gomez)
+- Enable rpath on OS X when the CMake version supports it (thx to J. Snape)
+- Added version information to *-config.cmake files and exported targets to
+  CMakeLists.txt (thx to J. Snape)
+- Improved CMake build by specifically targeting local includes (thx to 
+  C.-E. Hrabia)
+
+v1.8.1: 2017-01-13
+==================
+- Disambiguated isnan (C++11)
+- Fixed #123: Set root=NULL in clear()
+- Fixed #131: Portable binary read/write of Pointcloud and ScanGraph (uint32_t)
+
 v1.8.0: 2016-04-20
 ==================
 - Fixed #98: The tree structure in memory is now maintained in OcTreeBaseImpl to 

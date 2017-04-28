@@ -40,36 +40,38 @@
 
 #include "dynamicEDT3D.h"
 #include <octomap/OcTree.h>
+#include <octomap/OcTreeStamped.h>
 
-/// A DynamicEDTOctomap object connects a DynamicEDT3D object to an octomap.
-class DynamicEDTOctomap: private DynamicEDT3D {
+/// A DynamicEDTOctomapBase object connects a DynamicEDT3D object to an octomap.
+template <class TREE>
+class DynamicEDTOctomapBase: private DynamicEDT3D {
 public:
-    /** Create a DynamicEDTOctomap object that maintains a distance transform in the bounding box given by bbxMin, bbxMax and clamps distances at maxdist.
+    /** Create a DynamicEDTOctomapBase object that maintains a distance transform in the bounding box given by bbxMin, bbxMax and clamps distances at maxdist.
      *  treatUnknownAsOccupied configures the treatment of unknown cells in the distance computation.
      *
      *  The constructor copies occupancy data but does not yet compute the distance map. You need to call udpate to do this.
      *
      *  The distance map is maintained in a full three-dimensional array, i.e., there exists a float field in memory for every voxel inside the bounding box given by bbxMin and bbxMax. Consider this when computing distance maps for large octomaps, they will use much more memory than the octomap itself!
      */
-	DynamicEDTOctomap(float maxdist, octomap::OcTree* _octree, octomap::point3d bbxMin, octomap::point3d bbxMax, bool treatUnknownAsOccupied);
+	DynamicEDTOctomapBase(float maxdist, TREE* _octree, octomap::point3d bbxMin, octomap::point3d bbxMax, bool treatUnknownAsOccupied);
 
-	virtual ~DynamicEDTOctomap();
+	virtual ~DynamicEDTOctomapBase();
 
 	///trigger updating of the distance map. This will query the octomap for the set of changes since the last update.
 	///If you set updateRealDist to false, computations will be faster (square root will be omitted), but you can only retrieve squared distances
 	virtual void update(bool updateRealDist=true);
 
 	///retrieves distance and closestObstacle (closestObstacle is to be discarded if distance is maximum distance, the method does not write closestObstacle in this case).
-	///Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
+	///Returns DynamicEDTOctomapBase::distanceValue_Error if point is outside the map.
 	void getDistanceAndClosestObstacle(const octomap::point3d& p, float &distance, octomap::point3d& closestObstacle) const;
 
-	///retrieves distance at point. Returns DynamicEDTOctomap::distanceValue_Error if point is outside the map.
+	///retrieves distance at point. Returns DynamicEDTOctomapBase::distanceValue_Error if point is outside the map.
 	float getDistance(const octomap::point3d& p) const;
 
-	///retrieves distance at key. Returns DynamicEDTOctomap::distanceValue_Error if key is outside the map.
+	///retrieves distance at key. Returns DynamicEDTOctomapBase::distanceValue_Error if key is outside the map.
 	float getDistance(const octomap::OcTreeKey& k) const;
 
-	///retrieves squared distance in cells at point. Returns DynamicEDTOctomap::distanceInCellsValue_Error if point is outside the map.
+	///retrieves squared distance in cells at point. Returns DynamicEDTOctomapBase::distanceInCellsValue_Error if point is outside the map.
 	int getSquaredDistanceInCells(const octomap::point3d& p) const;
 
 	//variant of getDistanceAndClosestObstacle that ommits the check whether p is inside the area of the distance map. Use only if you are certain that p is covered by the distance map and if you need to save the time of the check.
@@ -111,7 +113,7 @@ private:
 	void mapToWorld(int x, int y, int z, octomap::point3d &p) const;
 	void mapToWorld(int x, int y, int z, octomap::OcTreeKey &key) const;
 
-	octomap::OcTree* octree;
+	TREE* octree;
 	bool unknownOccupied;
 	int treeDepth;
 	double treeResolution;
@@ -119,5 +121,10 @@ private:
 	octomap::OcTreeKey boundingBoxMaxKey;
 	int offsetX, offsetY, offsetZ;
 };
+
+typedef DynamicEDTOctomapBase<octomap::OcTree> DynamicEDTOctomap;
+typedef DynamicEDTOctomapBase<octomap::OcTreeStamped> DynamicEDTOctomapStamped;
+
+#include "dynamicEDTOctomap.hxx"
 
 #endif /* DYNAMICEDTOCTOMAP_H_ */

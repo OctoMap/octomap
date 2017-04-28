@@ -29,6 +29,8 @@
 #include <octovis/ViewerGui.h>
 #include <octovis/ColorOcTreeDrawer.h>
 #include <octomap/MapCollection.h>
+//Dummy object definition to ensure VS2012 does not drop the StaticMemberInitializer, causing this tree failing to register.
+octomap::ColorOcTree colortreeTmp(0);
 
 
 #define _MAXRANGE_URG 5.1
@@ -36,13 +38,16 @@
 
 namespace octomap{
 
-ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
+ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int initDepth)
 : QMainWindow(parent), m_scanGraph(NULL),
   m_trajectoryDrawer(NULL), m_pointcloudDrawer(NULL),
   m_cameraFollowMode(NULL),
   m_octreeResolution(0.1), m_laserMaxRange(-1.), m_occupancyThresh(0.5),
-  m_max_tree_depth(16), m_laserType(LASERTYPE_SICK),
-  m_cameraStored(false), m_filename("") {
+  m_max_tree_depth(initDepth > 0 && initDepth <= 16 ? initDepth : 16), 
+  m_laserType(LASERTYPE_SICK),
+  m_cameraStored(false),
+  m_filename("") 
+{
 
   ui.setupUi(this);
   m_glwidget = new ViewerWidget(this);
@@ -50,6 +55,7 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent)
 
   // Settings panel at the right side
   ViewerSettingsPanel* settingsPanel = new ViewerSettingsPanel(this);
+  settingsPanel->setTreeDepth(initDepth);
   QDockWidget* settingsDock = new QDockWidget("Octree / Scan graph settings", this);
   settingsDock->setWidget(settingsPanel);
   this->addDockWidget(Qt::RightDockWidgetArea, settingsDock);
@@ -393,6 +399,7 @@ void ViewerGui::openFile(){
 
     QString temp = QString(m_filename.c_str());
     QFileInfo fileinfo(temp);
+    this->setWindowTitle(fileinfo.fileName());
     if (fileinfo.suffix() == "graph"){
       openGraph();
     }else if (fileinfo.suffix() == "bt"){
@@ -1045,6 +1052,13 @@ void ViewerGui::on_actionHideBackground_toggled(bool checked) {
   }
 }
 
+void ViewerGui::on_actionAlternateRendering_toggled(bool checked) {
+  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it) {
+    //std::cout << "Setting Octree " << it->first << " to " << (checked ? "alternate" : "regular") << " rendering.";
+    it->second.octree_drawer->setAlternativeDrawing(checked);
+  }
+}
+
 void ViewerGui::on_actionClear_triggered() {
   for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin();
       it != m_octrees.end(); ++it) {
@@ -1185,14 +1199,22 @@ void ViewerGui::on_action_bg_gray_triggered() {
 void ViewerGui::on_savecampose_triggered() {
   QString filename = QFileDialog::getSaveFileName(this, "Save Viewer State", "camera.xml", "Camera/State file (*.xml)");
   if (!filename.isEmpty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    saveCameraPosition(filename.toLatin1().constData());
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     saveCameraPosition(filename.toAscii().constData());
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
   }
 }
 
 void ViewerGui::on_loadcampose_triggered() {
   QString filename = QFileDialog::getOpenFileName(this, "Load Viewer State", "camera.xml", "Camera/State file (*.xml)");
   if (!filename.isEmpty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    loadCameraPosition(filename.toLatin1().constData());
+#else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     loadCameraPosition(filename.toAscii().constData());
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
   }
 }
 

@@ -6,7 +6,7 @@
 #  Usage from an external project:
 #    In your CMakeLists.txt, add these lines:
 #
-#    FIND_PACKAGE(octomap REQUIRED )
+#    FIND_PACKAGE(OCTOMAP REQUIRED )
 #    INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
 #    TARGET_LINK_LIBRARIES(MY_TARGET_NAME ${OCTOMAP_LIBRARIES})
 #
@@ -16,19 +16,27 @@
 #      - OCTOMAP_LIBRARY_DIRS   : The directory where lib files are. Calling
 #                                 LINK_DIRECTORIES with this path is NOT needed.
 #      - OCTOMAP_INCLUDE_DIRS   : The OctoMap include directories.
+#      - OCTOMAP_MAJOR_VERSION  : Major version.
+#      - OCTOMAP_MINOR_VERSION  : Minor version.
+#      - OCTOMAP_PATCH_VERSION  : Patch version.
+#      - OCTOMAP_VERSION        : Major.Minor.Patch version.
 #
-# Based on the example CMake Tutorial
-# http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
-# and OpenCVConfig.cmake.in from OpenCV
 # ===================================================================================
 
- 
-set(OCTOMAP_INCLUDE_DIRS "@OCTOMAP_INCLUDE_DIRS@")
-set(OCTOMAP_LIBRARY_DIRS "@OCTOMAP_LIB_DIR@")
- 
+@PACKAGE_INIT@
+
+set(OCTOMAP_MAJOR_VERSION "@OCTOMAP_MAJOR_VERSION@")
+set(OCTOMAP_MINOR_VERSION "@OCTOMAP_MINOR_VERSION@")
+set(OCTOMAP_PATCH_VERSION "@OCTOMAP_PATCH_VERSION@")
+set(OCTOMAP_VERSION "@OCTOMAP_VERSION@")
+
+set_and_check(OCTOMAP_INCLUDE_DIRS "@PACKAGE_OCTOMAP_INCLUDE_DIRS@")
+set_and_check(OCTOMAP_LIBRARY_DIRS "@PACKAGE_OCTOMAP_LIB_DIR@")
 
 # Set library names
-set(OCTOMAP_LIBRARIES 
-  "@OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
-  "@OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
+set(OCTOMAP_LIBRARIES
+  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
+  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
 )
+
+@OCTOMAP_INCLUDE_TARGETS@

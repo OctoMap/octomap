@@ -1,17 +1,21 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT(dynamicEDT3D)
 
-ENABLE_TESTING()
+include(CTest)
 
 # version (e.g. for packaging)
 set(DYNAMICEDT3D_MAJOR_VERSION 1)
-set(DYNAMICEDT3D_MINOR_VERSION 8)
+set(DYNAMICEDT3D_MINOR_VERSION 9)
 set(DYNAMICEDT3D_PATCH_VERSION 0)
 set(DYNAMICEDT3D_VERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION}.${DYNAMICEDT3D_PATCH_VERSION})
 set(DYNAMICEDT3D_SOVERSION ${DYNAMICEDT3D_MAJOR_VERSION}.${DYNAMICEDT3D_MINOR_VERSION})
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  if(POLICY CMP0042)
+    # Enable MACOSX_RPATH by default.
+    cmake_policy(SET CMP0042 NEW)
+  endif(POLICY CMP0042)
 endif(COMMAND cmake_policy)
 
 SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
@@ -53,7 +57,7 @@ find_package(octomap REQUIRED
 MESSAGE(STATUS "Found octomap version: " ${octomap_VERSION})
 MESSAGE(STATUS "octomap libraries: ${OCTOMAP_LIBRARIES}")
 
-INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(BEFORE SYSTEM ${OCTOMAP_INCLUDE_DIRS})
 
 ADD_SUBDIRECTORY(src)
 
@@ -96,10 +100,18 @@ ELSE()
 ENDIF()
 # not used right now (export depends?)
 #set(DYNEDT3D_CMAKE_DIR "${PROJECT_BINARY_DIR}")
-configure_file(dynamicEDT3DConfig.cmake.in
-  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig.cmake" @ONLY)
-configure_file(dynamicEDT3DConfig-version.cmake.in
-  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig-version.cmake" @ONLY)
+include(CMakePackageConfigHelpers)
+
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  dynamicEDT3DConfig.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig.cmake"
+  PATH_VARS DYNAMICEDT3D_INCLUDE_DIRS DYNAMICEDT3D_LIB_DIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dynamicEDT3D)
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig-version.cmake"
+  VERSION ${DYNAMICEDT3D_VERSION}
+  COMPATIBILITY AnyNewerVersion)
 
 # Install the export set for use with the install-tree
 #install(EXPORT FooBarLibraryDepends DESTINATION
@@ -111,10 +123,21 @@ configure_file(dynamicEDT3DConfig-version.cmake.in
 set(DYNAMICEDT3D_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
 set(DYNAMICEDT3D_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 #set(DYNAMICEDT3D_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
-configure_file(dynamicEDT3DConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake" @ONLY)
-configure_file(dynamicEDT3DConfig-version.cmake.in
-  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake" @ONLY)
+
+set(DYNAMICEDT3D_INCLUDE_TARGETS
+  "include(\${CMAKE_CURRENT_LIST_DIR}/dynamicEDT3DTargets.cmake)")
+
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  dynamicEDT3DConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
+  PATH_VARS DYNAMICEDT3D_INCLUDE_DIRS DYNAMICEDT3D_LIB_DIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dynamicEDT3D)
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake"
+  VERSION ${DYNAMICEDT3D_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake" 

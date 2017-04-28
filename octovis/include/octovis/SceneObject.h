@@ -27,11 +27,11 @@
 
 // fix Windows includes
 #include <qglobal.h>
-#ifdef Q_WS_WIN
+#if defined(Q_WS_WIN) || defined(Q_OS_WIN)
   #include <QtCore/qt_windows.h>
 #endif
 
-#ifdef Q_WS_MAC
+#if defined(Q_WS_MAC) || defined(Q_OS_MAC)
   #include <OpenGL/glu.h>
 #else
   #include <GL/glu.h>

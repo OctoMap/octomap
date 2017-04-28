@@ -516,7 +516,8 @@ namespace octomap {
     /// recursive call of writeData()
     std::ostream& writeNodesRecurs(const NODE*, std::ostream &s) const;
     
-    /// recursive delete of node and all children (deallocates memory)
+    /// Recursively delete a node and all children. Deallocates memory
+    /// but does NOT set the node ptr to NULL nor updates tree size.
     void deleteNodeRecurs(NODE* node);
 
     /// recursive call of deleteNode()

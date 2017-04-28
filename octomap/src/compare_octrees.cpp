@@ -132,7 +132,11 @@ int main(int argc, char** argv) {
       else
         kld +=log(p1/p2)*p1 + log((1-p1)/(1-p2))*(1-p1);
 
+#if __cplusplus >= 201103L
+      if (std::isnan(kld)){
+#else
       if (isnan(kld)){
+#endif
         OCTOMAP_ERROR("KLD is nan! KLD(%f,%f)=%f; sum = %f", p1, p2, kld, kld_sum);
         exit(-1);
       }
