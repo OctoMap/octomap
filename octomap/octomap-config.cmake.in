@@ -6,7 +6,7 @@
 #  Usage from an external project:
 #    In your CMakeLists.txt, add these lines:
 #
-#    FIND_PACKAGE(octomap REQUIRED )
+#    FIND_PACKAGE(OCTOMAP REQUIRED )
 #    INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
 #    TARGET_LINK_LIBRARIES(MY_TARGET_NAME ${OCTOMAP_LIBRARIES})
 #
