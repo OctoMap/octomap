@@ -65,6 +65,10 @@ namespace octomap {
   // Note: do not inline this method, will decrease speed (KMW)
   CountingOcTreeNode* CountingOcTree::updateNode(const OcTreeKey& k) {
 
+    if (root == NULL) {
+      root = new CountingOcTreeNode();
+      tree_size++;
+    }
     CountingOcTreeNode* curNode (root);
     curNode->increaseCount();
 
