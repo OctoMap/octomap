@@ -1,36 +1,39 @@
+IF(NOT DEFINED OCTOMAP_LINK)
+  set(OCTOMAP_LINK octomap octomath)
+ENDIF(NOT DEFINED OCTOMAP_LINK)
 if(BUILD_TESTING)
   ADD_EXECUTABLE(test_raycasting test_raycasting.cpp)
-  TARGET_LINK_LIBRARIES(test_raycasting octomap)
+  TARGET_LINK_LIBRARIES(test_raycasting ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_iterators test_iterators.cpp)
-  TARGET_LINK_LIBRARIES(test_iterators octomap)
+  TARGET_LINK_LIBRARIES(test_iterators ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_io test_io.cpp)
-  TARGET_LINK_LIBRARIES(test_io octomap)
+  TARGET_LINK_LIBRARIES(test_io ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_changedkeys test_changedkeys.cpp)
-  TARGET_LINK_LIBRARIES(test_changedkeys octomap)
+  TARGET_LINK_LIBRARIES(test_changedkeys ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_scans test_scans.cpp)
-  TARGET_LINK_LIBRARIES(test_scans octomap)
+  TARGET_LINK_LIBRARIES(test_scans ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_color_tree test_color_tree.cpp)
-  TARGET_LINK_LIBRARIES(test_color_tree octomap)
+  TARGET_LINK_LIBRARIES(test_color_tree ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(color_tree_histogram color_tree_histogram.cpp)
-  TARGET_LINK_LIBRARIES(color_tree_histogram octomap)
+  TARGET_LINK_LIBRARIES(color_tree_histogram ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_mapcollection test_mapcollection.cpp)
-  TARGET_LINK_LIBRARIES(test_mapcollection octomap octomath)
+  TARGET_LINK_LIBRARIES(test_mapcollection ${OCTOMAP_LINK})
 
   ADD_EXECUTABLE(test_pruning test_pruning.cpp)
-  TARGET_LINK_LIBRARIES(test_pruning octomap octomath)
+  TARGET_LINK_LIBRARIES(test_pruning ${OCTOMAP_LINK})
 
 
   # CTest tests below
 
   ADD_EXECUTABLE(unit_tests unit_tests.cpp)
-  TARGET_LINK_LIBRARIES(unit_tests octomap)
+  TARGET_LINK_LIBRARIES(unit_tests ${OCTOMAP_LINK})
 
   ADD_TEST (NAME MathVector         COMMAND unit_tests MathVector     )
   ADD_TEST (NAME MathPose           COMMAND unit_tests MathPose       )
