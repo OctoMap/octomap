@@ -19,9 +19,9 @@ REQUIREMENTS
 
 Skip to WINDOWS for tips on compilation under Windows. You can install all dependencies on Ubuntu by running:
 
-    sudo apt-get install cmake doxygen libqt4-dev libqt4-opengl-dev libqglviewer-qt4-dev
+    sudo apt-get install cmake doxygen libqt4-dev libqt4-opengl-dev libqglviewer-dev-qt4
        
-
+(Note: for older releases of Ubuntu you need to exchange the last package name with `libqglviewer-qt4-dev`)
        
 INSTALLATION
 ------------
