@@ -56,7 +56,7 @@ namespace octomap {
     Q_OBJECT
    
   public:
-    ViewerGui(const std::string& filename="", QWidget *parent = 0, unsigned int initTreeDepth = 16);
+    ViewerGui(const std::string& filename="", QWidget *parent = 0, unsigned int initDepth = 16);
     ~ViewerGui();
 
     static const unsigned int LASERTYPE_URG  = 0;
@@ -70,10 +70,13 @@ namespace octomap {
     void changeTreeDepth(int depth);
     void addNextScans(unsigned scans);
     void gotoFirstScan();
+    void recalculateOccupancy(double cutoff);
 
     bool isShown();
 
     private slots:
+
+    void updateDrawers();
 
     // auto-connected Slots (by name))
 
@@ -215,6 +218,7 @@ namespace octomap {
     bool m_cameraStored;
     QLabel* m_mapSizeStatus;
     QLabel* m_mapMemoryStatus;
+    QLabel* m_buildingStatus;
 
     /// Filename of last loaded file, in case it is necessary to reload it
     std::string m_filename;

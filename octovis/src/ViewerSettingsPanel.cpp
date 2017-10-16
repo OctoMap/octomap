@@ -25,10 +25,15 @@
 #include <octovis/ViewerSettingsPanel.h>
 
 ViewerSettingsPanel::ViewerSettingsPanel(QWidget *parent)
-    : QWidget(parent), m_currentScan(0), m_numberScans(0), m_treeDepth(_TREE_MAX_DEPTH), m_resolution(0.1)
+    : QWidget(parent), m_currentScan(0), m_numberScans(0), m_treeDepth(_TREE_MAX_DEPTH), m_resolution(0.1),
+    m_occupancyCutoff(0.5), m_notifyCutoff(true)
 {
 	ui.setupUi(this);
 	connect(ui.treeDepth, SIGNAL(valueChanged(int)), this, SLOT(setTreeDepth(int)));
+  setOccupancyCutoff(0.5);
+  connect(ui.occCutoffSlider, SIGNAL(valueChanged(int)), this, SLOT(changeOccupancyCutoff(int)));
+  connect(ui.occCutoffBox, SIGNAL(valueChanged(double)), this, SLOT(changeOccupancyCutoff(double)));
+  ui.recalculateOccupancyButton->setEnabled(false);
 
 	scanProgressChanged();
 	leafSizeChanged();
@@ -66,6 +71,11 @@ void ViewerSettingsPanel::on_firstScanButton_clicked(){
   m_currentScan = 1;
   scanProgressChanged();
   emit gotoFirstScan();
+}
+
+void ViewerSettingsPanel::on_recalculateOccupancyButton_clicked() {
+  ui.recalculateOccupancyButton->setEnabled(false);
+  emit recaculateCutoff(m_occupancyCutoff);
 }
 
 void ViewerSettingsPanel::scanProgressChanged(){
@@ -111,12 +121,42 @@ void ViewerSettingsPanel::setResolution(double resolution){
   leafSizeChanged();
 }
 
+void ViewerSettingsPanel::setOccupancyCutoff(double cutoff, bool dirty) {
+  m_occupancyCutoff = cutoff;
+  bool recalc = ui.recalculateOccupancyButton->isEnabled() || dirty;
+  ui.occCutoffBox->setValue(cutoff);
+  ui.occCutoffSlider->setValue(int(cutoff * 100.0));
+  ui.recalculateOccupancyButton->setEnabled(recalc);
+}
+
 void ViewerSettingsPanel::setTreeDepth(int depth){
   emit treeDepthChanged(depth);
   m_treeDepth = depth;
   ui.treeDepth->setValue(depth);
   ui.treeDepthSlider->setValue(depth);
   leafSizeChanged();
+}
+
+void ViewerSettingsPanel::changeOccupancyCutoff(int cutoff) {
+  m_occupancyCutoff = double(cutoff) * 0.01;
+  if (m_notifyCutoff) {
+    // Temporarily prevent re-broadcasting change event.
+    m_notifyCutoff = false;
+    ui.occCutoffBox->setValue(m_occupancyCutoff);
+    m_notifyCutoff = true;
+  }
+  ui.recalculateOccupancyButton->setEnabled(true);
+}
+
+void ViewerSettingsPanel::changeOccupancyCutoff(double cutoff) {
+  m_occupancyCutoff = cutoff;
+  if (m_notifyCutoff) {
+    // Temporarily prevent re-broadcasting change event.
+    m_notifyCutoff = false;
+    ui.occCutoffSlider->setValue(int(cutoff * 100.0));
+    m_notifyCutoff = true;
+  }
+  ui.recalculateOccupancyButton->setEnabled(true);
 }
 
 void ViewerSettingsPanel::leafSizeChanged(){

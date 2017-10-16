@@ -38,8 +38,31 @@ namespace octomap {
     virtual void setOcTree(const AbstractOcTree& tree_pnt, const pose6d& origin, int map_id_);
 
   protected:
-    
-    
+    /// Specialisation of @c AbstractOcTreeIterator for handling @c ColorOcTree instances.
+    class ColorOcTreeIterator : public AbstractOcTreeIterator {
+    public:
+      ColorOcTreeIterator(const ColorOcTree *tree);
+
+      virtual void setOccupancyThres(double threshold);
+      virtual double getOccupancyThres() const;
+      virtual unsigned int getTreeSize() const;
+      virtual void getMetricMin(double& x, double& y, double& z) const;
+      virtual void getMetricMax(double& x, double& y, double& z) const;
+      virtual bool isValid() const;
+      virtual bool begin(unsigned int max_tree_depth);
+      virtual bool moveNext();
+      virtual bool getColor(unsigned char& r, unsigned char& g, unsigned char& b) const;
+      virtual float getOccupancy() const;
+      virtual point3d getCoordinate() const;
+      virtual double getSize() const;
+      virtual bool isLeaf() const;
+      virtual bool isOccupied() const;
+      virtual bool isAtThreshold() const;
+
+    private:
+      const ColorOcTree* m_tree;
+      ColorOcTree::tree_iterator m_it;
+    };
   };
 
 
