@@ -62,8 +62,8 @@ namespace octomap {
 
   void OcTreeDrawer::draw() const {
     static int gl_list_index = -1;
-    if(m_alternativeDrawing && gl_list_index < 0){ 
-      gl_list_index = glGenLists(1); 
+    if(m_alternativeDrawing && gl_list_index < 0){
+      gl_list_index = glGenLists(1);
       m_update = true;
     }
     if(!m_alternativeDrawing && gl_list_index != -1){//Free video card memory
@@ -72,10 +72,10 @@ namespace octomap {
       gl_list_index = -1;
     }
     if(m_update || !m_alternativeDrawing)
-    { 
-      if(m_alternativeDrawing) { 
+    {
+      if(m_alternativeDrawing) {
         std::cout << "Preparing batch rendering, please wait ...\n";
-        glNewList(gl_list_index, GL_COMPILE_AND_EXECUTE); 
+        glNewList(gl_list_index, GL_COMPILE_AND_EXECUTE);
       }
 
       // push current status
@@ -87,7 +87,7 @@ namespace octomap {
       // apply relative transform
       const octomath::Quaternion& q = relative_transform.rot();
       glTranslatef(relative_transform.x(), relative_transform.y(), relative_transform.z());
-      
+
       // convert quaternion to angle/axis notation
       float scale = sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
       if (scale) {
@@ -117,8 +117,8 @@ namespace octomap {
 
       // reset previous status
       glPopMatrix();
-      if(m_alternativeDrawing) { 
-        glEndList(); 
+      if(m_alternativeDrawing) {
+        glEndList();
         std::cout << "Finished preparation of batch rendering.\n";
       }
       m_update = false;
@@ -127,7 +127,7 @@ namespace octomap {
     {
       glCallList(gl_list_index);
     }
-    
+
   }
 
   void OcTreeDrawer::setAlphaOccupied(double alpha){
@@ -136,17 +136,17 @@ namespace octomap {
   }
 
 
-  void OcTreeDrawer::setOcTree(const AbstractOcTree& tree, const pose6d& origin, int map_id_) {
-      
-    const OcTree& octree = (const OcTree&) tree;
+  void OcTreeDrawer::setOcTree(const AbstractOcTree& in_tree, const pose6d& in_origin, int map_id_) {
+
+    const OcTree& octree = (const OcTree&) in_tree;
     this->map_id = map_id_;
 
     // save origin used during cube generation
-    this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), origin.rot());
+    this->initial_origin = octomap::pose6d(octomap::point3d(0,0,0), in_origin.rot());
 
     // origin is in global coords
-    this->origin = origin;
-    
+    this->origin = in_origin;
+
     // maximum size to prevent crashes on large maps: (should be checked in a better way than a constant)
     bool showAll = (octree.size() < 5 * 1e6);
     bool uses_origin = ( (origin.rot().x() != 0.) && (origin.rot().y() != 0.)
@@ -158,7 +158,7 @@ namespace octomap {
     unsigned int cnt_occupied(0), cnt_occupied_thres(0), cnt_free(0), cnt_free_thres(0);
     for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
             end=octree.end_tree(); it!= end; ++it) {
-      if (it.isLeaf()) { 
+      if (it.isLeaf()) {
         if (octree.isNodeOccupied(*it)){ // occupied voxels
           if (octree.isNodeAtThreshold(*it)) ++cnt_occupied_thres;
           else                               ++cnt_occupied;
@@ -167,8 +167,8 @@ namespace octomap {
           if (octree.isNodeAtThreshold(*it)) ++cnt_free_thres;
           else                               ++cnt_free;
         }
-      }        
-    }    
+      }
+    }
     // setup GL arrays for cube quads and cube colors
     initGLArrays(cnt_occupied      , m_occupiedSize     , &m_occupiedArray     , &m_occupiedColorArray);
     initGLArrays(cnt_occupied_thres, m_occupiedThresSize, &m_occupiedThresArray, &m_occupiedThresColorArray);
@@ -190,16 +190,16 @@ namespace octomap {
     unsigned int color_idx_occupied(0), color_idx_occupied_thres(0);
 
     m_grid_voxels.clear();
-    OcTreeVolume voxel; // current voxel, possibly transformed 
+    OcTreeVolume voxel; // current voxel, possibly transformed
     for(OcTree::tree_iterator it = octree.begin_tree(this->m_max_tree_depth),
             end=octree.end_tree(); it!= end; ++it) {
 
       if (it.isLeaf()) { // voxels for leaf nodes
-        if (uses_origin) 
+        if (uses_origin)
           voxel = OcTreeVolume(origin.rot().rotate(it.getCoordinate()), it.getSize());
-        else 
+        else
           voxel = OcTreeVolume(it.getCoordinate(), it.getSize());
-        
+
         if (octree.isNodeOccupied(*it)){ // occupied voxels
           if (octree.isNodeAtThreshold(*it)) {
             idx_occupied_thres = generateCube(voxel, cube_template, idx_occupied_thres, &m_occupiedThresArray);
@@ -219,7 +219,7 @@ namespace octomap {
           }
         }
       }
-      
+
       else { // inner node voxels (for grid structure only)
         if (showAll) {
           if (uses_origin)
@@ -228,7 +228,7 @@ namespace octomap {
             voxel = OcTreeVolume(it.getCoordinate(), it.getSize());
           m_grid_voxels.push_back(voxel);
         }
-      }      
+      }
     } // end for all voxels
 
     m_octree_grid_vis_initialized = false;
@@ -308,7 +308,7 @@ namespace octomap {
     // epsilon to be substracted from cube size so that neighboring planes don't overlap
     // seems to introduce strange artifacts nevertheless...
     double eps = 1e-5;
-    
+
     octomath::Vector3 p;
 
     double half_cube_size = GLfloat(v.second /2.0 -eps);
@@ -333,19 +333,19 @@ namespace octomap {
     (*glArray)[2][i+2] = p.z();
 
     p = v.first + cube_template[3] * half_cube_size;
-    (*glArray)[3][i]   = p.x(); 
-    (*glArray)[3][i+1] = p.y(); 
-    (*glArray)[3][i+2] = p.z(); 
+    (*glArray)[3][i]   = p.x();
+    (*glArray)[3][i+1] = p.y();
+    (*glArray)[3][i+2] = p.z();
 
     p = v.first + cube_template[4] * half_cube_size;
-    (*glArray)[4][i]   = p.x(); 
-    (*glArray)[4][i+1] = p.y(); 
-    (*glArray)[4][i+2] = p.z(); 
+    (*glArray)[4][i]   = p.x();
+    (*glArray)[4][i+1] = p.y();
+    (*glArray)[4][i+2] = p.z();
 
     p = v.first + cube_template[5] * half_cube_size;
-    (*glArray)[5][i]   = p.x(); 
-    (*glArray)[5][i+1] = p.y(); 
-    (*glArray)[5][i+2] = p.z(); 
+    (*glArray)[5][i]   = p.x();
+    (*glArray)[5][i+1] = p.y();
+    (*glArray)[5][i+2] = p.z();
     i+= 3;  //-------------------
 
     p = v.first + cube_template[6] * half_cube_size;
@@ -440,7 +440,7 @@ namespace octomap {
     (*glArray)[5][i+1] = p.y();
     (*glArray)[5][i+2] = p.z();
     i += 3;  //-------------------
-    
+
     return i; // updated array idx
   }
 
@@ -461,7 +461,7 @@ namespace octomap {
       // set Alpha value:
       (*glColorArray)[colorIdx + 3] = m_alphaOccupied;
       colorIdx += 4;
-    }  
+    }
     return colorIdx;
   }
 
@@ -481,7 +481,7 @@ namespace octomap {
       (*glColorArray)[colorIdx + 2] = (double) b/255.;
       (*glColorArray)[colorIdx + 3] = (double) a/255.;
       colorIdx += 4;
-    }  
+    }
     return colorIdx;
   }
 
@@ -515,13 +515,13 @@ namespace octomap {
     std::vector<octomath::Vector3> cube_template;
     initCubeTemplate(origin, cube_template);
 
-    for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin(); 
+    for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin();
          it != voxels.end(); it++) {
       i = generateCube(*it, cube_template, i, glArray);
     }
 
     if (glColorArray != NULL) {
-      for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin(); 
+      for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin();
            it != voxels.end(); it++) {
         colorIdx = setCubeColorHeightmap(*it, colorIdx, glColorArray);
       }
@@ -687,7 +687,7 @@ namespace octomap {
       }
       drawCubes(m_occupiedThresArray, m_occupiedThresSize, m_occupiedThresColorArray);
     }
-    else {      
+    else {
       // colors for printout mode:
       if (m_colorMode == CM_PRINTOUT) {
         if (!m_drawFree) { // gray on white background
@@ -695,7 +695,7 @@ namespace octomap {
         }
         else {
           glColor3f(0.1f, 0.1f, 0.1f);
-        }  
+        }
       }
 
       // draw binary occupied cells
@@ -858,7 +858,7 @@ namespace octomap {
 
 
   void OcTreeDrawer::setOrigin(octomap::pose6d t){
-    origin = t;  
+    origin = t;
     std::cout << "OcTreeDrawer: setting new global origin: " << t << std::endl;
 
     octomap::pose6d relative_transform = origin * initial_origin.inv();
@@ -874,7 +874,7 @@ namespace octomap {
 
     glPushMatrix();
 
-    float length = 0.15f; 
+    float length = 0.15f;
 
     GLboolean lighting, colorMaterial;
     glGetBooleanv(GL_LIGHTING, &lighting);
@@ -883,8 +883,8 @@ namespace octomap {
     glDisable(GL_COLOR_MATERIAL);
 
     double angle= 2 * acos(initial_origin.rot().u());
-    double scale = sqrt (initial_origin.rot().x()*initial_origin.rot().x() 
-                         + initial_origin.rot().y()*initial_origin.rot().y() 
+    double scale = sqrt (initial_origin.rot().x()*initial_origin.rot().x()
+                         + initial_origin.rot().y()*initial_origin.rot().y()
                          + initial_origin.rot().z()*initial_origin.rot().z());
     double ax= initial_origin.rot().x() / scale;
     double ay= initial_origin.rot().y() / scale;
@@ -922,5 +922,3 @@ namespace octomap {
   }
 
 } // namespace
-
-

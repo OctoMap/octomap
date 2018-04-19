@@ -38,19 +38,19 @@ namespace octomap {
   }
 
   template <class TREETYPE>
-  MapNode<TREETYPE>::MapNode(TREETYPE* node_map, pose6d origin) {
-  	this->node_map = node_map;
-  	this->origin = origin;
+  MapNode<TREETYPE>::MapNode(TREETYPE* in_node_map, pose6d in_origin) {
+  	this->node_map = in_node_map;
+  	this->origin = in_origin;
   }
 
   template <class TREETYPE>
-  MapNode<TREETYPE>::MapNode(const Pointcloud& cloud, pose6d origin): node_map(0) {
+  MapNode<TREETYPE>::MapNode(const Pointcloud& in_cloud, pose6d in_origin): node_map(0) {
   }
 
   template <class TREETYPE>
-  MapNode<TREETYPE>::MapNode(std::string filename, pose6d origin): node_map(0){
+  MapNode<TREETYPE>::MapNode(std::string filename, pose6d in_origin): node_map(0){
   	readMap(filename);
-  	this->origin = origin;
+  	this->origin = in_origin;
   	id = filename;
   }
 
@@ -58,7 +58,7 @@ namespace octomap {
   MapNode<TREETYPE>::~MapNode() {
   	clear();
   }
-    
+
   template <class TREETYPE>
   void MapNode<TREETYPE>::updateMap(const Pointcloud& cloud, point3d sensor_origin) {
   }
