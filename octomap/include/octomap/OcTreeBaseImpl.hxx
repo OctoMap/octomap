@@ -129,10 +129,10 @@ namespace octomap {
     }
 
     // traverse all nodes, check if structure the same
-    OcTreeBaseImpl<NODE,I>::tree_iterator it = this->begin_tree();
-    OcTreeBaseImpl<NODE,I>::tree_iterator end = this->end_tree();
-    OcTreeBaseImpl<NODE,I>::tree_iterator other_it = other.begin_tree();
-    OcTreeBaseImpl<NODE,I>::tree_iterator other_end = other.end_tree();
+    typename OcTreeBaseImpl<NODE,I>::tree_iterator it = this->begin_tree();
+    typename OcTreeBaseImpl<NODE,I>::tree_iterator end = this->end_tree();
+    typename OcTreeBaseImpl<NODE,I>::tree_iterator other_it = other.begin_tree();
+    typename OcTreeBaseImpl<NODE,I>::tree_iterator other_end = other.end_tree();
 
     for (; it != end; ++it, ++other_it){
       if (other_it == other_end)
