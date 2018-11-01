@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     int size;                  // number of grid cells (height * width * depth)
     float tx, ty, tz;          // Translation
     float scale;               // Scaling factor
-    bool mark_free = false;    // Mark free cells (false = cells remain "unknown")    
+    bool mark_free = false;    // Mark free cells (false = cells remain "unknown")
     bool rotate = false;       // Fix orientation of webots-exported files
     bool show_help = false;
     string output_filename;
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
           )
                show_help = true;
     }
-    
+
     if(show_help) {
         cout << "Usage: "<<argv[0]<<" [OPTIONS] <binvox filenames>" << endl;
         cout << "\tOPTIONS:" << endl;
@@ -101,9 +101,9 @@ int main(int argc, char **argv)
         cout << "All options apply to the subsequent input files.\n\n";
         exit(0);
     }
-    
+
     for(int i = 1; i < argc; i++) {
-        // Parse command line arguments    
+        // Parse command line arguments
         if(strcmp(argv[i], "--mark-free") == 0) {
             mark_free = true;
             continue;
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         }else if(strcmp(argv[i], "--rotate") == 0) {
           rotate = true;
           continue;
-        } else if(strcmp(argv[i], "-o") == 0 && i < argc - 1) {            
+        } else if(strcmp(argv[i], "-o") == 0 && i < argc - 1) {
             i++;
             output_filename = argv[i];
 
@@ -150,13 +150,13 @@ int main(int argc, char **argv)
 
 
         // Open input file
-        ifstream *input = new ifstream(argv[i], ios::in | ios::binary);    
+        ifstream *input = new ifstream(argv[i], ios::in | ios::binary);
         if(!input->good()) {
             cerr << "Error: Could not open input file " << argv[i] << "!" << endl;
             exit(1);
         } else {
             cout << "Reading binvox file " << argv[i] << "." << endl;
-            if(output_filename.empty()) { 
+            if(output_filename.empty()) {
                 output_filename = string(argv[i]).append(".bt");
             }
         }
@@ -222,10 +222,10 @@ int main(int argc, char **argv)
         	std::cout << "Offset on final map: "<< offset << std::endl;
 
         }
-                
+
         cout << "Read data: ";
         cout.flush();
-            
+
         // read voxel data
         byte value;
         byte count;
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
         int end_index = 0;
         unsigned nr_voxels = 0;
         unsigned nr_voxels_out = 0;
-        
+
         input->unsetf(ios::skipws);    // need to read every byte now (!)
         *input >> value;    // read the linefeed char
 
@@ -243,19 +243,19 @@ int main(int argc, char **argv)
             if (input->good()) {
                 end_index = index + count;
                 if (end_index > size) return 0;
-                for(int i=index; i < end_index; i++) {
+                for(int j=index; j < end_index; j++) {
                     // Output progress dots
-                    if(i % (size / 20) == 0) {
-                        cout << ".";            
+                    if(j % (size / 20) == 0) {
+                        cout << ".";
                         cout.flush();
                     }
-                    // voxel index --> voxel coordinates 
-                    int y = i % width;
-                    int z = (i / width) % height;
-                    int x = i / (width * height);
-                    
+                    // voxel index --> voxel coordinates
+                    int y = j % width;
+                    int z = (j / width) % height;
+                    int x = j / (width * height);
+
                     // voxel coordinates --> world coordinates
-                    point3d endpoint((float) ((double) x*res + tx + 0.000001), 
+                    point3d endpoint((float) ((double) x*res + tx + 0.000001),
                                      (float) ((double) y*res + ty + 0.000001),
                                      (float) ((double) z*res + tz + 0.000001));
 
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
                     }
                     if (applyOffset)
                     	endpoint += offset;
-                    
+
                     if (!applyBBX  || (endpoint(0) <= maxX && endpoint(0) >= minX
                                    && endpoint(1) <= maxY && endpoint(1) >= minY
                                    && endpoint(2) <= maxZ && endpoint(2) >= minZ)){
@@ -277,32 +277,32 @@ int main(int argc, char **argv)
                       nr_voxels_out ++;
                     }
                 }
-                
+
                 if (value) nr_voxels += count;
                 index = end_index;
             }    // if file still ok
-            
+
         }    // while
-        
+
         cout << endl << endl;
 
         input->close();
         cout << "    read " << nr_voxels << " voxels, skipped "<<nr_voxels_out << " (out of bounding box)\n\n";
     }
-    
+
     // prune octree
     cout << "Pruning octree" << endl << endl;
     tree->updateInnerOccupancy();
     tree->prune();
- 
-    // write octree to file  
+
+    // write octree to file
     if(output_filename.empty()) {
         cerr << "Error: No input files found." << endl << endl;
         exit(1);
     }
 
     cout << "Writing octree to " << output_filename << endl << endl;
-   
+
     tree->writeBinary(output_filename.c_str());
 
     cout << "done" << endl << endl;

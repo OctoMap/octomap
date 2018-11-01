@@ -6,10 +6,10 @@
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
- This file may be used under the terms of the GNU General Public License 
+ This file may be used under the terms of the GNU General Public License
  versions 2.0 or 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
+ In addition, as a special exception, Gilles Debunne gives you certain
  additional rights, described in the file GPL_EXCEPTION in this package.
 
  libQGLViewer uses dual licensing. Commercial/proprietary software must
@@ -175,18 +175,18 @@ public:
 
 		\note For efficiency reasons, the resulting Quaternion is not normalized.
 		You may normalize() it after each application in case of numerical drift. */
-	Quaternion& operator*=(const Quaternion &q)
+	Quaternion& operator*=(const Quaternion &quat)
 	{
-		*this = (*this)*q;
+		*this = (*this)*quat;
 		return *this;
 	}
 
 	/*! Returns the image of \p v by the rotation \p q.
 
 		Same as q.rotate(v). See rotate() and inverseRotate(). */
-	friend Vec operator*(const Quaternion& q, const Vec& v)
+	friend Vec operator*(const Quaternion& quat, const Vec& v)
 	{
-		return q.rotate(v);
+		return quat.rotate(v);
 	}
 
 	Vec rotate(const Vec& v) const;

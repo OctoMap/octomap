@@ -40,14 +40,14 @@ namespace octomap {
   std::ostream& ColorOcTreeNode::writeData(std::ostream &s) const {
     s.write((const char*) &value, sizeof(value)); // occupancy
     s.write((const char*) &color, sizeof(Color)); // color
-    
+
     return s;
   }
 
-  std::istream& ColorOcTreeNode::readData(std::istream &s) {        
+  std::istream& ColorOcTreeNode::readData(std::istream &s) {
     s.read((char*) &value, sizeof(value)); // occupancy
     s.read((char*) &color, sizeof(Color)); // color
-    
+
     return s;
   }
 
@@ -56,11 +56,11 @@ namespace octomap {
     int mg = 0;
     int mb = 0;
     int c = 0;
-    
+
     if (children != NULL){
       for (int i=0; i<8; i++) {
         ColorOcTreeNode* child = static_cast<ColorOcTreeNode*>(children[i]);
-        
+
         if (child != NULL && child->isColorSet()) {
           mr += child->getColor().r;
           mg += child->getColor().g;
@@ -69,7 +69,7 @@ namespace octomap {
         }
       }
     }
-    
+
     if (c > 0) {
       mr /= c;
       mg /= c;
@@ -82,35 +82,35 @@ namespace octomap {
   }
 
 
-  void ColorOcTreeNode::updateColorChildren() {      
+  void ColorOcTreeNode::updateColorChildren() {
     color = getAverageChildColor();
   }
 
 
   // tree implementation  --------------------------------------
-  ColorOcTree::ColorOcTree(double resolution)
-  : OccupancyOcTreeBase<ColorOcTreeNode>(resolution) {
+  ColorOcTree::ColorOcTree(double in_resolution)
+  : OccupancyOcTreeBase<ColorOcTreeNode>(in_resolution) {
     colorOcTreeMemberInit.ensureLinking();
   };
 
-  ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key, 
-                                             uint8_t r, 
-                                             uint8_t g, 
+  ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key,
+                                             uint8_t r,
+                                             uint8_t g,
                                              uint8_t b) {
     ColorOcTreeNode* n = search (key);
     if (n != 0) {
-      n->setColor(r, g, b); 
+      n->setColor(r, g, b);
     }
     return n;
   }
-  
+
   bool ColorOcTree::pruneNode(ColorOcTreeNode* node) {
-    if (!isNodeCollapsible(node)) 
+    if (!isNodeCollapsible(node))
       return false;
 
     // set value to children's values (all assumed equal)
     node->copyData(*(getNodeChild(node, 0)));
-    
+
     if (node->isColorSet()) // TODO check
       node->setColor(node->getAverageChildColor());
 
@@ -123,13 +123,13 @@ namespace octomap {
 
     return true;
   }
-  
+
   bool ColorOcTree::isNodeCollapsible(const ColorOcTreeNode* node) const{
     // all children must exist, must not have children of
     // their own and have the same occupancy probability
     if (!nodeChildExists(node, 0))
       return false;
-    
+
     const ColorOcTreeNode* firstChild = getNodeChild(node, 0);
     if (nodeHasChildren(firstChild))
       return false;
@@ -139,19 +139,19 @@ namespace octomap {
       if (!nodeChildExists(node, i) || nodeHasChildren(getNodeChild(node, i)) || !(getNodeChild(node, i)->getValue() == firstChild->getValue()))
         return false;
     }
-    
+
     return true;
   }
 
-  ColorOcTreeNode* ColorOcTree::averageNodeColor(const OcTreeKey& key, 
-                                                 uint8_t r, 
-                                                 uint8_t g, 
+  ColorOcTreeNode* ColorOcTree::averageNodeColor(const OcTreeKey& key,
+                                                 uint8_t r,
+                                                 uint8_t g,
                                                  uint8_t b) {
     ColorOcTreeNode* n = search(key);
     if (n != 0) {
       if (n->isColorSet()) {
         ColorOcTreeNode::Color prev_color = n->getColor();
-        n->setColor((prev_color.r + r)/2, (prev_color.g + g)/2, (prev_color.b + b)/2); 
+        n->setColor((prev_color.r + r)/2, (prev_color.g + g)/2, (prev_color.b + b)/2);
       }
       else {
         n->setColor(r, g, b);
@@ -160,22 +160,22 @@ namespace octomap {
     return n;
   }
 
-  ColorOcTreeNode* ColorOcTree::integrateNodeColor(const OcTreeKey& key, 
-                                                   uint8_t r, 
-                                                   uint8_t g, 
+  ColorOcTreeNode* ColorOcTree::integrateNodeColor(const OcTreeKey& key,
+                                                   uint8_t r,
+                                                   uint8_t g,
                                                    uint8_t b) {
     ColorOcTreeNode* n = search (key);
     if (n != 0) {
       if (n->isColorSet()) {
         ColorOcTreeNode::Color prev_color = n->getColor();
         double node_prob = n->getOccupancy();
-        uint8_t new_r = (uint8_t) ((double) prev_color.r * node_prob 
+        uint8_t new_r = (uint8_t) ((double) prev_color.r * node_prob
                                                +  (double) r * (0.99-node_prob));
-        uint8_t new_g = (uint8_t) ((double) prev_color.g * node_prob 
+        uint8_t new_g = (uint8_t) ((double) prev_color.g * node_prob
                                                +  (double) g * (0.99-node_prob));
-        uint8_t new_b = (uint8_t) ((double) prev_color.b * node_prob 
+        uint8_t new_b = (uint8_t) ((double) prev_color.b * node_prob
                                                +  (double) b * (0.99-node_prob));
-        n->setColor(new_r, new_g, new_b); 
+        n->setColor(new_r, new_g, new_b);
       }
       else {
         n->setColor(r, g, b);
@@ -183,8 +183,8 @@ namespace octomap {
     }
     return n;
   }
-  
-  
+
+
   void ColorOcTree::updateInnerOccupancy() {
     this->updateInnerOccupancyRecurs(this->root, 0);
   }
@@ -234,17 +234,17 @@ namespace octomap {
     fprintf(gui, "'-' w l lt 1 lc 2 tit \"\",");
     fprintf(gui, "'-' w l lt 1 lc 3 tit \"\"\n");
 
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_r[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_r[i]);
     fprintf(gui,"0 0\n"); fprintf(gui, "e\n");
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_g[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_g[i]);
     fprintf(gui,"0 0\n"); fprintf(gui, "e\n");
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_b[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_b[i]);
     fprintf(gui,"0 0\n"); fprintf(gui, "e\n");
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_r[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_r[i]);
     fprintf(gui, "e\n");
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_g[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_g[i]);
     fprintf(gui, "e\n");
-    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_b[i]);    
+    for (int i=0; i<256; ++i) fprintf(gui,"%d %d\n", i, histogram_b[i]);
     fprintf(gui, "e\n");
     fflush(gui);
 #endif
@@ -258,4 +258,3 @@ namespace octomap {
   ColorOcTree::StaticMemberInitializer ColorOcTree::colorOcTreeMemberInit;
 
 } // end namespace
-

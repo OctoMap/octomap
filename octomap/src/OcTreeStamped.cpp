@@ -35,28 +35,28 @@
 
 namespace octomap {
 
-  OcTreeStamped::OcTreeStamped(double resolution)
-   : OccupancyOcTreeBase<OcTreeNodeStamped>(resolution) {
+  OcTreeStamped::OcTreeStamped(double in_resolution)
+   : OccupancyOcTreeBase<OcTreeNodeStamped>(in_resolution) {
     ocTreeStampedMemberInit.ensureLinking();
   }
 
   unsigned int OcTreeStamped::getLastUpdateTime() {
-    // this value is updated whenever inner nodes are 
+    // this value is updated whenever inner nodes are
     // updated using updateOccupancyChildren()
     return root->getTimestamp();
   }
 
   void OcTreeStamped::degradeOutdatedNodes(unsigned int time_thres) {
-    unsigned int query_time = (unsigned int) time(NULL); 
+    unsigned int query_time = (unsigned int) time(NULL);
 
-    for(leaf_iterator it = this->begin_leafs(), end=this->end_leafs(); 
+    for(leaf_iterator it = this->begin_leafs(), end=this->end_leafs();
         it!= end; ++it) {
-      if ( this->isNodeOccupied(*it) 
+      if ( this->isNodeOccupied(*it)
            && ((query_time - it->getTimestamp()) > time_thres) ) {
         integrateMissNoTime(&*it);
       }
     }
-  }  
+  }
 
   void OcTreeStamped::updateNodeLogOdds(OcTreeNodeStamped* node, const float& update) const {
     OccupancyOcTreeBase<OcTreeNodeStamped>::updateNodeLogOdds(node, update);
@@ -70,4 +70,3 @@ namespace octomap {
   OcTreeStamped::StaticMemberInitializer OcTreeStamped::ocTreeStampedMemberInit;
 
 } // end namespace
-

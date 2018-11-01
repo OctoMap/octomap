@@ -49,8 +49,8 @@ namespace octomap {
   }
 
   /// implementation of CountingOcTree  --------------------------------------
-  CountingOcTree::CountingOcTree(double resolution)
-   : OcTreeBase<CountingOcTreeNode>(resolution) {
+  CountingOcTree::CountingOcTree(double in_resolution)
+   : OcTreeBase<CountingOcTreeNode>(in_resolution) {
       countingOcTreeMemberInit.ensureLinking();
    }
 
