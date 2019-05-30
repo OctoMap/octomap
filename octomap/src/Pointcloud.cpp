@@ -38,6 +38,9 @@
 
 #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
   #include <algorithm>
+  #if __cplusplus > 199711L
+    #include <random>
+  #endif
 #else
   #include <ext/algorithm>
 #endif
@@ -210,7 +213,13 @@ namespace octomap {
   #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
     samples.reserve(this->size());
     samples.insert(samples.end(), this->begin(), this->end());
-    std::random_shuffle(samples.begin(), samples.end());
+    #if __cplusplus > 199711L
+      std::random_device r;
+      std::mt19937 urbg(r());
+      std::shuffle(samples.begin(), samples.end(), urbg);
+    #else
+      std::random_shuffle(samples.begin(), samples.end());
+    #endif
     samples.resize(num_samples);
   #else
     random_sample_n(begin(), end(), std::back_insert_iterator<point3d_collection>(samples), num_samples);
