@@ -1,4 +1,4 @@
-<package>
+<package format="3">
   <name>octovis</name>
   <version>1.9.0</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
