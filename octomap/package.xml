@@ -1,4 +1,4 @@
-<package>
+<package format="3">
   <name>octomap</name>
   <version>1.9.0</version>
   <description>The OctoMap library implements a 3D occupancy grid mapping approach, providing data structures and mapping algorithms in C++. The map implementation is based on an octree. See
@@ -11,12 +11,11 @@
 
   <url type="website">http://octomap.github.io</url>
   <url type="bugtracker">https://github.com/OctoMap/octomap/issues</url>
-  
-  <run_depend>catkin</run_depend>
-  <buildtool_depend>cmake</buildtool_depend>
-  
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
   <export>
-    <build_type>cmake</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
-  
+
 </package>
