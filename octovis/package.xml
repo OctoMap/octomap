@@ -19,6 +19,10 @@
   <depend>libqt4-dev</depend>
   <depend>libqt4-opengl-dev</depend>
 
+  <depend>libqglviewer-dev-qt5</depend>
+  <depend>qtbase5-dev</depend>
+  <depend>libqt5opengl5-dev</depend>
+  
   <export>
     <build_type>ament_cmake</build_type>
   </export>
