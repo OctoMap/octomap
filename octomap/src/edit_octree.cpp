@@ -41,7 +41,9 @@
 using namespace std;
 using namespace octomap;
 
-typedef unsigned char byte;
+#if __cplusplus < 201500L
+  typedef unsigned char byte;
+#endif
 
 int main(int argc, char **argv)
 {
