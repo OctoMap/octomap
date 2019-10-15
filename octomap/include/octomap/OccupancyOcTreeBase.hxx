@@ -200,7 +200,6 @@ namespace octomap {
               free_cells.insert(keyray->begin(), keyray->end());
             }
           }
-          //printf("%i: free_cells(%i)\n", i, keyray->size());  
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
@@ -256,7 +255,7 @@ namespace octomap {
       } // end bbx case
 
     } // end for all points, end of parallel OMP loop
-
+#endif // __CUDA_SUPPORT__
     // prefer occupied cells over free ones (and make sets disjunct)
     for(KeySet::iterator it = free_cells.begin(), end=free_cells.end(); it!= end; ){
       if (occupied_cells.find(*it) != occupied_cells.end()){
@@ -265,7 +264,6 @@ namespace octomap {
         ++it;
       }
     }
-#endif // __CUDA_SUPPORT__
   }
 
   template <class NODE>
