@@ -13,8 +13,8 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-error ")
   SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG")
   SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-  # Shared object compilation under 64bit (vtable)
-  ADD_DEFINITIONS(-fPIC)
+  ## # Shared object compilation under 64bit (vtable)
+  ## ADD_DEFINITIONS(-fPIC)
 ENDIF()
 
 
