@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
-PROJECT( octomap )
+PROJECT( octomap LANGUAGES CUDA CXX)
 
 include(CTest)
 
@@ -21,6 +21,7 @@ SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
+SET (OCTOMAP_POSITION_INDEPENDENT_CODE ON)
 
 # OCTOMAP_OMP = enable OpenMP parallelization (experimental, defaults to OFF)
 SET(OCTOMAP_OMP FALSE CACHE BOOL "Enable/disable OpenMP parallelization")
@@ -33,6 +34,18 @@ IF(OCTOMAP_OMP)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 ENDIF(OCTOMAP_OMP)
+
+# __CUDA_SUPPORT__ = enable CUDA parallelization (experimental, defaults to OFF)
+SET(__CUDA_SUPPORT__ FALSE CACHE BOOL "Enable/disable CUDA parallelization")
+IF(DEFINED ENV{__CUDA_SUPPORT__})
+  SET(__CUDA_SUPPORT__ $ENV{__CUDA_SUPPORT__})
+ENDIF(DEFINED ENV{__CUDA_SUPPORT__})
+IF(__CUDA_SUPPORT__)
+  FIND_PACKAGE( CUDA 9.0 REQUIRED)
+  message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
+  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-O3 -gencode arch=compute_61,code=sm_61)
+  add_definitions(-D__CUDA_SUPPORT__)
+ENDIF(__CUDA_SUPPORT__)
 
 # Set output directories for libraries and executables
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
