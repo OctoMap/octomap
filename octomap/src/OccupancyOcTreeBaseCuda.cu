@@ -190,16 +190,31 @@ void computeUpdateCuda(
   auto time_start = boost::chrono::high_resolution_clock::now();
   // total number of rays or points
   auto scan_size = scan.size();
-  // make a copy of tree for device usage - need a better way ? or idk
+  static bool device_tree_init = false;
   octomap::OccupancyOcTreeBase<NODE>* tree_base_device;
-  cudaCheckErrors(cudaMallocManaged(&tree_base_device, sizeof(octomap::OccupancyOcTreeBase<NODE>)));
-  cudaCheckErrors(cudaMemcpy(tree_base_device, tree_base, sizeof(octomap::OccupancyOcTreeBase<NODE>), cudaMemcpyHostToDevice));
+  if (!device_tree_init) {
+    // make a copy of tree for device usage - need a better way ? or idk
+    auto time_tree_start = boost::chrono::high_resolution_clock::now();
+    cudaCheckErrors(cudaMallocManaged(&tree_base_device, sizeof(octomap::OccupancyOcTreeBase<NODE>)));
+    cudaCheckErrors(cudaMemcpy(tree_base_device, tree_base, sizeof(octomap::OccupancyOcTreeBase<NODE>), cudaMemcpyHostToDevice));
+    device_tree_init = true;
+    std::cout << "Time taken to copy tree: " << 
+    boost::chrono::duration<double>(
+      boost::chrono::high_resolution_clock::now() - 
+      time_tree_start).count() << std::endl;
+  }
 
+  auto time_cloud_start = boost::chrono::high_resolution_clock::now();
   // make an array of points from the point cloud for device usage
   octomap::point3d* scan_device;
   cudaCheckErrors(cudaMallocManaged(&scan_device, scan_size * sizeof(octomap::point3d)));
-	cudaCheckErrors(cudaMemcpy(scan_device, &scan[0], scan_size * sizeof(octomap::point3d), cudaMemcpyHostToDevice));
+  cudaCheckErrors(cudaMemcpy(scan_device, &scan[0], scan_size * sizeof(octomap::point3d), cudaMemcpyHostToDevice));
+  std::cout << "Time taken to copy cloud: " << 
+    boost::chrono::duration<double>(
+      boost::chrono::high_resolution_clock::now() - 
+      time_cloud_start).count() << std::endl;
 
+  auto time_cells_start = boost::chrono::high_resolution_clock::now();
   // Make a container for occupied cells
   static const auto free_cells_arr_size = 1000000;
   auto occupied_cells_host = KeyContainerCuda();
@@ -212,12 +227,18 @@ void computeUpdateCuda(
   cudaCheckErrors(cudaMemcpy(free_cells_device, &free_cells_host, sizeof(KeyContainerCuda), cudaMemcpyHostToDevice));
   occupied_cells_device->allocateDevice();
   free_cells_device->allocateDevice();
-
   occupied_cells_device->copyToDevice(occupied_cells_host);
   free_cells_device->copyToDevice(free_cells_host);
+  std::cout << "Time taken to allocate and copy cells: " << 
+  boost::chrono::duration<double>(
+    boost::chrono::high_resolution_clock::now() - 
+    time_cells_start).count() << std::endl;
+
   bool use_bbx_limit = tree_base->bbxSet();
   auto resolution = tree_base->getResolution();
   auto resolution_half = resolution * 0.5;
+
+  auto time_kernel = boost::chrono::high_resolution_clock::now();
   computeUpdateKernel<NODE><<<8, 256>>>(
     origin, 
     scan_device, 
@@ -229,18 +250,29 @@ void computeUpdateCuda(
     resolution,
     resolution_half,
     tree_base_device);
+  std::cout << "Time taken by the kernel: " << 
+    boost::chrono::duration<double>(
+      boost::chrono::high_resolution_clock::now() - 
+      time_kernel).count() << std::endl;
 
+  auto time_copy_host = boost::chrono::high_resolution_clock::now();
   // copy from device to host
   occupied_cells_host.copyToHost(*occupied_cells_device);
   free_cells_host.copyToHost(*free_cells_device);
   
-  for(auto p=free_cells_host.begin(); p != free_cells_host.end(); p++) {
+  for(auto p=free_cells_device->begin(); p != free_cells_device->end(); p++) {
     free_cells.insert(*p);
   }
 
-  for(auto p=occupied_cells_host.begin(); p != occupied_cells_host.end(); p++) {
+  for(auto p=occupied_cells_device->begin(); p != occupied_cells_device->end(); p++) {
     occupied_cells.insert(*p);
   }
+  std::cout << "Time taken to copy results to host: " << 
+    boost::chrono::duration<double>(
+      boost::chrono::high_resolution_clock::now() - 
+      time_copy_host).count() << std::endl;
+  std::cout << "Number of free_cells: " << free_cells.size() << std::endl;
+  std::cout << "Number of occupied_cells: " << occupied_cells.size() << std::endl;
 
   // free memory  
   cudaFree(scan_device);
