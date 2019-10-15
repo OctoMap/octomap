@@ -37,6 +37,15 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
 namespace octomath {
 
   /*!
@@ -49,15 +58,15 @@ namespace octomath {
   class Pose6D {
   public:
 
-    Pose6D();
-    ~Pose6D();
+    CUDA_CALLABLE Pose6D();
+    CUDA_CALLABLE ~Pose6D();
 
     /*!
      * \brief Constructor
      *
      * Constructs a pose from given translation and rotation.
      */
-    Pose6D(const Vector3& trans, const Quaternion& rot);
+    CUDA_CALLABLE Pose6D(const Vector3& trans, const Quaternion& rot);
 
     /*!
      * \brief Constructor
@@ -66,47 +75,47 @@ namespace octomath {
      * its x, y, z-values and a rotation represented by its
      * Tait-Bryan angles roll, pitch, and yaw
      */
-    Pose6D(float x, float y, float z, double roll, double pitch, double yaw);
+    CUDA_CALLABLE Pose6D(float x, float y, float z, double roll, double pitch, double yaw);
 
-    Pose6D& operator= (const Pose6D& other);
-    bool operator==(const Pose6D& other) const;
-    bool operator!=(const Pose6D& other) const;
+    CUDA_CALLABLE Pose6D& operator= (const Pose6D& other);
+    CUDA_CALLABLE bool operator==(const Pose6D& other) const;
+    CUDA_CALLABLE bool operator!=(const Pose6D& other) const;
 
     /*!
      * \brief Translational component
      *
      * @return the translational component of this pose
      */
-    inline Vector3& trans() { return translation; }
+    CUDA_CALLABLE inline Vector3& trans() { return translation; }
     /*!
      * \brief Rotational component
      *
      * @return the rotational component of this pose
      */
-    inline Quaternion& rot() { return rotation; }
+    CUDA_CALLABLE inline Quaternion& rot() { return rotation; }
     /*!
      * \brief Translational component
      *
      * @return the translational component of this pose
      */
-    const Vector3& trans() const { return translation; }
+    CUDA_CALLABLE const Vector3& trans() const { return translation; }
     /*!
      * \brief Rotational component
      * @return the rotational component of this pose
      */
-    const Quaternion& rot() const { return rotation; }
+    CUDA_CALLABLE const Quaternion& rot() const { return rotation; }
 
 
-    inline float& x() { return translation(0); }
-    inline float& y() { return translation(1); }
-    inline float& z() { return translation(2); }
-    inline const float& x() const { return translation(0); }
-    inline const float& y() const { return translation(1); }
-    inline const float& z() const { return translation(2); }
+    CUDA_CALLABLE inline float& x() { return translation(0); }
+    CUDA_CALLABLE inline float& y() { return translation(1); }
+    CUDA_CALLABLE inline float& z() { return translation(2); }
+    CUDA_CALLABLE inline const float& x() const { return translation(0); }
+    CUDA_CALLABLE inline const float& y() const { return translation(1); }
+    CUDA_CALLABLE inline const float& z() const { return translation(2); }
 
-    inline double roll()  const {return (rotation.toEuler())(0); }
-    inline double pitch() const {return (rotation.toEuler())(1); }
-    inline double yaw()   const {return (rotation.toEuler())(2); }
+    CUDA_CALLABLE inline double roll()  const {return (rotation.toEuler())(0); }
+    CUDA_CALLABLE inline double pitch() const {return (rotation.toEuler())(1); }
+    CUDA_CALLABLE inline double yaw()   const {return (rotation.toEuler())(2); }
 
     /*!
      * \brief Transformation of a vector
@@ -116,7 +125,7 @@ namespace octomath {
      * @return the vector which is translated by the translation of
      * this and afterwards rotated by the rotation of this.
      */
-    Vector3 transform (const Vector3 &v) const;
+    CUDA_CALLABLE Vector3 transform (const Vector3 &v) const;
 
     /*!
      * \brief Inversion
@@ -124,7 +133,7 @@ namespace octomath {
      * Inverts the coordinate transformation represented by this pose
      * @return a copy of this pose inverted
      */
-    Pose6D inv() const;
+    CUDA_CALLABLE Pose6D inv() const;
 
     /*!
      * \brief Inversion
@@ -132,7 +141,7 @@ namespace octomath {
      * Inverts the coordinate transformation represented by this pose
      * @return a reference to this pose
      */
-    Pose6D& inv_IP();
+    CUDA_CALLABLE Pose6D& inv_IP();
 
     /*!
      * \brief Concatenation
@@ -141,7 +150,7 @@ namespace octomath {
      * by this and p.
      * @return this * p (applies first this, then p)
      */
-    Pose6D operator* (const Pose6D &p) const;
+    CUDA_CALLABLE Pose6D operator* (const Pose6D &p) const;
     /*!
      * \brief In place concatenation
      *
@@ -149,14 +158,14 @@ namespace octomath {
      * @return this which results from first moving by this and
      * afterwards by p
      */
-    const Pose6D& operator*= (const Pose6D &p);
+    CUDA_CALLABLE const Pose6D& operator*= (const Pose6D &p);
 
     /*!
      * \brief Translational distance
      *
      * @return the translational (euclidian) distance to p
      */
-    double distance(const Pose6D &other) const;
+    CUDA_CALLABLE double distance(const Pose6D &other) const;
 
     /*!
      * \brief Translational length
@@ -164,7 +173,7 @@ namespace octomath {
      * @return the translational (euclidian) length of the translation
      * vector of this Pose6D
      */
-    double transLength() const;
+    CUDA_CALLABLE double transLength() const;
 
     /*!
      * \brief Output operator

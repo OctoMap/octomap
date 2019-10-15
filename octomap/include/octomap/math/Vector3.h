@@ -37,6 +37,15 @@
 #include <iostream>
 #include <math.h>
 
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
 
 namespace octomath {
 
@@ -53,14 +62,14 @@ namespace octomath {
     /*!
      * \brief Default constructor
      */
-    Vector3 () { data[0] = data[1] = data[2] = 0.0; }
+    CUDA_CALLABLE Vector3 () { data[0] = data[1] = data[2] = 0.0; }
 
     /*!
      * \brief Copy constructor
      *
      * @param other a vector of dimension 3
      */
-    Vector3 (const Vector3& other) {
+    CUDA_CALLABLE Vector3 (const Vector3& other) {
       data[0] = other(0);
       data[1] = other(1);
       data[2] = other(2);
@@ -72,7 +81,7 @@ namespace octomath {
      * Constructs a three-dimensional vector from
      * three single values x, y, z or roll, pitch, yaw
      */
-    Vector3 (float x, float y, float z) {
+    CUDA_CALLABLE Vector3 (float x, float y, float z) {
       data[0] = x;
       data[1] = y;
       data[2] = z;
@@ -88,7 +97,7 @@ namespace octomath {
      *
      * @param other a vector of dimension 3
      */
-    inline Vector3& operator= (const Vector3& other)  {
+    CUDA_CALLABLE inline Vector3& operator= (const Vector3& other)  {
       data[0] = other(0);
       data[1] = other(1);
       data[2] = other(2);      
@@ -104,7 +113,7 @@ namespace octomath {
      * by this and other.
      * @return this x other
      */
-    inline Vector3 cross (const Vector3& other) const 
+    CUDA_CALLABLE inline Vector3 cross (const Vector3& other) const 
     {
       //return (data.start<3> ().cross (other.data.start<3> ()));
       // \note should this be renamed?
@@ -114,81 +123,81 @@ namespace octomath {
     }
 
     /// dot product
-    inline double dot (const Vector3& other) const 
+    CUDA_CALLABLE inline double dot (const Vector3& other) const 
     {
       return x()*other.x() + y()*other.y() + z()*other.z();
     }
 
-    inline const float& operator() (unsigned int i) const
+    CUDA_CALLABLE inline const float& operator() (unsigned int i) const
     {
       return data[i];
     }
-    inline float& operator() (unsigned int i)
+    CUDA_CALLABLE inline float& operator() (unsigned int i)
     {
       return data[i];
     }
 
-    inline float& x() 
+    CUDA_CALLABLE inline float& x() 
     {
       return operator()(0);
     }
 
-    inline float& y() 
+    CUDA_CALLABLE inline float& y() 
     {
       return operator()(1);
     }
 
-    inline float& z() 
+    CUDA_CALLABLE inline float& z() 
     {
       return operator()(2);
     }
 
-    inline const float& x() const 
+    CUDA_CALLABLE inline const float& x() const 
     {
       return operator()(0);
     }
 
-    inline const float& y() const 
+    CUDA_CALLABLE inline const float& y() const 
     {
       return operator()(1);
     }
 
-    inline const float& z() const 
+    CUDA_CALLABLE inline const float& z() const 
     {
       return operator()(2);
     }
 
-    inline float& roll() 
+    CUDA_CALLABLE inline float& roll() 
     {
       return operator()(0);
     }
 
-    inline float& pitch() 
+    CUDA_CALLABLE inline float& pitch() 
     {
       return operator()(1);
     }
 
-    inline float& yaw() 
+    CUDA_CALLABLE inline float& yaw() 
     {
       return operator()(2);
     }
 
-    inline const float& roll() const 
+    CUDA_CALLABLE inline const float& roll() const 
     {
       return operator()(0);
     }
 
-    inline const float& pitch() const 
+    CUDA_CALLABLE inline const float& pitch() const 
     {
       return operator()(1);
     }
 
-    inline const float& yaw() const 
+    CUDA_CALLABLE inline const float& yaw() const 
     {
       return operator()(2);
     }
 
-    inline Vector3 operator- () const 
+    CUDA_CALLABLE inline Vector3 operator- () const 
     {
       Vector3 result;
       result(0) = -data[0];
@@ -197,7 +206,7 @@ namespace octomath {
       return result;
     }
 
-    inline Vector3 operator+ (const Vector3 &other) const 
+    CUDA_CALLABLE inline Vector3 operator+ (const Vector3 &other) const 
     {
       Vector3 result(*this);
       result(0) += other(0);
@@ -206,7 +215,7 @@ namespace octomath {
       return result;
     }
 
-    inline Vector3 operator*  (float x) const {
+    CUDA_CALLABLE inline Vector3 operator*  (float x) const {
       Vector3 result(*this);
       result(0) *= x;
       result(1) *= x;
@@ -214,7 +223,7 @@ namespace octomath {
       return result;
     }
 
-    inline Vector3 operator- (const Vector3 &other) const 
+    CUDA_CALLABLE inline Vector3 operator- (const Vector3 &other) const 
     {
       Vector3 result(*this);
       result(0) -= other(0);
@@ -223,32 +232,32 @@ namespace octomath {
       return result;
     }
 
-    inline void operator+= (const Vector3 &other)
+    CUDA_CALLABLE inline void operator+= (const Vector3 &other)
     {
       data[0] += other(0);
       data[1] += other(1);
       data[2] += other(2);      
     }
 
-    inline void operator-= (const Vector3& other) {
+    CUDA_CALLABLE inline void operator-= (const Vector3& other) {
       data[0] -= other(0);
       data[1] -= other(1);
       data[2] -= other(2);      
     }
 
-    inline void operator/= (float x) {
+    CUDA_CALLABLE inline void operator/= (float x) {
       data[0] /= x;
       data[1] /= x;
       data[2] /= x;      
     }
 
-    inline void operator*= (float x) {    
+    CUDA_CALLABLE inline void operator*= (float x) {    
       data[0] *= x;
       data[1] *= x;
       data[2] *= x;      
     }
 
-    inline bool operator== (const Vector3 &other) const {
+    CUDA_CALLABLE inline bool operator== (const Vector3 &other) const {
       for (unsigned int i=0; i<3; i++) {
         if (operator()(i) != other(i)) 
           return false;
@@ -257,17 +266,17 @@ namespace octomath {
     }
         
     /// @return length of the vector ("L2 norm")
-    inline double norm () const {
+    CUDA_CALLABLE inline double norm () const {
       return sqrt(norm_sq());
     }
 
     /// @return squared length ("L2 norm") of the vector
-    inline double norm_sq() const {
+    CUDA_CALLABLE inline double norm_sq() const {
       return (x()*x() + y()*y() + z()*z());
     }
 
     /// normalizes this vector, so that it has norm=1.0
-    inline Vector3& normalize () {
+    CUDA_CALLABLE inline Vector3& normalize () {
       double len = norm();
       if (len > 0)
         *this /= (float) len;
@@ -275,13 +284,13 @@ namespace octomath {
     }
 
     /// @return normalized vector, this one remains unchanged
-    inline Vector3 normalized () const {
+    CUDA_CALLABLE inline Vector3 normalized () const {
       Vector3 result(*this);
       result.normalize ();
       return result;
     }
 
-    inline double angleTo(const Vector3& other) const { 
+    CUDA_CALLABLE inline double angleTo(const Vector3& other) const { 
       double dot_prod = this->dot(other);
       double len1 = this->norm();
       double len2 = other.norm();
@@ -289,14 +298,14 @@ namespace octomath {
     }
 
 
-    inline double distance (const Vector3& other) const {
+    CUDA_CALLABLE inline double distance (const Vector3& other) const {
       double dist_x = x() - other.x();
       double dist_y = y() - other.y();
       double dist_z = z() - other.z();
       return sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z);
     }
 
-    inline double distanceXY (const Vector3& other) const {
+    CUDA_CALLABLE inline double distanceXY (const Vector3& other) const {
       double dist_x = x() - other.x();
       double dist_y = y() - other.y();
       return sqrt(dist_x*dist_x + dist_y*dist_y);
