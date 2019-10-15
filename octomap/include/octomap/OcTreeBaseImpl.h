@@ -45,6 +45,15 @@
 #include "OcTreeKey.h"
 #include "ScanGraph.h"
 
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
 
 namespace octomap {
   
@@ -354,26 +363,26 @@ namespace octomap {
     //
 
     /// Converts from a single coordinate into a discrete key
-    inline key_type coordToKey(double coordinate) const{
+    CUDA_CALLABLE inline key_type coordToKey(double coordinate) const{
       return ((int) floor(resolution_factor * coordinate)) + tree_max_val;
     }
 
     /// Converts from a single coordinate into a discrete key at a given depth
-    key_type coordToKey(double coordinate, unsigned depth) const;
+    CUDA_CALLABLE key_type coordToKey(double coordinate, unsigned depth) const;
 
 
     /// Converts from a 3D coordinate into a 3D addressing key
-    inline OcTreeKey coordToKey(const point3d& coord) const{
+    CUDA_CALLABLE inline OcTreeKey coordToKey(const point3d& coord) const{
       return OcTreeKey(coordToKey(coord(0)), coordToKey(coord(1)), coordToKey(coord(2)));
     }
 
     /// Converts from a 3D coordinate into a 3D addressing key
-    inline OcTreeKey coordToKey(double x, double y, double z) const{
+    CUDA_CALLABLE inline OcTreeKey coordToKey(double x, double y, double z) const{
       return OcTreeKey(coordToKey(x), coordToKey(y), coordToKey(z));
     }
 
     /// Converts from a 3D coordinate into a 3D addressing key at a given depth
-    inline OcTreeKey coordToKey(const point3d& coord, unsigned depth) const{
+    CUDA_CALLABLE inline OcTreeKey coordToKey(const point3d& coord, unsigned depth) const{
       if (depth == tree_depth)
         return coordToKey(coord);
       else
@@ -381,7 +390,7 @@ namespace octomap {
     }
 
     /// Converts from a 3D coordinate into a 3D addressing key at a given depth
-    inline OcTreeKey coordToKey(double x, double y, double z, unsigned depth) const{
+    CUDA_CALLABLE inline OcTreeKey coordToKey(double x, double y, double z, unsigned depth) const{
       if (depth == tree_depth)
         return coordToKey(x,y,z);
       else
@@ -421,7 +430,7 @@ namespace octomap {
      * @param key values that will be computed, an array of fixed size 3.
      * @return true if point is within the octree (valid), false otherwise
      */
-    bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(const point3d& coord, OcTreeKey& key) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey at a certain depth, with boundary checking.
@@ -431,7 +440,7 @@ namespace octomap {
      * @param key values that will be computed, an array of fixed size 3.
      * @return true if point is within the octree (valid), false otherwise
      */
-    bool coordToKeyChecked(const point3d& coord, unsigned depth, OcTreeKey& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(const point3d& coord, unsigned depth, OcTreeKey& key) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey, with boundary checking.
@@ -442,7 +451,7 @@ namespace octomap {
      * @param key values that will be computed, an array of fixed size 3.
      * @return true if point is within the octree (valid), false otherwise
      */
-    bool coordToKeyChecked(double x, double y, double z, OcTreeKey& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(double x, double y, double z, OcTreeKey& key) const;
 
     /**
      * Converts a 3D coordinate into a 3D OcTreeKey at a certain depth, with boundary checking.
@@ -454,7 +463,7 @@ namespace octomap {
      * @param key values that will be computed, an array of fixed size 3.
      * @return true if point is within the octree (valid), false otherwise
      */
-    bool coordToKeyChecked(double x, double y, double z, unsigned depth, OcTreeKey& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(double x, double y, double z, unsigned depth, OcTreeKey& key) const;
 
     /**
      * Converts a single coordinate into a discrete addressing key, with boundary checking.
@@ -463,7 +472,7 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, key_type& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(double coordinate, key_type& key) const;
 
     /**
      * Converts a single coordinate into a discrete addressing key, with boundary checking.
@@ -473,27 +482,27 @@ namespace octomap {
      * @param key discrete 16 bit adressing key, result
      * @return true if coordinate is within the octree bounds (valid), false otherwise
      */
-    bool coordToKeyChecked(double coordinate, unsigned depth, key_type& key) const;
+    CUDA_CALLABLE bool coordToKeyChecked(double coordinate, unsigned depth, key_type& key) const;
 
     /// converts from a discrete key at a given depth into a coordinate
     /// corresponding to the key's center
-    double keyToCoord(key_type key, unsigned depth) const;
+    CUDA_CALLABLE double keyToCoord(key_type key, unsigned depth) const;
 
     /// converts from a discrete key at the lowest tree level into a coordinate
     /// corresponding to the key's center
-    inline double keyToCoord(key_type key) const{
+    CUDA_CALLABLE inline double keyToCoord(key_type key) const{
       return (double( (int) key - (int) this->tree_max_val ) +0.5) * this->resolution;
     }
 
     /// converts from an addressing key at the lowest tree level into a coordinate
     /// corresponding to the key's center
-    inline point3d keyToCoord(const OcTreeKey& key) const{
+    CUDA_CALLABLE inline point3d keyToCoord(const OcTreeKey& key) const{
       return point3d(float(keyToCoord(key[0])), float(keyToCoord(key[1])), float(keyToCoord(key[2])));
     }
 
     /// converts from an addressing key at a given depth into a coordinate
     /// corresponding to the key's center
-    inline point3d keyToCoord(const OcTreeKey& key, unsigned depth) const{
+    CUDA_CALLABLE inline point3d keyToCoord(const OcTreeKey& key, unsigned depth) const{
       return point3d(float(keyToCoord(key[0], depth)), float(keyToCoord(key[1], depth)), float(keyToCoord(key[2], depth)));
     }
 
