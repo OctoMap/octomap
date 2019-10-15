@@ -35,6 +35,9 @@
 #include <algorithm>
 
 #include <octomap/MCTables.h>
+#ifdef __CUDA_SUPPORT__
+#include <octomap/OccupancyOcTreeBaseCUDA.cuh>
+#endif
 
 namespace octomap {
 
@@ -170,9 +173,9 @@ namespace octomap {
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange)
   {
-
-
-
+#ifdef __CUDA_SUPPORT__
+    computeUpdateCUDA(scan, origin, free_cells, occupied_cells, maxrange, this);
+#else
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
@@ -197,6 +200,7 @@ namespace octomap {
               free_cells.insert(keyray->begin(), keyray->end());
             }
           }
+          //printf("%i: free_cells(%i)\n", i, keyray->size());  
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
@@ -261,6 +265,7 @@ namespace octomap {
         ++it;
       }
     }
+#endif // __CUDA_SUPPORT__
   }
 
   template <class NODE>
