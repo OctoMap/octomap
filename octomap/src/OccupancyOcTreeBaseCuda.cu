@@ -9,6 +9,8 @@
 #define CUDA_CALLABLE
 #endif
 
+#define MAX_RAY_SIZE 256
+
 template <class NODE,class I>
 CUDA_CALLABLE bool computeRayKeysCuda(
   const point3d& origin, 
@@ -63,15 +65,11 @@ CUDA_CALLABLE bool computeRayKeysCuda(
       tDelta[i] = NPP_MAXABS_64F;
     }
   }
-  //printf ("direction: %f, %f, %f\n", direction.x(), direction.y(), direction.z());
-  //printf ("tMax: %f, %f, %f\n", tMax[0], tMax[1], tMax[2]);
-  //printf ("tDelta: %f, %f, %f\n", tDelta[0], tDelta[1], tDelta[2]);
 
   int i = 0;
   // Incremental phase  ---------------------------------------------------------
   bool done = false;
   while (!done) {
-    //printf ("i: %i\n", i);
 
     unsigned int dim;
 
@@ -104,13 +102,11 @@ CUDA_CALLABLE bool computeRayKeysCuda(
       // if this is longer than the expected ray length, we should have already hit the voxel containing the end point with the code above (key_end).
       // However, we did not hit it due to accumulating discretization errors, so this is the point here to stop the ray as we would never reach the voxel key_end
       if (dist_from_origin > length) {
-        //printf("length: %f\n", length);
         done = true;
         break;
       }
 
       else {  // continue to add freespace cells
-      //printf ("adding key.");
         ray.addKey(current_key);
       }
     }
@@ -122,7 +118,6 @@ CUDA_CALLABLE bool computeRayKeysCuda(
   return true;
 }
 
-#define MAX_RAY_SIZE 100
 template <class NODE>
 __global__ void computeUpdateKernel(
   octomap::point3d origin,
