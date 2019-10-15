@@ -15,16 +15,7 @@ using namespace octomap;
 
 #ifdef __CUDA_SUPPORT__
 template <class NODE>
-__global__ void computeUpdateKernel(
-  octomap::point3d origin,
-  octomap::point3d* points,
-  KeyRayCUDA* rays,
-  size_t size,
-  double maxrange,
-  OccupancyOcTreeBase<NODE>* tree_base);
-
-template <class NODE>
-void computeUpdateCUDA(
+void computeUpdateCuda(
   const octomap::Pointcloud& scan, const octomap::point3d& origin, octomap::KeySet& free_cells, 
   octomap::KeySet& occupied_cells, double maxrange, octomap::OccupancyOcTreeBase<NODE>* tree_base);
 #endif

@@ -8,10 +8,10 @@
 
 namespace octomap {
 
-  class KeyContainerCUDA {
+  class KeyContainerCuda {
   public:
     
-    CUDA_CALLABLE KeyContainerCUDA (
+    CUDA_CALLABLE KeyContainerCuda (
       const int& maxSize = 100000) :
       maxSize(maxSize)
     {
@@ -19,11 +19,11 @@ namespace octomap {
       reset();
     }
 
-    CUDA_CALLABLE ~KeyContainerCUDA () {
+    CUDA_CALLABLE ~KeyContainerCuda () {
       delete ray;
     }
     
-    CUDA_CALLABLE KeyContainerCUDA(const KeyContainerCUDA& other)
+    CUDA_CALLABLE KeyContainerCuda(const KeyContainerCuda& other)
     {
       ray = other.ray;
       last = other.last;
@@ -38,20 +38,20 @@ namespace octomap {
       cudaCheckErrors(cudaFree(ray));
     }
 
-    __host__ void copyToDevice(const KeyContainerCUDA& other) {
+    __host__ void copyToDevice(const KeyContainerCuda& other) {
       assert (maxSize == other.sizeMax());
       cudaCheckErrors(cudaMemcpy(ray, other.ray, maxSize * sizeof(OcTreeKey), cudaMemcpyHostToDevice));
       last = other.last;
       maxSize = other.maxSize;
     }
 
-    __host__ void copyToHost(const KeyContainerCUDA& other) {
+    __host__ void copyToHost(const KeyContainerCuda& other) {
       assert (maxSize == other.sizeMax());
       cudaCheckErrors(cudaMemcpy(ray, other.ray, maxSize * sizeof(OcTreeKey), cudaMemcpyDeviceToHost));
       last = other.last;
     }
 
-    CUDA_CALLABLE KeyContainerCUDA& operator=(const KeyContainerCUDA& other){
+    CUDA_CALLABLE KeyContainerCuda& operator=(const KeyContainerCuda& other){
       ray = other.ray;
       last = other.last;
       maxSize = other.maxSize;
@@ -82,7 +82,7 @@ namespace octomap {
     int maxSize;
   };
 
-  using KeyRayCUDA = KeyContainerCUDA;
+  using KeyRayCuda = KeyContainerCuda;
 }
 #endif
 #endif

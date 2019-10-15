@@ -94,6 +94,8 @@ namespace octomap {
       computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
     else
       computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+    std::cout << "free_cells:" << free_cells.size() << std::endl;
+    std::cout << "occupied_cells:" << occupied_cells.size() << std::endl;  
 
     // insert data into tree  -----------------------
     for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
@@ -174,7 +176,7 @@ namespace octomap {
                                                 double maxrange)
   {
 #ifdef __CUDA_SUPPORT__
-    computeUpdateCUDA(scan, origin, free_cells, occupied_cells, maxrange, this);
+    computeUpdateCuda(scan, origin, free_cells, occupied_cells, maxrange, this);
 #else
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());

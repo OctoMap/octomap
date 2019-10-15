@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED COMPONENTS chrono)
+
 SET (octomap_SRCS
   AbstractOcTree.cpp
   AbstractOccupancyOcTree.cpp
@@ -31,8 +33,8 @@ SET_TARGET_PROPERTIES(
 target_compile_features(octomap-static PUBLIC cxx_std_11)
 add_dependencies(octomap-static octomath-static)
 
-TARGET_LINK_LIBRARIES(octomap octomath ${CUDA_LIBRARIES})
-TARGET_LINK_LIBRARIES(octomap-static octomath ${CUDA_LIBRARIES})
+TARGET_LINK_LIBRARIES(octomap octomath ${CUDA_LIBRARIES} ${Boost_LIBRARIES})
+TARGET_LINK_LIBRARIES(octomap-static octomath ${CUDA_LIBRARIES} ${Boost_LIBRARIES})
 
 if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
   file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
@@ -42,9 +44,9 @@ export(TARGETS octomap octomap-static
   APPEND FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-targets.cmake")
 
 ADD_SUBDIRECTORY( testing )
-
+MESSAGE(STATUS ${Boost_LIBRARIES})
 ADD_EXECUTABLE(graph2tree graph2tree.cpp)
-TARGET_LINK_LIBRARIES(graph2tree octomap-static ${CUDA_LIBRARIES})
+TARGET_LINK_LIBRARIES(graph2tree octomap-static ${CUDA_LIBRARIES} ${Boost_LIBRARIES})
 target_compile_features(graph2tree PUBLIC cxx_std_11)
 SET_TARGET_PROPERTIES(graph2tree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
