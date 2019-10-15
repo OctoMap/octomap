@@ -36,7 +36,7 @@
 
 #include <octomap/MCTables.h>
 #ifdef __CUDA_SUPPORT__
-#include <octomap/OccupancyOcTreeBaseCUDA.cuh>
+#include <octomap/OccupancyOcTreeBaseCuda.cuh>
 #endif
 
 namespace octomap {

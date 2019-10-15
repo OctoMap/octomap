@@ -1,5 +1,5 @@
 #ifdef __CUDA_SUPPORT__
-#include <octomap/KeyContainerCUDA.cuh>
+#include <octomap/KeyContainerCuda.cuh>
 
 namespace octomap {
   __device__ void KeyContainerCUDA::addKeyAtomic(const OcTreeKey& k) {

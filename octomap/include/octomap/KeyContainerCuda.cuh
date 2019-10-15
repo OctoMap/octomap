@@ -3,7 +3,7 @@
 #ifdef __CUDA_SUPPORT__
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <octomap/AssertionCuda.h>
+#include <octomap/AssertionCuda.cuh>
 #include <octomap/OcTreeKey.h>
 
 namespace octomap {

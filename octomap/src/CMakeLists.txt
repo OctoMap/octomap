@@ -11,7 +11,7 @@ SET (octomap_SRCS
   )
 
 IF(__CUDA_SUPPORT__)
-  SET (octomap_SRCS ${octomap_SRCS} OccupancyOcTreeBaseCUDA.cu KeyContainerCUDA.cu)
+  SET (octomap_SRCS ${octomap_SRCS} OccupancyOcTreeBaseCuda.cu KeyContainerCuda.cu)
 ENDIF(__CUDA_SUPPORT__)
 
 # dynamic and static libs, see CMake FAQ:

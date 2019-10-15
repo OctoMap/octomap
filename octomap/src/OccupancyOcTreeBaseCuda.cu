@@ -1,5 +1,5 @@
-#include <octomap/OccupancyOcTreeBaseCUDA.cuh>
-#include <octomap/CUDAAssertion.h>
+#include <octomap/OccupancyOcTreeBaseCuda.cuh>
+#include <octomap/AssertionCuda.cuh>
 #ifdef __CUDA_SUPPORT__
 
 #ifdef __CUDACC__
