@@ -40,6 +40,7 @@
 #include <ciso646>
 
 #include <assert.h>
+#include <vector>
 
 /* Libc++ does not implement the TR1 namespace, all c++11 related functionality
  * is instead implemented in the std namespace.
@@ -58,6 +59,22 @@
   }
 #endif
 
+#ifdef __CUDA_SUPPORT__
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <octomap/CUDAAssertion.h>
+#endif
+
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
+
 namespace octomap {
 
   typedef uint16_t key_type;
@@ -70,37 +87,37 @@ namespace octomap {
   class OcTreeKey {
     
   public:  
-    OcTreeKey () {}
-    OcTreeKey (key_type a, key_type b, key_type c){ 
+    CUDA_CALLABLE OcTreeKey () {}
+    CUDA_CALLABLE OcTreeKey (key_type a, key_type b, key_type c){ 
       k[0] = a; 
       k[1] = b; 
       k[2] = c;         
     }
     
-    OcTreeKey(const OcTreeKey& other){
+    CUDA_CALLABLE OcTreeKey(const OcTreeKey& other){
       k[0] = other.k[0]; 
       k[1] = other.k[1]; 
       k[2] = other.k[2];
     }
     
-    bool operator== (const OcTreeKey &other) const { 
+    CUDA_CALLABLE bool operator== (const OcTreeKey &other) const { 
       return ((k[0] == other[0]) && (k[1] == other[1]) && (k[2] == other[2]));
     }
     
-    bool operator!= (const OcTreeKey& other) const {
+    CUDA_CALLABLE bool operator!= (const OcTreeKey& other) const {
       return( (k[0] != other[0]) || (k[1] != other[1]) || (k[2] != other[2]) );
     }
     
-    OcTreeKey& operator=(const OcTreeKey& other){
+    CUDA_CALLABLE OcTreeKey& operator=(const OcTreeKey& other){
       k[0] = other.k[0]; k[1] = other.k[1]; k[2] = other.k[2];
       return *this;
     }
     
-    const key_type& operator[] (unsigned int i) const { 
+    CUDA_CALLABLE const key_type& operator[] (unsigned int i) const { 
       return k[i];
     }
     
-    key_type& operator[] (unsigned int i) { 
+    CUDA_CALLABLE key_type& operator[] (unsigned int i) { 
       return k[i];
     }
 
@@ -108,7 +125,7 @@ namespace octomap {
 
     /// Provides a hash function on Keys
     struct KeyHash{
-      size_t operator()(const OcTreeKey& key) const{
+      CUDA_CALLABLE size_t operator()(const OcTreeKey& key) const{
         // a simple hashing function 
 	// explicit casts to size_t to operate on the complete range
 	// constanst will be promoted according to C++ standard
@@ -180,7 +197,7 @@ namespace octomap {
     std::vector<OcTreeKey>::iterator end_of_ray;
     const static size_t maxSize = 100000;
   };
-
+  
   /**
    * Computes the key of a child node while traversing the octree, given
    * child index and current key
