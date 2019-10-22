@@ -36,7 +36,7 @@
 
 #include <octomap/MCTables.h>
 #ifdef __CUDA_SUPPORT__
-#include <octomap/OccupancyOcTreeBaseCuda.cuh>
+#include <octomap/OctomapUpdaterCuda.cuh>
 #endif
 
 namespace octomap {
@@ -45,14 +45,12 @@ namespace octomap {
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double in_resolution)
     : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(in_resolution), use_bbx_limit(false), use_change_detection(false)
   {
-
   }
 
   template <class NODE>
   OccupancyOcTreeBase<NODE>::OccupancyOcTreeBase(double in_resolution, unsigned int in_tree_depth, unsigned int in_tree_max_val)
     : OcTreeBaseImpl<NODE,AbstractOccupancyOcTree>(in_resolution, in_tree_depth, in_tree_max_val), use_bbx_limit(false), use_change_detection(false)
   {
-
   }
 
   template <class NODE>
@@ -88,7 +86,7 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
                                              double maxrange, bool lazy_eval, bool discretize) {
-
+    #ifndef __CUDA_SUPPORT__
     KeySet free_cells, occupied_cells;
     if (discretize)
       computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
@@ -102,6 +100,9 @@ namespace octomap {
     for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
       updateNode(*it, true, lazy_eval);
     }
+    #else
+    octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange, lazy_eval);
+    #endif
   }
 
   template <class NODE>
@@ -173,13 +174,11 @@ namespace octomap {
                                                 KeySet& free_cells, KeySet& occupied_cells,
                                                 double maxrange)
   {
-#ifdef __CUDA_SUPPORT__
-    computeUpdateCuda(scan, origin, free_cells, occupied_cells, maxrange, this);
-#else
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
 #endif
+printf("scan=%i", scan.size());
     for (int i = 0; i < (int)scan.size(); ++i) {
       const point3d& p = scan[i];
       unsigned threadIdx = 0;
@@ -255,7 +254,6 @@ namespace octomap {
       } // end bbx case
 
     } // end for all points, end of parallel OMP loop
-#endif // __CUDA_SUPPORT__
     // prefer occupied cells over free ones (and make sets disjunct)
     for(KeySet::iterator it = free_cells.begin(), end=free_cells.end(); it!= end; ){
       if (occupied_cells.find(*it) != occupied_cells.end()){

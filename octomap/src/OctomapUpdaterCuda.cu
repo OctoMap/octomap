@@ -1,4 +1,4 @@
-#include <octomap/OccupancyOcTreeBaseCuda.cuh>
+#include <octomap/OctomapUpdaterCuda.cuh>
 #include <octomap/AssertionCuda.cuh>
 #include <boost/chrono.hpp>
 #ifdef __CUDA_SUPPORT__
@@ -66,7 +66,6 @@ CUDA_CALLABLE bool computeRayKeysCuda(
     }
   }
 
-  int i = 0;
   // Incremental phase  ---------------------------------------------------------
   bool done = false;
   while (!done) {
@@ -110,7 +109,6 @@ CUDA_CALLABLE bool computeRayKeysCuda(
         ray.addKey(current_key);
       }
     }
-    ++i;
     assert ( ray.size() < ray.sizeMax() - 1);
 
   } // end while
@@ -122,8 +120,8 @@ template <class NODE>
 __global__ void computeUpdateKernel(
   octomap::point3d origin,
   octomap::point3d* points,
-  KeyContainerCuda* occupied_cells,
-  KeyContainerCuda* free_cells,
+  KeyRayCuda* rays,
+  HashSetCuda* key_map,
   size_t size,
   double maxrange,
   bool use_bbx_limit,
@@ -134,28 +132,29 @@ __global__ void computeUpdateKernel(
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
   for (int i = idx; i < size; i += stride) 
+  //for (int i =0; i < 1; i ++) 
   {
     auto& p = points[i];
-    KeyRayCuda ray(MAX_RAY_SIZE);
+    auto& ray = rays[idx];
     if (!use_bbx_limit) { // no BBX specified
       if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
         // free cells
         if (computeRayKeysCuda(origin, p, ray, resolution, resolution_half, tree_base)) {
           for (auto rp = ray.begin(); rp != ray.end(); ++rp) {
-            free_cells->addKeyAtomic(*rp);
+            key_map->insertDevice(*rp, FREE);
           }
         }
         // occupied endpoint
         OcTreeKey key;
         if (tree_base->coordToKeyChecked(p, key)) {
-          occupied_cells->addKeyAtomic(key);
+          key_map->insertDevice(key, OCCUPIED);
         }
       } else { // user set a maxrange and length is above
         point3d direction = (p - origin).normalized ();
         point3d new_end = origin + direction * (float) maxrange;
         if (computeRayKeysCuda(origin, new_end, ray, resolution, resolution_half, tree_base)) { // *ray
           for (auto rp = ray.begin(); rp != ray.end(); ++rp) {
-            free_cells->addKeyAtomic(*rp);
+            key_map->insertDevice(*rp, FREE);
           }
         }
       } // end if maxrange
@@ -165,14 +164,14 @@ __global__ void computeUpdateKernel(
         // occupied endpoint
         OcTreeKey key;
         if (tree_base->coordToKeyChecked(p, key)){
-          occupied_cells->addKeyAtomic(key);
+          key_map->insertDevice(key, OCCUPIED);
         }
 
         // update freespace, break as soon as bbx limit is reached
         if (computeRayKeysCuda(origin, p, ray, resolution, resolution_half, tree_base)) {
           for(auto rp=ray.end(); rp != ray.begin(); rp--) {
             if (!tree_base->inBBX(*rp)) {
-              free_cells->addKeyAtomic(*rp);
+              key_map->insertDevice(*rp, FREE);
             }
             else break;
           }
@@ -182,86 +181,98 @@ __global__ void computeUpdateKernel(
   }
 }
 
+void verifyTable(const HashSetCuda &table ) {
+  int free_cells = 0, occ = 0, count = 0;
+  for (size_t i = 0; i < table.count(); i++) {
+    auto current = table.element(i);
+    while (current != NULL) {
+      if (current->value_ == 0) 
+        ++free_cells;
+      else if (current->value_ == 1) 
+        ++occ;
+      ++count;
+      current = current->next_;
+    }
+  }
+  printf( "%d elements found in hash table with %d free and %d occupied.\n", count, free_cells, occ);
+}
+
 template <class NODE>
-void computeUpdateCuda(
-  const octomap::Pointcloud& scan, const octomap::point3d& origin, octomap::KeySet& free_cells, 
-  octomap::KeySet& occupied_cells, double maxrange, octomap::OccupancyOcTreeBase<NODE>* tree_base)
+void OctomapUpdaterCuda<NODE>::initialize() {
+  // make a copy of tree for device usage - need a better way ? or idk
+  cudaCheckErrors(cudaMallocManaged(&tree_base_device_, sizeof(octomap::OccupancyOcTreeBase<NODE>)));
+  cudaCheckErrors(cudaMemcpy(tree_base_device_, tree_base_, sizeof(octomap::OccupancyOcTreeBase<NODE>), cudaMemcpyHostToDevice));
+
+  // rays
+  n_rays_ = N_BLOCKS * N_THREADS;
+  auto rays_host = new KeyRayCuda[n_rays_];
+  for (int i = 0; i < N_BLOCKS * N_THREADS; ++i) {
+    rays_host[i].allocateDevice();
+  }
+  cudaCheckErrors(cudaMallocManaged(&rays_device_, n_rays_ * sizeof(KeyRayCuda)));
+  cudaCheckErrors(cudaMemcpy(rays_device_, &rays_host[0], n_rays_ * sizeof(KeyRayCuda), cudaMemcpyHostToDevice));
+  delete[] rays_host;
+
+  // Make a temporary container for occupied cells
+  HashSetCuda key_map_temp_host;
+  //HashSetCuda free_map_host;
+
+  key_map_temp_host.initializeDevice(MAX_HASHED_ELEMENTS, MAX_ELEMENTS);
+  //free_map_host.initializeDevice(MAX_HASHED_ELEMENTS, MAX_ELEMENTS);
+
+  cudaCheckErrors(cudaMallocManaged(&key_map_device_, sizeof(HashSetCuda)));
+  //cudaCheckErrors(cudaMallocManaged(&free_map_device_, sizeof(HashSetCuda)));
+  cudaCheckErrors(cudaMemcpy(key_map_device_, &key_map_temp_host, sizeof(HashSetCuda), cudaMemcpyHostToDevice));
+  //cudaCheckErrors(cudaMemcpy(free_map_device_, &free_map_host, sizeof(HashSetCuda), cudaMemcpyHostToDevice));
+
+  // copy from device to host
+  key_map_host_.initializeHost(MAX_HASHED_ELEMENTS, MAX_ELEMENTS);
+  //free_map_host_.initializeHost(MAX_HASHED_ELEMENTS, MAX_ELEMENTS);
+}
+
+template <class NODE>
+void OctomapUpdaterCuda<NODE>::computeUpdate(
+  const octomap::Pointcloud& scan, 
+  const octomap::point3d& origin,
+  const double& maxrange,
+  const bool& lazy_eval)
 {
-  auto time_start = boost::chrono::high_resolution_clock::now();
+  //auto t_start = boost::chrono::high_resolution_clock::now();
   // total number of rays or points
   auto scan_size = scan.size();
-  octomap::OccupancyOcTreeBase<NODE>* tree_base_device;
-  // make a copy of tree for device usage - need a better way ? or idk
-  cudaCheckErrors(cudaMallocManaged(&tree_base_device, sizeof(octomap::OccupancyOcTreeBase<NODE>)));
-  cudaCheckErrors(cudaMemcpy(tree_base_device, tree_base, sizeof(octomap::OccupancyOcTreeBase<NODE>), cudaMemcpyHostToDevice));
 
   // make an array of points from the point cloud for device usage
   octomap::point3d* scan_device;
   cudaCheckErrors(cudaMallocManaged(&scan_device, scan_size * sizeof(octomap::point3d)));
   cudaCheckErrors(cudaMemcpy(scan_device, &scan[0], scan_size * sizeof(octomap::point3d), cudaMemcpyHostToDevice));
 
-  // Make a container for occupied cells
-  static const auto free_cells_arr_size = 1000000;
-  auto occupied_cells_host = new KeyContainerCuda();
-  auto free_cells_host = new KeyContainerCuda(free_cells_arr_size);
-  KeyContainerCuda* occupied_cells_device;
-  KeyContainerCuda* free_cells_device;
-  cudaCheckErrors(cudaMallocManaged(&occupied_cells_device, sizeof(KeyContainerCuda)));
-  cudaCheckErrors(cudaMallocManaged(&free_cells_device, sizeof(KeyContainerCuda)));
-  cudaCheckErrors(cudaMemcpy(occupied_cells_device, occupied_cells_host, sizeof(KeyContainerCuda), cudaMemcpyHostToDevice));
-  cudaCheckErrors(cudaMemcpy(free_cells_device, free_cells_host, sizeof(KeyContainerCuda), cudaMemcpyHostToDevice));
-  occupied_cells_device->allocateDevice();
-  free_cells_device->allocateDevice();
-  occupied_cells_device->copyToDevice(*occupied_cells_host);
-  free_cells_device->copyToDevice(*free_cells_host);
-
-  bool use_bbx_limit = tree_base->bbxSet();
-  auto resolution = tree_base->getResolution();
-  auto resolution_half = resolution * 0.5;
-
-  computeUpdateKernel<NODE><<<32, 256>>>(
+  // Reset the map
+  key_map_device_->reset();
+  computeUpdateKernel<NODE><<<6, 32>>>( 
     origin, 
-    scan_device, 
-    occupied_cells_device, 
-    free_cells_device,
+    scan_device,
+    rays_device_,
+    key_map_device_,
     scan_size, 
     maxrange, 
-    use_bbx_limit,
-    resolution,
-    resolution_half,
-    tree_base_device);
-  cudaDeviceSynchronize();
-      
-  auto time_copy_host = boost::chrono::high_resolution_clock::now();
-  // copy from device to host
-  occupied_cells_host->copyToHost(*occupied_cells_device);
-  free_cells_host->copyToHost(*free_cells_device);
+    use_bbx_limit_,
+    res_,
+    res_half_,
+    tree_base_device_); 
+  cudaCheckErrors(cudaDeviceSynchronize());
   
-  for(auto p=free_cells_device->begin(); p != free_cells_device->end(); p++) {
-    free_cells.insert(*p);
+  for (size_t i = 0; i < key_map_device_->count(); i++) {
+    auto current = key_map_device_->element(i);
+    while (current != NULL) {
+      tree_base_->updateNode(current->key_, static_cast<bool>(current->value_), lazy_eval);
+      current = current->next_;
+    }
   }
-
-  for(auto p=occupied_cells_device->begin(); p != occupied_cells_device->end(); p++) {
-    occupied_cells.insert(*p);
-  }
-
   // free memory  
-  cudaFree(scan_device);
-  occupied_cells_device->freeDevice();
-  free_cells_device->freeDevice();
-  cudaFree(occupied_cells_device);
-  cudaFree(free_cells_device);
-  cudaFree(tree_base_device);
-  auto time_end = boost::chrono::high_resolution_clock::now();
-  std::cout << "Total time taken: " << boost::chrono::duration<double>(time_end - time_start).count() << std::endl;
+  cudaCheckErrors(cudaFree(scan_device));
+  //std::cout << "time:" << boost::chrono::duration<double>(boost::chrono::high_resolution_clock::now() - t_start).count() << std::endl;
 }
-template void computeUpdateCuda(
-  const Pointcloud& scan, const point3d& origin, KeySet& free_cells, 
-  KeySet& occupied_cells, double maxrange, OccupancyOcTreeBase<OcTreeNode>*);
-template void computeUpdateCuda(
-  const Pointcloud& scan, const point3d& origin, KeySet& free_cells, 
-  KeySet& occupied_cells, double maxrange, OccupancyOcTreeBase<OcTreeNodeStamped>*);
-template void computeUpdateCuda(
-  const Pointcloud& scan, const point3d& origin, KeySet& free_cells, 
-  KeySet& occupied_cells, double maxrange, OccupancyOcTreeBase<ColorOcTreeNode>*);
+template class OctomapUpdaterCuda<OcTreeNode>;
+template class OctomapUpdaterCuda<OcTreeNodeStamped>;
+template class OctomapUpdaterCuda<ColorOcTreeNode>;
 #endif

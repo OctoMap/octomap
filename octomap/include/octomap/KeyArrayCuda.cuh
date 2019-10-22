@@ -1,29 +1,27 @@
-#ifndef KEY_CONTAINDER_CUDA_CUH
-#define KEY_CONTAINDER_CUDA_CUH
+#ifndef KEY_ARRAY_CUDA_CUH
+#define KEY_ARRAY_CUDA_CUH
 #ifdef __CUDA_SUPPORT__
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <octomap/AssertionCuda.cuh>
 #include <octomap/OcTreeKey.h>
+#include <octomap/HashSetCuda.cuh>
 
 namespace octomap {
 
-  class KeyContainerCuda {
+  class KeyArrayCuda {
   public:
     
-    CUDA_CALLABLE KeyContainerCuda (
-      const int& maxSize = 100000) :
+    CUDA_CALLABLE KeyArrayCuda (
+      const int& maxSize = 100) :
       maxSize(maxSize)
     {
-      ray = new OcTreeKey[maxSize];
-      reset();
     }
 
-    CUDA_CALLABLE ~KeyContainerCuda () {
-      delete ray;
+    CUDA_CALLABLE ~KeyArrayCuda () {
     }
     
-    CUDA_CALLABLE KeyContainerCuda(const KeyContainerCuda& other)
+    CUDA_CALLABLE KeyArrayCuda(const KeyArrayCuda& other)
     {
       ray = other.ray;
       last = other.last;
@@ -38,20 +36,20 @@ namespace octomap {
       cudaCheckErrors(cudaFree(ray));
     }
 
-    __host__ void copyToDevice(const KeyContainerCuda& other) {
+    __host__ void copyFromHost(const KeyArrayCuda& other) {
       assert (maxSize == other.sizeMax());
       cudaCheckErrors(cudaMemcpy(ray, other.ray, maxSize * sizeof(OcTreeKey), cudaMemcpyHostToDevice));
       last = other.last;
       maxSize = other.maxSize;
     }
 
-    __host__ void copyToHost(const KeyContainerCuda& other) {
+    __host__ void copyFromDevice(const KeyArrayCuda& other) {
       assert (maxSize == other.sizeMax());
       cudaCheckErrors(cudaMemcpy(ray, other.ray, maxSize * sizeof(OcTreeKey), cudaMemcpyDeviceToHost));
       last = other.last;
     }
 
-    CUDA_CALLABLE KeyContainerCuda& operator=(const KeyContainerCuda& other){
+    CUDA_CALLABLE KeyArrayCuda& operator=(const KeyArrayCuda& other){
       ray = other.ray;
       last = other.last;
       maxSize = other.maxSize;
@@ -82,7 +80,9 @@ namespace octomap {
     int maxSize;
   };
 
-  using KeyRayCuda = KeyContainerCuda;
+  using KeyRayCuda = KeyArrayCuda;
 }
+
+
 #endif
 #endif

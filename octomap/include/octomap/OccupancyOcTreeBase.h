@@ -44,6 +44,11 @@
 #include "OcTreeBaseImpl.h"
 #include "AbstractOccupancyOcTree.h"
 
+#ifdef __CUDA_SUPPORT__
+template <class NODE>
+class OctomapUpdaterCuda;
+#endif
+
 #ifdef __CUDACC__
 #ifndef CUDA_CALLABLE
 #define CUDA_CALLABLE __host__ __device__
@@ -84,6 +89,14 @@ namespace octomap {
 
     /// Copy constructor
     OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs);
+
+    /// Initializer for cuda updater
+    #ifdef __CUDA_SUPPORT__
+    void initializeCuda() {
+      octomapUpdaterCuda = new OctomapUpdaterCuda<NODE>(this);
+      octomapUpdaterCuda->initialize();
+    }
+    #endif
 
     /**
     * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
@@ -504,7 +517,10 @@ namespace octomap {
     bool use_change_detection;
     /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
     KeyBoolMap changed_keys;
-    
+
+    #ifdef __CUDA_SUPPORT__
+    OctomapUpdaterCuda<NODE>* octomapUpdaterCuda;
+    #endif
 
   };
 
