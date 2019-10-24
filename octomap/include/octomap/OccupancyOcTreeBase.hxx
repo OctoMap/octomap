@@ -86,7 +86,9 @@ namespace octomap {
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
                                              double maxrange, bool lazy_eval, bool discretize) {
-    #ifndef __CUDA_SUPPORT__
+    #ifdef __CUDA_SUPPORT__
+        octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange);
+    #else
     KeySet free_cells, occupied_cells;
     if (discretize)
       computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
@@ -100,8 +102,6 @@ namespace octomap {
     for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
       updateNode(*it, true, lazy_eval);
     }
-    #else
-    octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange, lazy_eval);
     #endif
   }
 

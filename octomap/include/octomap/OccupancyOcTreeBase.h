@@ -92,8 +92,8 @@ namespace octomap {
 
     /// Initializer for cuda updater
     #ifdef __CUDA_SUPPORT__
-    void initializeCuda() {
-      octomapUpdaterCuda = new OctomapUpdaterCuda<NODE>(this);
+    void initializeCuda(const double& max_range, const size_t& scan_size) {
+      octomapUpdaterCuda = new OctomapUpdaterCuda<NODE>(this, max_range, scan_size);
       octomapUpdaterCuda->initialize();
     }
     #endif

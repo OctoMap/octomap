@@ -242,7 +242,7 @@ int main(int argc, char** argv) {
   tree->setProbHit(probHit);
   tree->setProbMiss(probMiss);
   #ifdef __CUDA_SUPPORT__
-  tree->initializeCuda();
+  tree->initializeCuda(maxrange, (*graph->begin())->scan->size());
   #endif
 
   gettimeofday(&start, NULL);  // start timer
@@ -252,12 +252,10 @@ int main(int argc, char** argv) {
     if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << endl;
     else cout << "("<<currentScan << "/" << numScans << ") " << endl;
 
-    auto t_start = boost::chrono::high_resolution_clock::now();
     if (simpleUpdate)
       tree->insertPointCloudRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
     else
       tree->insertPointCloud((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, false, discretize);
-    std::cout << "time:" << boost::chrono::duration<double>(boost::chrono::high_resolution_clock::now() - t_start).count() << std::endl;
     if (compression == 2){
       tree->toMaxLikelihood();
       tree->prune();

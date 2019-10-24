@@ -5,6 +5,7 @@
 #include <cuda_runtime.h>
 #include <octomap/AssertionCuda.cuh>
 #include <octomap/OcTreeKey.h>
+#include <octomap/KeyArrayCuda.cuh>
 
 /**
  * Based on CUDA by Example: 
@@ -13,30 +14,11 @@
  */
 
 namespace octomap {
-  struct LockCuda {
-    int *mutex;
-    __host__ LockCuda(void) {
-      initializeDevice();
-    }
-    __host__ ~LockCuda(void) {
-      //cudaCheckErrors(cudaFree(mutex));
-    }
-    __device__ void lock(void);
-    __device__ void unlock(void);
-    __host__ void initializeDevice() {
-      int state = 0;
-      cudaCheckErrors(cudaMallocManaged(&mutex, sizeof(int)));
-      cudaCheckErrors(cudaMemcpy(mutex, &state, sizeof(int), cudaMemcpyHostToDevice));
-    }
-  };
-
-  #define UNKNOWN -1
-  #define FREE 0
-  #define OCCUPIED 1
 
   struct SetElement {
     OcTreeKey key_;
     SetElement *next_;
+    size_t hash_;
     int value_ = {UNKNOWN};
   };
 
@@ -54,7 +36,7 @@ namespace octomap {
     SetElement* pool_;
     int first_free_;
   public:
-    LockCuda* pair_locks_;
+    unsigned int* hash_locks_;
     
     __host__ HashSetCuda () : type_(NONE) {
     }
@@ -85,10 +67,8 @@ namespace octomap {
         cudaCheckErrors(cudaMemset(elements_, 0, n_hash_elements * sizeof(SetElement*)));
         cudaCheckErrors(cudaMallocManaged(&pool_, n_elements * sizeof(SetElement)));
         first_free_ = 0;
-        //auto locks = new LockCuda[n_hash_elements];
-        //cudaCheckErrors(cudaMallocManaged(&pair_locks_, n_hash_elements * sizeof(LockCuda)));
-        //cudaCheckErrors(cudaMemcpy(pair_locks_, &locks[0], n_hash_elements * sizeof(LockCuda), cudaMemcpyHostToDevice));
-        //delete[] locks;
+        cudaCheckErrors(cudaMallocManaged(&hash_locks_, n_hash_elements * sizeof(unsigned int)));
+        cudaCheckErrors(cudaMemset(hash_locks_, 0, n_hash_elements * sizeof(unsigned int)));
         type_ = DEVICE;
       } else {
         printf("Map already initialized to host.");
@@ -114,6 +94,7 @@ namespace octomap {
           auto location = &pool_[first_free_++];
           location->key_ = key;
           location->value_ = value;
+          location->hash_ = hash;
           location->next_ = elements_[hash];
           elements_[hash] = location;
         }
@@ -124,21 +105,15 @@ namespace octomap {
       }
     }
 
-    __device__ void insertDevice(const OcTreeKey& key, const int& value);
-    __host__ void reset() {
-        // reset all map values
-        while (first_free_ > 0) {
-          pool_[--first_free_].value_ = UNKNOWN;
-        }
-
-        //cudaCheckErrors(cudaMallocManaged(&elements_, count_ * sizeof(SetElement*)));
-        cudaCheckErrors(cudaMemset(elements_, 0, count_ * sizeof(SetElement*)));
-        //cudaCheckErrors(cudaMallocManaged(&pool_, n_elements_ * sizeof(SetElement)));
-    }
+    __device__ void insertDevice(const KeyRayCuda& ray, const int& start, const int& tid, const int& value);
 
     CUDA_CALLABLE size_t count() const { return count_; }
     CUDA_CALLABLE const SetElement* element(const int& idx) const { return elements_[idx]; }
     CUDA_CALLABLE void resetElement(const int& idx) { elements_[idx] = nullptr; }
+
+    CUDA_CALLABLE SetElement** elements() { return elements_; }
+    CUDA_CALLABLE SetElement* pool() { return pool_; }
+    CUDA_CALLABLE int& firstFree() { return first_free_; }
 
     __host__ void copyFromDevice(const HashSetCuda& other) {
       if (type_ == HOST) {
@@ -166,7 +141,7 @@ namespace octomap {
             (SetElement*)(
               (size_t)pool_[i].next_ - (size_t)other.pool_ + (size_t)pool_);
         }
-      } 
+      }
     }
 
     __host__ void copyElementsFromDevice(const HashSetCuda& other) {
