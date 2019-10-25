@@ -87,7 +87,24 @@ namespace octomap {
   void OccupancyOcTreeBase<NODE>::insertPointCloud(const Pointcloud& scan, const octomap::point3d& sensor_origin,
                                              double maxrange, bool lazy_eval, bool discretize) {
     #ifdef __CUDA_SUPPORT__
-        octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange);
+    if (discretize) {
+      Pointcloud discretePC;
+      discretePC.reserve(scan.size());
+      KeySet endpoints;
+
+      for (int i = 0; i < (int)scan.size(); ++i) {
+        OcTreeKey k = this->coordToKey(scan[i]);
+        std::pair<KeySet::iterator,bool> ret = endpoints.insert(k);
+        if (ret.second){ // insertion took place => k was not in set
+          discretePC.push_back(this->keyToCoord(k));
+        }
+      }
+      // directly updates nodes
+      octomapUpdaterCuda->computeUpdate(discretePC, sensor_origin, maxrange, lazy_eval);
+    } else {
+      // directly updates nodes
+      octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange, lazy_eval);
+    }
     #else
     KeySet free_cells, occupied_cells;
     if (discretize)
