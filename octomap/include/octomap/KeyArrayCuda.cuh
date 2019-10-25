@@ -17,15 +17,6 @@ namespace octomap {
     static void setMaxSize(const int& max_size) { max_ray_size_ = max_size;} 
   };
 
-  struct KeyValue {
-    __host__ __device__ KeyValue() {}
-    __host__ __device__ KeyValue(const OcTreeKey& key, const int& value) :
-      key_(key), value_(value) {}
-    __host__ __device__ ~KeyValue() {}
-    OcTreeKey key_;
-    int value_ = UNKNOWN;
-  };
-
   struct KeyHash {
     __host__ __device__ KeyHash() {}
     __host__ __device__ KeyHash(const OcTreeKey& key, const size_t& hash) :
