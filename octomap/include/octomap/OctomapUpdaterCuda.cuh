@@ -32,7 +32,8 @@ public:
   void computeUpdate(
     const octomap::Pointcloud& scan, 
     const octomap::point3d& origin,
-    const double& max_range);
+    const double& max_range,
+    const bool& lazy_eval);
 
 private:
   // tree base on host
