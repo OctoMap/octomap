@@ -9,8 +9,8 @@ namespace octomap {
       ray_[atomicAdd(&last_, 1)] = k;
     }
 
-  __device__ unsigned long long int KeyPtrArrayCuda::addKeyAtomicAt(const OcTreeKey* k, const int& l) {
-    return atomicCAS((unsigned long long int*)&ray_[l], 0, (unsigned long long int)k);
+  __device__ unsigned UnsignedArrayCuda::addKeyAtomicAt(const unsigned& k, const unsigned& l) {
+    return atomicCAS((unsigned*)&ray_[l], 0, k);
   }
 
   template class ArrayCuda<size_t>;

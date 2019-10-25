@@ -126,9 +126,9 @@ namespace octomap {
     int max_size_;
   };
 
-  class KeyPtrArrayCuda : public ArrayCuda<OcTreeKey*> {
+  class UnsignedArrayCuda : public ArrayCuda<unsigned> {
   public:
-    __device__ unsigned long long int addKeyAtomicAt(const OcTreeKey* k, const int& l);
+    __device__ unsigned addKeyAtomicAt(const unsigned& k, const unsigned& l);
     using ArrayCuda::ArrayCuda;
   };
 

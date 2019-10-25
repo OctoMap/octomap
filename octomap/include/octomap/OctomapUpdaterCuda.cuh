@@ -43,13 +43,10 @@ private:
   KeyRayCuda* rays_device_;
   int n_rays_;
   // Hashset for occupied/free cells on device
-  ArrayCuda<KeyValue>* key_value_arr_device_;
-  KeyPtrArrayCuda* free_hash_arr_device_;
-  KeyPtrArrayCuda* occupied_hash_arr_device_;
+  UnsignedArrayCuda* free_hash_arr_device_;
+  UnsignedArrayCuda* occupied_hash_arr_device_;
   ArrayCuda<KeyHash>* free_hashes_device_;
   ArrayCuda<KeyHash>* occupied_hashes_device_;
-  ArrayCuda<KeyHash>* free_hashes_host_;
-  ArrayCuda<KeyHash>* occupied_hashes_host_;
   bool use_bbx_limit_;
   double res_;
   double res_half_;
@@ -65,8 +62,7 @@ private:
 
   // map size settings
   int ray_size_;
-  int max_arr_elements_ = 5e6;
-  int max_hash_elements_ = 2e5;
+  int max_hash_elements_ = 2e6;
   int max_range_ = -1;
 };
 #endif
