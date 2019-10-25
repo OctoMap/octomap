@@ -1,23 +1,27 @@
-#include <stddef.h>
-#include <octomap/OctomapUpdaterCuda.cuh>
-#include <octomap/AssertionCuda.cuh>
-#include <boost/chrono.hpp>
 #ifdef __CUDA_SUPPORT__
+#include <stddef.h>
+#include <octomap/CudaOctomapUpdater.cuh>
+#include <octomap/CudaAssertion.cuh>
+#include <boost/chrono.hpp>
 
 #ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
 #define CUDA_CALLABLE __host__ __device__
+#endif
 #else
+#ifndef CUDA_CALLABLE
 #define CUDA_CALLABLE
+#endif
 #endif
 
 template <class NODE,class I>
-CUDA_CALLABLE bool computeRayKeysCuda(
+CUDA_CALLABLE bool computeRayKeys(
   const point3d& origin, 
   const point3d& end, 
   KeyRayCuda& ray,
   const double& resolution,
   const double& resolution_half,
-  OcTreeBaseImpl<NODE,I>* tree_base)
+  octomap::OcTreeBaseImpl<NODE,I>* tree_base)
 {
   ray.reset();
 
@@ -67,8 +71,13 @@ CUDA_CALLABLE bool computeRayKeysCuda(
 
   // Incremental phase  ---------------------------------------------------------
   bool done = false;
+  auto size_max = ray.sizeMax();
   while (!done) {
-
+    if (ray.size() >= size_max) {
+      done = true;
+      break;
+    }
+    
     unsigned int dim;
 
     // find minimum tMax:
@@ -108,8 +117,6 @@ CUDA_CALLABLE bool computeRayKeysCuda(
         ray.addKey(current_key);
       }
     }
-    assert ( ray.size() < ray.sizeMax() - 1);
-
   } // end while
 
   return true;
@@ -122,14 +129,14 @@ __global__ void computeUpdateNoBBxRanged(
   KeyRayCuda* rays,
   UnsignedArrayCuda* free_hash_arr_device,
   UnsignedArrayCuda* occupied_hash_arr_device,
-  ArrayCuda<KeyHash>* free_hashes_device,
-  ArrayCuda<KeyHash>* occupied_hashes_device,
+  TArray<KeyHash>* free_hashes_device,
+  TArray<KeyHash>* occupied_hashes_device,
   size_t size,
   size_t max_hash_elements,
   double max_range,
   double resolution,
   double resolution_half,
-  OccupancyOcTreeBase<NODE>* tree_base)
+  OccupancyOcTreeBase<NODE>* tree_base_device)
 {
   int tid = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
@@ -139,7 +146,7 @@ __global__ void computeUpdateNoBBxRanged(
     auto& ray = rays[tid];
     if ((p - origin).norm() <= max_range) { // is not max_range meas.
       // free cells
-      if (computeRayKeysCuda(origin, p, ray, resolution, resolution_half, tree_base)) {
+      if (computeRayKeys(origin, p, ray, resolution, resolution_half, tree_base_device)) {
         for (auto it = ray.begin(); it != ray.end(); ++it) {
           size_t hash = OcTreeKey::KeyHash{}(*it) % max_hash_elements;
           if (free_hash_arr_device->addKeyAtomicAt((unsigned)1, hash) == 0)
@@ -149,7 +156,7 @@ __global__ void computeUpdateNoBBxRanged(
       
       // occupied endpoint
       OcTreeKey key;
-      if (tree_base->coordToKeyChecked(p, key)) {
+      if (tree_base_device->coordToKeyChecked(p, key)) {
         size_t hash = OcTreeKey::KeyHash{}(key) % max_hash_elements;
         if (occupied_hash_arr_device->addKeyAtomicAt((unsigned)1, hash) == 0) {}
           occupied_hashes_device->addKeyAtomic(KeyHash(key, hash));
@@ -158,7 +165,7 @@ __global__ void computeUpdateNoBBxRanged(
       point3d direction = (p - origin).normalized ();
       point3d new_end = origin + direction * (float) max_range;
       // free cells
-      if (computeRayKeysCuda(origin, p, ray, resolution, resolution_half, tree_base)) {
+      if (computeRayKeys(origin, p, ray, resolution, resolution_half, tree_base_device)) {
         for (auto it = ray.begin(); it != ray.end(); ++it) {
           size_t hash = OcTreeKey::KeyHash{}(*it) % max_hash_elements;
           if (free_hash_arr_device->addKeyAtomicAt((unsigned)1, hash) == 0)
@@ -177,13 +184,13 @@ __global__ void computeUpdateNoBBxNoRange(
   KeyRayCuda* rays,
   UnsignedArrayCuda* free_hash_arr_device,
   UnsignedArrayCuda* occupied_hash_arr_device,
-  ArrayCuda<KeyHash>* free_hashes_device,
-  ArrayCuda<KeyHash>* occupied_hashes_device,
+  TArray<KeyHash>* free_hashes_device,
+  TArray<KeyHash>* occupied_hashes_device,
   size_t size,
   size_t max_hash_elements,
   double resolution,
   double resolution_half,
-  OccupancyOcTreeBase<NODE>* tree_base)
+  OccupancyOcTreeBase<NODE>* tree_base_device)
 {
   int tid = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
@@ -192,7 +199,7 @@ __global__ void computeUpdateNoBBxNoRange(
     auto& p = points[i];
     auto& ray = rays[tid];
     // free cells
-    if (computeRayKeysCuda(origin, p, ray, resolution, resolution_half, tree_base)) {
+    if (computeRayKeys(origin, p, ray, resolution, resolution_half, tree_base_device)) {
       for (auto it = ray.begin(); it != ray.end(); ++it) {
         size_t hash = OcTreeKey::KeyHash{}(*it) % max_hash_elements;
         if (free_hash_arr_device->addKeyAtomicAt((unsigned)1, hash) == 0)
@@ -202,7 +209,7 @@ __global__ void computeUpdateNoBBxNoRange(
     
     // occupied endpoint
     OcTreeKey key;
-    if (tree_base->coordToKeyChecked(p, key)) {
+    if (tree_base_device->coordToKeyChecked(p, key)) {
       size_t hash = OcTreeKey::KeyHash{}(key) % max_hash_elements;
       if (occupied_hash_arr_device->addKeyAtomicAt((unsigned)1, hash) == 0) {}
         occupied_hashes_device->addKeyAtomic(KeyHash(key, hash));
@@ -210,9 +217,9 @@ __global__ void computeUpdateNoBBxNoRange(
   }
 }
 
-__global__ void reset(
+__global__ void computeUpdateReset(
   UnsignedArrayCuda* arr_device,
-  ArrayCuda<KeyHash>* hashes_device,
+  TArray<KeyHash>* hashes_device,
   size_t size
 )
 {
@@ -224,27 +231,12 @@ __global__ void reset(
   }
 }
 
-void verifyTable(const HashSetCuda &table ) {
-  int free_cells = 0, occ = 0, count = 0;
-  for (size_t i = 0; i < table.count(); i++) {
-    auto current = table.element(i);
-    while (current != NULL) {
-      if (current->value_ == 0) 
-        ++free_cells;
-      else if (current->value_ == 1) 
-        ++occ;
-      ++count;
-      current = current->next_;
-    }
-  }
-  printf( "%d elements found in hash table with %d free and %d occupied.\n", count, free_cells, occ);
-}
-
 template <class NODE>
-OctomapUpdaterCuda<NODE>::OctomapUpdaterCuda(
+CudaOctomapUpdater<NODE>::CudaOctomapUpdater(
   octomap::OccupancyOcTreeBase<NODE>* tree_base, 
   const double& max_range,
-  const size_t& scan_size) :
+  const size_t& scan_size,
+  const bool& print_info) :
   tree_base_(tree_base),
   max_range_(max_range)
 {
@@ -253,34 +245,38 @@ OctomapUpdaterCuda<NODE>::OctomapUpdaterCuda(
   use_bbx_limit_ = tree_base_->bbxSet();
   res_ = tree_base_->getResolution();
   res_half_ = res_ * 0.5;
-  if (max_range < 10.0) {
+  if (max_range < 0.0) {
+    ray_size_ = 100.0 / res_;
+  } else if (max_range < 10.0) {
     ray_size_ = 10.0 / res_;
   } else if (max_range < 20.0) {
     ray_size_ = 20.0 / res_;
   }
-  std::cout << "ray_size_:" << ray_size_ << std::endl;
   KeyRayConfig::setMaxSize(ray_size_);
 
-  std::cout << "Setting up cuda updater for the scan size:" << scan_size_ << std::endl;
-  std::cout << "scan_size_:" << scan_size_ << std::endl;
   int warp_size = 32;
   n_total_threads_ = std::ceil(scan_size_ / (float) warp_size) * warp_size;
   n_threads_per_block_ = min(n_total_threads_, 256);
   n_blocks_ = n_total_threads_ / n_threads_per_block_;
-  std::cout << "Total number of threads: " << n_total_threads_ << std::endl;
-  std::cout << "Total number of blocks: " << n_blocks_ << std::endl;
-  std::cout << "Threads per block: " << n_threads_per_block_ << std::endl;
   n_rays_ = n_total_threads_;
-  std::cout << 
+  
+  if (print_info) {
+    std::cout << "ray_size_:" << ray_size_ << std::endl;
+    std::cout << "Setting up cuda updater for the scan size:" << scan_size_ << std::endl;
+    std::cout << "scan_size_:" << scan_size_ << std::endl;
+    std::cout << "Total number of threads: " << n_total_threads_ << std::endl;
+    std::cout << "Total number of blocks: " << n_blocks_ << std::endl;
+    std::cout << "Threads per block: " << n_threads_per_block_ << std::endl;
+    std::cout << 
     "Memory used by rays:" << 
     n_rays_ * 
     (ray_size_ * sizeof(OcTreeKey) + sizeof(KeyArrayCuda)) 
     << " bytes. " << std::endl;
-
+  }
 }
 
 template <class NODE>
-OctomapUpdaterCuda<NODE>::~OctomapUpdaterCuda() {
+CudaOctomapUpdater<NODE>::~CudaOctomapUpdater() {
   for (int i = 0; i < n_rays_; ++i) {
     rays_device_[i].freeDevice();
   }
@@ -290,7 +286,7 @@ OctomapUpdaterCuda<NODE>::~OctomapUpdaterCuda() {
 }
 
 template <class NODE>
-void OctomapUpdaterCuda<NODE>::initialize() {
+void CudaOctomapUpdater<NODE>::initialize() {
   // make a copy of tree for device usage - need a better way ? or idk
   cudaCheckErrors(cudaMallocManaged(&tree_base_device_, sizeof(octomap::OccupancyOcTreeBase<NODE>)));
   cudaCheckErrors(cudaMemcpy(tree_base_device_, tree_base_, sizeof(octomap::OccupancyOcTreeBase<NODE>), cudaMemcpyHostToDevice));
@@ -314,24 +310,25 @@ void OctomapUpdaterCuda<NODE>::initialize() {
   cudaCheckErrors(cudaMallocManaged(&occupied_hash_arr_device_, sizeof(UnsignedArrayCuda)));
   cudaCheckErrors(cudaMemcpy(occupied_hash_arr_device_, &occupied_hash_arr_host, sizeof(UnsignedArrayCuda), cudaMemcpyHostToDevice));
 
-  ArrayCuda<KeyHash> free_hashes(max_hash_elements_);
-  ArrayCuda<KeyHash> occupied_hashes(max_hash_elements_);
+  TArray<KeyHash> free_hashes(max_hash_elements_);
+  TArray<KeyHash> occupied_hashes(max_hash_elements_);
   free_hashes.allocateDevice();
   occupied_hashes.allocateDevice();
-  cudaCheckErrors(cudaMallocManaged(&free_hashes_device_, sizeof(ArrayCuda<KeyHash>)));
-  cudaCheckErrors(cudaMemcpy(free_hashes_device_, &free_hashes, sizeof(ArrayCuda<KeyHash>), cudaMemcpyHostToDevice));
-  cudaCheckErrors(cudaMallocManaged(&occupied_hashes_device_, sizeof(ArrayCuda<KeyHash>)));
-  cudaCheckErrors(cudaMemcpy(occupied_hashes_device_, &occupied_hashes, sizeof(ArrayCuda<KeyHash>), cudaMemcpyHostToDevice));
+  cudaCheckErrors(cudaMallocManaged(&free_hashes_device_, sizeof(TArray<KeyHash>)));
+  cudaCheckErrors(cudaMemcpy(free_hashes_device_, &free_hashes, sizeof(TArray<KeyHash>), cudaMemcpyHostToDevice));
+  cudaCheckErrors(cudaMallocManaged(&occupied_hashes_device_, sizeof(TArray<KeyHash>)));
+  cudaCheckErrors(cudaMemcpy(occupied_hashes_device_, &occupied_hashes, sizeof(TArray<KeyHash>), cudaMemcpyHostToDevice));
 
   // initialized scan points
   cudaCheckErrors(cudaMallocManaged(&scan_device, scan_size_ * sizeof(octomap::point3d)));
 }
 
 template <class NODE>
-void OctomapUpdaterCuda<NODE>::computeUpdate(
+void CudaOctomapUpdater<NODE>::computeUpdate(
   const octomap::Pointcloud& scan, 
   const octomap::point3d& origin,
-  const double& max_range)
+  const double& max_range,
+  const bool& lazy_eval)
 {
   auto t_start = boost::chrono::high_resolution_clock::now();
   // total number of rays or points
@@ -372,17 +369,17 @@ void OctomapUpdaterCuda<NODE>::computeUpdate(
   }
   cudaCheckErrors(cudaDeviceSynchronize());
   for (int i = 0; i < occupied_hashes_device_->size(); ++i) {
-    tree_base_->updateNode(occupied_hashes_device_->get(i).key_, false, false);
+    tree_base_->updateNode(occupied_hashes_device_->get(i).key_, false, lazy_eval);
   }
   for (int i = 0; i < occupied_hashes_device_->size(); ++i) {
-    tree_base_->updateNode(occupied_hashes_device_->get(i).key_, true, false);
+    tree_base_->updateNode(occupied_hashes_device_->get(i).key_, true, lazy_eval);
   }
-  reset<<<n_blocks_, n_threads_per_block_>>>(free_hash_arr_device_, free_hashes_device_, free_hashes_device_->size());
-  reset<<<n_blocks_, n_threads_per_block_>>>(occupied_hash_arr_device_, occupied_hashes_device_, occupied_hashes_device_->size());
+  computeUpdateReset<<<n_blocks_, n_threads_per_block_>>>(free_hash_arr_device_, free_hashes_device_, free_hashes_device_->size());
+  computeUpdateReset<<<n_blocks_, n_threads_per_block_>>>(occupied_hash_arr_device_, occupied_hashes_device_, occupied_hashes_device_->size());
   free_hashes_device_->reset();
   occupied_hashes_device_->reset();
 }
-template class OctomapUpdaterCuda<OcTreeNode>;
-template class OctomapUpdaterCuda<OcTreeNodeStamped>;
-template class OctomapUpdaterCuda<ColorOcTreeNode>;
+template class CudaOctomapUpdater<OcTreeNode>;
+template class CudaOctomapUpdater<OcTreeNodeStamped>;
+template class CudaOctomapUpdater<ColorOcTreeNode>;
 #endif

@@ -1,16 +1,12 @@
-#ifndef KEY_ARRAY_CUDA_CUH
-#define KEY_ARRAY_CUDA_CUH
+#ifndef T_ARRAY_CUH
+#define T_ARRAY_CUH
 #ifdef __CUDA_SUPPORT__
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <octomap/AssertionCuda.cuh>
+#include <octomap/CudaAssertion.cuh>
 #include <octomap/OcTreeKey.h>
 
 namespace octomap {
-
-  #define UNKNOWN -1
-  #define FREE 0
-  #define OCCUPIED 1
 
   struct KeyRayConfig {
     static int max_ray_size_;
@@ -27,19 +23,19 @@ namespace octomap {
   };
 
   template <typename T> 
-  class ArrayCuda {
+  class TArray {
   public:
     
-    __host__ ArrayCuda (const int& max_size = KeyRayConfig::max_ray_size_) :
+    __host__ TArray (const int& max_size = KeyRayConfig::max_ray_size_) :
       max_size_(max_size)
     {      
       reset();
     }
 
-    __host__ ~ArrayCuda () {
+    __host__ ~TArray () {
     }
     
-    CUDA_CALLABLE ArrayCuda(const ArrayCuda& other)
+    CUDA_CALLABLE TArray(const TArray& other)
     {
       ray_ = other.ray_;
       last_ = other.last_;
@@ -57,17 +53,17 @@ namespace octomap {
       cudaCheckErrors(cudaFree(ray_));
     }
 
-    __host__ void copyFromHost(const ArrayCuda& other) {
+    __host__ void copyFromHost(const TArray& other) {
       cudaCheckErrors(cudaMemcpy(ray_, other.ray_, max_size_ * sizeof(T), cudaMemcpyHostToDevice));
       last_ = other.last_;
     }
 
-    __host__ void copyFromDevice(const ArrayCuda& other) {
+    __host__ void copyFromDevice(const TArray& other) {
       cudaCheckErrors(cudaMemcpy(ray_, other.ray_, max_size_ * sizeof(T), cudaMemcpyDeviceToHost));
       last_ = other.last_;
     }
 
-    CUDA_CALLABLE ArrayCuda& operator=(const ArrayCuda& other){
+    CUDA_CALLABLE TArray& operator=(const TArray& other){
       ray_ = other.ray_;
       last_ = other.last_;
       return *this;
@@ -109,7 +105,7 @@ namespace octomap {
 
     CUDA_CALLABLE int size() const { return last_; }
     CUDA_CALLABLE int* last() { return &last_; }
-    int sizeMax() { return max_size_; }
+    CUDA_CALLABLE int sizeMax() { return max_size_; }
 
   protected:
     T* ray_;
@@ -117,14 +113,14 @@ namespace octomap {
     int max_size_;
   };
 
-  class UnsignedArrayCuda : public ArrayCuda<unsigned> {
+  class UnsignedArrayCuda : public TArray<unsigned> {
   public:
     __device__ unsigned addKeyAtomicAt(const unsigned& k, const unsigned& l);
-    using ArrayCuda::ArrayCuda;
+    using TArray::TArray;
   };
 
-  class KeyArrayCuda : public ArrayCuda<OcTreeKey> {
-    using ArrayCuda::ArrayCuda;
+  class KeyArrayCuda : public TArray<OcTreeKey> {
+    using TArray::TArray;
   };
 
   using KeyRayCuda = KeyArrayCuda;

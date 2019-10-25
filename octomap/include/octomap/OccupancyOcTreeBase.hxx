@@ -36,7 +36,7 @@
 
 #include <octomap/MCTables.h>
 #ifdef __CUDA_SUPPORT__
-#include <octomap/OctomapUpdaterCuda.cuh>
+#include <octomap/CudaOctomapUpdater.cuh>
 #endif
 
 namespace octomap {
@@ -100,10 +100,10 @@ namespace octomap {
         }
       }
       // directly updates nodes
-      octomapUpdaterCuda->computeUpdate(discretePC, sensor_origin, maxrange, lazy_eval);
+      cudaOctomapUpdater->computeUpdate(discretePC, sensor_origin, maxrange, lazy_eval);
     } else {
       // directly updates nodes
-      octomapUpdaterCuda->computeUpdate(scan, sensor_origin, maxrange, lazy_eval);
+      cudaOctomapUpdater->computeUpdate(scan, sensor_origin, maxrange, lazy_eval);
     }
     #else
     KeySet free_cells, occupied_cells;
@@ -195,7 +195,6 @@ namespace octomap {
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
 #endif
-printf("scan=%i", scan.size());
     for (int i = 0; i < (int)scan.size(); ++i) {
       const point3d& p = scan[i];
       unsigned threadIdx = 0;

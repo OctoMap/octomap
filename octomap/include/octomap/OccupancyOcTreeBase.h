@@ -46,7 +46,7 @@
 
 #ifdef __CUDA_SUPPORT__
 template <class NODE>
-class OctomapUpdaterCuda;
+class CudaOctomapUpdater;
 #endif
 
 #ifdef __CUDACC__
@@ -93,8 +93,8 @@ namespace octomap {
     /// Initializer for cuda updater
     #ifdef __CUDA_SUPPORT__
     void initializeCuda(const double& max_range, const size_t& scan_size) {
-      octomapUpdaterCuda = new OctomapUpdaterCuda<NODE>(this, max_range, scan_size);
-      octomapUpdaterCuda->initialize();
+      cudaOctomapUpdater = new CudaOctomapUpdater<NODE>(this, max_range, scan_size);
+      cudaOctomapUpdater->initialize();
     }
     #endif
 
@@ -519,7 +519,7 @@ namespace octomap {
     KeyBoolMap changed_keys;
 
     #ifdef __CUDA_SUPPORT__
-    OctomapUpdaterCuda<NODE>* octomapUpdaterCuda;
+    CudaOctomapUpdater<NODE>* cudaOctomapUpdater;
     #endif
 
   };

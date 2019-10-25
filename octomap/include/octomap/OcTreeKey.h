@@ -62,7 +62,6 @@
 #ifdef __CUDA_SUPPORT__
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <octomap/AssertionCuda.cuh>
 #endif
 
 #ifdef __CUDACC__

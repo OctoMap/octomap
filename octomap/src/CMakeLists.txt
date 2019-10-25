@@ -10,9 +10,8 @@ SET (octomap_SRCS
   OcTreeNode.cpp
   OcTreeStamped.cpp
   ColorOcTree.cpp
-  OctomapUpdaterCuda.cu
-  KeyArrayCuda.cu
-  HashSetCuda.cu
+  CudaOctomapUpdater.cu
+  TArray.cu
   )
 
 IF(__CUDA_SUPPORT__)
@@ -52,7 +51,7 @@ ADD_EXECUTABLE(graph2tree graph2tree.cpp)
 TARGET_LINK_LIBRARIES(graph2tree octomap-static ${CUDA_LIBRARIES} ${Boost_LIBRARIES})
 target_compile_features(graph2tree PUBLIC cxx_std_11)
 SET_TARGET_PROPERTIES(graph2tree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-#[[
+
 ADD_EXECUTABLE(log2graph log2graph.cpp)
 TARGET_LINK_LIBRARIES(log2graph octomap-static ${CUDA_LIBRARIES})
 target_compile_features(log2graph PUBLIC cxx_std_11)
@@ -107,7 +106,7 @@ ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
 TARGET_LINK_LIBRARIES(octree2pointcloud octomap-static ${CUDA_LIBRARIES})
 target_compile_features(octree2pointcloud PUBLIC cxx_std_11)
 SET_TARGET_PROPERTIES(octree2pointcloud PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-]]
+
 install(TARGETS octomap octomap-static
   EXPORT octomap-targets
   INCLUDES DESTINATION include
