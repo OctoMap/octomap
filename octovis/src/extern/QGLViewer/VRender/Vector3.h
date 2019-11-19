@@ -191,5 +191,8 @@ namespace vrender
 			double _xyz[3];  //!< The 3 vector components
 
 	}; // interface of Vector3
+
+	Vector3 operator* (double,const Vector3&);
+	std::ostream& operator<< (std::ostream&,const Vector3&);
 }
 #endif // _VECTOR3_H

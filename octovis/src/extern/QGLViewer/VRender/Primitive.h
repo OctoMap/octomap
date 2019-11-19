@@ -66,6 +66,8 @@ namespace vrender
 	class Feedback3DColor ;
 	class Primitive ;
 
+	std::ostream& operator<<(std::ostream&,const Feedback3DColor&);
+
 #define EPS_SMOOTH_LINE_FACTOR 0.06  /* Lower for better smooth lines. */
 
 	//  A Feedback3DColor is a structure containing informations about a vertex projected into

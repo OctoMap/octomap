@@ -115,6 +115,9 @@ namespace vrender
 
   }; // interface of NVector3
 
+  double operator*(const NVector3 &u,const Vector3  &v);
+  double operator*(const Vector3  &u,const NVector3 &v);
+
 }
 
 #endif // _NVECTOR3_H

@@ -176,6 +176,8 @@ namespace vrender
 			double _xyz[2];  //!< The 3 vector components
 
 	}; // interface of Vector2
+
+	Vector2 operator- (const Vector2&);	
 }
 
 #endif // _VECTOR2_H
