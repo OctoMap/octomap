@@ -1,3 +1,7 @@
+v1.9.1: 2019-11-23
+==================
+- Improved compatibility with modern compilers and ROS2
+
 v1.9.0: 2017-04-28
 ==================
 - Fixed getUnknownLeafCenters to return true leaf centers (thx to A. Ecins)

@@ -18,6 +18,7 @@ set_target_properties( octomap PROPERTIES
 )
 ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
 SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap") 
+add_dependencies(octomap-static octomath-static)
 
 TARGET_LINK_LIBRARIES(octomap octomath)
 

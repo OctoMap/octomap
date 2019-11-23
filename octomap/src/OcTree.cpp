@@ -36,8 +36,8 @@
 
 namespace octomap {
 
-	OcTree::OcTree(double resolution) 
-		: OccupancyOcTreeBase<OcTreeNode>(resolution) {
+	OcTree::OcTree(double in_resolution)
+		: OccupancyOcTreeBase<OcTreeNode>(in_resolution) {
 		ocTreeMemberInit.ensureLinking();
 	};
 
@@ -48,7 +48,7 @@ namespace octomap {
 
   OcTree::StaticMemberInitializer OcTree::ocTreeMemberInit;
 
-  
+
 
 
 } // namespace

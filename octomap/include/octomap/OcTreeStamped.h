@@ -40,9 +40,9 @@
 #include <ctime>
 
 namespace octomap {
-  
+
   // node definition
-  class OcTreeNodeStamped : public OcTreeNode {    
+  class OcTreeNodeStamped : public OcTreeNode {
 
   public:
     OcTreeNodeStamped() : OcTreeNode(), timestamp(0) {}
@@ -52,19 +52,19 @@ namespace octomap {
     bool operator==(const OcTreeNodeStamped& rhs) const{
       return (rhs.value == value && rhs.timestamp == timestamp);
     }
-    
+
     void copyData(const OcTreeNodeStamped& from){
       OcTreeNode::copyData(from);
       timestamp = from.getTimestamp();
     }
-      
+
     // timestamp
     inline unsigned int getTimestamp() const { return timestamp; }
     inline void updateTimestamp() { timestamp = (unsigned int) time(NULL);}
-    inline void setTimestamp(unsigned int timestamp) {this->timestamp = timestamp; }
+    inline void setTimestamp(unsigned int t) {timestamp = t; }
 
-    // update occupancy and timesteps of inner nodes 
-    inline void updateOccupancyChildren() {      
+    // update occupancy and timesteps of inner nodes
+    inline void updateOccupancyChildren() {
       this->setLogOdds(this->getMaxChildLogOdds());  // conservative
       updateTimestamp();
     }
@@ -75,12 +75,12 @@ namespace octomap {
 
 
   // tree definition
-  class OcTreeStamped : public OccupancyOcTreeBase <OcTreeNodeStamped> {    
+  class OcTreeStamped : public OccupancyOcTreeBase <OcTreeNodeStamped> {
 
   public:
     /// Default constructor, sets resolution of leafs
 	  OcTreeStamped(double resolution);
-      
+
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)
     OcTreeStamped* create() const {return new OcTreeStamped(resolution); }
@@ -91,14 +91,14 @@ namespace octomap {
     unsigned int getLastUpdateTime();
 
     void degradeOutdatedNodes(unsigned int time_thres);
-    
+
     virtual void updateNodeLogOdds(OcTreeNodeStamped* node, const float& update) const;
     void integrateMissNoTime(OcTreeNodeStamped* node) const;
 
   protected:
     /**
      * Static member object which ensures that this OcTree's prototype
-     * ends up in the classIDMapping only once. You need this as a 
+     * ends up in the classIDMapping only once. You need this as a
      * static member in any derived octree class in order to read .ot
      * files through the AbstractOcTree factory. You should also call
      * ensureLinking() once from the constructor.
@@ -120,7 +120,7 @@ namespace octomap {
     };
     /// to ensure static initialization (only once)
     static StaticMemberInitializer ocTreeStampedMemberInit;
-    
+
   };
 
 } // end namespace

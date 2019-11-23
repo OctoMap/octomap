@@ -49,8 +49,8 @@ namespace octomap {
   }
 
   /// implementation of CountingOcTree  --------------------------------------
-  CountingOcTree::CountingOcTree(double resolution)
-   : OcTreeBase<CountingOcTreeNode>(resolution) {
+  CountingOcTree::CountingOcTree(double in_resolution)
+   : OcTreeBase<CountingOcTreeNode>(in_resolution) {
       countingOcTreeMemberInit.ensureLinking();
    }
 
@@ -65,6 +65,10 @@ namespace octomap {
   // Note: do not inline this method, will decrease speed (KMW)
   CountingOcTreeNode* CountingOcTree::updateNode(const OcTreeKey& k) {
 
+    if (root == NULL) {
+      root = new CountingOcTreeNode();
+      tree_size++;
+    }
     CountingOcTreeNode* curNode (root);
     curNode->increaseCount();
 
