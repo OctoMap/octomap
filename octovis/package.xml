@@ -19,9 +19,13 @@
     <build_type>cmake</build_type>
   </export>
       
-  <depend>octomap</depend>
-  <depend>libqglviewer-qt4</depend>
-  <depend>libqt4-dev</depend>
-  <depend>libqt4-opengl-dev</depend>
-  <depend>libqtgui4</depend>
+  <build_depend>octomap</build_depend>
+  <build_depend>libqglviewer-qt4-dev</build_depend>
+  <build_depend>libqt4-dev</build_depend>
+  <build_depend>libqt4-opengl-dev</build_depend>
+
+  <exec_depend>octomap</exec_depend>
+  <exec_depend>libqglviewer-qt4</exec_depend>
+  <exec_depend>libqtgui4</exec_depend>
+  <exec_depend>libqt4-opengl</exec_depend>
 </package>
