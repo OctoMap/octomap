@@ -113,7 +113,7 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double maxrange, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double /* maxrange */, bool lazy_eval) {
     if (pc.size() < 1)
       return;
 
