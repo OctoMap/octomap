@@ -1,3 +1,7 @@
+v1.9.2: 2019-11-28
+==================
+- Fix ROS buildfarm failures for octovis
+
 v1.9.1: 2019-11-23
 ==================
 - Improved compatibility with modern compilers and ROS2
