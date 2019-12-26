@@ -1,6 +1,11 @@
+v1.9.3: 2019-12-26
+==================
+- Fixed Wpedantic warnings
+- Removed problematic INSTALL_NAME_DIR (maxOS workaround)
+
 v1.9.2: 2019-11-28
 ==================
-- Fix ROS buildfarm failures for octovis
+- Fixed ROS buildfarm failures for octovis
 
 v1.9.1: 2019-11-23
 ==================
