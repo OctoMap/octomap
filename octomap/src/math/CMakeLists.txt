@@ -24,6 +24,6 @@ export(TARGETS octomath octomath-static
 
 install(TARGETS octomath octomath-static
   EXPORT octomap-targets
-  INCLUDES DESTINATION include
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )

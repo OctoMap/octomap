@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT( octovis )
 
 include(CTest)
+include(GNUInstallDirs)
 
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
@@ -55,9 +56,9 @@ INCLUDE_DIRECTORIES(BEFORE SYSTEM ${OCTOMAP_INCLUDE_DIRS})
 export(PACKAGE octovis)
 
 set(INSTALL_TARGETS_DEFAULT_ARGS
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
 # Builds the "octovis" viewer based on OpenGL and 
@@ -125,8 +126,8 @@ IF(BUILD_VIEWER)
     
   # Create a octovis-config.cmake file for the use from the install tree
   # and install it
-  set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
-  set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+  set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
   #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
   set(OCTOVIS_INCLUDE_TARGETS
@@ -136,7 +137,7 @@ IF(BUILD_VIEWER)
     octovis-config.cmake.in
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
     PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
-    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
+    INSTALL_DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/octovis")
 
   WRITE_BASIC_PACKAGE_VERSION_FILE(
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
@@ -146,15 +147,15 @@ IF(BUILD_VIEWER)
   install(FILES
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
-    DESTINATION share/octovis/)
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/octovis")
 
   # #installation:
   # # store all header files to install:
   file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
-  install(FILES ${octovis_HDRS} DESTINATION include/octovis)
+  install(FILES ${octovis_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octovis")
 
   # Install catkin package.xml
-  install(FILES package.xml DESTINATION share/octovis)
+  install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octovis")
   
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")

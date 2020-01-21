@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 PROJECT(dynamicEDT3D)
 
 include(CTest)
+include(GNUInstallDirs)
 
 # version (e.g. for packaging)
 set(DYNAMICEDT3D_MAJOR_VERSION 1)
@@ -63,10 +64,10 @@ ADD_SUBDIRECTORY(src)
 
 
 file(GLOB dynamicEDT3D_HDRS ${PROJECT_SOURCE_DIR}/include/dynamicEDT3D/*.h ${PROJECT_SOURCE_DIR}/include/dynamicEDT3D/*.hxx)
-install(FILES ${dynamicEDT3D_HDRS}	DESTINATION include/dynamicEDT3D)
+install(FILES ${dynamicEDT3D_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dynamicEDT3D")
 
 # Install catkin package.xml, attention package.xml names the catkin package "dynamic_edt_3d", so this is also the location where it needs to be installed to (and not "dynamicEDT3D")
-install(FILES package.xml DESTINATION share/dynamic_edt_3d)
+install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/dynamic_edt_3d")
 
 #TODO: this conflicts with the octomap uninstall
 #it is not only a target name problem, also both will use the same manifest file
@@ -106,7 +107,7 @@ CONFIGURE_PACKAGE_CONFIG_FILE(
   dynamicEDT3DConfig.cmake.in
   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig.cmake"
   PATH_VARS DYNAMICEDT3D_INCLUDE_DIRS DYNAMICEDT3D_LIB_DIR
-  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dynamicEDT3D)
+  INSTALL_DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/dynamicEDT3D")
 
 WRITE_BASIC_PACKAGE_VERSION_FILE(
   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DConfig-version.cmake"
@@ -120,8 +121,8 @@ WRITE_BASIC_PACKAGE_VERSION_FILE(
  
 # Create a dynamicEDT3DConfig.cmake file for the use from the install tree
 # and install it
-set(DYNAMICEDT3D_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
-set(DYNAMICEDT3D_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(DYNAMICEDT3D_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+set(DYNAMICEDT3D_LIB_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 #set(DYNAMICEDT3D_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
 set(DYNAMICEDT3D_INCLUDE_TARGETS
@@ -131,7 +132,7 @@ CONFIGURE_PACKAGE_CONFIG_FILE(
   dynamicEDT3DConfig.cmake.in
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
   PATH_VARS DYNAMICEDT3D_INCLUDE_DIRS DYNAMICEDT3D_LIB_DIR
-  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dynamicEDT3D)
+  INSTALL_DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/dynamicEDT3D")
 
 WRITE_BASIC_PACKAGE_VERSION_FILE(
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake"
@@ -141,7 +142,7 @@ WRITE_BASIC_PACKAGE_VERSION_FILE(
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig.cmake"
   "${PROJECT_BINARY_DIR}/InstallFiles/dynamicEDT3DConfig-version.cmake" 
-  DESTINATION share/dynamicEDT3D/)
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/dynamicEDT3D")
 
 # Write pkgconfig-file:
 include(InstallPkgConfigFile)
