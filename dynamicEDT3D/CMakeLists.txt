@@ -147,7 +147,7 @@ install(FILES
 include(InstallPkgConfigFile)
 install_pkg_config_file(dynamicEDT3D
     CFLAGS
-    LIBS -ldynamicEDT3D
+    LIBS -ldynamicedt3d
     REQUIRES
     VERSION ${DYNAMICEDT3D_VERSION})
 

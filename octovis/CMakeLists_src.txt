@@ -57,9 +57,7 @@ else(OCTOVIS_QT5)
   QT4_ADD_RESOURCES(viewer_RES src/icons.qrc)
 endif(OCTOVIS_QT5)
 
-#found QGLViewer lib dir
-link_directories(${QGLViewer_LIBRARY_DIR})
-
+#found QGLViewer include dir
 INCLUDE_DIRECTORIES(
   ${QGLViewer_INCLUDE_DIR}
 )
