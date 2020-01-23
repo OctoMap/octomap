@@ -12,8 +12,15 @@ Octovis is based on [QGLViewer](http://www.libqglviewer.com/), distributed under
 (octovis/src/extern/QGLViewer/GPL_EXCEPTION).
 
 
-LINUX
+BUILD
 -----
+
+To compile the library you need:
+
+* OpenGL
+* cmake (http://www.cmake.org)
+* Qt development environment
+* QGLViewer
 
 You can build octovis independently of octomap by following
 the these steps:
@@ -28,17 +35,10 @@ the these steps:
 You can manually set the location of the octomap library with the
 `octomap_DIR` variable in CMake.
 
-Note: If you get an error such as
-
-> CMake Error at /usr/share/cmake-2.8/Modules/FindQt4.cmake:1148 (MESSAGE):
->  Qt qmake not found!
-
-but you have Qt4 installed, this probably means that both Qt3 and Qt4
-are installed. In Ubuntu this can be resolved by executing:
-
-    sudo update-alternatives --config qmake
-    
-and choosing Qt4.
+If you compiled QGLViewer on your own and CMake cannot find it,
+you can use the variable `QGLViewer_INCLUDE_DIR` to specify
+the header file location and `QGLViewer_LIBRARIES` to set
+the library file to link against (e.g. libQGLViewer.so or QGLViewer.lib).
 
 
 WINDOWS
@@ -47,12 +47,6 @@ WINDOWS
 The octomap viewer **octovis** can be compiled and used under
 Windows although this has not been tested in-depth. Feedback 
 is welcome ("it works" is nice too :-))
-
-To compile the library you need:
-
-* OpenGL
-* cmake (http://www.cmake.org)
-* QT development environment (see below)
 
 
 ### MinGW ###
