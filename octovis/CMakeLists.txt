@@ -60,107 +60,84 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
   ARCHIVE DESTINATION lib
 )
 
-# Builds the "octovis" viewer based on OpenGL and 
-# libQGLViewer, if dependencies available
-SET( BUILD_VIEWER 0)
-
 option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
 
 # Look for required libraries:
-FIND_PACKAGE(OpenGL)
+FIND_PACKAGE(OpenGL REQUIRED)
 if(NOT OCTOVIS_QT5)
-  FIND_PACKAGE(Qt4)
+  FIND_PACKAGE(Qt4 REQUIRED)
 endif(NOT OCTOVIS_QT5)
 
-IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND) 
-	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")	
+FIND_PACKAGE(QGLViewer REQUIRED)
+
+MESSAGE(STATUS "\n")
+MESSAGE(STATUS "viewer octovis will be built")
+
+set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+
+INCLUDE( CMakeLists_src.txt )
+  
+# Create an octovis-config.cmake file for the use from the build tree
+set(OCTOVIS_INCLUDE_DIRS "${INCLUDE_DIRS}")
+set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+# Set library names as absolute paths
+# Windows, spec. MSVC requires the .lib suffix for imported libs
+IF(WIN32)
+  set(OCTOVIS_LIBRARY
+    "${CMAKE_IMPORT_LIBRARY_PREFIX}octovis${CMAKE_IMPORT_LIBRARY_SUFFIX}"
+  )
 ELSE()
-	FIND_PACKAGE(QGLViewer)
-	IF(QGLViewer_FOUND)
-	  SET( BUILD_VIEWER 1)
-	ELSE()
-	  MESSAGE ( "\n")
-  	MESSAGE ( "libQGLViewer could not be found or generated.")
-	ENDIF()
+  set(OCTOVIS_LIBRARY
+    "${CMAKE_SHARED_LIBRARY_PREFIX}octovis${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  )
 ENDIF()
 
+include(CMakePackageConfigHelpers)
 
-IF(BUILD_VIEWER)
-  MESSAGE(STATUS "\n")
-  MESSAGE(STATUS "viewer octovis will be built")
-  
-  set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-  INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
-   
-  INCLUDE( CMakeLists_src.txt )
-    
-  # Create an octovis-config.cmake file for the use from the build tree
-  set(OCTOVIS_INCLUDE_DIRS "${INCLUDE_DIRS}")
-  set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-  # Set library names as absolute paths
-  # Windows, spec. MSVC requires the .lib suffix for imported libs
-  IF(WIN32)
-    set(OCTOVIS_LIBRARY
-      "${CMAKE_IMPORT_LIBRARY_PREFIX}octovis${CMAKE_IMPORT_LIBRARY_SUFFIX}"
-    )
-  ELSE()
-    set(OCTOVIS_LIBRARY
-      "${CMAKE_SHARED_LIBRARY_PREFIX}octovis${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    )
-  ENDIF()
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  octovis-config.cmake.in
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config.cmake"
+  PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
 
-  include(CMakePackageConfigHelpers)
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config-version.cmake"
+  VERSION ${OCTOVIS_VERSION}
+  COMPATIBILITY AnyNewerVersion)
 
-  CONFIGURE_PACKAGE_CONFIG_FILE(
-    octovis-config.cmake.in
-    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config.cmake"
-    PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
-    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
+# not used right now (export depends?)
+#set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
 
-  WRITE_BASIC_PACKAGE_VERSION_FILE(
-    "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octovis/octovis-config-version.cmake"
-    VERSION ${OCTOVIS_VERSION}
-    COMPATIBILITY AnyNewerVersion)
+# Create a octovis-config.cmake file for the use from the install tree
+# and install it
+set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+#set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
-  # not used right now (export depends?)
-  #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
-    
-  # Create a octovis-config.cmake file for the use from the install tree
-  # and install it
-  set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
-  set(OCTOVIS_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-  #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
+set(OCTOVIS_INCLUDE_TARGETS
+  "include(\${CMAKE_CURRENT_LIST_DIR}/octovis-targets.cmake)")
 
-  set(OCTOVIS_INCLUDE_TARGETS
-    "include(\${CMAKE_CURRENT_LIST_DIR}/octovis-targets.cmake)")
+CONFIGURE_PACKAGE_CONFIG_FILE(
+  octovis-config.cmake.in
+  "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
+  PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
 
-  CONFIGURE_PACKAGE_CONFIG_FILE(
-    octovis-config.cmake.in
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
-    PATH_VARS OCTOVIS_INCLUDE_DIRS OCTOVIS_LIB_DIR
-    INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/share/octovis)
+WRITE_BASIC_PACKAGE_VERSION_FILE(
+  "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
+  VERSION ${OCTOVIS_VERSION}
+  COMPATIBILITY AnyNewerVersion)
 
-  WRITE_BASIC_PACKAGE_VERSION_FILE(
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
-    VERSION ${OCTOVIS_VERSION}
-    COMPATIBILITY AnyNewerVersion)
+install(FILES
+  "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
+  "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
+  DESTINATION share/octovis/)
 
-  install(FILES
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
-    DESTINATION share/octovis/)
+# #installation:
+# # store all header files to install:
+file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
+install(FILES ${octovis_HDRS} DESTINATION include/octovis)
 
-  # #installation:
-  # # store all header files to install:
-  file(GLOB octovis_HDRS  *.h *.hxx *.hpp)
-  install(FILES ${octovis_HDRS} DESTINATION include/octovis)
-
-  # Install catkin package.xml
-  install(FILES package.xml DESTINATION share/octovis)
-  
-ELSE()
-    MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
-	MESSAGE ( "This will not affect the compilation of the stand-alone library and tools (octomap)")
-    MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
-ENDIF()
-
+# Install catkin package.xml
+install(FILES package.xml DESTINATION share/octovis)
