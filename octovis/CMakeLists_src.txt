@@ -151,13 +151,13 @@ export(TARGETS octovis octovis-static octovis-shared
 
 install(TARGETS octovis octovis-static octovis-shared
   EXPORT octovis-targets
-  INCLUDES DESTINATION include
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
-install(EXPORT octovis-targets DESTINATION share/octovis/)
+install(EXPORT octovis-targets DESTINATION "${CMAKE_INSTALL_DATADIR}/octovis")
 
 file(GLOB octovis_HDRS ${PROJECT_SOURCE_DIR}/include/octovis/*.h)
 # filter generated headers for GUI:
 list(REMOVE_ITEM octovis_HDRS ${viewer_MOC_HDRS} ${viewer_UIS_H})
-install(FILES ${octovis_HDRS} DESTINATION include/octovis)
+install(FILES ${octovis_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octovis")
 
