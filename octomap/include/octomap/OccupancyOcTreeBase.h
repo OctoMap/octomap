@@ -44,6 +44,20 @@
 #include "OcTreeBaseImpl.h"
 #include "AbstractOccupancyOcTree.h"
 
+#ifdef __CUDA_SUPPORT__
+template <class NODE>
+class CudaOctomapUpdater;
+#endif
+
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
 
 namespace octomap {
 
@@ -75,6 +89,14 @@ namespace octomap {
 
     /// Copy constructor
     OccupancyOcTreeBase(const OccupancyOcTreeBase<NODE>& rhs);
+
+    /// Initializer for cuda updater
+    #ifdef __CUDA_SUPPORT__
+    void initializeCuda(const double& max_range, const size_t& scan_size) {
+      cudaOctomapUpdater = new CudaOctomapUpdater<NODE>(this, max_range, scan_size);
+      cudaOctomapUpdater->initialize();
+    }
+    #endif
 
     /**
     * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
@@ -344,9 +366,9 @@ namespace octomap {
     point3d getBBXBounds () const;
     point3d getBBXCenter () const;
     /// @return true if point is in the currently set bounding box
-    bool inBBX(const point3d& p) const;
+    CUDA_CALLABLE bool inBBX(const point3d& p) const;
     /// @return true if key is in the currently set bounding box
-    bool inBBX(const OcTreeKey& key) const;
+    CUDA_CALLABLE bool inBBX(const OcTreeKey& key) const;
 
     //-- change detection on occupancy:
     /// track or ignore changes while inserting scans (default: ignore)
@@ -368,7 +390,6 @@ namespace octomap {
     /// Number of changes since last reset.
     size_t numChangesDetected() const { return changed_keys.size(); }
 
-
     /**
      * Helper for insertPointCloud(). Computes all octree nodes affected by the point cloud
      * integration at once. Here, occupied nodes have a preference over free
@@ -384,7 +405,6 @@ namespace octomap {
                        KeySet& free_cells,
                        KeySet& occupied_cells,
                        double maxrange);
-
 
     /**
      * Helper for insertPointCloud(). Computes all octree nodes affected by the point cloud
@@ -497,7 +517,10 @@ namespace octomap {
     bool use_change_detection;
     /// Set of leaf keys (lowest level) which changed since last resetChangeDetection
     KeyBoolMap changed_keys;
-    
+
+    #ifdef __CUDA_SUPPORT__
+    CudaOctomapUpdater<NODE>* cudaOctomapUpdater;
+    #endif
 
   };
 

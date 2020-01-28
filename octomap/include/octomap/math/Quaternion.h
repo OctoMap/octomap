@@ -39,6 +39,15 @@
 #include <iostream>
 #include <vector>
 
+#ifdef __CUDACC__
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE __host__ __device__
+#endif
+#else
+#ifndef CUDA_CALLABLE
+#define CUDA_CALLABLE
+#endif
+#endif
 
 namespace octomath {
 
@@ -63,12 +72,12 @@ namespace octomath {
      * Constructs the (1,0,0,0) Unit Quaternion
      * representing the identity rotation.
      */
-    inline Quaternion() { u() = 1;  x() = 0; y() = 0; z() = 0;  }
+    CUDA_CALLABLE inline Quaternion() { u() = 1;  x() = 0; y() = 0; z() = 0;  }
 
     /*!
      * \brief Copy constructor
      */
-    Quaternion(const Quaternion& other);
+    CUDA_CALLABLE Quaternion(const Quaternion& other);
 
     /*!
      * \brief Constructor
@@ -76,14 +85,14 @@ namespace octomath {
      * Constructs a Quaternion from four single
      * values
      */
-    Quaternion(float u, float x, float y, float z);
+    CUDA_CALLABLE Quaternion(float u, float x, float y, float z);
 
     /*!
      * \brief Constructor
      *
      * @param other a vector containing euler angles
      */
-    Quaternion(const Vector3& other);
+    CUDA_CALLABLE Quaternion(const Vector3& other);
 
     /*!
      * \brief Constructor from Euler angles
@@ -94,12 +103,12 @@ namespace octomath {
      * @param pitch theta/pitch angle (rotation about y-axis)
      * @param yaw psi/yaw angle (rotation about z-axis)
      */
-    Quaternion(double roll, double pitch, double yaw);
+    CUDA_CALLABLE Quaternion(double roll, double pitch, double yaw);
 
 
      
     //! Constructs a Unit Quaternion from a rotation angle and axis.  
-    Quaternion(const Vector3& axis, double angle);
+    CUDA_CALLABLE Quaternion(const Vector3& axis, double angle);
 
 
     /*!
@@ -108,22 +117,22 @@ namespace octomath {
      * Converts the attitude represented by this to
      * Euler angles (roll, pitch, yaw).
      */
-    Vector3 toEuler() const;
+    CUDA_CALLABLE Vector3 toEuler() const;
 
-    void toRotMatrix(std::vector <double>& rot_matrix_3_3) const;
-
-
-    inline const float& operator() (unsigned int i) const { return data[i]; }
-    inline float& operator() (unsigned int i) { return data[i]; }
-
-    float norm () const;
-    Quaternion  normalized () const;
-    Quaternion& normalize ();
+    CUDA_CALLABLE void toRotMatrix(std::vector <double>& rot_matrix_3_3) const;
 
 
-    void operator/= (float x);
-    Quaternion& operator= (const Quaternion& other);
-    bool operator== (const Quaternion& other) const;
+    CUDA_CALLABLE inline const float& operator() (unsigned int i) const { return data[i]; }
+    CUDA_CALLABLE inline float& operator() (unsigned int i) { return data[i]; }
+
+    CUDA_CALLABLE float norm () const;
+    CUDA_CALLABLE Quaternion  normalized () const;
+    CUDA_CALLABLE Quaternion& normalize ();
+
+
+    CUDA_CALLABLE void operator/= (float x);
+    CUDA_CALLABLE Quaternion& operator= (const Quaternion& other);
+    CUDA_CALLABLE bool operator== (const Quaternion& other) const;
 
     /*!
      * \brief Quaternion multiplication
@@ -132,28 +141,28 @@ namespace octomath {
      * commutative.
      * @return this * other
      */
-    Quaternion operator* (const Quaternion& other) const;
+    CUDA_CALLABLE Quaternion operator* (const Quaternion& other) const;
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return q * (0, v)
      */
-    Quaternion operator* (const Vector3 &v) const;
+    CUDA_CALLABLE Quaternion operator* (const Vector3 &v) const;
 
     /*!
      * \brief Quaternion multiplication with extended vector
      *
      * @return (0, v) * q
      */
-    friend Quaternion operator* (const Vector3 &v, const Quaternion &q);
+    CUDA_CALLABLE friend Quaternion operator* (const Vector3 &v, const Quaternion &q);
 
     /*!
      * \brief Inversion
      *
      * @return A copy of this Quaterion inverted
      */
-    inline Quaternion inv() const {  return Quaternion(u(), -x(), -y(), -z()); }
+    CUDA_CALLABLE inline Quaternion inv() const {  return Quaternion(u(), -x(), -y(), -z()); }
 
 
     /*!
@@ -162,7 +171,7 @@ namespace octomath {
      * Inverts this Quaternion
      * @return a reference to this Quaternion
      */
-    Quaternion& inv_IP();
+    CUDA_CALLABLE Quaternion& inv_IP();
 
     /*!
      * \brief Rotate a vector
@@ -173,17 +182,17 @@ namespace octomath {
      * @param v a vector represented in world coordinates
      * @return v represented in body-fixed coordinates
      */
-    Vector3 rotate(const Vector3 &v) const;
+    CUDA_CALLABLE Vector3 rotate(const Vector3 &v) const;
 
-    inline float& u() { return data[0]; }
-    inline float& x() { return data[1]; }
-    inline float& y() { return data[2]; }
-    inline float& z() { return data[3]; }
+    CUDA_CALLABLE inline float& u() { return data[0]; }
+    CUDA_CALLABLE inline float& x() { return data[1]; }
+    CUDA_CALLABLE inline float& y() { return data[2]; }
+    CUDA_CALLABLE inline float& z() { return data[3]; }
 
-    inline const float& u() const { return data[0]; }
-    inline const float& x() const { return data[1]; }
-    inline const float& y() const { return data[2]; }
-    inline const float& z() const { return data[3]; }
+    CUDA_CALLABLE inline const float& u() const { return data[0]; }
+    CUDA_CALLABLE inline const float& x() const { return data[1]; }
+    CUDA_CALLABLE inline const float& y() const { return data[2]; }
+    CUDA_CALLABLE inline const float& z() const { return data[3]; }
 
     std::istream& read(std::istream &s);
     std::ostream& write(std::ostream &s) const;

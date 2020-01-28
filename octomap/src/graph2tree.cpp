@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <boost/chrono.hpp>
 
 #include <octomap/octomap.h>
 #include <octomap/octomap_timing.h>
@@ -240,20 +241,21 @@ int main(int argc, char** argv) {
   tree->setClampingThresMax(clampingMax);
   tree->setProbHit(probHit);
   tree->setProbMiss(probMiss);
-
+  #ifdef __CUDA_SUPPORT__
+  tree->initializeCuda(maxrange, (*graph->begin())->scan->size());
+  #endif
 
   gettimeofday(&start, NULL);  // start timer
   size_t numScans = graph->size();
   size_t currentScan = 1;
   for (ScanGraph::iterator scan_it = graph->begin(); scan_it != graph->end(); scan_it++) {
-    if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << flush;
-    else cout << "("<<currentScan << "/" << numScans << ") " << flush;
+    if (max_scan_no > 0) cout << "("<<currentScan << "/" << max_scan_no << ") " << endl;
+    else cout << "("<<currentScan << "/" << numScans << ") " << endl;
 
     if (simpleUpdate)
       tree->insertPointCloudRays((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange);
     else
       tree->insertPointCloud((*scan_it)->scan, (*scan_it)->pose.trans(), maxrange, false, discretize);
-
     if (compression == 2){
       tree->toMaxLikelihood();
       tree->prune();
