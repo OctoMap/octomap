@@ -245,11 +245,11 @@ CudaOctomapUpdater<NODE>::CudaOctomapUpdater(
   use_bbx_limit_ = tree_base_->bbxSet();
   res_ = tree_base_->getResolution();
   res_half_ = res_ * 0.5;
-  if (max_range < 0.0) {
+  if (max_range <= 0.0) {
     ray_size_ = 100.0 / res_;
-  } else if (max_range < 10.0) {
+  } else if (max_range <= 10.0) {
     ray_size_ = 10.0 / res_;
-  } else if (max_range < 20.0) {
+  } else if (max_range <= 20.0) {
     ray_size_ = 20.0 / res_;
   }
   KeyRayConfig::setMaxSize(ray_size_);
@@ -258,7 +258,7 @@ CudaOctomapUpdater<NODE>::CudaOctomapUpdater(
   n_total_threads_ = std::ceil(scan_size_ / (float) warp_size) * warp_size;
   n_threads_per_block_ = min(n_total_threads_, 256);
   n_blocks_ = n_total_threads_ / n_threads_per_block_;
-  n_rays_ = n_total_threads_;
+  n_rays_ = n_total_threads_; // each thread works on a different ray
   
   if (print_info) {
     std::cout << "ray_size_:" << ray_size_ << std::endl;
@@ -368,8 +368,8 @@ void CudaOctomapUpdater<NODE>::computeUpdate(
     }
   }
   cudaCheckErrors(cudaDeviceSynchronize());
-  for (int i = 0; i < occupied_hashes_device_->size(); ++i) {
-    tree_base_->updateNode(occupied_hashes_device_->get(i).key_, false, lazy_eval);
+  for (int i = 0; i < free_hashes_device_->size(); ++i) {
+    tree_base_->updateNode(free_hashes_device_->get(i).key_, false, lazy_eval);
   }
   for (int i = 0; i < occupied_hashes_device_->size(); ++i) {
     tree_base_->updateNode(occupied_hashes_device_->get(i).key_, true, lazy_eval);

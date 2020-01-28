@@ -14,7 +14,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG")
   SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
   ## # Shared object compilation under 64bit (vtable)
-  ## ADD_DEFINITIONS(-fPIC)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # enables -fPIC in applicable compilers (required to avoid link errors in some cases)
 ENDIF()
 
 
