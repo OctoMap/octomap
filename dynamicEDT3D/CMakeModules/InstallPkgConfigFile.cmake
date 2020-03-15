@@ -7,10 +7,10 @@
 #                              [LIBS <lflag> ...]
 #                              [REQUIRES <required-package-name> ...])
 # 
-# Create and install a pkg-config .pc file to CMAKE_INSTALL_PREFIX/lib/pkgconfig
+# Create and install a pkg-config .pc file to CMAKE_INSTALL_LIBDIR/pkgconfig
 #	assuming the following install layout:
-#	       libraries:   CMAKE_INSTALL_PREFIX/lib
-#	       headers  :   CMAKE_INSTALL_PREFIX/include
+#	       libraries:   CMAKE_INSTALL_LIBDIR
+#	       headers  :   CMAKE_INSTALL_INCLUDEDIR
 #
 # example:
 #    add_library(mylib mylib.c)
@@ -63,8 +63,8 @@ function(install_pkg_config_file)
     # write the .pc file out
     file(WRITE ${pc_fname}
         "prefix=${CMAKE_INSTALL_PREFIX}\n"
-        "libdir=\${prefix}/lib\n"
-        "includedir=\${prefix}/include\n"
+        "libdir=${CMAKE_INSTALL_FULL_LIBDIR}\n"
+        "includedir=${CMAKE_INSTALL_FULL_INCLUDEDIR}\n"
         "\n"
         "Name: ${pc_name}\n"
         "Description: ${pc_description}\n"
@@ -74,5 +74,5 @@ function(install_pkg_config_file)
         "Cflags: -I\${includedir} ${pc_cflags}\n")
 
     # mark the .pc file for installation to the lib/pkgconfig directory
-    install(FILES ${pc_fname} DESTINATION lib/pkgconfig)    
+    install(FILES ${pc_fname} DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endfunction(install_pkg_config_file)

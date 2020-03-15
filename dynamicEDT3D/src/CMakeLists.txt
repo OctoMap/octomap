@@ -32,7 +32,7 @@ ADD_SUBDIRECTORY(examples)
 
 install(TARGETS dynamicedt3d dynamicedt3d-static
   EXPORT dynamicEDT3DTargets
-  INCLUDES DESTINATION include
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
-install(EXPORT dynamicEDT3DTargets DESTINATION share/dynamicEDT3D/)
+install(EXPORT dynamicEDT3DTargets DESTINATION "${CMAKE_INSTALL_DATADIR}/dynamicEDT3D")

@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
 PROJECT( octomap-distribution )
 
 ENABLE_TESTING()  # enable CTest environment of subprojects
@@ -6,7 +6,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # enables -fPIC in applicable compilers
 
 option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
 option(BUILD_DYNAMICETD3D_SUBPROJECT  "Build targets from subproject dynamicEDT3D" ON)
-option(OCTOVIS_QT5 "Link Octovis against Qt5?" NO)
+option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
 
 if(OCTOVIS_QT5)
 	# Compiling against QT5 requires C++11.
