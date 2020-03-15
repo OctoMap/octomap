@@ -1,3 +1,9 @@
+v1.9.4: 2020-03-15
+==================
+- octovis: Enable Qt5 by default
+- Support added for configurable libdir for packaging
+- Increased minimum CMake version to 3.0.2
+
 v1.9.3: 2019-12-26
 ==================
 - Fixed Wpedantic warnings
