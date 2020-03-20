@@ -22,6 +22,7 @@
   <build_depend>octomap</build_depend>
 
   <!-- Qt5 -->
+  <build_depend>libqglviewer-dev-qt5</build_depend>
   <build_depend>libqt5-core</build_depend>
   <build_depend>libqt5-opengl-dev</build_depend>
 
@@ -33,9 +34,10 @@
   <exec_depend>octomap</exec_depend>
 
   <!-- Qt5 -->
+  <exec_depend>libqglviewer2-qt5</exec_depend>
   <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-opengl</exec_depend>
   <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
 
   <!-- Qt4 -->
   <!-- <exec_depend>libqglviewer-qt4</exec_depend>
