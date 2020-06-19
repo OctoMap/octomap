@@ -83,7 +83,7 @@ IF(BUILD_LIB_FROM_SOURCE)
 	MESSAGE(STATUS "\t generating Makefile using qmake") 
 	EXECUTE_PROCESS(
 	  WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
-	  COMMAND qmake-qt4
+	  COMMAND qmake
 	  OUTPUT_QUIET
 	  )
       ENDIF(QMAKE-QT4)
