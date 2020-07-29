@@ -1,5 +1,5 @@
 # Find QGLViewer library
-# Looks for a system-wide version of libQGLViewer (qglviewer-qt4 in Ubuntu).
+# Looks for a system-wide version of libQGLViewer (qglviewer-qt4 or 5 in Ubuntu).
 # If none is found, it builds and uses the local copy in "extern"
 #
 # Many thanks to L. Ott for assistance!
@@ -23,7 +23,11 @@ FIND_PATH( QGLViewer_INCLUDE_DIR qglviewer.h
     ${QGLVIEWER_BASE_DIR}
 )
 
-FIND_LIBRARY( QGLViewer_LIBRARY_DIR_UBUNTU NAMES qglviewer-qt4 QGLViewer-qt4)
+IF( QT4_FOUND )
+    FIND_LIBRARY( QGLViewer_LIBRARY_DIR_UBUNTU NAMES qglviewer-qt4 QGLViewer-qt4)
+ELSE()
+    FIND_LIBRARY( QGLViewer_LIBRARY_DIR_UBUNTU NAMES qglviewer-qt5 QGLViewer-qt5)
+ENDIF()
 FIND_LIBRARY( QGLViewer_LIBRARY_DIR_WINDOWS QGLViewer2 ${QGLVIEWER_BASE_DIR})
 FIND_LIBRARY( QGLViewer_LIBRARY_DIR_OTHER QGLViewer ${QGLVIEWER_BASE_DIR})
 
@@ -79,7 +83,7 @@ IF(BUILD_LIB_FROM_SOURCE)
 	MESSAGE(STATUS "\t generating Makefile using qmake") 
 	EXECUTE_PROCESS(
 	  WORKING_DIRECTORY ${QGLVIEWER_BASE_DIR}
-	  COMMAND qmake-qt4
+	  COMMAND qmake
 	  OUTPUT_QUIET
 	  )
       ENDIF(QMAKE-QT4)

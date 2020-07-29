@@ -1,3 +1,26 @@
+v1.9.5: 2020-03-25
+==================
+- octovis: Update ROS dependencies to Qt5
+
+v1.9.4: 2020-03-15
+==================
+- octovis: Enable Qt5 by default
+- Support added for configurable libdir for packaging
+- Increased minimum CMake version to 3.0.2
+
+v1.9.3: 2019-12-26
+==================
+- Fixed Wpedantic warnings
+- Removed problematic INSTALL_NAME_DIR (maxOS workaround)
+
+v1.9.2: 2019-11-28
+==================
+- Fixed ROS buildfarm failures for octovis
+
+v1.9.1: 2019-11-23
+==================
+- Improved compatibility with modern compilers and ROS2
+
 v1.9.0: 2017-04-28
 ==================
 - Fixed getUnknownLeafCenters to return true leaf centers (thx to A. Ecins)

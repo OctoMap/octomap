@@ -1,26 +1,46 @@
 <package format="3">
   <name>octovis</name>
-  <version>1.9.0</version>
+  <version>1.9.5</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
   http://octomap.github.io for details.</description>
 
   <author email="wurm@informatik.uni-freiburg.de">Kai M. Wurm</author>
   <author email="armin@hornung.io">Armin Hornung</author>
   <maintainer email="armin@hornung.io">Armin Hornung</maintainer>
+  <maintainer email="w.merkt+oss@gmail.com">Wolfgang Merkt</maintainer>
   <license>GPLv2</license>
 
   <url type="website">http://octomap.github.io</url>
   <url type="bugtracker">https://github.com/OctoMap/octomap/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+      
+  <build_depend>octomap</build_depend>
 
-  <depend>octomap</depend>
-  <depend>libqglviewer-qt4-dev</depend>
-  <depend>libqt4-dev</depend>
-  <depend>libqt4-opengl-dev</depend>
+  <!-- Qt5 -->
+  <build_depend>libqglviewer-dev-qt5</build_depend>
+  <build_depend>libqt5-core</build_depend>
+  <build_depend>libqt5-opengl-dev</build_depend>
+
+  <!-- Qt4 -->
+  <!-- <build_depend>libqglviewer-qt4-dev</build_depend>
+  <build_depend>libqt4-dev</build_depend>
+  <build_depend>libqt4-opengl-dev</build_depend> -->
+
+  <exec_depend>octomap</exec_depend>
+
+  <!-- Qt5 -->
+  <exec_depend>libqglviewer2-qt5</exec_depend>
+  <exec_depend>libqt5-core</exec_depend>
+  <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
+
+  <!-- Qt4 -->
+  <!-- <exec_depend>libqglviewer-qt4</exec_depend>
+  <exec_depend>libqtgui4</exec_depend>
+  <exec_depend>libqt4-opengl</exec_depend> -->
 
   <export>
     <build_type>ament_cmake</build_type>
   </export>
-
 </package>

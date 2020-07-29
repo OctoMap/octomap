@@ -67,13 +67,12 @@ void ViewerWidget::init() {
 
   // background color defaults to white
   this->setBackgroundColor( QColor(255,255,255) );
-  this->qglClearColor( this->backgroundColor() );
 }
 
 void ViewerWidget::resetView(){
   this->camera()->setOrientation((float) -M_PI_2, (float) M_PI_2);
   this->showEntireScene();
-  updateGL();
+  update();
 }
 
 
@@ -98,7 +97,7 @@ void ViewerWidget::enableHeightColorMode (bool enabled) {
   for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); it++) {
     (*it)->enableHeightColorMode(enabled);
   }
-  updateGL();
+  update();
 }
 
 void ViewerWidget::enablePrintoutMode(bool enabled) {
@@ -106,7 +105,7 @@ void ViewerWidget::enablePrintoutMode(bool enabled) {
   for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); it++) {
     (*it)->enablePrintoutMode(enabled);
   }
-  updateGL();
+  update();
 }
 
 void ViewerWidget::enableSemanticColoring (bool enabled) {
@@ -114,12 +113,12 @@ void ViewerWidget::enableSemanticColoring (bool enabled) {
   for(std::vector<SceneObject*>::iterator it = m_sceneObjects.begin(); it != m_sceneObjects.end(); it++) {
     (*it)->enableSemanticColoring(enabled);
   }
-  updateGL();
+  update();
 }
 
 void ViewerWidget::enableSelectionBox(bool enabled) {
   m_drawSelectionBox = enabled;
-  updateGL();
+  update();
 }
 
 
@@ -145,7 +144,7 @@ void ViewerWidget::setCamPosition(double x, double y, double z, double lookX, do
   camera()->setPosition(qglviewer::Vec(x, y, z));
   camera()->lookAt(qglviewer::Vec(lookX, lookY, lookZ));
   camera()->setUpVector(qglviewer::Vec(0.0, 0.0, 1.0));
-  updateGL();
+  update();
 }
 
 void ViewerWidget::setCamPose(const octomath::Pose6D& pose){
@@ -161,12 +160,12 @@ void ViewerWidget::jumpToCamFrame(int id, int frame) {
   } else {
     std::cerr << "Error: Could not jump to frame " << frame << " of " << kfi->numberOfKeyFrames() << std::endl;
   }
-  updateGL();
+  update();
 }
 
 void ViewerWidget::deleteCameraPath(int id) {
   if(camera()->keyFrameInterpolator(id)) {
-    disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(updateGL()));
+    disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(update()));
     disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
     disconnect(camera()->keyFrameInterpolator(id), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
     camera()->deletePath(id);
@@ -243,7 +242,7 @@ void ViewerWidget::playCameraPath(int id, int start_frame) {
     m_current_camera_frame = start_frame;
     kfi->setInterpolationTime(kfi->keyFrameTime(start_frame));
     std::cout << "Playing path of length " << kfi->numberOfKeyFrames() << ", start time " << kfi->keyFrameTime(start_frame) << std::endl;
-    connect(kfi, SIGNAL(interpolated()), this, SLOT(updateGL()));
+    connect(kfi, SIGNAL(interpolated()), this, SLOT(update()));
     connect(kfi, SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
     connect(kfi, SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
     kfi->startInterpolation();
@@ -252,7 +251,7 @@ void ViewerWidget::playCameraPath(int id, int start_frame) {
 
 void ViewerWidget::stopCameraPath(int id) {
   if(camera()->keyFrameInterpolator(id) && camera()->keyFrameInterpolator(id)->interpolationIsStarted()) {
-    disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(updateGL()));
+    disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(update()));
     disconnect(camera()->keyFrameInterpolator(id), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
     disconnect(camera()->keyFrameInterpolator(id), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
     camera()->keyFrameInterpolator(id)->stopInterpolation();
@@ -261,7 +260,7 @@ void ViewerWidget::stopCameraPath(int id) {
 
 void ViewerWidget::cameraPathFinished() {
   if(camera()->keyFrameInterpolator(m_current_camera_path)) {
-    disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(interpolated()), this, SLOT(updateGL()));
+    disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(interpolated()), this, SLOT(update()));
     disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(interpolated()), this, SLOT(cameraPathInterpolated()));
     disconnect(camera()->keyFrameInterpolator(m_current_camera_path), SIGNAL(endReached()), this, SLOT(cameraPathFinished()));
     emit cameraPathStopped(m_current_camera_path);
@@ -292,7 +291,7 @@ void ViewerWidget::setSceneBoundingBox(const qglviewer::Vec& min, const qglviewe
 void ViewerWidget::addSceneObject(SceneObject* obj){
   assert (obj);
   m_sceneObjects.push_back(obj);
-  updateGL();
+  update();
 }
 
 void ViewerWidget::removeSceneObject(SceneObject* obj){
@@ -304,7 +303,7 @@ void ViewerWidget::removeSceneObject(SceneObject* obj){
     else
       ++it;
   }
-  updateGL();
+  update();
 }
 
 void ViewerWidget::clearAll(){
@@ -364,7 +363,6 @@ void ViewerWidget::postDraw(){
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
   glDisable(GL_COLOR_MATERIAL);
-  qglColor(foregroundColor());
 
   if (gridIsDrawn()){
     glLineWidth(1.0);

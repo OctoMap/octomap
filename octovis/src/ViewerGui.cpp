@@ -286,7 +286,7 @@ void ViewerGui::showOcTree() {
   m_mapSizeStatus->setText(size);
   //}
 
-  m_glwidget->updateGL();
+  m_glwidget->update();
 
   // generate cubes -> display
   // timeval start;
@@ -299,7 +299,7 @@ void ViewerGui::showOcTree() {
   //    gettimeofday(&stop, NULL);  // stop timer
   //    double time_to_generate = (stop.tv_sec - start.tv_sec) + 1.0e-6 *(stop.tv_usec - start.tv_usec);
   //    fprintf(stderr, "setOcTree took %f sec\n", time_to_generate);
-  m_glwidget->updateGL();
+  m_glwidget->update();
 }
 
 
@@ -983,7 +983,7 @@ void ViewerGui::on_actionSelection_box_toggled(bool checked){
   m_glwidget->enableSelectionBox(checked);
 
 
-  m_glwidget->updateGL();
+  m_glwidget->update();
 }
 
 void ViewerGui::on_actionHeight_map_toggled(bool checked){
@@ -1040,7 +1040,7 @@ void ViewerGui::on_actionAxes_toggled(bool checked){
       it != m_octrees.end(); ++it) {
     it->second.octree_drawer->enableAxes(checked);
   }
-  m_glwidget->updateGL();
+  m_glwidget->update();
 }
 
 void ViewerGui::on_actionHideBackground_toggled(bool checked) {
@@ -1048,7 +1048,7 @@ void ViewerGui::on_actionHideBackground_toggled(bool checked) {
   if (getOctreeRecord(DEFAULT_OCTREE_ID, r)) {
     if (checked) m_glwidget->removeSceneObject(r->octree_drawer);
     else         m_glwidget->addSceneObject(r->octree_drawer);
-    m_glwidget->updateGL();
+    m_glwidget->update();
   }
 }
 
@@ -1142,7 +1142,7 @@ void ViewerGui::on_actionOctree_cells_toggled(bool enabled) {
       it != m_octrees.end(); ++it) {
     it->second.octree_drawer->enableOcTreeCells(enabled);
   }
-  m_glwidget->updateGL();
+  m_glwidget->update();
 }
 
 void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
@@ -1150,7 +1150,7 @@ void ViewerGui::on_actionOctree_structure_toggled(bool enabled) {
       it != m_octrees.end(); ++it) {
     it->second.octree_drawer->enableOcTree(enabled);
   }
-  m_glwidget->updateGL();
+  m_glwidget->update();
 }
 
 void ViewerGui::on_actionFree_toggled(bool enabled) {
@@ -1158,7 +1158,7 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
       it != m_octrees.end(); ++it) {
     it->second.octree_drawer->enableFreespace(enabled);
   }
-  m_glwidget->updateGL();
+  m_glwidget->update();
 
 }
 
@@ -1176,24 +1176,21 @@ void ViewerGui::on_actionSelected_toggled(bool enabled) {
   //   } else{
   //     m_octreeDrawer->clearOcTreeSelection();
   //   }
-  //   m_glwidget->updateGL();
+  //   m_glwidget->update();
   // }
 }
 
 
 void ViewerGui::on_action_bg_black_triggered() {
   m_glwidget->setBackgroundColor( QColor(0,0,0) );
-  m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
 }
 
 void ViewerGui::on_action_bg_white_triggered() {
   m_glwidget->setBackgroundColor( QColor(255,255,255) );
-  m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
 }
 
 void ViewerGui::on_action_bg_gray_triggered() {
   m_glwidget->setBackgroundColor( QColor(117,117,117) );
-  m_glwidget->qglClearColor( m_glwidget->backgroundColor() );
 }
 
 void ViewerGui::on_savecampose_triggered() {

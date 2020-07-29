@@ -41,7 +41,6 @@
 using namespace std;
 using namespace octomap;
 
-typedef unsigned char byte;
 
 int main(int argc, char **argv)
 {

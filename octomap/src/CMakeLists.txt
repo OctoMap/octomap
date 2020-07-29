@@ -69,10 +69,10 @@ TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
 
 install(TARGETS octomap octomap-static
   EXPORT octomap-targets
-  INCLUDES DESTINATION include
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
-install(EXPORT octomap-targets DESTINATION share/octomap/)
+install(EXPORT octomap-targets DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
 install(TARGETS
 	graph2tree

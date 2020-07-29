@@ -21,8 +21,6 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG") #sse3 disabled for compatibility
 #  SET (CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG -msse3 -mssse3")
   SET (CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-  # Shared object compilation under 64bit (vtable)
-  ADD_DEFINITIONS(-fPIC)  
   # IF(OCTOMAP_OMP)
   #   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
   #   SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -fopenmp")
@@ -35,6 +33,9 @@ set(CMAKE_SKIP_BUILD_RPATH  FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# enables -fPIC in applicable compilers
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # no prefix needed for python modules
 set(CMAKE_SHARED_MODULE_PREFIX "")
