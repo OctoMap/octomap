@@ -69,7 +69,7 @@ install(FILES ${octomap_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octomap")
 file(GLOB octomap_math_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octomap/math")
 
-# Install catkin package.xml
+# Install package.xml (catkin/ament/rosdep)
 install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
 # uninstall target
