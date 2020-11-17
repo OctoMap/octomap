@@ -91,7 +91,7 @@ namespace octomap {
   ColorOcTree::ColorOcTree(double in_resolution)
   : OccupancyOcTreeBase<ColorOcTreeNode>(in_resolution) {
     colorOcTreeMemberInit.ensureLinking();
-  };
+  }
 
   ColorOcTreeNode* ColorOcTree::setNodeColor(const OcTreeKey& key,
                                              uint8_t r,

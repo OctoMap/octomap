@@ -5,7 +5,7 @@ using namespace std;
 using namespace octomap;
 
 
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** argv) {
 
   std::string filename(argv[1]);
 

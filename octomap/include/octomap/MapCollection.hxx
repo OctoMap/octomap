@@ -312,7 +312,7 @@ namespace octomap {
   }
 
   template <class MAPNODE>
-  bool MapCollection<MAPNODE>::readTagValue(std::string tag, std::ifstream& infile, std::string* value) {
+  bool MapCollection<MAPNODE>::readTagValue(std::string /*tag*/, std::ifstream& infile, std::string* value) {
     std::string line;
     while( getline(infile, line) ){
       if(line.length() != 0 && line[0] != '#')
