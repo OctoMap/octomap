@@ -52,11 +52,20 @@ namespace octomath {
     rotation(roll, pitch, yaw)
   { }
 
+  Pose6D::Pose6D(const Pose6D& other) :
+    translation(other.trans()),
+    rotation(other.rot())
+  { }
+
   Pose6D& Pose6D::operator= (const Pose6D& other) {
     translation = other.trans();
     rotation = other.rot();
     return *this;
   }
+
+  Pose6D::~Pose6D() {
+  }
+
 
 
   Pose6D Pose6D::inv() const {

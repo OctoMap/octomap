@@ -50,6 +50,8 @@ namespace octomath {
   public:
 
     Pose6D();
+    ~Pose6D();
+
 
     /*!
      * \brief Constructor
@@ -67,7 +69,7 @@ namespace octomath {
      */
     Pose6D(float x, float y, float z, double roll, double pitch, double yaw);
 
-    Pose6D(const Pose6D& other) = default;
+    Pose6D(const Pose6D& other);
     Pose6D& operator= (const Pose6D& other);
 
     //Pose6D(Pose6D&& other) = default;
