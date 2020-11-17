@@ -23,8 +23,6 @@ SET (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 # COMPILER SETTINGS (default: Release) and flags
 INCLUDE(CompilerSettings)
 
-#  target_compile_options(${TARGET_NAME} PRIVATE -Werror=deprecated-copy)
-
 # OCTOMAP_OMP = enable OpenMP parallelization (experimental, defaults to OFF)
 SET(OCTOMAP_OMP FALSE CACHE BOOL "Enable/disable OpenMP parallelization")
 IF(DEFINED ENV{OCTOMAP_OMP})

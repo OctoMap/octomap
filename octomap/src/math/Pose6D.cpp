@@ -52,6 +52,9 @@ namespace octomath {
     rotation(roll, pitch, yaw)
   { }
 
+  Pose6D::~Pose6D() {
+  }
+
   Pose6D::Pose6D(const Pose6D& other) :
     translation(other.trans()),
     rotation(other.rot())
@@ -63,11 +66,7 @@ namespace octomath {
     return *this;
   }
 
-  Pose6D::~Pose6D() {
-  }
-
-
-
+  
   Pose6D Pose6D::inv() const {
     Pose6D result(*this);
     result.rot() = rot().inv().normalized();
