@@ -25,7 +25,7 @@ OcTree* generateSphereTree(point3d origin, float radius){
 	return tree;
 }
 
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** argv) {
 
   // //Generate a MapCollection
   // MapCollection<MapNode<OcTree> > coll;

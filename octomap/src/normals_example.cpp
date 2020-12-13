@@ -49,7 +49,7 @@ void print_query_info(point3d query, OcTreeNode* node) {
     cout << "occupancy probability at " << query << ":\t is unknown" << endl;    
 }
 
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** /*argv*/) {
 
   cout << endl;
   cout << "generating example map" << endl;

@@ -55,13 +55,18 @@ namespace octomath {
   Pose6D::~Pose6D() {
   }
 
+  Pose6D::Pose6D(const Pose6D& other) :
+    translation(other.trans()),
+    rotation(other.rot())
+  { }
+
   Pose6D& Pose6D::operator= (const Pose6D& other) {
     translation = other.trans();
     rotation = other.rot();
     return *this;
   }
 
-
+  
   Pose6D Pose6D::inv() const {
     Pose6D result(*this);
     result.rot() = rot().inv().normalized();
