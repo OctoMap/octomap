@@ -18,6 +18,7 @@ jobs:
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       PRERELEASE: true # always run the prerelease tests
+      BUILDER: colcon
       # CMAKE_ARGS: '-DCMAKE_BUILD_TYPE=Debug'
     runs-on: ubuntu-latest
     steps:
