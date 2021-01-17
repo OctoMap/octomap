@@ -14,6 +14,8 @@ jobs:
           - {ROS_DISTRO: kinetic}
           - {ROS_DISTRO: melodic}
           - {ROS_DISTRO: noetic}
+          - {ROS_DISTRO: foxy}
+          - {ROS_DISTRO: rolling}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
       PRERELEASE: true # always run the prerelease tests
