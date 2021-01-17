@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: kinetic}
           - {ROS_DISTRO: melodic}
           - {ROS_DISTRO: noetic}
           - {ROS_DISTRO: foxy}
