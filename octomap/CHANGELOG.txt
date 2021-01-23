@@ -1,3 +1,11 @@
+v1.9.6: 2021-01-23
+==================
+- Fixed ifstream >> byte with c++17
+- strict warnings_as_errors compiler options and corresponding fixes
+- octovis: Fixed qmake command to build libQGLViewer with Qt5.
+- octovis: adapted to be compatible with libQGLViewer >= 2.7.0
+- octovis: use -fPIC with all compilers
+
 v1.9.5: 2020-03-25
 ==================
 - octovis: Update ROS dependencies to Qt5

@@ -6,7 +6,7 @@ using namespace std;
 using namespace octomap;
 using namespace octomath;
 
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** /*argv*/) {
     float res = 0.01f;
     OcTree tree(res);
     
