@@ -72,6 +72,10 @@ install(FILES ${octomap_math_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octo
 # Install package.xml (catkin/ament/rosdep)
 install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
+# Allows Colcon to find non-Ament packages when using workspace underlays
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
+
 # uninstall target
 configure_file(
     "${PROJECT_SOURCE_DIR}/CMakeModules/CMakeUninstall.cmake.in"

@@ -69,6 +69,10 @@ install(FILES ${dynamicEDT3D_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dyna
 # Install catkin package.xml, attention package.xml names the catkin package "dynamic_edt_3d", so this is also the location where it needs to be installed to (and not "dynamicEDT3D")
 install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/dynamic_edt_3d")
 
+# Allows Colcon to find non-Ament packages when using workspace underlays
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
+
 #TODO: this conflicts with the octomap uninstall
 #it is not only a target name problem, also both will use the same manifest file
 #in the same binary directory
