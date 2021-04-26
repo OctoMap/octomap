@@ -140,7 +140,7 @@ namespace octomap {
           for(KeyRay::iterator it=keyray->begin(); it != keyray->end(); it++) {
             updateNode(*it, false, lazy_eval); // insert freespace measurement
           }
-          updateNode(p, endpoint_occupied, lazy_eval); // update endpoint to be occupied
+          updateNode(p, endpoint_occupied, lazy_eval); // update endpoint
         }
       }
 
