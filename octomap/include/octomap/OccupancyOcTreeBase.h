@@ -132,6 +132,11 @@ namespace octomap {
     virtual void insertPointCloud(const ScanNode& scan, double maxrange=-1., bool lazy_eval = false, bool discretize = false);
 
     /**
+     * Works just like a wrapper with endpoint_occupied set to true.
+     */
+    virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false);
+
+    /**
      * Integrate a Pointcloud (in global reference frame), parallelized with OpenMP.
      * This function simply inserts all rays of the point clouds as batch operation.
      * Discretization effects can lead to the deletion of occupied space, it is
@@ -140,10 +145,11 @@ namespace octomap {
      * @param scan Pointcloud (measurement endpoints), in global reference frame
      * @param sensor_origin measurement origin in global reference frame
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
+     * @param endpoint_occupied specifies it the endpoints should be updated as occupied or not
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
      */
-     virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false);
+     virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool endpoint_occupied = true, bool lazy_eval = false);
 
      /**
       * Set log_odds value of voxel to log_odds_value. This only works if key is at the lowest
