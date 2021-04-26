@@ -111,9 +111,12 @@ namespace octomap {
     insertPointCloud(transformed_scan, transformed_sensor_origin, maxrange, lazy_eval, discretize);
   }
 
+  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double maxrange, bool lazy_eval) {
+    insertPointCloudRays(pc, origin, maxrange, true, lazy_eval);
+  }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double /* maxrange */, bool lazy_eval) {
+  void OccupancyOcTreeBase<NODE>::insertPointCloudRays(const Pointcloud& pc, const point3d& origin, double /* maxrange */, bool endpoint_occupied, bool lazy_eval) {
     if (pc.size() < 1)
       return;
 
@@ -137,7 +140,7 @@ namespace octomap {
           for(KeyRay::iterator it=keyray->begin(); it != keyray->end(); it++) {
             updateNode(*it, false, lazy_eval); // insert freespace measurement
           }
-          updateNode(p, true, lazy_eval); // update endpoint to be occupied
+          updateNode(p, endpoint_occupied, lazy_eval); // update endpoint to be occupied
         }
       }
 
