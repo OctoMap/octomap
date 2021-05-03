@@ -13,13 +13,11 @@ jobs:
         env:
           - {ROS_DISTRO: melodic}
           - {ROS_DISTRO: noetic}
-          - {ROS_DISTRO: foxy}
-          - {ROS_DISTRO: rolling}
+          - {ROS_DISTRO: foxy, PRERELEASE: true}
+          - {ROS_DISTRO: rolling, PRERELEASE: true}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
-      PRERELEASE: true # always run the prerelease tests
       BUILDER: colcon
-      # CMAKE_ARGS: '-DCMAKE_BUILD_TYPE=Debug'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

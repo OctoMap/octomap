@@ -158,6 +158,10 @@ IF(BUILD_VIEWER)
 
   # Install catkin package.xml
   install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octovis")
+
+  # Allows Colcon to find non-Ament packages when using workspace underlays
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
   
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
