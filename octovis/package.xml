@@ -1,20 +1,23 @@
-<package format="2">
+<package format="3">
   <name>octovis</name>
-  <version>1.9.6</version>
+  <version>1.9.7</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
   http://octomap.github.io for details.</description>
 
   <author email="wurm@informatik.uni-freiburg.de">Kai M. Wurm</author>
   <author email="armin@hornung.io">Armin Hornung</author>
   <maintainer email="armin@hornung.io">Armin Hornung</maintainer>
-  <maintainer email="w.merkt+oss@gmail.com">Wolfgang Merkt</maintainer>
+  <maintainer email="opensource@wolfgangmerkt.com">Wolfgang Merkt</maintainer>
   <license>GPLv2</license>
 
   <url type="website">http://octomap.github.io</url>
   <url type="bugtracker">https://github.com/OctoMap/octomap/issues</url>
 
+  <!-- The following tags are recommended by REP-136 -->
+  <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
+
   <buildtool_depend>cmake</buildtool_depend>
-  
   <export>
     <build_type>cmake</build_type>
   </export>

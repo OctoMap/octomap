@@ -1,19 +1,23 @@
-<package format="2">
+<package format="3">
   <name>dynamic_edt_3d</name>
-  <version>1.9.6</version>
+  <version>1.9.7</version>
   <description> The dynamicEDT3D library implements an inrementally updatable Euclidean distance transform (EDT) in 3D. It comes with a wrapper to use the OctoMap 3D representation and hooks into the change detection of the OctoMap library to propagate changes to the EDT.</description>
 
   <author email="sprunkc@informatik.uni-freiburg.de">Christoph Sprunk</author>
   <maintainer email="sprunkc@informatik.uni-freiburg.de">Christoph Sprunk</maintainer>
-  <maintainer email="w.merkt+oss@gmail.com">Wolfgang Merkt</maintainer>
+  <maintainer email="opensource@wolfgangmerkt.com">Wolfgang Merkt</maintainer>
   <license>BSD</license>
 
   <url type="website">http://octomap.github.io</url>
   <url type="bugtracker">https://github.com/OctoMap/octomap/issues</url>
 
   <depend>octomap</depend>
-  <buildtool_depend>cmake</buildtool_depend>
 
+  <!-- The following tags are recommended by REP-136 -->
+  <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
+
+  <buildtool_depend>cmake</buildtool_depend>
   <export>
     <build_type>cmake</build_type>
   </export>

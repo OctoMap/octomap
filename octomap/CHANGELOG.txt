@@ -1,3 +1,8 @@
+v1.9.7: 2021-05-03
+==================
+- Use explicit casting to prevent implicit sign conversion
+- REP-136 compliance and compatibility with ROS1 & ROS2 using single branch
+
 v1.9.6: 2021-01-23
 ==================
 - Fixed ifstream >> byte with c++17

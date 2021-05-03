@@ -7,7 +7,7 @@ include(GNUInstallDirs)
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
 set(OCTOMAP_MINOR_VERSION 9)
-set(OCTOMAP_PATCH_VERSION 6)
+set(OCTOMAP_PATCH_VERSION 7)
 set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
 set(OCTOMAP_SOVERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION})
 if(COMMAND cmake_policy)
@@ -69,8 +69,12 @@ install(FILES ${octomap_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octomap")
 file(GLOB octomap_math_HDRS ${PROJECT_SOURCE_DIR}/include/octomap/math/*.h)
 install(FILES ${octomap_math_HDRS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/octomap/math")
 
-# Install catkin package.xml
+# Install package.xml (catkin/ament/rosdep)
 install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
+
+# Allows Colcon to find non-Ament packages when using workspace underlays
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
 
 # uninstall target
 configure_file(
