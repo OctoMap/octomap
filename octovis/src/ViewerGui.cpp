@@ -126,9 +126,7 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
           m_glwidget, SLOT(setCamPose(const octomath::Pose6D&)));
 
   connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
-  #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) // Requires Qt5
   connect(m_glwidget, SIGNAL(select(const QMouseEvent*)), this, SLOT(voxelSelected(const QMouseEvent*)));
-  #endif
 
   if (filename != ""){
     m_filename = filename;

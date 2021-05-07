@@ -29,7 +29,7 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtWidgets>
 #else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtGui/QMainWindow>
+#include <QtGui>
 #endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QFileDialog>
 #include <QMessageBox>
