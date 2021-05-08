@@ -480,6 +480,8 @@ void ViewerGui::setOcTreeUISwitches() {
   ui.actionConvert_ml_tree->setEnabled(true);
   ui.actionReload_Octree->setEnabled(true);
   ui.actionSettings->setEnabled(false);
+  ui.actionSelected->setChecked(true);
+  ui.actionSelected->setEnabled(true);
 }
 
 void ViewerGui::openTree(){
@@ -1203,7 +1205,7 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
 }
 
 void ViewerGui::on_actionSelected_toggled(bool enabled) {
-  // if(m_octreeDrawer) {
+    // if(m_octreeDrawer) {
     //   m_octreeDrawer->enableSelection(enabled);
 
   //   // just for testing, you should set the selection somewhere else and only enable it here:
