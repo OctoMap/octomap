@@ -1085,6 +1085,7 @@ void ViewerGui::voxelSelected(const QMouseEvent* e){
   const point3d direction3d{(float)direction.x,(float)direction.y,(float)direction.z};
   point3d end3d; // voxel coords hit by ray
   QString message = QString("--, --, -- m");
+  std::list<octomap::OcTreeVolume> selection;
 
   for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it)
   {
@@ -1106,7 +1107,11 @@ void ViewerGui::voxelSelected(const QMouseEvent* e){
     if (ray_hit)
     {
       message = QString("%L1, %L2, %L3 m").arg(end3d.x()).arg(end3d.y()).arg(end3d.z());
+      OcTreeVolume voxel = OcTreeVolume(end3d, tree->getResolution());
+      selection.push_back(voxel);
+      it->second.octree_drawer->setOcTreeSelection(selection);
     }
+    else it->second.octree_drawer->clearOcTreeSelection();
   }
   m_nodeSelected->setText(message);
   m_glwidget->update();
@@ -1205,21 +1210,11 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
 }
 
 void ViewerGui::on_actionSelected_toggled(bool enabled) {
-    // if(m_octreeDrawer) {
-    //   m_octreeDrawer->enableSelection(enabled);
-
-  //   // just for testing, you should set the selection somewhere else and only enable it here:
-  //   if (enabled){
-  //     std::list<OcTreeVolume> selection;
-  //     std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
-  //     selection.push_back(volume);
-  //     m_octreeDrawer->setOcTreeSelection(selection);
-
-  //   } else{
-  //     m_octreeDrawer->clearOcTreeSelection();
-  //   }
-  //   m_glwidget->update();
-  // }
+  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin();
+      it != m_octrees.end(); ++it) {
+        if(it->second.octree_drawer)
+          it->second.octree_drawer->enableSelection(enabled);
+  }
 }
 
 

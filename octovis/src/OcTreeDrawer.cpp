@@ -100,14 +100,14 @@ namespace octomap {
 
       glEnableClientState(GL_VERTEX_ARRAY);
 
+        if (m_drawSelection) // Drawing voxels in descending alpha-channel magnitude avoids (most) artifacts
+          drawSelection();
         if (m_drawOccupied)
           drawOccupiedVoxels();
         if (m_drawFree)
           drawFreeVoxels();
         if (m_drawOcTreeGrid)
           drawOctreeGrid();
-        if (m_drawSelection)
-          drawSelection();
 
         if (m_displayAxes) {
           drawAxes();
@@ -239,6 +239,10 @@ namespace octomap {
 
   void OcTreeDrawer::setOcTreeSelection(const std::list<octomap::OcTreeVolume>& selectedVoxels){
     m_update = true;
+
+    // init selectedVoxels GLarray
+    initGLArrays(selectedVoxels.size(), m_selectionSize, &m_selectionArray, NULL);
+
     generateCubes(selectedVoxels, &m_selectionArray, m_selectionSize, this->origin);
   }
 
@@ -739,7 +743,7 @@ namespace octomap {
 
   void OcTreeDrawer::drawSelection() const {
     if (m_selectionSize != 0) {
-      glColor4f(1.0, 0.0, 0.0, 0.5);
+      glColor4f(1.0, 0.0, 0.0, 1.0);
       drawCubes(m_selectionArray, m_selectionSize);
     }
   }
