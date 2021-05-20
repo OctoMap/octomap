@@ -15,13 +15,12 @@
 
   <!-- The following tags are recommended by REP-136 -->
   <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
-  <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
 
   <buildtool_depend>cmake</buildtool_depend>
   <export>
     <build_type>cmake</build_type>
   </export>
-      
+
   <build_depend>octomap</build_depend>
 
   <!-- Qt5 -->
