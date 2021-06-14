@@ -16,7 +16,7 @@ Download the latest releases:
   https://github.com/octomap/octomap/releases
 
 API documentation:
-  http://octomap.github.com/octomap/doc/
+  https://octomap.github.io/octomap/doc/
   
 Build status: 
   [![Build Status](https://travis-ci.org/OctoMap/octomap.png?branch=devel)](https://travis-ci.org/OctoMap/octomap)
