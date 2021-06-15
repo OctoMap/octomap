@@ -15,7 +15,7 @@
 
   \section intro_sec Introduction
 
-  The <a href="http://octomap.github.com/">OctoMap library</a>
+  The <a href="https://octomap.github.io/">OctoMap library</a>
   implements a 3D occupancy grid mapping approach. It provides data
   structures and mapping algorithms. The map is implemented using an
   \ref octomap::OcTree "Octree". It is designed to meet the following
@@ -59,10 +59,10 @@ convenient exchange between robots even under bandwidth constraints.
 
 <p> Octomap was developed by <a
 href="http://www.informatik.uni-freiburg.de/~wurm">Kai M. Wurm</a> and
-<a href="http://www.informatik.uni-freiburg.de/~hornunga">Armin
+<a href="http://www.arminhornung.de">Armin
 Hornung</a>, and is currently maintained by Armin Hornung. A tracker for bug reports and
 feature requests is available available <a href="https://github.com/OctoMap/octomap/issues">on GitHub</a>.
-You can find an overview at http://octomap.github.com/ and the code repository at
+You can find an overview at https://octomap.github.io/ and the code repository at
 https://github.com/OctoMap/octomap.</p>
 
   \section install_sec Installation
