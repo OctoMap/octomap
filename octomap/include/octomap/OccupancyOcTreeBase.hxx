@@ -882,7 +882,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::setBBXMin (point3d& min) {
+  void OccupancyOcTreeBase<NODE>::setBBXMin (const point3d& min) {
     bbx_min = min;
     if (!this->coordToKeyChecked(bbx_min, bbx_min_key)) {
       OCTOMAP_ERROR("ERROR while generating bbx min key.\n");
@@ -890,7 +890,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::setBBXMax (point3d& max) {
+  void OccupancyOcTreeBase<NODE>::setBBXMax (const point3d& max) {
     bbx_max = max;
     if (!this->coordToKeyChecked(bbx_max, bbx_max_key)) {
       OCTOMAP_ERROR("ERROR while generating bbx max key.\n");
