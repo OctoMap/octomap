@@ -2,7 +2,7 @@ Octomap - A probabilistic, flexible, and compact 3D mapping library for robotic 
 =======================================================================================
 
 Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2013.
-http://octomap.github.com
+https://octomap.github.io
 
 See the [list of contributors](AUTHORS.txt) for further authors.
 
@@ -58,7 +58,7 @@ DOCUMENTATION
 -------------
 
 The documentation for the latest stable release is available online:
-  http://octomap.github.com/octomap/doc/index.html
+  https://octomap.github.io/octomap/doc/index.html
 
 You can build the most current HTML-Documentation for your current
 source with Doxygen by running `make docs` 
