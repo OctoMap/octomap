@@ -1,4 +1,5 @@
 <map id="octomath::Pose6D" name="octomath::Pose6D">
-<area shape="rect" id="node2" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion. " alt="" coords="5,5,152,32"/>
-<area shape="rect" id="node3" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector. " alt="" coords="177,5,305,32"/>
+<area shape="rect" id="node1" title="This class represents a tree&#45;dimensional pose of an object." alt="" coords="95,95,225,121"/>
+<area shape="rect" id="node2" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion." alt="" coords="5,5,152,32"/>
+<area shape="rect" id="node3" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="177,5,306,32"/>
 </map>

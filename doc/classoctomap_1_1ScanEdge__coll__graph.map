@@ -1,7 +1,9 @@
 <map id="octomap::ScanEdge" name="octomap::ScanEdge">
-<area shape="rect" id="node2" href="$classoctomap_1_1ScanNode.html" title="A 3D scan as Pointcloud, performed from a Pose6D. " alt="" coords="191,293,331,320"/>
-<area shape="rect" id="node3" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object. " alt="" coords="231,104,360,131"/>
-<area shape="rect" id="node6" href="$classoctomap_1_1Pointcloud.html" title="A collection of 3D coordinates (point3d), which are regarded as endpoints of a 3D laser scan..." alt="" coords="77,203,217,229"/>
-<area shape="rect" id="node4" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion. " alt="" coords="223,5,369,32"/>
-<area shape="rect" id="node5" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector. " alt="" coords="30,5,159,32"/>
+<area shape="rect" id="node1" title="A connection between two ScanNodes." alt="" coords="240,392,380,419"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1ScanNode.html" title="A 3D scan as Pointcloud, performed from a Pose6D." alt="" coords="185,288,326,315"/>
+<area shape="rect" id="node3" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object." alt="" coords="225,102,355,129"/>
+<area shape="rect" id="node6" href="$classoctomap_1_1Pointcloud.html" title="A collection of 3D coordinates (point3d), which are regarded as endpoints of a 3D laser scan." alt="" coords="71,199,213,225"/>
+<area shape="rect" id="node4" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion." alt="" coords="217,5,363,32"/>
+<area shape="rect" id="node5" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="52,5,181,32"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,95,156,136"/>
 </map>

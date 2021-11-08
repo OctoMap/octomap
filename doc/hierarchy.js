@@ -43,6 +43,9 @@ var hierarchy =
       ] ]
     ] ],
     [ "octomap::ColorOcTreeNode::Color", "classoctomap_1_1ColorOcTreeNode_1_1Color.html", null ],
+    [ "INTERFACE", null, [
+      [ "octomap::OcTreeBaseImpl< NODE, INTERFACE >", "classoctomap_1_1OcTreeBaseImpl.html", null ]
+    ] ],
     [ "iterator", null, [
       [ "iterator_base", "classiterator__base.html", [
         [ "leaf_bbx_iterator", "classleaf__bbx__iterator.html", null ],
@@ -63,11 +66,8 @@ var hierarchy =
     [ "octomap::ScanNode", "classoctomap_1_1ScanNode.html", null ],
     [ "iterator_base::StackElement", "structiterator__base_1_1StackElement.html", null ],
     [ "octomap::CountingOcTree::StaticMemberInitializer", "classoctomap_1_1CountingOcTree_1_1StaticMemberInitializer.html", null ],
-    [ "octomap::ColorOcTree::StaticMemberInitializer", "classoctomap_1_1ColorOcTree_1_1StaticMemberInitializer.html", null ],
     [ "octomap::OcTree::StaticMemberInitializer", "classoctomap_1_1OcTree_1_1StaticMemberInitializer.html", null ],
+    [ "octomap::ColorOcTree::StaticMemberInitializer", "classoctomap_1_1ColorOcTree_1_1StaticMemberInitializer.html", null ],
     [ "octomap::OcTreeStamped::StaticMemberInitializer", "classoctomap_1_1OcTreeStamped_1_1StaticMemberInitializer.html", null ],
-    [ "octomath::Vector3", "classoctomath_1_1Vector3.html", null ],
-    [ "INTERFACE", null, [
-      [ "octomap::OcTreeBaseImpl< NODE, INTERFACE >", "classoctomap_1_1OcTreeBaseImpl.html", null ]
-    ] ]
+    [ "octomath::Vector3", "classoctomath_1_1Vector3.html", null ]
 ];

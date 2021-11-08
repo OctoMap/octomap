@@ -1,5 +1,6 @@
 <map id="include/octomap/MapNode.hxx" name="include/octomap/MapNode.hxx">
-<area shape="rect" id="node2" href="$MapNode_8h.html" title="include/octomap/MapNode.h" alt="" coords="22,80,209,107"/>
-<area shape="rect" id="node3" href="$MapCollection_8h.html" title="include/octomap/MapCollection.h" alt="" coords="9,155,223,181"/>
-<area shape="rect" id="node4" href="$test__mapcollection_8cpp.html" title="src/testing/test_mapcollection.cpp" alt="" coords="5,229,227,256"/>
+<area shape="rect" id="node1" title=" " alt="" coords="15,5,217,32"/>
+<area shape="rect" id="node2" href="$MapNode_8h.html" title=" " alt="" coords="22,80,210,107"/>
+<area shape="rect" id="node3" href="$MapCollection_8h.html" title=" " alt="" coords="9,155,223,181"/>
+<area shape="rect" id="node4" href="$test__mapcollection_8cpp.html" title=" " alt="" coords="5,229,227,256"/>
 </map>

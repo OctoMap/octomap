@@ -1,8 +1,12 @@
 <map id="octomap::ScanGraph" name="octomap::ScanGraph">
-<area shape="rect" id="node3" href="$classoctomap_1_1ScanNode.html" title="A 3D scan as Pointcloud, performed from a Pose6D. " alt="" coords="167,293,307,320"/>
-<area shape="rect" id="node10" href="$classoctomap_1_1ScanEdge.html" title="A connection between two ScanNodes. " alt="" coords="282,397,421,424"/>
-<area shape="rect" id="node4" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object. " alt="" coords="231,104,360,131"/>
-<area shape="rect" id="node7" href="$classoctomap_1_1Pointcloud.html" title="A collection of 3D coordinates (point3d), which are regarded as endpoints of a 3D laser scan..." alt="" coords="77,203,217,229"/>
-<area shape="rect" id="node5" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion. " alt="" coords="223,5,369,32"/>
-<area shape="rect" id="node6" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector. " alt="" coords="30,5,159,32"/>
+<area shape="rect" id="node1" title="A ScanGraph is a collection of ScanNodes, connected by ScanEdges." alt="" coords="157,612,303,639"/>
+<area shape="rect" id="node2" title=" " alt="" coords="135,443,282,484"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1ScanNode.html" title="A 3D scan as Pointcloud, performed from a Pose6D." alt="" coords="161,288,302,315"/>
+<area shape="rect" id="node10" href="$classoctomap_1_1ScanEdge.html" title="A connection between two ScanNodes." alt="" coords="276,392,416,419"/>
+<area shape="rect" id="node4" href="$classoctomath_1_1Pose6D.html" title="This class represents a tree&#45;dimensional pose of an object." alt="" coords="225,102,355,129"/>
+<area shape="rect" id="node7" href="$classoctomap_1_1Pointcloud.html" title="A collection of 3D coordinates (point3d), which are regarded as endpoints of a 3D laser scan." alt="" coords="71,199,213,225"/>
+<area shape="rect" id="node5" href="$classoctomath_1_1Quaternion.html" title="This class represents a Quaternion." alt="" coords="217,5,363,32"/>
+<area shape="rect" id="node6" href="$classoctomath_1_1Vector3.html" title="This class represents a three&#45;dimensional vector." alt="" coords="52,5,181,32"/>
+<area shape="rect" id="node8" title=" " alt="" coords="5,95,156,136"/>
+<area shape="rect" id="node9" title=" " alt="" coords="273,508,419,549"/>
 </map>

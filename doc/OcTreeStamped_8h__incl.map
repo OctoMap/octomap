@@ -1,22 +1,45 @@
 <map id="include/octomap/OcTreeStamped.h" name="include/octomap/OcTreeStamped.h">
-<area shape="rect" id="node2" href="$OcTreeNode_8h.html" title="octomap/OcTreeNode.h" alt="" coords="566,229,727,256"/>
-<area shape="rect" id="node18" href="$OccupancyOcTreeBase_8h.html" title="octomap/OccupancyOcTreeBase.h" alt="" coords="805,80,1032,107"/>
-<area shape="rect" id="node3" href="$octomap__types_8h.html" title="octomap_types.h" alt="" coords="325,379,448,405"/>
-<area shape="rect" id="node13" href="$octomap__utils_8h.html" title="octomap_utils.h" alt="" coords="1843,304,1957,331"/>
-<area shape="rect" id="node14" href="$OcTreeDataNode_8h.html" title="OcTreeDataNode.h" alt="" coords="563,304,697,331"/>
-<area shape="rect" id="node7" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="629,603,793,629"/>
-<area shape="rect" id="node10" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="523,453,689,480"/>
-<area shape="rect" id="node12" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="189,453,397,480"/>
-<area shape="rect" id="node11" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="544,528,640,555"/>
-<area shape="rect" id="node16" href="$OcTreeDataNode_8hxx.html" title="octomap/OcTreeDataNode.hxx" alt="" coords="573,379,776,405"/>
-<area shape="rect" id="node20" href="$OcTreeBaseImpl_8h.html" title="OcTreeBaseImpl.h" alt="" coords="853,155,983,181"/>
-<area shape="rect" id="node34" href="$AbstractOccupancyOcTree_8h.html" title="AbstractOccupancyOcTree.h" alt="" coords="1466,155,1656,181"/>
-<area shape="rect" id="node40" href="$OccupancyOcTreeBase_8hxx.html" title="octomap/OccupancyOcTreeBase.hxx" alt="" coords="1937,155,2177,181"/>
-<area shape="rect" id="node24" href="$OcTreeKey_8h.html" title="OcTreeKey.h" alt="" coords="1177,229,1276,256"/>
-<area shape="rect" id="node29" href="$ScanGraph_8h.html" title="ScanGraph.h" alt="" coords="443,229,541,256"/>
-<area shape="rect" id="node32" href="$OcTreeIterator_8hxx.html" title="octomap/OcTreeIterator.hxx" alt="" coords="95,229,280,256"/>
-<area shape="rect" id="node33" href="$OcTreeBaseImpl_8hxx.html" title="octomap/OcTreeBaseImpl.hxx" alt="" coords="751,229,949,256"/>
-<area shape="rect" id="node31" href="$Pointcloud_8h.html" title="Pointcloud.h" alt="" coords="445,304,539,331"/>
-<area shape="rect" id="node35" href="$AbstractOcTree_8h.html" title="AbstractOcTree.h" alt="" coords="1556,229,1681,256"/>
-<area shape="rect" id="node42" href="$MCTables_8h.html" title="octomap/MCTables.h" alt="" coords="2077,229,2224,256"/>
+<area shape="rect" id="node1" title=" " alt="" coords="832,5,1059,32"/>
+<area shape="rect" id="node2" href="$OcTreeNode_8h.html" title=" " alt="" coords="114,229,275,256"/>
+<area shape="rect" id="node19" href="$OccupancyOcTreeBase_8h.html" title=" " alt="" coords="832,80,1059,107"/>
+<area shape="rect" id="node43" title=" " alt="" coords="1083,80,1138,107"/>
+<area shape="rect" id="node3" href="$octomap__types_8h.html" title=" " alt="" coords="792,379,915,405"/>
+<area shape="rect" id="node14" href="$octomap__utils_8h.html" title=" " alt="" coords="43,304,157,331"/>
+<area shape="rect" id="node15" href="$OcTreeDataNode_8h.html" title=" " alt="" coords="182,304,317,331"/>
+<area shape="rect" id="node18" title=" " alt="" coords="443,304,496,331"/>
+<area shape="rect" id="node4" title=" " alt="" coords="749,453,811,480"/>
+<area shape="rect" id="node5" title=" " alt="" coords="687,603,745,629"/>
+<area shape="rect" id="node6" title=" " alt="" coords="1233,453,1271,480"/>
+<area shape="rect" id="node7" title=" " alt="" coords="835,453,914,480"/>
+<area shape="rect" id="node8" href="$Vector3_8h.html" title=" " alt="" coords="1096,603,1261,629"/>
+<area shape="rect" id="node11" href="$Pose6D_8h.html" title=" " alt="" coords="990,453,1157,480"/>
+<area shape="rect" id="node13" href="$octomap__deprecated_8h.html" title=" " alt="" coords="517,453,725,480"/>
+<area shape="rect" id="node9" title=" " alt="" coords="1188,677,1260,704"/>
+<area shape="rect" id="node10" title=" " alt="" coords="1101,677,1163,704"/>
+<area shape="rect" id="node12" href="$Quaternion_8h.html" title=" " alt="" coords="1011,528,1107,555"/>
+<area shape="rect" id="node16" title=" " alt="" coords="549,379,619,405"/>
+<area shape="rect" id="node17" href="$OcTreeDataNode_8hxx.html" title=" " alt="" coords="148,379,351,405"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1707,155,1771,181"/>
+<area shape="rect" id="node21" href="$OcTreeBaseImpl_8h.html" title=" " alt="" coords="880,155,1011,181"/>
+<area shape="rect" id="node34" href="$AbstractOccupancyOcTree_8h.html" title=" " alt="" coords="1226,155,1417,181"/>
+<area shape="rect" id="node40" href="$OccupancyOcTreeBase_8hxx.html" title=" " alt="" coords="1443,155,1683,181"/>
+<area shape="rect" id="node22" title=" " alt="" coords="623,229,686,256"/>
+<area shape="rect" id="node23" title=" " alt="" coords="710,229,765,256"/>
+<area shape="rect" id="node24" title=" " alt="" coords="1535,229,1590,256"/>
+<area shape="rect" id="node25" href="$OcTreeKey_8h.html" title=" " alt="" coords="1273,229,1370,256"/>
+<area shape="rect" id="node29" href="$ScanGraph_8h.html" title=" " alt="" coords="1099,229,1197,256"/>
+<area shape="rect" id="node32" href="$OcTreeIterator_8hxx.html" title=" " alt="" coords="789,229,973,256"/>
+<area shape="rect" id="node33" href="$OcTreeBaseImpl_8hxx.html" title=" " alt="" coords="350,229,549,256"/>
+<area shape="rect" id="node26" title=" " alt="" coords="1404,304,1471,331"/>
+<area shape="rect" id="node27" title=" " alt="" coords="1495,304,1599,331"/>
+<area shape="rect" id="node28" title=" " alt="" coords="1269,304,1379,331"/>
+<area shape="rect" id="node30" title=" " alt="" coords="1623,304,1678,331"/>
+<area shape="rect" id="node31" href="$Pointcloud_8h.html" title=" " alt="" coords="1047,304,1142,331"/>
+<area shape="rect" id="node35" href="$AbstractOcTree_8h.html" title=" " alt="" coords="1615,229,1740,256"/>
+<area shape="rect" id="node37" title=" " alt="" coords="1703,304,1769,331"/>
+<area shape="rect" id="node39" title=" " alt="" coords="1394,229,1459,256"/>
+<area shape="rect" id="node36" title=" " alt="" coords="1865,304,1930,331"/>
+<area shape="rect" id="node38" title=" " alt="" coords="1794,304,1841,331"/>
+<area shape="rect" id="node41" title=" " alt="" coords="1764,229,1839,256"/>
+<area shape="rect" id="node42" href="$MCTables_8h.html" title=" " alt="" coords="1863,229,2009,256"/>
 </map>

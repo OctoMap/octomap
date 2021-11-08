@@ -1,5 +1,6 @@
 <map id="octomap::CountingOcTree" name="octomap::CountingOcTree">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBase.html" title="octomap::OcTreeBase\l\&lt; CountingOcTreeNode \&gt;" alt="" coords="9,185,180,226"/>
-<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; CountingOcTreeNode,\l AbstractOcTree \&gt;" alt="" coords="5,80,184,136"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="9,5,180,32"/>
+<area shape="rect" id="node1" title="An AbstractOcTree which stores an internal counter per node / volume." alt="" coords="7,273,182,300"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeBase.html" title=" " alt="" coords="9,184,181,225"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeBaseImpl.html" title=" " alt="" coords="5,80,184,136"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="9,5,181,32"/>
 </map>

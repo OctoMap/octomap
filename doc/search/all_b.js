@@ -1,16 +1,12 @@
 var searchData=
 [
-  ['node',['node',['../structiterator__base_1_1StackElement.html#a814f2efe9a419ff6673e5e204e9e3ec5',1,'iterator_base::StackElement']]],
-  ['node_5fmap',['node_map',['../classoctomap_1_1MapNode.html#a5f7fe263ee153452e7edab1e269832b8',1,'octomap::MapNode']]],
-  ['nodechildexists',['nodeChildExists',['../classoctomap_1_1OcTreeBaseImpl.html#af552e93651636f60e65d245126092619',1,'octomap::OcTreeBaseImpl']]],
-  ['nodehaschildren',['nodeHasChildren',['../classoctomap_1_1OcTreeBaseImpl.html#a6c14198c2a454ecf2a797234e02d2fb2',1,'octomap::OcTreeBaseImpl']]],
-  ['nodes',['nodes',['../classoctomap_1_1MapCollection.html#adbcc27888fa1aff8467db3b96d3a28c8',1,'octomap::MapCollection::nodes()'],['../classoctomap_1_1ScanGraph.html#a78b6d1e4cde66d7bcad0dc132b19595a',1,'octomap::ScanGraph::nodes()']]],
-  ['nodetomaxlikelihood',['nodeToMaxLikelihood',['../classoctomap_1_1OccupancyOcTreeBase.html#a7b5973d41a60f4a4ccf07ca9916c7142',1,'octomap::OccupancyOcTreeBase::nodeToMaxLikelihood(NODE *occupancyNode) const '],['../classoctomap_1_1OccupancyOcTreeBase.html#aea2310e44ca5203e12f9fbabe8a7d285',1,'octomap::OccupancyOcTreeBase::nodeToMaxLikelihood(NODE &amp;occupancyNode) const ']]],
-  ['nodetype',['NodeType',['../classoctomap_1_1OcTreeBaseImpl.html#a55b5e366c42c06ec27cb1ce1729eddda',1,'octomap::OcTreeBaseImpl']]],
-  ['norm',['norm',['../classoctomath_1_1Quaternion.html#a38b887891f70cf15641dc1dabf8e47f4',1,'octomath::Quaternion::norm()'],['../classoctomath_1_1Vector3.html#a56bf8a27cdb62290e93b71cb5fa2619a',1,'octomath::Vector3::norm()']]],
-  ['norm_5fsq',['norm_sq',['../classoctomath_1_1Vector3.html#a32e618bee15015caf25a3fed1f07d2f4',1,'octomath::Vector3']]],
-  ['normalize',['normalize',['../classoctomath_1_1Quaternion.html#a1588356662a58ff950414d65c5f13404',1,'octomath::Quaternion::normalize()'],['../classoctomath_1_1Vector3.html#abf794bc14ccee08f69262448f546fca4',1,'octomath::Vector3::normalize()']]],
-  ['normalized',['normalized',['../classoctomath_1_1Quaternion.html#a1fb848cc694a0eaa160460ba0469b552',1,'octomath::Quaternion::normalized()'],['../classoctomath_1_1Vector3.html#ad78cb98b2a7c5f62ad7aeb2f27aa1ff4',1,'octomath::Vector3::normalized()']]],
-  ['normals_5fexample_2ecpp',['normals_example.cpp',['../normals__example_8cpp.html',1,'']]],
-  ['numchangesdetected',['numChangesDetected',['../classoctomap_1_1OccupancyOcTreeBase.html#a8bef63746796f272dfe5e545ef73d46a',1,'octomap::OccupancyOcTreeBase']]]
+  ['k_229',['k',['../classoctomap_1_1OcTreeKey.html#ab257d8b5947b0c6e9c6c668bb3049cb6',1,'octomap::OcTreeKey']]],
+  ['key_230',['key',['../structiterator__base_1_1StackElement.html#a60ce56c4d748f000d04692a81f147947',1,'iterator_base::StackElement']]],
+  ['key_5ftype_231',['key_type',['../namespaceoctomap.html#a3cd494d376227020230326d6f5892660',1,'octomap']]],
+  ['keyboolmap_232',['KeyBoolMap',['../namespaceoctomap.html#a5f98f11c602d9fefec29ff55763e1d49',1,'octomap']]],
+  ['keyhash_233',['KeyHash',['../structoctomap_1_1OcTreeKey_1_1KeyHash.html',1,'octomap::OcTreeKey']]],
+  ['keyray_234',['KeyRay',['../classoctomap_1_1KeyRay.html',1,'octomap::KeyRay'],['../classoctomap_1_1KeyRay.html#ae1710cde6683315151cdd4370580f0e8',1,'octomap::KeyRay::KeyRay()'],['../classoctomap_1_1KeyRay.html#adc1fb94f761085cbb4a44f5162230505',1,'octomap::KeyRay::KeyRay(const KeyRay &amp;other)']]],
+  ['keyrays_235',['keyrays',['../classoctomap_1_1OcTreeBaseImpl.html#a6bd58a85177ebd36b1dfed18a95ab965',1,'octomap::OcTreeBaseImpl']]],
+  ['keyset_236',['KeySet',['../namespaceoctomap.html#aceae2f852393087f735de263074245df',1,'octomap']]],
+  ['keytocoord_237',['keyToCoord',['../classoctomap_1_1OcTreeBaseImpl.html#a43b2fb8c6fd1195f823697d77435da74',1,'octomap::OcTreeBaseImpl::keyToCoord(key_type key, unsigned depth) const'],['../classoctomap_1_1OcTreeBaseImpl.html#a416ff6d47c687f4ca903c1d781e4692e',1,'octomap::OcTreeBaseImpl::keyToCoord(key_type key) const'],['../classoctomap_1_1OcTreeBaseImpl.html#a1ad6660e639e51df193bd3e65139e5ba',1,'octomap::OcTreeBaseImpl::keyToCoord(const OcTreeKey &amp;key) const'],['../classoctomap_1_1OcTreeBaseImpl.html#a9c0871d6b742218bcaffc4000318328e',1,'octomap::OcTreeBaseImpl::keyToCoord(const OcTreeKey &amp;key, unsigned depth) const']]]
 ];

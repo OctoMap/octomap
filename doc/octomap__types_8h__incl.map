@@ -1,6 +1,13 @@
 <map id="include/octomap/octomap_types.h" name="include/octomap/octomap_types.h">
-<area shape="rect" id="node5" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="227,245,391,272"/>
-<area shape="rect" id="node8" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="205,96,371,123"/>
-<area shape="rect" id="node10" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="447,96,655,123"/>
-<area shape="rect" id="node9" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="148,171,244,197"/>
+<area shape="rect" id="node1" title=" " alt="" coords="159,5,329,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,95,67,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="168,244,227,271"/>
+<area shape="rect" id="node4" title=" " alt="" coords="142,95,181,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="205,95,283,121"/>
+<area shape="rect" id="node6" href="$Vector3_8h.html" title=" " alt="" coords="360,244,525,271"/>
+<area shape="rect" id="node9" href="$Pose6D_8h.html" title=" " alt="" coords="307,95,474,121"/>
+<area shape="rect" id="node11" href="$octomap__deprecated_8h.html" title=" " alt="" coords="549,95,757,121"/>
+<area shape="rect" id="node7" title=" " alt="" coords="301,319,373,345"/>
+<area shape="rect" id="node8" title=" " alt="" coords="411,319,474,345"/>
+<area shape="rect" id="node10" href="$Quaternion_8h.html" title=" " alt="" coords="284,169,380,196"/>
 </map>

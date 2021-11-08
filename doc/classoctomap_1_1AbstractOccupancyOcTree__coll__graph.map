@@ -1,5 +1,6 @@
 <map id="octomap::AbstractOccupancyOcTree" name="octomap::AbstractOccupancyOcTree">
-<area shape="rect" id="node2" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="174,189,345,216"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="28,99,107,125"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="5,6,131,47"/>
+<area shape="rect" id="node1" title="Interface class for all octree types that store occupancy." alt="" coords="5,261,200,303"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="214,185,386,212"/>
+<area shape="rect" id="node3" title="STL class." alt="" coords="68,96,148,123"/>
+<area shape="rect" id="node4" title="STL class." alt="" coords="45,5,171,47"/>
 </map>

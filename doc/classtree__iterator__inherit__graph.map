@@ -1,3 +1,5 @@
 <map id="tree_iterator" name="tree_iterator">
-<area shape="rect" id="node2" href="$classiterator__base.html" title="Base class for OcTree iterators. " alt="" coords="30,109,127,136"/>
+<area shape="rect" id="node1" title="Iterator over the complete tree (inner nodes and leafs)." alt="" coords="35,184,125,211"/>
+<area shape="rect" id="node2" href="$classiterator__base.html" title="Base class for OcTree iterators." alt="" coords="31,109,129,136"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,155,61"/>
 </map>
