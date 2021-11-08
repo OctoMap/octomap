@@ -318,11 +318,11 @@ namespace octomap {
 
 		/**
 		 * Performs a step of the marching cubes surface reconstruction algorithm
-		 * to retreive the normal of the triangles that fall in the cube
+		 * to retrieve the normal of the triangles that fall in the cube
 		 * formed by the voxels located at the vertex of a given voxel.
 		 *
-		 * @param[in] voxel for which retreive the normals
-		 * @param[out] triangles normals
+		 * @param[in] point voxel for which retrieve the normals
+		 * @param[out] normals normals of the triangles
 		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
 		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
 		 */
