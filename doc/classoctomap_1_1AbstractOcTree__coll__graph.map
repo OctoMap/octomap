@@ -1,4 +1,5 @@
 <map id="octomap::AbstractOcTree" name="octomap::AbstractOcTree">
-<area shape="rect" id="node2" title="STL class. " alt="" coords="51,99,129,125"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="27,6,153,47"/>
+<area shape="rect" id="node1" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="5,185,177,212"/>
+<area shape="rect" id="node2" title="STL class." alt="" coords="51,96,131,123"/>
+<area shape="rect" id="node3" title="STL class." alt="" coords="28,5,155,47"/>
 </map>

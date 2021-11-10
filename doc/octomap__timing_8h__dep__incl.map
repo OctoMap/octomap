@@ -1,6 +1,7 @@
 <map id="include/octomap/octomap_timing.h" name="include/octomap/octomap_timing.h">
-<area shape="rect" id="node2" href="$eval__octree__accuracy_8cpp.html" title="src/eval_octree_accuracy.cpp" alt="" coords="5,96,200,123"/>
-<area shape="rect" id="node3" href="$graph2tree_8cpp.html" title="src/graph2tree.cpp" alt="" coords="225,96,355,123"/>
-<area shape="rect" id="node4" href="$octree2pointcloud_8cpp.html" title="src/octree2pointcloud.cpp" alt="" coords="380,96,551,123"/>
-<area shape="rect" id="node5" href="$test__iterators_8cpp.html" title="src/testing/test_iterators.cpp" alt="" coords="575,96,763,123"/>
+<area shape="rect" id="node1" title=" " alt="" coords="291,5,461,47"/>
+<area shape="rect" id="node2" href="$eval__octree__accuracy_8cpp.html" title=" " alt="" coords="5,95,200,121"/>
+<area shape="rect" id="node3" href="$graph2tree_8cpp.html" title=" " alt="" coords="224,95,355,121"/>
+<area shape="rect" id="node4" href="$octree2pointcloud_8cpp.html" title=" " alt="" coords="379,95,549,121"/>
+<area shape="rect" id="node5" href="$test__iterators_8cpp.html" title=" " alt="" coords="574,95,762,121"/>
 </map>

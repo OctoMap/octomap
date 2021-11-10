@@ -1,5 +1,6 @@
 <map id="include/octomap/OcTreeStamped.h" name="include/octomap/OcTreeStamped.h">
-<area shape="rect" id="node2" href="$OcTreeStamped_8cpp.html" title="src/OcTreeStamped.cpp" alt="" coords="5,80,168,107"/>
-<area shape="rect" id="node3" href="$test__io_8cpp.html" title="src/testing/test_io.cpp" alt="" coords="193,80,343,107"/>
-<area shape="rect" id="node4" href="$unit__tests_8cpp.html" title="src/testing/unit_tests.cpp" alt="" coords="367,80,536,107"/>
+<area shape="rect" id="node1" title=" " alt="" coords="155,5,382,32"/>
+<area shape="rect" id="node2" href="$OcTreeStamped_8cpp.html" title=" " alt="" coords="5,80,169,107"/>
+<area shape="rect" id="node3" href="$test__io_8cpp.html" title=" " alt="" coords="193,80,344,107"/>
+<area shape="rect" id="node4" href="$unit__tests_8cpp.html" title=" " alt="" coords="368,80,537,107"/>
 </map>

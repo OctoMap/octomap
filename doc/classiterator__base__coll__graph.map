@@ -1,3 +1,6 @@
 <map id="iterator_base" name="iterator_base">
-<area shape="rect" id="node4" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator. " alt="" coords="5,108,192,135"/>
+<area shape="rect" id="node1" title="Base class for OcTree iterators." alt="" coords="553,64,651,91"/>
+<area shape="rect" id="node2" title=" " alt="" coords="308,5,457,61"/>
+<area shape="rect" id="node3" title=" " alt="" coords="297,86,468,157"/>
+<area shape="rect" id="node4" href="$structiterator__base_1_1StackElement.html" title="Element on the internal recursion stack of the iterator." alt="" coords="5,108,192,135"/>
 </map>

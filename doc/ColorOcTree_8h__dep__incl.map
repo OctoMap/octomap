@@ -1,7 +1,8 @@
 <map id="include/octomap/ColorOcTree.h" name="include/octomap/ColorOcTree.h">
-<area shape="rect" id="node2" href="$ColorOcTree_8cpp.html" title="src/ColorOcTree.cpp" alt="" coords="5,88,147,115"/>
-<area shape="rect" id="node3" href="$convert__octree_8cpp.html" title="src/convert_octree.cpp" alt="" coords="172,88,325,115"/>
-<area shape="rect" id="node4" href="$color__tree__histogram_8cpp.html" title="src/testing/color_tree\l_histogram.cpp" alt="" coords="351,81,495,122"/>
-<area shape="rect" id="node5" href="$test__color__tree_8cpp.html" title="src/testing/test_color\l_tree.cpp" alt="" coords="519,81,663,122"/>
-<area shape="rect" id="node6" href="$test__io_8cpp.html" title="src/testing/test_io.cpp" alt="" coords="687,88,837,115"/>
+<area shape="rect" id="node1" title=" " alt="" coords="320,5,527,32"/>
+<area shape="rect" id="node2" href="$ColorOcTree_8cpp.html" title=" " alt="" coords="5,87,148,114"/>
+<area shape="rect" id="node3" href="$convert__octree_8cpp.html" title=" " alt="" coords="173,87,327,114"/>
+<area shape="rect" id="node4" href="$color__tree__histogram_8cpp.html" title=" " alt="" coords="351,80,495,121"/>
+<area shape="rect" id="node5" href="$test__color__tree_8cpp.html" title=" " alt="" coords="519,80,663,121"/>
+<area shape="rect" id="node6" href="$test__io_8cpp.html" title=" " alt="" coords="688,87,839,114"/>
 </map>

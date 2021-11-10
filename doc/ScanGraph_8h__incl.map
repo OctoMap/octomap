@@ -1,8 +1,16 @@
 <map id="include/octomap/ScanGraph.h" name="include/octomap/ScanGraph.h">
-<area shape="rect" id="node4" href="$Pointcloud_8h.html" title="Pointcloud.h" alt="" coords="525,80,619,107"/>
-<area shape="rect" id="node7" href="$octomap__types_8h.html" title="octomap/octomap_types.h" alt="" coords="421,155,597,181"/>
-<area shape="rect" id="node9" href="$Vector3_8h.html" title="octomap/math/Vector3.h" alt="" coords="399,379,563,405"/>
-<area shape="rect" id="node11" href="$Pose6D_8h.html" title="octomap/math/Pose6D.h" alt="" coords="503,229,669,256"/>
-<area shape="rect" id="node13" href="$octomap__deprecated_8h.html" title="octomap/octomap_deprecated.h" alt="" coords="220,229,428,256"/>
-<area shape="rect" id="node12" href="$Quaternion_8h.html" title="Quaternion.h" alt="" coords="553,304,649,331"/>
+<area shape="rect" id="node1" title=" " alt="" coords="235,5,433,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,60,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="325,453,388,480"/>
+<area shape="rect" id="node4" href="$Pointcloud_8h.html" title=" " alt="" coords="597,80,692,107"/>
+<area shape="rect" id="node7" href="$octomap__types_8h.html" title=" " alt="" coords="482,155,658,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="783,379,842,405"/>
+<area shape="rect" id="node6" title=" " alt="" coords="851,229,889,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="135,229,197,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="221,229,300,256"/>
+<area shape="rect" id="node10" href="$Vector3_8h.html" title=" " alt="" coords="503,379,669,405"/>
+<area shape="rect" id="node12" href="$Pose6D_8h.html" title=" " alt="" coords="608,229,775,256"/>
+<area shape="rect" id="node14" href="$octomap__deprecated_8h.html" title=" " alt="" coords="325,229,533,256"/>
+<area shape="rect" id="node11" title=" " alt="" coords="610,453,682,480"/>
+<area shape="rect" id="node13" href="$Quaternion_8h.html" title=" " alt="" coords="658,304,754,331"/>
 </map>

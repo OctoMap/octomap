@@ -1,6 +1,7 @@
 <map id="octomap::OcTree" name="octomap::OcTree">
-<area shape="rect" id="node2" href="$classoctomap_1_1OccupancyOcTreeBase.html" title="octomap::OccupancyOcTree\lBase\&lt; OcTreeNode \&gt;" alt="" coords="25,275,215,317"/>
-<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeBaseImpl.html" title="octomap::OcTreeBaseImpl\l\&lt; OcTreeNode, AbstractOccupancy\lOcTree \&gt;" alt="" coords="5,171,235,227"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOccupancyOcTree.html" title="Interface class for all octree types that store occupancy. " alt="" coords="23,81,217,122"/>
-<area shape="rect" id="node5" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="34,5,205,32"/>
+<area shape="rect" id="node1" title="octomap main map data structure, stores 3D occupancy grid map in an OcTree." alt="" coords="59,363,182,389"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OccupancyOcTreeBase.html" title=" " alt="" coords="26,273,215,315"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeBaseImpl.html" title=" " alt="" coords="5,169,236,225"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOccupancyOcTree.html" title="Interface class for all octree types that store occupancy." alt="" coords="23,80,218,121"/>
+<area shape="rect" id="node5" href="$classoctomap_1_1AbstractOcTree.html" title="This abstract class is an interface to all octrees and provides a factory design pattern for readin a..." alt="" coords="35,5,207,32"/>
 </map>

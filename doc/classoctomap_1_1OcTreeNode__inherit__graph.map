@@ -1,6 +1,7 @@
 <map id="octomap::OcTreeNode" name="octomap::OcTreeNode">
-<area shape="rect" id="node4" href="$classoctomap_1_1ColorOcTreeNode.html" title="octomap::ColorOcTreeNode" alt="" coords="5,245,189,272"/>
-<area shape="rect" id="node5" href="$classoctomap_1_1OcTreeNodeStamped.html" title="octomap::OcTreeNodeStamped" alt="" coords="214,245,420,272"/>
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; float \&gt;" alt="" coords="115,81,297,122"/>
-<area shape="rect" id="node3" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="105,5,308,32"/>
+<area shape="rect" id="node1" title="Nodes to be used in OcTree." alt="" coords="130,169,285,196"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1ColorOcTreeNode.html" title=" " alt="" coords="5,244,191,271"/>
+<area shape="rect" id="node5" href="$classoctomap_1_1OcTreeNodeStamped.html" title=" " alt="" coords="215,244,421,271"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeDataNode.html" title=" " alt="" coords="116,80,299,121"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1AbstractOcTreeNode.html" title=" " alt="" coords="106,5,309,32"/>
 </map>

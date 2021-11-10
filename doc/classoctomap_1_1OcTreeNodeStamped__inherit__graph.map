@@ -1,5 +1,6 @@
 <map id="octomap::OcTreeNodeStamped" name="octomap::OcTreeNodeStamped">
-<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree. " alt="" coords="31,171,184,197"/>
-<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeDataNode.html" title="octomap::OcTreeDataNode\l\&lt; float \&gt;" alt="" coords="17,81,199,122"/>
-<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTreeNode.html" title="octomap::AbstractOcTreeNode" alt="" coords="7,5,209,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,244,212,271"/>
+<area shape="rect" id="node2" href="$classoctomap_1_1OcTreeNode.html" title="Nodes to be used in OcTree." alt="" coords="31,169,186,196"/>
+<area shape="rect" id="node3" href="$classoctomap_1_1OcTreeDataNode.html" title=" " alt="" coords="17,80,200,121"/>
+<area shape="rect" id="node4" href="$classoctomap_1_1AbstractOcTreeNode.html" title=" " alt="" coords="7,5,210,32"/>
 </map>
