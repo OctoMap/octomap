@@ -233,24 +233,30 @@ namespace octomap {
               occupied_cells.insert(key);
             }
           }
-
-          // update freespace, break as soon as bbx limit is reached
-          if (this->computeRayKeys(origin, p, *keyray)){
-            for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
-              if (inBBX(*rit)) {
-#ifdef _OPENMP
-                #pragma omp critical (free_insert)
-#endif
-                {
-                  free_cells.insert(*rit);
-                }
-              }
-              else break;
-            }
-          } // end if compute ray
         } // end if in BBX and not maxrange
-      } // end bbx case
 
+        // truncate the end point to the max range if the max range is exceededs
+        point3d new_end = p;
+        if ((max_range >= 0.0) && ((p - origin).norm() > maxrange)) {
+          const point3d direction = (p - origin).normalized();
+          new_end = origin + direction * (float) maxrange;
+        }
+
+        // update freespace, break as soon as bbx limit is reached
+        if (this->computeRayKeys(origin, p, *keyray)){
+          for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
+            if (inBBX(*rit)) {
+#ifdef _OPENMP
+              #pragma omp critical (free_insert)
+#endif
+              {
+                free_cells.insert(*rit);
+              }
+            }
+            else break;
+          }
+        } // end if compute ray
+      } // end bbx case
     } // end for all points, end of parallel OMP loop
 
     // prefer occupied cells over free ones (and make sets disjunct)
