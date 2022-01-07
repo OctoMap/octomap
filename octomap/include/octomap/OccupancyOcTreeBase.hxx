@@ -235,7 +235,7 @@ namespace octomap {
           }
         } // end if in BBX and not maxrange
 
-        // truncate the end point to the max range if the max range is exceededs
+        // truncate the end point to the max range if the max range is exceeded
         point3d new_end = p;
         if ((max_range >= 0.0) && ((p - origin).norm() > maxrange)) {
           const point3d direction = (p - origin).normalized();
