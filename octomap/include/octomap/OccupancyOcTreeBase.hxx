@@ -237,7 +237,7 @@ namespace octomap {
 
         // truncate the end point to the max range if the max range is exceeded
         point3d new_end = p;
-        if ((max_range >= 0.0) && ((p - origin).norm() > maxrange)) {
+        if ((maxrange >= 0.0) && ((p - origin).norm() > maxrange)) {
           const point3d direction = (p - origin).normalized();
           new_end = origin + direction * (float) maxrange;
         }
