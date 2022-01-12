@@ -244,13 +244,13 @@ namespace octomap {
 
         // update freespace, break as soon as bbx limit is reached
         if (this->computeRayKeys(origin, new_end, *keyray)){
-          for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
-            if (inBBX(*rit)) {
+          for(KeyRay::iterator it=keyray->begin(); it != keyray->end(); it++) {
+            if (inBBX(*it)) {
 #ifdef _OPENMP
               #pragma omp critical (free_insert)
 #endif
               {
-                free_cells.insert(*rit);
+                free_cells.insert(*it);
               }
             }
             else break;
