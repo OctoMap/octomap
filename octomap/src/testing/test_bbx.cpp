@@ -18,6 +18,7 @@ int main(int /*argc*/, char** /*argv*/) {
 
   // Set up the point cloud. Offset the origin by half resolution to use the
   // center of a voxel.
+  Pointcloud cloud;
   const point3d origin(resolution / 2.f, 5.f + resolution / 2.f, resolution / 2.f);
   const float maxrange = 8.f;
   // The first point is inside the bounding box and max range.
