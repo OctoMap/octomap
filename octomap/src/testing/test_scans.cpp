@@ -13,6 +13,22 @@ void printUsage(char* self){
   exit(1);
 }
 
+void comparePose(const pose6d& first, const pose6d& sec){
+    EXPECT_FLOAT_EQ(first.x(), sec.x());
+    EXPECT_FLOAT_EQ(first.y(), sec.y());
+    EXPECT_FLOAT_EQ(first.z(), sec.z());    
+    
+    EXPECT_FLOAT_EQ(first.roll(), sec.roll());
+    EXPECT_FLOAT_EQ(first.pitch(), sec.pitch());
+    EXPECT_FLOAT_EQ(first.yaw(), sec.yaw());
+}
+
+void comparePoint(const point3d& first, const point3d& sec){
+    EXPECT_FLOAT_EQ(first.x(), sec.x());
+    EXPECT_FLOAT_EQ(first.y(), sec.y());
+    EXPECT_FLOAT_EQ(first.z(), sec.z());
+}
+
 int main(int argc, char** argv) {
   if (argc != 2){
     printUsage(argv[0]);
@@ -53,15 +69,15 @@ int main(int argc, char** argv) {
     ScanNode* refScanNode = *referenceGraph.begin();
     
     EXPECT_EQ(scanNode->id, refScanNode->id);
-    EXPECT_EQ(scanNode->pose, refScanNode->pose);
+    comparePose(scanNode->pose, refScanNode->pose);
     EXPECT_EQ(scanNode->scan->size(), refScanNode->scan->size());
 
     for (size_t i = 0; i < scanNode->scan->size(); ++i){
-      EXPECT_EQ((*scanNode->scan)[i], (*refScanNode->scan)[i]);
+      comparePoint((*scanNode->scan)[i], (*refScanNode->scan)[i]);
     }  
     
   }
-  // test reading and writing to file
+  // test reading and writing to file - to verify, are the values really exactly equal or just close?
   {
     std::cout << "Testing ScanGraph I/O" << std::endl;
     
