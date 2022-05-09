@@ -39,4 +39,15 @@ set(OCTOMAP_LIBRARIES
   "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
 )
 
+# Additionally set the variables using a lower-case project name.
+# This fixes discovery for downstream packages that search for lower-case octomap, which has been common in downstream code:
+set(octomap_MAJOR_VERSION "${OCTOMAP_MAJOR_VERSION}")
+set(octomap_MINOR_VERSION "${OCTOMAP_MINOR_VERSION}")
+set(octomap_PATCH_VERSION "${OCTOMAP_PATCH_VERSION}")
+set(octomap_VERSION "${OCTOMAP_VERSION}")
+set(octomap_INCLUDE_DIRS "${OCTOMAP_INCLUDE_DIRS}")
+set(octomap_LIBRARY_DIRS "${OCTOMAP_LIBRARY_DIRS}")
+set(octomap_LIBRARIES "${OCTOMAP_LIBRARIES}")
+
+
 @OCTOMAP_INCLUDE_TARGETS@
