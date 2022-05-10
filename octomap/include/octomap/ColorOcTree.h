@@ -168,7 +168,7 @@ namespace octomap {
 
     // uses gnuplot to plot a RGB histogram in EPS format
     void writeColorHistogram(std::string filename);
-    
+
   protected:
     void updateInnerOccupancyRecurs(ColorOcTreeNode* node, unsigned int depth);
 
