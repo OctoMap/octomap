@@ -35,4 +35,4 @@
 #include "Pointcloud.h"
 #include "ScanGraph.h"
 #include "OcTree.h"
-
+#include "SemanticOcTree.h"

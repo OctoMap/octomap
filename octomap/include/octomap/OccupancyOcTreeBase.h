@@ -71,6 +71,7 @@ namespace octomap {
   public:
     /// Default constructor, sets resolution of leafs
     OccupancyOcTreeBase(double resolution);
+
     virtual ~OccupancyOcTreeBase();
 
     /// Copy constructor

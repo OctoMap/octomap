@@ -1,9 +1,9 @@
 #ifndef OCTOMAP_SEMANTIC_OCTREE_H
 #define OCTOMAP_SEMANTIC_OCTREE_H
 
-#include<iostream>
-#include<octomap/OcTreeNode.h>
-#include<octomap/OccupancyOcTreeBase.h>
+#include <iostream>
+#include <octomap/OcTreeNode.h>
+#include <octomap/OccupancyOcTreeBase.h>
 #include <unordered_map>
 
 namespace octomap{
@@ -36,6 +36,9 @@ namespace octomap{
         Semantics semantic_info;
 
     public:
+
+        friend class SemanticOcTree;
+
         SemanticOcTreeNode() : OcTreeNode() {}        
         SemanticOcTreeNode(const SemanticOcTreeNode& rhs) : OcTreeNode(rhs), semantic_info(rhs.semantic_info){}
         bool operator==(const SemanticOcTreeNode& rhs) const{
@@ -47,12 +50,19 @@ namespace octomap{
             this->semantic_info = from.getSemanticInfo();
         }
 
+        bool isSemanticInfoSet(){return true;} //Always true for now.
         inline Semantics getSemanticInfo() const {return semantic_info;}
         inline void setSemanticInfo(Semantics s) {this->semantic_info = s;}
         inline void setSemanticInfo(int id, int est_category, int confidence) 
             {this->semantic_info = Semantics(id, est_category, confidence);}
         
         Semantics& getSemanticInfo() {return semantic_info;}
+
+        void updateSemanticsChildren();
+        Semantics getAverageChildSemanticInfo() const;
+
+        std::istream& readData(std::istream &s);
+        std::ostream& writeData(std::ostream &s) const;
     };
 
 
@@ -64,32 +74,33 @@ namespace octomap{
         SemanticOcTree* create() const {return new SemanticOcTree(resolution);}
         std::string getTreeType() const {return "SemanticOcTree";}
 
-        virtual bool pruneNode(SemanticOcTreeNode* node);   
+        virtual bool pruneNode(SemanticOcTreeNode* node);
         virtual bool isNodeCollapsible(const SemanticOcTreeNode* node) const;
         
-        // set node color at given key or coordinate. Replaces previous color.
+        // // set node color at given key or coordinate. Replaces previous color.
         SemanticOcTreeNode* setNodeSemantics(const OcTreeKey& key, int id, int est_category, float confidence);
-
+        
         SemanticOcTreeNode* setNodeSemantics(float x, float y, 
-                                    float z, int id, 
-                                    int est_category, float confidence) {
-        OcTreeKey key;
-        if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
-        return setNodeSemantics(key,id,est_category,confidence);
+                                             float z, int id, 
+                                             int est_category, float confidence) {
+            OcTreeKey key;
+            if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
+            return setNodeSemantics(key,id,est_category,confidence);
         }
 
+        
         SemanticOcTreeNode* integrateNodeSemantics(const OcTreeKey& key, int id, 
-                                    int est_category, float confidence);
+                                                    int est_category, float confidence);
         
         SemanticOcTreeNode* integrateNodeSemantics(float x, float y, 
-                                        float z, uint8_t id, 
-                                        int est_category, float confidence) {
-        OcTreeKey key;
-        if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
-        return integrateNodeSemantics(key,id, est_category, confidence);
+                                                    float z, uint8_t id, 
+                                                    int est_category, float confidence) {
+            OcTreeKey key;
+            if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
+            return integrateNodeSemantics(key,id, est_category, confidence);
         }
-
-        // update inner nodes, sets color to average child color
+        
+        // // update inner nodes, sets color to average child color
         void updateInnerOccupancy();
 
     protected:
@@ -105,9 +116,9 @@ namespace octomap{
         class StaticMemberInitializer{
         public:
             StaticMemberInitializer() {
-            SemanticOcTree* tree = new SemanticOcTree(0.1);
-            tree->clearKeyRays();
-            AbstractOcTree::registerTreeType(tree);
+                SemanticOcTree* tree = new SemanticOcTree(0.1);
+                tree->clearKeyRays();
+                AbstractOcTree::registerTreeType(tree);
             }
 
             /**
@@ -119,8 +130,8 @@ namespace octomap{
         };
         /// static member to ensure static initialization (only once)
         static StaticMemberInitializer semanticOcTreeMemberInit;
-
     };
-}
+
+} //end of namespace
 
 #endif

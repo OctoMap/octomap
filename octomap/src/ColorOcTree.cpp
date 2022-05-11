@@ -184,7 +184,6 @@ namespace octomap {
     return n;
   }
 
-
   void ColorOcTree::updateInnerOccupancy() {
     this->updateInnerOccupancyRecurs(this->root, 0);
   }
