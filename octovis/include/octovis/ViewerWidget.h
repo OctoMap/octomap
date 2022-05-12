@@ -86,6 +86,7 @@ private slots:
 signals:
    void cameraPathStopped(int id);
    void cameraPathFrameChanged(int id, int current_camera_frame);
+   void select(const QMouseEvent* e);
 
  protected:
 

@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -49,7 +49,7 @@
        * Constructor of the iterator. Initializes the iterator with the default
        * constructor (= end() iterator) if tree is empty or NULL.
        *
-       * @param tree OcTreeBaseImpl on which the iterator is used on
+       * @param ptree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
       iterator_base(OcTreeBaseImpl<NodeType,INTERFACE> const* ptree, uint8_t depth=0)
@@ -210,7 +210,7 @@
       /**
        * Constructor of the iterator.
        *
-       * @param tree OcTreeBaseImpl on which the iterator is used on
+       * @param ptree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
       tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* ptree, uint8_t depth=0) : iterator_base(ptree, depth) {};
@@ -267,7 +267,7 @@
           /**
           * Constructor of the iterator.
           *
-          * @param tree OcTreeBaseImpl on which the iterator is used on
+          * @param ptree OcTreeBaseImpl on which the iterator is used on
           * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
           */
           leaf_iterator(OcTreeBaseImpl<NodeType, INTERFACE> const* ptree, uint8_t depth=0) : iterator_base(ptree, depth) {
@@ -345,7 +345,7 @@
       * will include the bounding box coordinate. For a more exact control, use
       * the constructor with OcTreeKeys instead.
       *
-      * @param tree OcTreeBaseImpl on which the iterator is used on
+      * @param ptree OcTreeBaseImpl on which the iterator is used on
       * @param min Minimum point3d of the axis-aligned boundingbox
       * @param max Maximum point3d of the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
@@ -373,7 +373,7 @@
       * Constructor of the iterator. This version uses the exact keys as axis-aligned
       * bounding box (including min and max).
       *
-      * @param tree OcTreeBaseImpl on which the iterator is used on
+      * @param ptree OcTreeBaseImpl on which the iterator is used on
       * @param min Minimum OcTreeKey to be included in the axis-aligned boundingbox
       * @param max Maximum OcTreeKey to be included in the axis-aligned boundingbox
       * @param depth Maximum depth to traverse the tree. 0 (default): unlimited

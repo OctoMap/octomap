@@ -1,3 +1,14 @@
+v1.9.8: 2022-05-12
+==================
+- Also set lowercase octomap_* variables in CMake config (#369)
+- Fix float tests and overflow problem in binvox2bt
+- Fix to freespace update when bbx is set. (#360)
+- Update Doxygen & URLs  (#354,#352)
+- make setBBXMin/Max parameters const (#348)
+- ROS: Remove unused ament_cmake dependency.
+- octovis: Implement volume selection features (#339)
+- octovis: Link dependencies in octovis-static library (#340)
+
 v1.9.7: 2021-05-03
 ==================
 - Use explicit casting to prevent implicit sign conversion

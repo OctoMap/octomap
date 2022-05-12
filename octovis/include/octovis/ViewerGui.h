@@ -27,9 +27,9 @@
 
 #include <qglobal.h>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets>
 #else  // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtGui/QMainWindow>
+#include <QtGui>
 #endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QFileDialog>
 #include <QMessageBox>
@@ -113,6 +113,7 @@ namespace octomap {
     void on_actionHideBackground_toggled(bool checked);
     void on_actionAlternateRendering_toggled(bool checked);
     void on_actionClear_triggered();
+    void voxelSelected(const QMouseEvent* e);
 
     void on_action_bg_black_triggered();
     void on_action_bg_white_triggered();
@@ -213,6 +214,7 @@ namespace octomap {
     unsigned int m_max_tree_depth;
     unsigned int m_laserType; // SICK or Hokuyo /URG
     bool m_cameraStored;
+    QLabel* m_nodeSelected;
     QLabel* m_mapSizeStatus;
     QLabel* m_mapMemoryStatus;
 

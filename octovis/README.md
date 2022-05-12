@@ -2,7 +2,7 @@ Octomap - A probabilistic, flexible, and compact 3D mapping library for robotic 
 =======================================================================================
 
 Authors: K. M. Wurm, A. Hornung, University of Freiburg, Copyright (C) 2009-2013.
-http://octomap.github.com
+https://octomap.github.io
 
 Octovis is a visualization tool and library for OctoMap.
 It is distributed under the GPL license (see "LICENSE.txt").

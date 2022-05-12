@@ -71,10 +71,13 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
   ui.menuShow->addAction(settingsCameraDock->toggleViewAction());
 
   // status bar
+  m_nodeSelected = new QLabel("Selected node coordinates", this);
   m_mapSizeStatus = new QLabel("Map size", this);
   m_mapMemoryStatus = new QLabel("Memory consumption", this);
+  m_nodeSelected->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   m_mapSizeStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   m_mapMemoryStatus->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  statusBar()->addPermanentWidget(m_nodeSelected);
   statusBar()->addPermanentWidget(m_mapSizeStatus);
   statusBar()->addPermanentWidget(m_mapMemoryStatus);
 
@@ -123,6 +126,7 @@ ViewerGui::ViewerGui(const std::string& filename, QWidget *parent, unsigned int 
           m_glwidget, SLOT(setCamPose(const octomath::Pose6D&)));
 
   connect(ui.actionReset_view, SIGNAL(triggered()), m_glwidget, SLOT(resetView()));
+  connect(m_glwidget, SIGNAL(select(const QMouseEvent*)), this, SLOT(voxelSelected(const QMouseEvent*)));
 
   if (filename != ""){
     m_filename = filename;
@@ -476,6 +480,8 @@ void ViewerGui::setOcTreeUISwitches() {
   ui.actionConvert_ml_tree->setEnabled(true);
   ui.actionReload_Octree->setEnabled(true);
   ui.actionSettings->setEnabled(false);
+  ui.actionSelected->setChecked(true);
+  ui.actionSelected->setEnabled(true);
 }
 
 void ViewerGui::openTree(){
@@ -1070,6 +1076,47 @@ void ViewerGui::on_actionClear_triggered() {
   showOcTree();
 }
 
+void ViewerGui::voxelSelected(const QMouseEvent* e){
+  QPoint pixel_coord = e->pos();
+  qglviewer::Vec origin;
+  qglviewer::Vec direction;
+  m_glwidget->camera()->convertClickToLine(pixel_coord, origin, direction);
+  const point3d origin3d{(float)origin.x,(float)origin.y,(float)origin.z};
+  const point3d direction3d{(float)direction.x,(float)direction.y,(float)direction.z};
+  point3d end3d; // voxel coords hit by ray
+  QString message = QString("--, --, -- m");
+  std::list<octomap::OcTreeVolume> selection;
+
+  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin(); it != m_octrees.end(); ++it)
+  {
+    AbstractOcTree* tree = it->second.octree;
+    bool ray_hit = false;
+    if (OcTree* occupancytree = dynamic_cast<OcTree*>(tree))
+    {
+      ray_hit = occupancytree->castRay(origin3d, direction3d, end3d, true); // ? append ray distance arg to avoid raycast to inf warnings
+    }
+    else if (ColorOcTree* occupancytree = dynamic_cast<ColorOcTree*>(tree))
+    {
+      ray_hit = occupancytree->castRay(origin3d, direction3d, end3d, true);
+    }
+    else
+    {
+      OCTOMAP_ERROR("Could not select nodes of this tree type %s\n", tree->getTreeType().c_str());
+      continue;
+    }
+    if (ray_hit)
+    {
+      message = QString("%L1, %L2, %L3 m").arg(end3d.x()).arg(end3d.y()).arg(end3d.z());
+      OcTreeVolume voxel = OcTreeVolume(end3d, tree->getResolution());
+      selection.push_back(voxel);
+      it->second.octree_drawer->setOcTreeSelection(selection);
+    }
+    else it->second.octree_drawer->clearOcTreeSelection();
+  }
+  m_nodeSelected->setText(message);
+  m_glwidget->update();
+}
+
 void ViewerGui::on_actionTest_triggered(){
 
 }
@@ -1163,21 +1210,11 @@ void ViewerGui::on_actionFree_toggled(bool enabled) {
 }
 
 void ViewerGui::on_actionSelected_toggled(bool enabled) {
-  // if(m_octreeDrawer) {
-    //   m_octreeDrawer->enableSelection(enabled);
-
-  //   // just for testing, you should set the selection somewhere else and only enable it here:
-  //   if (enabled){
-  //     std::list<OcTreeVolume> selection;
-  //     std::pair<octomath::Vector3, double> volume(octomath::Vector3(0.0, 0.0, 0.0), 0.2);
-  //     selection.push_back(volume);
-  //     m_octreeDrawer->setOcTreeSelection(selection);
-
-  //   } else{
-  //     m_octreeDrawer->clearOcTreeSelection();
-  //   }
-  //   m_glwidget->update();
-  // }
+  for (std::map<int, OcTreeRecord>::iterator it = m_octrees.begin();
+      it != m_octrees.end(); ++it) {
+        if(it->second.octree_drawer)
+          it->second.octree_drawer->enableSelection(enabled);
+  }
 }
 
 
