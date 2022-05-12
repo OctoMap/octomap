@@ -111,7 +111,7 @@ namespace octomap{
                                                                 float confidence) {
         SemanticOcTreeNode* n = search (key);
         if (n != 0) {
-            if (n->isSemanticInfoSet()) {
+            if (this->isNodeOccupied(n)) {
                 //Currently integrates the latest info, but need better way to integrate semantics
                 int new_id = id;
                 int new_category = category;
@@ -119,11 +119,20 @@ namespace octomap{
                 n->setSemanticInfo(new_id, new_category, new_confidence);
             }
             else {
-                n->setSemanticInfo(id, category, confidence);
+                n->clearSemanticInfo();
             }
         }
         return n;
-  }
+    }
+
+    SemanticOcTreeNode* SemanticOcTree::integrateNodeSemantics(const OcTreeKey& key) {
+        SemanticOcTreeNode* n = search (key);
+        if (n != 0) {
+            if(!this->isNodeOccupied(n))
+                n->clearSemanticInfo();
+        }
+        return n;
+    }
 
    void SemanticOcTree::updateInnerOccupancy() {
       this->updateInnerOccupancyRecurs(this->root, 0);
@@ -158,13 +167,11 @@ namespace octomap{
     // insert data into tree  -----------------------
     for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
       updateNode(*it, false, lazy_eval);
+      integrateNodeSemantics(*it); //Clears if empty
     }
     for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
       updateNode(*it, true, lazy_eval);
-      std::cout<<confidence<<std::endl;
       integrateNodeSemantics(*it, id, est_category, confidence);
     }
   }
-
-
 }//end of namespace

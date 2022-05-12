@@ -55,7 +55,12 @@ namespace octomap{
         inline void setSemanticInfo(Semantics s) {this->semantic_info = s;}
         inline void setSemanticInfo(int id, int est_category, float confidence) 
             {this->semantic_info = Semantics(id, est_category, confidence);}
-        
+        inline void clearSemanticInfo(){
+            this->semantic_info.id = -1;
+            this->semantic_info.est_category = -1;
+            this->semantic_info.confidence = 0.0;
+            this->semantic_info.category.clear();
+        }        
         Semantics& getSemanticInfo() {return semantic_info;}
 
         void updateSemanticsChildren();
@@ -91,6 +96,8 @@ namespace octomap{
         
         SemanticOcTreeNode* integrateNodeSemantics(const OcTreeKey& key, int id, 
                                                     int est_category, float confidence);
+        
+        SemanticOcTreeNode* integrateNodeSemantics(const OcTreeKey& key);
         
         SemanticOcTreeNode* integrateNodeSemantics(float x, float y, 
                                                     float z, uint8_t id, 
