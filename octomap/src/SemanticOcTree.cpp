@@ -145,5 +145,26 @@ namespace octomap{
     }
   }
 
+  void SemanticOcTree::insertPointCloudAndSemantics(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
+                                    int id, int est_category, float confidence,
+                                    double maxrange, bool lazy_eval, bool discretize) {
+
+    KeySet free_cells, occupied_cells;
+    if (discretize)
+      computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+    else
+      computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+
+    // insert data into tree  -----------------------
+    for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
+      updateNode(*it, false, lazy_eval);
+    }
+    for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
+      updateNode(*it, true, lazy_eval);
+      std::cout<<confidence<<std::endl;
+      integrateNodeSemantics(*it, id, est_category, confidence);
+    }
+  }
+
 
 }//end of namespace

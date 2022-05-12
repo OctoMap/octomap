@@ -57,38 +57,32 @@ int main(int /*argc*/, char** /*argv*/) {
 
 
   // insert some measurements of occupied cells
-
+  Pointcloud pc = Pointcloud();
   for (int x=-20; x<20; x++) {
     for (int y=-20; y<20; y++) {
       for (int z=-20; z<20; z++) {
         point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
-        tree.updateNode(endpoint, true); // integrate 'occupied' measurement
+        pc.push_back(endpoint);  
       }
     }
   }
 
-  // insert some measurements of free cells
+  point3d origin ((float) 0.0, (float) 0.0, (float) 0.0);
+  //tree.insertPointCloud(pc, origin, 30, false, false);
+  tree.insertPointCloudAndSemantics(pc, origin, 2, -1, 0.86, 30, false, false);
 
-  for (int x=-30; x<30; x++) {
-    for (int y=-30; y<30; y++) {
-      for (int z=-30; z<30; z++) {
-        point3d endpoint ((float) x*0.02f-1.0f, (float) y*0.02f-1.0f, (float) z*0.02f-1.0f);
-        tree.updateNode(endpoint, false);  // integrate 'free' measurement
-      }
-    }
-  }
 
   cout << endl;
   cout << "performing some queries:" << endl;
   
-  point3d query (0., 0., 0.);
+  point3d query (0.5, 0.5, 0.5);
   SemanticOcTreeNode* result = tree.search (query);
-  result->setSemanticInfo(-1, 0, 1.0);
+  //result->setSemanticInfo(-1, 0, 1.0);
   print_query_info(query, result);
 
   query = point3d(-1.,-1.,-1.);
   result = tree.search (query);
-  result->setSemanticInfo(-2, 1, 0.0);
+  //result->setSemanticInfo(-2, 1, 0.0);
   print_query_info(query, result);
 
   query = point3d(1.,1.,1.);

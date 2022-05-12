@@ -14,7 +14,7 @@ namespace octomap{
         int est_category;
         float confidence;
 
-        Semantics(): id(-1), est_category(-1){}
+        Semantics(): id(-1), est_category(-1), confidence(0.0){}
         Semantics(int _id, int _est_category, float _confidence)
          : id(_id), est_category(_est_category), confidence(_confidence){}
 
@@ -53,7 +53,7 @@ namespace octomap{
         bool isSemanticInfoSet(){return true;} //Always true for now.
         inline Semantics getSemanticInfo() const {return semantic_info;}
         inline void setSemanticInfo(Semantics s) {this->semantic_info = s;}
-        inline void setSemanticInfo(int id, int est_category, int confidence) 
+        inline void setSemanticInfo(int id, int est_category, float confidence) 
             {this->semantic_info = Semantics(id, est_category, confidence);}
         
         Semantics& getSemanticInfo() {return semantic_info;}
@@ -99,8 +99,12 @@ namespace octomap{
             if (!this->coordToKeyChecked(point3d(x,y,z), key)) return NULL;
             return integrateNodeSemantics(key,id, est_category, confidence);
         }
-        
-        // // update inner nodes, sets color to average child color
+
+        void insertPointCloudAndSemantics(const Pointcloud& scan, const octomap::point3d& sensor_origin, 
+                                    int id, int category, float confidence,
+                                    double maxrange, bool lazy_eval, bool discretize);
+          
+        // update inner nodes, sets color to average child color
         void updateInnerOccupancy();
 
     protected:
