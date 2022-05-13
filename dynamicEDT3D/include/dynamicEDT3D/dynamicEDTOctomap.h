@@ -40,6 +40,7 @@
 
 #include "dynamicEDT3D.h"
 #include <octomap/OcTree.h>
+#include <octomap/SemanticOcTree.h>
 #include <octomap/OcTreeStamped.h>
 
 /// A DynamicEDTOctomapBase object connects a DynamicEDT3D object to an octomap.
@@ -122,7 +123,7 @@ private:
 	int offsetX, offsetY, offsetZ;
 };
 
-typedef DynamicEDTOctomapBase<octomap::OcTree> DynamicEDTOctomap;
+typedef DynamicEDTOctomapBase<octomap::SemanticOcTree> DynamicEDTOctomap;
 typedef DynamicEDTOctomapBase<octomap::OcTreeStamped> DynamicEDTOctomapStamped;
 
 #include "dynamicEDTOctomap.hxx"
