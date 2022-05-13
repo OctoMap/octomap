@@ -62,7 +62,7 @@ namespace octomap{
             this->semantic_info.category.clear();
         }        
         Semantics& getSemanticInfo() {return semantic_info;}
-
+        inline int getCategory() {return this->semantic_info.est_category;}
         void updateSemanticsChildren();
         Semantics getAverageChildSemanticInfo() const;
 
