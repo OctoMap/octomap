@@ -40,8 +40,8 @@
 
 #include "dynamicEDT3D.h"
 #include <octomap/OcTree.h>
-#include <octomap/SemanticOcTree.h>
 #include <octomap/OcTreeStamped.h>
+#include <octomap/SemanticOcTree.h>
 
 /// A DynamicEDTOctomapBase object connects a DynamicEDT3D object to an octomap.
 template <class TREE>
