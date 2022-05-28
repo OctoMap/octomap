@@ -50,4 +50,6 @@ if(BUILD_TESTING)
   ADD_TEST (NAME test_mapcollection COMMAND test_mapcollection ${PROJECT_SOURCE_DIR}/share/data/mapcoll.txt)
   ADD_TEST (NAME test_color_tree    COMMAND test_color_tree)
   ADD_TEST (NAME test_bbx           COMMAND test_bbx)
+
+  SET_TESTS_PROPERTIES (ReadGraph PROPERTIES DEPENDS InsertScan)
 endif()
