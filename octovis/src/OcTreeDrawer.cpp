@@ -23,6 +23,7 @@
  */
 
 #include <octovis/OcTreeDrawer.h>
+#undef GL_GLEXT_VERSION  // Previously defined by glu
 #include <qglviewer.h>
 
 #define OTD_RAD2DEG 57.2957795
