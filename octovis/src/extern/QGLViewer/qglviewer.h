@@ -1059,8 +1059,8 @@ public Q_SLOTS:
 	void setStateFileName(const QString& name) { stateFileName_ = name; }
 
 #ifndef DOXYGEN
-	void saveToFile(const QString& fileName=QString::null);
-	bool restoreFromFile(const QString& fileName=QString::null);
+	void saveToFile(const QString& fileName=QString());
+	bool restoreFromFile(const QString& fileName=QString());
 #endif
 
 private:
