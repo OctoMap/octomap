@@ -1259,13 +1259,13 @@ void ViewerGui::saveCameraPosition(const char* filename) const {
   ViewerWidget* aux = const_cast<ViewerWidget*>( m_glwidget);
   aux->setStateFileName(QString(filename));
   aux->saveStateToFile();
-  aux->setStateFileName(QString::null);
+  aux->setStateFileName(QString());
 }
 
 void ViewerGui::loadCameraPosition(const char* filename) {
   m_glwidget->setStateFileName(QString(filename));
   m_glwidget->restoreStateFromFile();
-  m_glwidget->setStateFileName(QString::null);
+  m_glwidget->setStateFileName(QString());
 }
 
 
