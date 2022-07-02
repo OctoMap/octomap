@@ -45,6 +45,33 @@ namespace octomap{
     void SemanticOcTreeNode::updateSemanticsChildren(){
         semantic_info = getAverageChildSemanticInfo();
     }
+
+    void SemanticOcTreeNode::addSemanticInfo(int id, int est_category, float confidence){
+        //update 
+        if (semantic_info.category[est_category] < 10){
+            semantic_info.category[est_category] += 1;
+        }
+
+        int max = 0;
+        int new_est_category = -1;
+        for(auto &it: semantic_info.category){
+            //calculate new maximum
+            if(it.second > max){
+                new_est_category = it.first;
+                max = it.second;
+            }
+            //decay histogram
+            if( it.first != est_category)
+                it.second = std::max(it.second - 1, 0);
+        }
+
+        if (new_est_category != -1){
+            semantic_info.est_category = new_est_category;
+        }
+    
+        confidence = confidence + 0.0; //Dummy to avoid compiler errors
+        id = id + 0; //same reason
+    }
     
     //tree implementation
     SemanticOcTree::SemanticOcTree(double resolution)
@@ -116,7 +143,8 @@ namespace octomap{
                 int new_id = id;
                 int new_category = category;
                 float new_confidence = confidence;
-                n->setSemanticInfo(new_id, new_category, new_confidence);
+                n->addSemanticInfo(new_id, new_category, new_confidence);
+                //n->setSemanticInfo(new_id, new_category, new_confidence);
             }
             else {
                 n->clearSemanticInfo();

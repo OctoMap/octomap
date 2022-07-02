@@ -37,59 +37,76 @@
 using namespace std;
 using namespace octomap;
 
-
-void print_query_info(point3d query, SemanticOcTreeNode* node) {
-  if (node != NULL) {
-    cout << "occupancy probability at " << query << ":\t " << node->getOccupancy() << endl;
-    octomap::Semantics semantic_info = node->getSemanticInfo();
-    cout << "id: " << semantic_info.id << " category "<< semantic_info.est_category<< " confidence " << semantic_info.confidence << endl;
-  }
-  else 
-    cout << "occupancy probability at " << query << ":\t is unknown" << endl;    
-}
-
 int main(int /*argc*/, char** /*argv*/) {
 
   cout << endl;
   cout << "generating example map" << endl;
 
-  SemanticOcTree tree (0.1);  // create empty tree with resolution 0.1
+  SemanticOcTree tree (0.1 * 1000);  // create empty tree with resolution 0.1
 
-
+  
   // insert some measurements of occupied cells
   Pointcloud pc = Pointcloud();
+
+  /*
   for (int x=-20; x<20; x++) {
     for (int y=-20; y<20; y++) {
       for (int z=-20; z<20; z++) {
+        c += 1;
         point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
         pc.push_back(endpoint);  
       }
     }
   }
+  */
+  /*
+  for (int x=-20; x<20; x++) {
+    c += 1;
+    point3d endpoint ((float) x*0.05f, (float) 0*0.05f, (float) 0*0.05f);
+    pc.push_back(endpoint);  
+  }
+  */
+  
+  point3d endpoint ((float) 0.85*1000, (float) 0.5*1000, (float) 0.6*1000);
+  pc.push_back(endpoint);  
+  //std::cout<< "Number of points added: "<< c << std::endl;
 
   point3d origin ((float) 0.0, (float) 0.0, (float) 0.0);
   //tree.insertPointCloud(pc, origin, 30, false, false);
-  tree.insertPointCloudAndSemantics(pc, origin, 2, -1, 0.86, 30, false, false);
+  tree.insertPointCloudAndSemantics(pc, origin, 2, -1, 0.86, 30 *1000, false, false);
 
+  Pointcloud pcomp = Pointcloud();
+  int it_count = 0;
+  for(SemanticOcTree::leaf_iterator it = tree.begin_leafs(), end=tree.end_leafs(); it!= end; ++it)
+  {   
+        it_count += 1;
+        pcomp.push_back(it.getCoordinate());
+        //std::cout << "Node size: " << it.getSize() << std::endl;
+        //std::cout << "Node center: " << it.getCoordinate() << std::endl;
+        //std::cout << it.getCoordinate() << "," << std::endl;
+  }  
+  std::cout << it_count << std::endl;
 
-  cout << endl;
-  cout << "performing some queries:" << endl;
   
-  point3d query (0.5, 0.5, 0.5);
-  SemanticOcTreeNode* result = tree.search (query);
-  //result->setSemanticInfo(-1, 0, 1.0);
-  print_query_info(query, result);
-
-  query = point3d(-1.,-1.,-1.);
-  result = tree.search (query);
-  //result->setSemanticInfo(-2, 1, 0.0);
-  print_query_info(query, result);
-
-  query = point3d(1.,1.,1.);
-  result = tree.search (query);
-  print_query_info(query, result);
-
-
-  cout << endl;
+  int i = 0;
+  while(i<20){
+      int count = 0;
+      Pointcloud pc1 = Pointcloud();
+      for(SemanticOcTree::leaf_iterator it = tree.begin_leafs(), end=tree.end_leafs(); it!= end; ++it)
+      {
+        //manipulate node, e.g.:
+        ///std::cout<<pcomp[count] << "   "<< it.getCoordinate() << std::endl;
+        count += 1;
+        pc1.push_back(it.getCoordinate());
+        SemanticOcTreeNode node = *it;
+        if (tree.isNodeOccupied(node)){
+          std::cout << "Node center: " << it.getCoordinate() << std::endl;
+        }
+      }
+      tree.insertPointCloudAndSemantics(pc1, origin, 2, -1, 0.86, 30, false, false);
+      std::cout<< "Number of nodes " << count << std::endl;
+      i+=1;
+  }
   
+  cout << endl;
 }
