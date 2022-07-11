@@ -68,9 +68,8 @@ namespace octomap{
         if (new_est_category != -1){
             semantic_info.est_category = new_est_category;
         }
-    
+        semantic_info.id = id; //Update id for the node
         confidence = confidence + 0.0; //Dummy to avoid compiler errors
-        id = id + 0; //same reason
     }
     
     //tree implementation

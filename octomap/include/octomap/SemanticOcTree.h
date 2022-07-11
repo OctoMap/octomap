@@ -64,6 +64,7 @@ namespace octomap{
         void addSemanticInfo(int id, int est_category, float confidence);
         Semantics& getSemanticInfo() {return semantic_info;}
         inline int getCategory() {return this->semantic_info.est_category;}
+        inline int getId() {return this->semantic_info.id;}
         void updateSemanticsChildren();
         Semantics getAverageChildSemanticInfo() const;
 

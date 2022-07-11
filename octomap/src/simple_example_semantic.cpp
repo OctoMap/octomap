@@ -42,38 +42,18 @@ int main(int /*argc*/, char** /*argv*/) {
   cout << endl;
   cout << "generating example map" << endl;
 
-  SemanticOcTree tree (0.1 * 1000);  // create empty tree with resolution 0.1
-
+  SemanticOcTree tree (0.1);  // create empty tree with resolution 0.1
   
   // insert some measurements of occupied cells
   Pointcloud pc = Pointcloud();
 
-  /*
-  for (int x=-20; x<20; x++) {
-    for (int y=-20; y<20; y++) {
-      for (int z=-20; z<20; z++) {
-        c += 1;
-        point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
-        pc.push_back(endpoint);  
-      }
-    }
-  }
-  */
-  /*
-  for (int x=-20; x<20; x++) {
-    c += 1;
-    point3d endpoint ((float) x*0.05f, (float) 0*0.05f, (float) 0*0.05f);
-    pc.push_back(endpoint);  
-  }
-  */
-  
-  point3d endpoint ((float) 0.85*1000, (float) 0.5*1000, (float) 0.6*1000);
+  point3d endpoint ((float) 0.85, (float) 0.5, (float) 0.6);
   pc.push_back(endpoint);  
   //std::cout<< "Number of points added: "<< c << std::endl;
 
   point3d origin ((float) 0.0, (float) 0.0, (float) 0.0);
   //tree.insertPointCloud(pc, origin, 30, false, false);
-  tree.insertPointCloudAndSemantics(pc, origin, 2, -1, 0.86, 30 *1000, false, false);
+  tree.insertPointCloudAndSemantics(pc, origin, 3, 4, 0.86, 30 *1000, false, false);
 
   Pointcloud pcomp = Pointcloud();
   int it_count = 0;
@@ -101,9 +81,10 @@ int main(int /*argc*/, char** /*argv*/) {
         SemanticOcTreeNode node = *it;
         if (tree.isNodeOccupied(node)){
           std::cout << "Node center: " << it.getCoordinate() << std::endl;
+          std::cout << "Node Id: " << node.getId() << std::endl;
         }
       }
-      tree.insertPointCloudAndSemantics(pc1, origin, 2, -1, 0.86, 30, false, false);
+      tree.insertPointCloudAndSemantics(pc1, origin, 3, 4, 0.86, 30, false, false);
       std::cout<< "Number of nodes " << count << std::endl;
       i+=1;
   }
