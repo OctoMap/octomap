@@ -41,7 +41,8 @@
 namespace octomap {
 
   class AbstractOcTreeNode {
-
+    // public:
+    //   virtual ~AbstractOcTreeNode() {}
 
   };
   

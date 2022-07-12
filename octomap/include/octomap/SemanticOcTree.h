@@ -70,6 +70,15 @@ namespace octomap{
 
         std::istream& readData(std::istream &s);
         std::ostream& writeData(std::ostream &s) const;
+        SemanticOcTreeNode* getChild(unsigned int i){
+            if ((children != NULL) && (children[i] != NULL)) {
+                AbstractOcTreeNode * c = this->children[i];
+                SemanticOcTreeNode * soctn = static_cast<SemanticOcTreeNode*>(c);
+                return soctn;
+            } else { 
+                return NULL;
+            }
+        }
     };
 
 

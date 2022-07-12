@@ -104,6 +104,7 @@
       /// Ptr operator will return the current node in the octree which the
       /// iterator is referring to
       NodeType* operator->() { return stack.top().node;}
+      NodeType* getTopNode() { return stack.top().node;}
 
       /// Return the current node in the octree which the
       /// iterator is referring to
