@@ -61,6 +61,8 @@ namespace octomap{
             this->semantic_info.confidence = 0.0;
             this->semantic_info.category.clear();
         }        
+        inline void setId(int id) {this->semantic_info.id = id;}
+
         void addSemanticInfo(int id, int est_category, float confidence);
         Semantics& getSemanticInfo() {return semantic_info;}
         inline int getCategory() {return this->semantic_info.est_category;}
