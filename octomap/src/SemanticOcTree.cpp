@@ -45,8 +45,8 @@ namespace octomap{
                         max_est_category = child_est_category;
                     }
 
-                    if(tracker_hist[child_est_tracker_id]>max_count_tracker_id){
-                        max_count_tracker_id = semantic_hist[child_est_tracker_id];
+                    if(tracker_id_hist[child_est_tracker_id]>max_count_tracker_id){
+                        max_count_tracker_id = tracker_id_hist[child_est_tracker_id];
                         max_est_category = child_est_tracker_id;
                     }
 
