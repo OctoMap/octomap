@@ -10,6 +10,7 @@ namespace octomap{
 
     struct Semantics{
         std::unordered_map<int, int> category;
+        std::unordered_map<int, int> tracker_id_histogram;
         int id;
         int est_category;
         float confidence;

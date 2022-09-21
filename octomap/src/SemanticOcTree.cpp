@@ -21,25 +21,40 @@ namespace octomap{
     //Basic implementation of this function: Needs to be improved for future
     Semantics SemanticOcTreeNode::getAverageChildSemanticInfo() const{
         std::unordered_map<int, int> semantic_hist;
-        int max_count = 0;
+        std::unordered_map<int, int> tracker_id_hist;
+        int max_count_category = 0;
+        int max_count_tracker_id = 0;
+
         int max_est_category = -1;
+        int max_est_tracker_id = -1;
 
         if(children!=NULL){
             for(int i=0; i<8; i++) { 
                 SemanticOcTreeNode* child = static_cast<SemanticOcTreeNode*>(children[i]);
 
                 if(child != NULL){
-                    int child_est_catergory = child->getSemanticInfo().est_category;
-                    semantic_hist[child_est_catergory] += 1;
-                    if(semantic_hist[child_est_catergory]>max_count){
-                        max_count = semantic_hist[child_est_catergory];
-                        max_est_category = child_est_catergory;
+                    int child_est_category = child->getSemanticInfo().est_category;
+                    semantic_hist[child_est_category] += 1;
+                    
+                    int child_est_tracker_id = child->getSemanticInfo().id;
+                    tracker_id_hist[child_est_tracker_id] +=1;
+                    
+
+                    if(semantic_hist[child_est_category]>max_count_category){
+                        max_count_category = semantic_hist[child_est_category];
+                        max_est_category = child_est_category;
                     }
+
+                    if(tracker_hist[child_est_tracker_id]>max_count_tracker_id){
+                        max_count_tracker_id = semantic_hist[child_est_tracker_id];
+                        max_est_category = child_est_tracker_id;
+                    }
+
                 }
             }
         }
 
-        return octomap::Semantics(-1, max_est_category, 0.0); 
+        return octomap::Semantics(max_est_tracker_id, max_est_category, 0.0); 
     }
 
     void SemanticOcTreeNode::updateSemanticsChildren(){
@@ -68,7 +83,29 @@ namespace octomap{
         if (new_est_category != -1){
             semantic_info.est_category = new_est_category;
         }
-        semantic_info.id = id; //Update id for the node
+        
+                if (semantic_info.category[est_category] < 10){
+            semantic_info.category[est_category] += 1;
+        }
+
+        //update tracker_ id for the node
+        max = 0;
+        int new_est_tracker_id = -1;
+        for(auto &it: semantic_info.tracker_id_histogram){
+            //calculate new maximum
+            if(it.second > max){
+                new_est_tracker_id = it.first;
+                max = it.second;
+            }
+            //decay histogram
+            if( it.first != id)
+                it.second = std::max(it.second - 1, 0);
+        }
+
+        if (new_est_tracker_id != -1){
+            semantic_info.id = new_est_tracker_id;
+        }
+                
         confidence = confidence + 0.0; //Dummy to avoid compiler errors
     }
     
