@@ -76,19 +76,23 @@ namespace octomap{
                 max = it.second;
             }
             //decay histogram
-            if( it.first != est_category)
-                it.second = std::max(it.second - 1, 0);
+            //if( it.first != est_category)
+            //    it.second = std::max(it.second - 1, 0);
+        }
+
+        if(semantic_info.category[est_category] == max){
+            new_est_category = est_category; //More importance to incoming category
         }
 
         if (new_est_category != -1){
             semantic_info.est_category = new_est_category;
         }
         
-                if (semantic_info.category[est_category] < 10){
-            semantic_info.category[est_category] += 1;
-        }
 
         //update tracker_ id for the node
+        if (semantic_info.tracker_id_histogram[id] < 10){
+            semantic_info.tracker_id_histogram[id] += 1;
+        }
         max = 0;
         int new_est_tracker_id = -1;
         for(auto &it: semantic_info.tracker_id_histogram){
@@ -98,8 +102,12 @@ namespace octomap{
                 max = it.second;
             }
             //decay histogram
-            if( it.first != id)
-                it.second = std::max(it.second - 1, 0);
+            //if( it.first != id)
+            //    it.second = std::max(it.second - 1, 0);
+        }
+        
+        if(semantic_info.tracker_id_histogram[id] == max){
+            new_est_tracker_id = id; //More importance to incoming tracker id
         }
 
         if (new_est_tracker_id != -1){
