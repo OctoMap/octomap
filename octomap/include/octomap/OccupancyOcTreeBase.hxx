@@ -35,7 +35,7 @@
 #include <algorithm>
 
 #include <octomap/MCTables.h>
-
+#define UNUSED(x) (void)(x)
 namespace octomap {
 
   template <class NODE>
@@ -146,7 +146,8 @@ namespace octomap {
 
   template <class NODE>
   void OccupancyOcTreeBase<NODE>::computeDiscreteUpdate(const Pointcloud& scan, const octomap::point3d& origin,
-                                                KeySet& free_cells, KeySet& occupied_cells,
+                                                KeySet& free_cells, 
+                                                KeySet& occupied_cells,
                                                 double maxrange)
  {
    Pointcloud discretePC;
@@ -166,29 +167,34 @@ namespace octomap {
 
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, const octomap::point3d& origin,
-                                                KeySet& free_cells, KeySet& occupied_cells,
+  void OccupancyOcTreeBase<NODE>::computeUpdate(const Pointcloud& scan, 
+                                                const octomap::point3d& origin,
+                                                KeySet& free_cells, 
+                                                KeySet& occupied_cells,
                                                 double maxrange)
   {
+    UNUSED(free_cells);
 
-
-
+/*
 #ifdef _OPENMP
     omp_set_num_threads(this->keyrays.size());
     #pragma omp parallel for schedule(guided)
 #endif
+*/
     for (int i = 0; i < (int)scan.size(); ++i) {
       const point3d& p = scan[i];
-      unsigned threadIdx = 0;
+      //unsigned threadIdx = 0;
+/*
 #ifdef _OPENMP
       threadIdx = omp_get_thread_num();
 #endif
       KeyRay* keyray = &(this->keyrays.at(threadIdx));
 
-
+*/
       if (!use_bbx_limit) { // no BBX specified
         if ((maxrange < 0.0) || ((p - origin).norm() <= maxrange) ) { // is not maxrange meas.
           // free cells
+/*
           if (this->computeRayKeys(origin, p, *keyray)){
 #ifdef _OPENMP
             #pragma omp critical (free_insert)
@@ -197,6 +203,7 @@ namespace octomap {
               free_cells.insert(keyray->begin(), keyray->end());
             }
           }
+*/
           // occupied endpoint
           OcTreeKey key;
           if (this->coordToKeyChecked(p, key)){
@@ -207,7 +214,10 @@ namespace octomap {
               occupied_cells.insert(key);
             }
           }
-        } else { // user set a maxrange and length is above
+        } 
+/*        
+        else { // user set a maxrange and length is above
+
           point3d direction = (p - origin).normalized ();
           point3d new_end = origin + direction * (float) maxrange;
           if (this->computeRayKeys(origin, new_end, *keyray)){
@@ -219,7 +229,11 @@ namespace octomap {
             }
           }
         } // end if maxrange
-      } else { // BBX was set
+*/
+      }
+/* 
+      else { // BBX was set (Not set in our case)
+
         // endpoint in bbx and not maxrange?
         if ( inBBX(p) && ((maxrange < 0.0) || ((p - origin).norm () <= maxrange) ) )  {
 
@@ -257,8 +271,10 @@ namespace octomap {
           }
         } // end if compute ray
       } // end bbx case
+*/
     } // end for all points, end of parallel OMP loop
 
+    /*
     // prefer occupied cells over free ones (and make sets disjunct)
     for(KeySet::iterator it = free_cells.begin(), end=free_cells.end(); it!= end; ){
       if (occupied_cells.find(*it) != occupied_cells.end()){
@@ -267,6 +283,7 @@ namespace octomap {
         ++it;
       }
     }
+    */
   }
 
   template <class NODE>

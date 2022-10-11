@@ -1,6 +1,6 @@
 #include <octomap/SemanticOcTree.h>
 #include <unordered_map>
-
+#define UNUSED(x) (void)(x)
 namespace octomap{
 
     // node implementation  --------------------------------------
@@ -199,16 +199,21 @@ namespace octomap{
                                     double maxrange, bool lazy_eval, bool discretize) {
 
     KeySet free_cells, occupied_cells;
+    //KeySet occupied_cells;
     if (discretize)
       computeDiscreteUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+      //computeDiscreteUpdate(scan, sensor_origin, occupied_cells, maxrange);
     else
       computeUpdate(scan, sensor_origin, free_cells, occupied_cells, maxrange);
+      //computeUpdate(scan, sensor_origin, occupied_cells, maxrange);
 
     // insert data into tree  -----------------------
+    /*
     for (KeySet::iterator it = free_cells.begin(); it != free_cells.end(); ++it) {
       updateNode(*it, false, lazy_eval);
       integrateNodeSemantics(*it); //Clears if empty
     }
+    */
     for (KeySet::iterator it = occupied_cells.begin(); it != occupied_cells.end(); ++it) {
       updateNode(*it, true, lazy_eval);
       integrateNodeSemantics(*it, id, est_category, confidence);
