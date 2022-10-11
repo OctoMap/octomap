@@ -14,10 +14,13 @@ namespace octomap{
         int id;
         int est_category;
         float confidence;
-
-        Semantics(): id(-1), est_category(-1), confidence(0.0){}
-        Semantics(int _id, int _est_category, float _confidence)
-         : id(_id), est_category(_est_category), confidence(_confidence){}
+        
+        int id_count;
+        int est_category_count;
+        
+        Semantics(): id(-1), est_category(-1), confidence(0.0), id_count(0), est_category_count(0){}
+        Semantics(int _id, int _est_category, float _confidence, int _id_count = 0, int _est_category_count = 0)
+         : id(_id), est_category(_est_category), confidence(_confidence), id_count(_id_count), est_category_count(_est_category_count){}
 
         bool operator== (const Semantics &other) const{
             return (est_category == other.est_category);
@@ -59,8 +62,13 @@ namespace octomap{
         inline void clearSemanticInfo(){
             this->semantic_info.id = -1;
             this->semantic_info.est_category = -1;
+
+            this->semantic_info.id_count = 0;
+            this->semantic_info.est_category_count = 0;
+
             this->semantic_info.confidence = 0.0;
             this->semantic_info.category.clear();
+            this->semantic_info.tracker_id_histogram.clear();
         }        
         inline void setId(int id) {this->semantic_info.id = id;}
         inline void setCategory(int category) {this->semantic_info.est_category = category;}                          

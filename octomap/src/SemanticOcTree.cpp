@@ -67,53 +67,21 @@ namespace octomap{
             semantic_info.category[est_category] += 1;
         }
 
-        int max = 0;
-        int new_est_category = -1;
-        for(auto &it: semantic_info.category){
-            //calculate new maximum
-            if(it.second > max){
-                new_est_category = it.first;
-                max = it.second;
-            }
-            //decay histogram
-            //if( it.first != est_category)
-            //    it.second = std::max(it.second - 1, 0);
-        }
-
-        if(semantic_info.category[est_category] == max){
-            new_est_category = est_category; //More importance to incoming category
-        }
-
-        if (new_est_category != -1){
-            semantic_info.est_category = new_est_category;
+        if(semantic_info.est_category_count <= semantic_info.category[est_category]){
+            semantic_info.est_category = est_category;
+            semantic_info.est_category_count = semantic_info.category[est_category];
         }
         
-
         //update tracker_ id for the node
         if (semantic_info.tracker_id_histogram[id] < 10){
             semantic_info.tracker_id_histogram[id] += 1;
         }
-        max = 0;
-        int new_est_tracker_id = -1;
-        for(auto &it: semantic_info.tracker_id_histogram){
-            //calculate new maximum
-            if(it.second > max){
-                new_est_tracker_id = it.first;
-                max = it.second;
-            }
-            //decay histogram
-            //if( it.first != id)
-            //    it.second = std::max(it.second - 1, 0);
+
+        if(semantic_info.id_count <= semantic_info.tracker_id_histogram[id]){
+            semantic_info.id = id;
+            semantic_info.id_count = semantic_info.tracker_id_histogram[id];
         }
         
-        if(semantic_info.tracker_id_histogram[id] == max){
-            new_est_tracker_id = id; //More importance to incoming tracker id
-        }
-
-        if (new_est_tracker_id != -1){
-            semantic_info.id = new_est_tracker_id;
-        }
-                
         confidence = confidence + 0.0; //Dummy to avoid compiler errors
     }
     
