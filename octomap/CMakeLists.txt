@@ -90,8 +90,8 @@ add_custom_target(uninstall
 export(PACKAGE octomap)
  
 # Create a octomap-config.cmake file for the use from the build tree
-set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
-set(OCTOMAP_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+set(OCTOMAP_INCLUDE_DIRS "include")
+set(OCTOMAP_LIB_DIR "lib")
 # Set library names as absolute paths
 # Windows, spec. MSVC requires the .lib suffix for imported libs
 IF(WIN32)
@@ -127,8 +127,8 @@ WRITE_BASIC_PACKAGE_VERSION_FILE(
 
 # Create a octomap-config.cmake file for the use from the install tree
 # and install it
-set(OCTOMAP_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
-set(OCTOMAP_LIB_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+set(OCTOMAP_INCLUDE_DIRS "include")
+set(OCTOMAP_LIB_DIR "lib")
 #set(OCTOMAP_CMAKE_DIR "${INSTALL_DATA_DIR}/FooBar/CMake")
 
 set(OCTOMAP_INCLUDE_TARGETS

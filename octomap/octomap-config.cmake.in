@@ -35,8 +35,8 @@ set_and_check(OCTOMAP_LIBRARY_DIRS "@PACKAGE_OCTOMAP_LIB_DIR@")
 
 # Set library names
 set(OCTOMAP_LIBRARIES
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
+  "octomap"
+  "octomath"
 )
 
 # Additionally set the variables using a lower-case project name.
