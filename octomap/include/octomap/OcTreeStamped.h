@@ -116,7 +116,7 @@ namespace octomap {
       * StaticMemberInitializer, causing this tree failing to register.
       * Needs to be called from the constructor of this octree.
       */
-      void ensureLinking() {};
+      void ensureLinking() {}
     };
     /// to ensure static initialization (only once)
     static StaticMemberInitializer ocTreeStampedMemberInit;

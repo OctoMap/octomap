@@ -100,9 +100,9 @@ namespace octomap {
     OCTOMAP_DEPRECATED(bool hasChildren() const);
 
     /// @return value stored in the node
-    T getValue() const{return value;};
+    T getValue() const{return value;}
     /// sets value to be stored in the node
-    void setValue(T v) {value = v;};
+    void setValue(T v) {value = v;}
 
     // file IO:
 

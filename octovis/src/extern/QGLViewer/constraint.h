@@ -197,7 +197,7 @@ public:
 		  case MyAxisPlaneConstraint::FREE: ... break;
 		  case MyAxisPlaneConstraint::CUSTOM: ... break;
 		}
-	  };
+	  }
 
 	  MyAxisPlaneConstraint* c = new MyAxisPlaneConstraint();
 	  // Note the Type conversion
@@ -209,11 +209,11 @@ public:
 	/*! @name Translation constraint */
 	//@{
 	/*! Overloading of Constraint::constrainTranslation(). Empty */
-	virtual void constrainTranslation(Vec& translation, Frame* const frame) { Q_UNUSED(translation); Q_UNUSED(frame); };
+	virtual void constrainTranslation(Vec& translation, Frame* const frame) { Q_UNUSED(translation); Q_UNUSED(frame); }
 
 	void setTranslationConstraint(Type type, const Vec& direction);
 	/*! Sets the Type() of the translationConstraintType(). Default is AxisPlaneConstraint::FREE. */
-	void setTranslationConstraintType(Type type) { translationConstraintType_ = type; };
+	void setTranslationConstraintType(Type type) { translationConstraintType_ = type; }
 	void setTranslationConstraintDirection(const Vec& direction);
 
 	/*! Returns the translation constraint Type().
@@ -225,7 +225,7 @@ public:
 
 	Use Frame::setPosition() to define the position of the constrained Frame before it gets
 	constrained. */
-	Type translationConstraintType() const { return translationConstraintType_; };
+	Type translationConstraintType() const { return translationConstraintType_; }
 	/*! Returns the direction used by the translation constraint.
 
 	It represents the axis direction (AxisPlaneConstraint::AXIS) or the plane normal
@@ -235,20 +235,20 @@ public:
 	The AxisPlaneConstraint derived classes express this direction in different coordinate system
 	(camera for CameraConstraint, local for LocalConstraint, and world for WorldConstraint). This
 	value can be modified with setTranslationConstraintDirection(). */
-	Vec translationConstraintDirection() const { return translationConstraintDir_; };
+	Vec translationConstraintDirection() const { return translationConstraintDir_; }
 	//@}
 
 	/*! @name Rotation constraint */
 	//@{
 	/*! Overloading of Constraint::constrainRotation(). Empty. */
-	virtual void constrainRotation(Quaternion& rotation, Frame* const frame) { Q_UNUSED(rotation); Q_UNUSED(frame); };
+	virtual void constrainRotation(Quaternion& rotation, Frame* const frame) { Q_UNUSED(rotation); Q_UNUSED(frame); }
 
 	void setRotationConstraint(Type type, const Vec& direction);
 	void setRotationConstraintType(Type type);
 	void setRotationConstraintDirection(const Vec& direction);
 
 	/*! Returns the rotation constraint Type(). */
-	Type rotationConstraintType() const { return rotationConstraintType_; };
+	Type rotationConstraintType() const { return rotationConstraintType_; }
 	/*! Returns the axis direction used by the rotation constraint.
 
 	This direction is defined only when rotationConstraintType() is AxisPlaneConstraint::AXIS.
@@ -256,7 +256,7 @@ public:
 	The AxisPlaneConstraint derived classes express this direction in different coordinate system
 	(camera for CameraConstraint, local for LocalConstraint, and world for WorldConstraint). This
 	value can be modified with setRotationConstraintDirection(). */
-	Vec rotationConstraintDirection() const { return rotationConstraintDir_; };
+	Vec rotationConstraintDirection() const { return rotationConstraintDir_; }
 	//@}
 
 private:
@@ -280,7 +280,7 @@ class QGLVIEWER_EXPORT LocalConstraint : public AxisPlaneConstraint
 {
 public:
 	/*! Virtual destructor. Empty. */
-	virtual ~LocalConstraint() {};
+	virtual ~LocalConstraint() {}
 
 	virtual void constrainTranslation(Vec&     translation, Frame* const frame);
 	virtual void constrainRotation   (Quaternion& rotation, Frame* const frame);
@@ -300,7 +300,7 @@ class QGLVIEWER_EXPORT WorldConstraint : public AxisPlaneConstraint
 {
 public:
 	/*! Virtual destructor. Empty. */
-	virtual ~WorldConstraint() {};
+	virtual ~WorldConstraint() {}
 
 	virtual void constrainTranslation(Vec&     translation, Frame* const frame);
 	virtual void constrainRotation   (Quaternion& rotation, Frame* const frame);
@@ -321,13 +321,13 @@ class QGLVIEWER_EXPORT CameraConstraint : public AxisPlaneConstraint
 public:
 	explicit CameraConstraint(const Camera* const camera);
 	/*! Virtual destructor. Empty. */
-	virtual ~CameraConstraint() {};
+	virtual ~CameraConstraint() {}
 
 	virtual void constrainTranslation(Vec&     translation, Frame* const frame);
 	virtual void constrainRotation   (Quaternion& rotation, Frame* const frame);
 
 	/*! Returns the associated Camera. Set using the CameraConstraint constructor. */
-	const Camera* camera() const { return camera_; };
+	const Camera* camera() const { return camera_; }
 
 private:
 	const Camera* const camera_;

@@ -102,7 +102,7 @@
         maxDepth = other.maxDepth;
         stack = other.stack;
         return *this;
-      };
+      }
 
       /// Ptr operator will return the current node in the octree which the
       /// iterator is referring to
@@ -220,7 +220,7 @@
        * @param ptree OcTreeBaseImpl on which the iterator is used on
        * @param depth Maximum depth to traverse the tree. 0 (default): unlimited
        */
-      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* ptree, uint8_t depth=0) : iterator_base<NodeType>(ptree, depth) {};
+      tree_iterator(OcTreeBaseImpl<NodeType,INTERFACE> const* ptree, uint8_t depth=0) : iterator_base<NodeType>(ptree, depth) {}
 
       /// postfix increment operator of iterator (it++)
       tree_iterator operator++(int){
@@ -287,7 +287,7 @@
             }
           }
 
-          leaf_iterator(const leaf_iterator& other) : iterator_base<NodeType>(other) {};
+          leaf_iterator(const leaf_iterator& other) : iterator_base<NodeType>(other) {}
 
           /// postfix increment operator of iterator (it++)
           leaf_iterator operator++(int){
@@ -341,7 +341,7 @@
      */
     class leaf_bbx_iterator : public iterator_base<NodeType> {
     public:
-      leaf_bbx_iterator() : iterator_base<NodeType>() {};
+      leaf_bbx_iterator() : iterator_base<NodeType>() {}
       /**
       * Constructor of the iterator. The bounding box corners min and max are
       * converted into an OcTreeKey first.
@@ -432,7 +432,7 @@
 
 
         return *this;
-      };
+      }
 
     protected:
 
