@@ -57,7 +57,7 @@ namespace octomap {
 
   public:
     SceneObject();
-    virtual ~SceneObject(){};
+    virtual ~SceneObject(){}
 
     /**
     * Actual draw function which will be called to visualize the object
@@ -67,7 +67,7 @@ namespace octomap {
     /**
     * Clears the object's representation (will be called when it gets invalid)
     */
-    virtual void clear(){};
+    virtual void clear(){}
 
   public:
     //! the color mode has to be set before calling OcTreDrawer::setMap()
@@ -95,8 +95,8 @@ namespace octomap {
   */
   class ScanGraphDrawer : public SceneObject {
   public:
-    ScanGraphDrawer(): SceneObject(){};
-    virtual ~ScanGraphDrawer(){};
+    ScanGraphDrawer(): SceneObject(){}
+    virtual ~ScanGraphDrawer(){}
 
     /**
     * Notifies drawer of a new or changed ScanGraph, so that the internal

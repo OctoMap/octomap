@@ -40,12 +40,12 @@ class ViewerSettings : public QDialog
 public:
     ViewerSettings(QWidget *parent = 0);
     ~ViewerSettings();
-    double getResolution(){return ui.resolution->value(); };
-    void setResolution(double resolution){ui.resolution->setValue(resolution);};
-    unsigned int getLaserType(){return ui.laserType->currentIndex(); };
-    void setLaserType(int type){ui.laserType->setCurrentIndex(type); };
-    double getMaxRange(){return ui.maxRange->value(); };
-    void setMaxRange(double range){ui.maxRange->setValue(range); };
+    double getResolution(){return ui.resolution->value(); }
+    void setResolution(double resolution){ui.resolution->setValue(resolution);}
+    unsigned int getLaserType(){return ui.laserType->currentIndex(); }
+    void setLaserType(int type){ui.laserType->setCurrentIndex(type); }
+    double getMaxRange(){return ui.maxRange->value(); }
+    void setMaxRange(double range){ui.maxRange->setValue(range); }
 
 private:
     Ui::ViewerSettingsClass ui;

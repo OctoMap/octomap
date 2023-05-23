@@ -51,7 +51,7 @@ namespace octomap {
     friend class StaticMapInit;
   public:
     AbstractOcTree();
-    virtual ~AbstractOcTree() {};
+    virtual ~AbstractOcTree() {}
 
     /// virtual constructor: creates a new object of same type
     virtual AbstractOcTree* create() const = 0;

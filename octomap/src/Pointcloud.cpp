@@ -38,7 +38,7 @@
 
 #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
   #include <algorithm>
-  #if __cplusplus > 199711L
+  #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
     #include <random>
   #endif
 #else
@@ -213,7 +213,7 @@ namespace octomap {
   #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
     samples.reserve(this->size());
     samples.insert(samples.end(), this->begin(), this->end());
-    #if __cplusplus > 199711L
+    #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
       std::random_device r;
       std::mt19937 urbg(r());
       std::shuffle(samples.begin(), samples.end(), urbg);

@@ -115,7 +115,7 @@ namespace octomap {
 
    public:
 
-    ScanGraph() {};
+    ScanGraph() {}
     ~ScanGraph();
 
     /// Clears all nodes and edges, and will delete the corresponding objects
