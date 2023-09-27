@@ -46,6 +46,9 @@ TARGET_LINK_LIBRARIES(bt2vrml octomap)
 ADD_EXECUTABLE(edit_octree edit_octree.cpp)
 TARGET_LINK_LIBRARIES(edit_octree octomap)
 
+ADD_EXECUTABLE(mark_free mark_free.cpp)
+TARGET_LINK_LIBRARIES(mark_free octomap)
+
 ADD_EXECUTABLE(convert_octree convert_octree.cpp)
 TARGET_LINK_LIBRARIES(convert_octree octomap)
 
@@ -80,6 +83,7 @@ install(TARGETS
 	binvox2bt
 	bt2vrml
 	edit_octree
+	mark_free
 	convert_octree
 	eval_octree_accuracy
 	compare_octrees
