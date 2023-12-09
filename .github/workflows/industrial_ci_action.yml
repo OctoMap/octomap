@@ -11,9 +11,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: melodic}
           - {ROS_DISTRO: noetic}
-          - {ROS_DISTRO: foxy, PRERELEASE: true}
           - {ROS_DISTRO: rolling, PRERELEASE: true}
     env:
       CCACHE_DIR: /github/home/.ccache # Enable ccache
