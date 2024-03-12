@@ -1,7 +1,7 @@
 # This config uses industrial_ci (https://github.com/ros-industrial/industrial_ci.git).
 # For troubleshooting, see readme (https://github.com/ros-industrial/industrial_ci/blob/master/README.rst)
 
-name: CI
+name: ROS-CI
 
 # This determines when this workflow is run
 on: [push, pull_request] # on all pushes and PRs
@@ -14,16 +14,9 @@ jobs:
           - {ROS_DISTRO: noetic}
           - {ROS_DISTRO: rolling, PRERELEASE: true}
     env:
-      CCACHE_DIR: /github/home/.ccache # Enable ccache
       BUILDER: colcon
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      # This step will fetch/store the directory used by ccache before/after the ci run
-      - uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
-      # Run industrial_ci
+      - uses: actions/checkout@v4
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{ matrix.env }}
