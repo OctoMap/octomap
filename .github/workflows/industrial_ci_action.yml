@@ -11,8 +11,9 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: noetic}
-          - {ROS_DISTRO: rolling, PRERELEASE: true}
+          - {ROS_DISTRO: noetic, PRERELEASE: true}
+          - {ROS_DISTRO: iron, PRERELEASE: true}
+          - {ROS_DISTRO: rolling}
     env:
       BUILDER: colcon
     runs-on: ubuntu-latest
