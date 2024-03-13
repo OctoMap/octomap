@@ -170,7 +170,7 @@ ENDIF(DOXYGEN_FOUND)
 INCLUDE(CPackSettings)
 
 # Finished:
-MESSAGE ("\n")
+MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile dynamicEDT3D using: make")
 MESSAGE (STATUS "Install dynamicEDT3D using: make install")
 MESSAGE (STATUS "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")
