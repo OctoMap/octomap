@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT( octovis )
 
 include(CTest)
@@ -68,6 +68,7 @@ SET( BUILD_VIEWER 0)
 option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
 
 # Look for required libraries:
+set(OpenGL_GL_PREFERENCE LEGACY)
 FIND_PACKAGE(OpenGL)
 if(NOT OCTOVIS_QT5)
   FIND_PACKAGE(Qt4)
