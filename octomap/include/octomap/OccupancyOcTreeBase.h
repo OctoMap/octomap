@@ -142,8 +142,9 @@ namespace octomap {
      * @param maxrange maximum range for how long individual beams are inserted (default -1: complete beam)
      * @param lazy_eval whether update of inner nodes is omitted after the update (default: false).
      *   This speeds up the insertion, but you need to call updateInnerOccupancy() when done.
+     * @param endpoint_occupied specifies if the end point should be updated as occupied or free
      */
-     virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false);
+     virtual void insertPointCloudRays(const Pointcloud& scan, const point3d& sensor_origin, double maxrange = -1., bool lazy_eval = false, bool endpoint_occupied = true);
 
      /**
       * Set log_odds value of voxel to log_odds_value. This only works if key is at the lowest
