@@ -716,7 +716,7 @@ void ViewerGui::on_actionSave_file_triggered(){
   }
 
   QString filename = QFileDialog::getSaveFileName(this, tr("Save octree file"),
-                                                  "", tr("Full OcTree (*.ot);;Bonsai Tree file (*.bt);;"));
+                                                  "", tr("Full OcTree (*.ot);;Bonsai Tree file (*.bt);;"), 0, QFileDialog::DontUseNativeDialog);
 
   if (filename != ""){
     QApplication::setOverrideCursor(Qt::WaitCursor);
