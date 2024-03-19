@@ -52,7 +52,7 @@ namespace octomap {
   class AbstractOccupancyOcTree : public AbstractOcTree {
   public:
     AbstractOccupancyOcTree();
-    virtual ~AbstractOccupancyOcTree() {};
+    virtual ~AbstractOccupancyOcTree() {}
 
     //-- IO
 

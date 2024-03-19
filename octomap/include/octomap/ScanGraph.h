@@ -60,7 +60,7 @@ namespace octomap {
 
     ~ScanNode();
 
-    bool operator == (const ScanNode& other) {
+    bool operator == (const ScanNode& other) const {
       return (id == other.id);
     }
 
@@ -87,7 +87,7 @@ namespace octomap {
       : first(_first), second(_second), constraint(_constraint), weight(1.0) { }
     ScanEdge() {}
 
-    bool operator == (const ScanEdge& other) {
+    bool operator == (const ScanEdge& other) const {
       return ( (*first == *(other.first) ) && ( *second == *(other.second) ) );
     }
 
@@ -115,7 +115,7 @@ namespace octomap {
 
    public:
 
-    ScanGraph() {};
+    ScanGraph() {}
     ~ScanGraph();
 
     /// Clears all nodes and edges, and will delete the corresponding objects

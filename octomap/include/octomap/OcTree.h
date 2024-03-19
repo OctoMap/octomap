@@ -59,7 +59,7 @@ namespace octomap {
      */
     OcTree(std::string _filename);
 
-    virtual ~OcTree(){};
+    virtual ~OcTree(){}
 
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)
@@ -89,7 +89,7 @@ namespace octomap {
 	     * StaticMemberInitializer, causing this tree failing to register.
 	     * Needs to be called from the constructor of this octree.
 	     */
-	    void ensureLinking() {};
+	    void ensureLinking() {}
     };
 
     /// to ensure static initialization (only once)

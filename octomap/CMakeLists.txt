@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT( octomap )
 
 include(CTest)
@@ -6,8 +6,8 @@ include(GNUInstallDirs)
 
 # version (e.g. for packaging)
 set(OCTOMAP_MAJOR_VERSION 1)
-set(OCTOMAP_MINOR_VERSION 9)
-set(OCTOMAP_PATCH_VERSION 8)
+set(OCTOMAP_MINOR_VERSION 10)
+set(OCTOMAP_PATCH_VERSION 0)
 set(OCTOMAP_VERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION}.${OCTOMAP_PATCH_VERSION})
 set(OCTOMAP_SOVERSION ${OCTOMAP_MAJOR_VERSION}.${OCTOMAP_MINOR_VERSION})
 if(COMMAND cmake_policy)
@@ -77,18 +77,20 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
 
 # uninstall target
-configure_file(
-    "${PROJECT_SOURCE_DIR}/CMakeModules/CMakeUninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
+if(NOT TARGET uninstall)
+    configure_file(
+        "${PROJECT_SOURCE_DIR}/CMakeModules/CMakeUninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+        IMMEDIATE @ONLY)
 
-add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
 export(PACKAGE octomap)
- 
+
 # Create a octomap-config.cmake file for the use from the build tree
 set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
 set(OCTOMAP_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -147,7 +149,7 @@ WRITE_BASIC_PACKAGE_VERSION_FILE(
 
 install(FILES
   "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config.cmake"
-  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake" 
+  "${PROJECT_BINARY_DIR}/InstallFiles/octomap-config-version.cmake"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
 # Write pkgconfig-file:
@@ -158,7 +160,7 @@ install_pkg_config_file(octomap
     REQUIRES
     VERSION ${OCTOMAP_VERSION})
 
-# Documentation 
+# Documentation
 FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/octomap.dox.in ${CMAKE_CURRENT_BINARY_DIR}/octomap.dox @ONLY)
@@ -171,7 +173,7 @@ ENDIF(DOXYGEN_FOUND)
 INCLUDE(CPackSettings)
 
 # Finished:
-MESSAGE ("\n")
+MESSAGE (STATUS "\n")
 MESSAGE (STATUS "Compile octomap using: make")
 MESSAGE (STATUS "Install octomap using: make install")
 MESSAGE (STATUS "    (be sure to set the correct CMAKE_INSTALL_PREFIX before)")

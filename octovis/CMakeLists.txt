@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT( octovis )
 
 include(CTest)
@@ -6,8 +6,8 @@ include(GNUInstallDirs)
 
 # # version (e.g. for packaging)
 set(OCTOVIS_MAJOR_VERSION 1)
-set(OCTOVIS_MINOR_VERSION 9)
-set(OCTOVIS_PATCH_VERSION 8)
+set(OCTOVIS_MINOR_VERSION 10)
+set(OCTOVIS_PATCH_VERSION 0)
 set(OCTOVIS_VERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION}.${OCTOVIS_PATCH_VERSION})
 set(OCTOVIS_SOVERSION ${OCTOVIS_MAJOR_VERSION}.${OCTOVIS_MINOR_VERSION})
 # get rid of a useless warning:
@@ -61,20 +61,21 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
-# Builds the "octovis" viewer based on OpenGL and 
+# Builds the "octovis" viewer based on OpenGL and
 # libQGLViewer, if dependencies available
 SET( BUILD_VIEWER 0)
 
 option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
 
 # Look for required libraries:
+set(OpenGL_GL_PREFERENCE LEGACY)
 FIND_PACKAGE(OpenGL)
 if(NOT OCTOVIS_QT5)
   FIND_PACKAGE(Qt4)
 endif(NOT OCTOVIS_QT5)
 
-IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND) 
-	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")	
+IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND)
+	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")
 ELSE()
 	FIND_PACKAGE(QGLViewer)
 	IF(QGLViewer_FOUND)
@@ -89,12 +90,12 @@ ENDIF()
 IF(BUILD_VIEWER)
   MESSAGE(STATUS "\n")
   MESSAGE(STATUS "viewer octovis will be built")
-  
+
   set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
   INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
-   
+
   INCLUDE( CMakeLists_src.txt )
-    
+
   # Create an octovis-config.cmake file for the use from the build tree
   set(OCTOVIS_INCLUDE_DIRS "${INCLUDE_DIRS}")
   set(OCTOVIS_LIB_DIR     "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -125,7 +126,7 @@ IF(BUILD_VIEWER)
 
   # not used right now (export depends?)
   #set(OCTOMAP_CMAKE_DIR "${PROJECT_BINARY_DIR}")
-    
+
   # Create a octovis-config.cmake file for the use from the install tree
   # and install it
   set(OCTOVIS_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
@@ -148,7 +149,7 @@ IF(BUILD_VIEWER)
 
   install(FILES
     "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config.cmake"
-    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake" 
+    "${PROJECT_BINARY_DIR}/InstallFiles/octovis-config-version.cmake"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/octovis")
 
   # #installation:
@@ -162,10 +163,9 @@ IF(BUILD_VIEWER)
   # Allows Colcon to find non-Ament packages when using workspace underlays
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
-  
+
 ELSE()
     MESSAGE ( "Unfortunately, the viewer (octovis) can not be built because some requirements are missing.")
 	MESSAGE ( "This will not affect the compilation of the stand-alone library and tools (octomap)")
     MESSAGE ( "See README.txt or http://octomap.sf.net for further information.\n")
 ENDIF()
-

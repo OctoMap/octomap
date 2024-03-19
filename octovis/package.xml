@@ -1,6 +1,6 @@
 <package format="3">
   <name>octovis</name>
-  <version>1.9.8</version>
+  <version>1.10.0</version>
   <description>octovis is visualization tool for the OctoMap library based on Qt and libQGLViewer. See
   http://octomap.github.io for details.</description>
 
@@ -22,6 +22,7 @@
   </export>
 
   <build_depend>octomap</build_depend>
+  <build_depend>opengl</build_depend>
 
   <!-- Qt5 -->
   <build_depend>libqglviewer-dev-qt5</build_depend>
@@ -34,6 +35,7 @@
   <build_depend>libqt4-opengl-dev</build_depend> -->
 
   <exec_depend>octomap</exec_depend>
+  <exec_depend>opengl</exec_depend>
 
   <!-- Qt5 -->
   <exec_depend>libqglviewer2-qt5</exec_depend>

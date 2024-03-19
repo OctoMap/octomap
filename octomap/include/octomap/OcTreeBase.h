@@ -43,7 +43,7 @@ namespace octomap {
   template <class NODE>
   class OcTreeBase : public OcTreeBaseImpl<NODE,AbstractOcTree> {
   public:
-    OcTreeBase<NODE>(double res) : OcTreeBaseImpl<NODE,AbstractOcTree>(res) {};
+    OcTreeBase(double res) : OcTreeBaseImpl<NODE,AbstractOcTree>(res) {}
 
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)

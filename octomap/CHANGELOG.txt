@@ -1,3 +1,21 @@
+v1.10.0: 2024-03-19
+===================
+- CMake: Fix duplicate uninstall target (#406)
+- Fix errors with recent compilers and C++17/20 standard (#394)
+- Fix ScanGraph.h c++20 compilation error (#398)
+- Add smaller than operator for vectors (#330)
+- Add vcpkg installation instructions to Readme (#382)
+- Fix test dependencies in CMakeLists (#374)
+- replace deprecated std::iterator by defining required types (#373)
+- octovis: fix issue with saving not showing any dialog (#414)
+- octovis: Fix deprecated QString and glext redefinition warning (#375)
+- octovis: Declare missing dependency on opengl (#408)
+- ROS: Updates to compile cleanly on ROS 2 Rolling on Ubuntu 24.04 (#415)
+- ROS: Remove ccache  for ROS-Industrial CI yml (#413)
+- ROS: Remove EOL ROS distros from CI actions
+
+
+
 v1.9.8: 2022-05-12
 ==================
 - Also set lowercase octomap_* variables in CMake config (#369)

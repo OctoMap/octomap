@@ -56,6 +56,15 @@ To compile the complete package, run:
 Binaries and libs will end up in the directories `bin` and `lib` of the
 top-level directory where you started the build.
 
+Alternatively, you can build and install octomap using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+    ./vcpkg integrate install
+    ./vcpkg install octomap
+
+The octomap port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
 See [octomap README](octomap/README.md) and [octovis README](octovis/README.md) for further
 details and hints on compiling, especially under Windows.
