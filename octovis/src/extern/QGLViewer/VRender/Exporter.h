@@ -60,7 +60,7 @@ namespace vrender
 	{
 		public:
 			Exporter() ;
-			virtual ~Exporter() {};
+			virtual ~Exporter() {}
 
 			virtual void exportToFile(const QString& filename,const std::vector<PtrPrimitive>&,VRenderParams&) ;
 
@@ -92,7 +92,7 @@ namespace vrender
 	{
 		public:
 			EPSExporter() ;
-			virtual ~EPSExporter() {};
+			virtual ~EPSExporter() {}
 
 		protected:
 			virtual void spewPoint(const Point *, QTextStream& out) ;
@@ -120,7 +120,7 @@ namespace vrender
 	class PSExporter: public EPSExporter
 	{
 		public:
-			virtual ~PSExporter() {};
+			virtual ~PSExporter() {}
 		protected:
 			virtual void writeFooter(QTextStream& out) const ;
 	};
@@ -129,7 +129,7 @@ namespace vrender
 	{
 		public:
 			FIGExporter() ;
-			virtual ~FIGExporter() {};
+			virtual ~FIGExporter() {}
 
 		protected:
 			virtual void spewPoint(const Point *, QTextStream& out) ;

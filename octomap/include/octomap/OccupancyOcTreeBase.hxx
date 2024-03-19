@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -233,24 +233,30 @@ namespace octomap {
               occupied_cells.insert(key);
             }
           }
-
-          // update freespace, break as soon as bbx limit is reached
-          if (this->computeRayKeys(origin, p, *keyray)){
-            for(KeyRay::reverse_iterator rit=keyray->rbegin(); rit != keyray->rend(); rit++) {
-              if (inBBX(*rit)) {
-#ifdef _OPENMP
-                #pragma omp critical (free_insert)
-#endif
-                {
-                  free_cells.insert(*rit);
-                }
-              }
-              else break;
-            }
-          } // end if compute ray
         } // end if in BBX and not maxrange
-      } // end bbx case
 
+        // truncate the end point to the max range if the max range is exceeded
+        point3d new_end = p;
+        if ((maxrange >= 0.0) && ((p - origin).norm() > maxrange)) {
+          const point3d direction = (p - origin).normalized();
+          new_end = origin + direction * (float) maxrange;
+        }
+
+        // update freespace, break as soon as bbx limit is reached
+        if (this->computeRayKeys(origin, new_end, *keyray)){
+          for(KeyRay::iterator it=keyray->begin(); it != keyray->end(); it++) {
+            if (inBBX(*it)) {
+#ifdef _OPENMP
+              #pragma omp critical (free_insert)
+#endif
+              {
+                free_cells.insert(*it);
+              }
+            }
+            else break;
+          }
+        } // end if compute ray
+      } // end bbx case
     } // end for all points, end of parallel OMP loop
 
     // prefer occupied cells over free ones (and make sets disjunct)
@@ -882,7 +888,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::setBBXMin (point3d& min) {
+  void OccupancyOcTreeBase<NODE>::setBBXMin (const point3d& min) {
     bbx_min = min;
     if (!this->coordToKeyChecked(bbx_min, bbx_min_key)) {
       OCTOMAP_ERROR("ERROR while generating bbx min key.\n");
@@ -890,7 +896,7 @@ namespace octomap {
   }
 
   template <class NODE>
-  void OccupancyOcTreeBase<NODE>::setBBXMax (point3d& max) {
+  void OccupancyOcTreeBase<NODE>::setBBXMax (const point3d& max) {
     bbx_max = max;
     if (!this->coordToKeyChecked(bbx_max, bbx_max_key)) {
       OCTOMAP_ERROR("ERROR while generating bbx max key.\n");

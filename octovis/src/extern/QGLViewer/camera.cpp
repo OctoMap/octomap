@@ -199,8 +199,8 @@ void Camera::setScreenWidthAndHeight(int width, int height)
  \code
  class myCamera :: public qglviewer::Camera
  {
-   virtual qreal Camera::zNear() const { return 0.001; };
-   virtual qreal Camera::zFar() const { return 100.0; };
+   virtual qreal Camera::zNear() const { return 0.001; }
+   virtual qreal Camera::zFar() const { return 100.0; }
  }
  \endcode
 

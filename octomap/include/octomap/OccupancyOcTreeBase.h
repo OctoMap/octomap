@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -318,11 +318,11 @@ namespace octomap {
 
 		/**
 		 * Performs a step of the marching cubes surface reconstruction algorithm
-		 * to retreive the normal of the triangles that fall in the cube
+		 * to retrieve the normal of the triangles that fall in the cube
 		 * formed by the voxels located at the vertex of a given voxel.
 		 *
-		 * @param[in] voxel for which retreive the normals
-		 * @param[out] triangles normals
+		 * @param[in] point voxel for which retrieve the normals
+		 * @param[out] normals normals of the triangles
 		 * @param[in] unknownStatus consider unknown cells as free (false) or occupied (default, true).
 		 * @return True if the input voxel is known in the occupancy grid, and false if it is unknown.
 		 */
@@ -334,9 +334,9 @@ namespace octomap {
     void useBBXLimit(bool enable) { use_bbx_limit = enable; }
     bool bbxSet() const { return use_bbx_limit; }
     /// sets the minimum for a query bounding box to use
-    void setBBXMin (point3d& min);
+    void setBBXMin (const point3d& min);
     /// sets the maximum for a query bounding box to use
-    void setBBXMax (point3d& max);
+    void setBBXMax (const point3d& max);
     /// @return the currently set minimum for bounding box queries, if set
     point3d getBBXMin () const { return bbx_min; }
     /// @return the currently set maximum for bounding box queries, if set

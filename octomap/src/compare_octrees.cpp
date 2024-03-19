@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
       else
         kld +=log(p1/p2)*p1 + log((1-p1)/(1-p2))*(1-p1);
 
-#if __cplusplus >= 201103L
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
       if (std::isnan(kld)){
 #else
       if (isnan(kld)){

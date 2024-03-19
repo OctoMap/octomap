@@ -100,7 +100,12 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
 # Library target 
 add_library(octovis-static STATIC ${viewerlib_SRCS})
-target_link_libraries(octovis-static)
+target_link_libraries(octovis-static
+  ${OPENGL_gl_LIBRARY} 
+  ${OPENGL_glu_LIBRARY} 
+  ${OCTOMAP_LIBRARIES}
+  ${QGLViewer_LIBRARIES}
+)
 set_target_properties(octovis-static PROPERTIES OUTPUT_NAME octovis)
 
 add_library(octovis-shared SHARED ${viewerlib_SRCS})

@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -63,8 +63,8 @@ namespace octomap {
 int main(int argc, char **argv)
 {
     int version;               // binvox file format version (should be 1)
-    int depth, height, width;  // dimensions of the voxel grid
-    int size;                  // number of grid cells (height * width * depth)
+    size_t depth, height, width;  // dimensions of the voxel grid
+    size_t size;                  // number of grid cells (height * width * depth)
     float tx, ty, tz;          // Translation
     float scale;               // Scaling factor
     bool mark_free = false;    // Mark free cells (false = cells remain "unknown")
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
         *input >> version;
         cout << "reading binvox version " << version << endl;
 
-        depth = -1;
+        depth = 0;
         int done = 0;
         while(input->good() && !done) {
             *input >> line;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
             cout << "    error reading header" << endl;
             return 0;
         }
-        if (depth == -1) {
+        if (depth == 0) {
             cout << "    missing dimensions in header" << endl;
             return 0;
         }
@@ -231,10 +231,10 @@ int main(int argc, char **argv)
         // read voxel data
         octomap::byte value;
         octomap::byte count;
-        int index = 0;
-        int end_index = 0;
-        unsigned nr_voxels = 0;
-        unsigned nr_voxels_out = 0;
+        size_t index = 0;
+        size_t end_index = 0;
+        size_t nr_voxels = 0;
+        size_t nr_voxels_out = 0;
 
         input->unsetf(ios::skipws);    // need to read every byte now (!)
         *input >> value;    // read the linefeed char
@@ -245,16 +245,16 @@ int main(int argc, char **argv)
             if (input->good()) {
                 end_index = index + count;
                 if (end_index > size) return 0;
-                for(int j=index; j < end_index; j++) {
+                for(size_t j=index; j < end_index; j++) {
                     // Output progress dots
                     if(j % (size / 20) == 0) {
                         cout << ".";
                         cout.flush();
                     }
                     // voxel index --> voxel coordinates
-                    int y = j % width;
-                    int z = (j / width) % height;
-                    int x = j / (width * height);
+                    size_t y = j % width;
+                    size_t z = (j / width) % height;
+                    size_t x = j / (width * height);
 
                     // voxel coordinates --> world coordinates
                     point3d endpoint((float) ((double) x*res + tx + 0.000001),

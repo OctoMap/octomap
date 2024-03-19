@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -43,7 +43,7 @@ namespace octomap {
   template <class NODE>
   class OcTreeBase : public OcTreeBaseImpl<NODE,AbstractOcTree> {
   public:
-    OcTreeBase<NODE>(double res) : OcTreeBaseImpl<NODE,AbstractOcTree>(res) {};
+    OcTreeBase(double res) : OcTreeBaseImpl<NODE,AbstractOcTree>(res) {}
 
     /// virtual constructor: creates a new object of same type
     /// (Covariant return type requires an up-to-date compiler)

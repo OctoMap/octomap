@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -100,9 +100,9 @@ namespace octomap {
     OCTOMAP_DEPRECATED(bool hasChildren() const);
 
     /// @return value stored in the node
-    T getValue() const{return value;};
+    T getValue() const{return value;}
     /// sets value to be stored in the node
-    void setValue(T v) {value = v;};
+    void setValue(T v) {value = v;}
 
     // file IO:
 

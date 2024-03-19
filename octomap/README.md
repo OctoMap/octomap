@@ -2,11 +2,11 @@ Octomap - A probabilistic, flexible, and compact 3D mapping library for robotic 
 =======================================================================================
 
 Authors: Kai M. Wurm and Armin Hornung, University of Freiburg, Copyright (C) 2009-2013.
-http://octomap.github.com
+https://octomap.github.io
 
-See the [list of contributors](AUTHORS.txt) for further authors.
+See the [list of contributors](https://github.com/OctoMap/octomap/blob/devel/octomap/AUTHORS.txt) for further authors.
 
-License for octomap: [New BSD License](LICENSE.txt)
+License for octomap: [New BSD License](https://github.com/OctoMap/octomap/blob/devel/octomap/LICENSE.txt)
 
 
 REQUIREMENTS
@@ -58,7 +58,7 @@ DOCUMENTATION
 -------------
 
 The documentation for the latest stable release is available online:
-  http://octomap.github.com/octomap/doc/index.html
+  https://octomap.github.io/octomap/doc/index.html
 
 You can build the most current HTML-Documentation for your current
 source with Doxygen by running `make docs` 
@@ -104,7 +104,7 @@ ECLIPSE PROJECT FILES
 ---------------------
 
 Eclipse project files can be generated (with some limitations, see:
-http://www.vtk.org/Wiki/Eclipse_CDT4_Generator) by running:
+https://gitlab.kitware.com/cmake/community/-/wikis/doc/editors/Eclipse-CDT4-Generator) by running:
 
     cmake -G"Eclipse CDT4 - Unix Makefiles" ..
 	
@@ -121,7 +121,7 @@ The octomap library and tools can be compiled and used
 under Windows although this has not been tested in-depth. 
 Feedback is welcome.
 
-To compile the library you need cmake (http://www.cmake.org)
+To compile the library you need cmake (https://www.cmake.org)
 and either MinGW or Visual Studio.
 
 ### MinGW ###

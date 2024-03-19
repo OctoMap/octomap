@@ -62,14 +62,14 @@ namespace octomap {
     void setAlternativeDrawing(bool flag){m_alternativeDrawing = flag;}
 
     void enableOcTree(bool enabled = true);
-    void enableOcTreeCells(bool enabled = true) { m_update = true; m_drawOccupied = enabled; };
-    void enableFreespace(bool enabled = true) { m_update = true; m_drawFree = enabled; };
-    void enableSelection(bool enabled = true) { m_update = true; m_drawSelection = enabled; };
-    void setMax_tree_depth(unsigned int max_tree_depth) { m_update = true; m_max_tree_depth = max_tree_depth;};
+    void enableOcTreeCells(bool enabled = true) { m_update = true; m_drawOccupied = enabled; }
+    void enableFreespace(bool enabled = true) { m_update = true; m_drawFree = enabled; }
+    void enableSelection(bool enabled = true) { m_update = true; m_drawSelection = enabled; }
+    void setMax_tree_depth(unsigned int max_tree_depth) { m_update = true; m_max_tree_depth = max_tree_depth;}
 
     // set new origin (move object)
     void setOrigin(octomap::pose6d t);
-    void enableAxes(bool enabled = true) { m_update = true; m_displayAxes = enabled; };
+    void enableAxes(bool enabled = true) { m_update = true; m_displayAxes = enabled; }
 
   protected:
     //void clearOcTree();

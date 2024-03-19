@@ -1,6 +1,6 @@
 /*
  * OctoMap - An Efficient Probabilistic 3D Mapping Framework Based on Octrees
- * http://octomap.github.com/
+ * https://octomap.github.io/
  *
  * Copyright (c) 2009-2013, K.M. Wurm and A. Hornung, University of Freiburg
  * All rights reserved.
@@ -255,7 +255,18 @@ namespace octomath {
       }
       return true;
     }
-        
+
+    inline bool operator< (const Vector3 &other) const {
+      for (unsigned int i=0; i<3; i++){
+        if (operator()(i) < other(i))
+          return true;
+        else if (operator()(i) == other(i))
+          continue;
+        else
+          return false;
+      }
+    }
+
     /// @return length of the vector ("L2 norm")
     inline double norm () const {
       return sqrt(norm_sq());
