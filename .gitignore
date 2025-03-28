@@ -27,3 +27,7 @@ Makefile
 *.bt
 *.ot
 *.graph
+*.pcd
+
+# ccache
+.cache
