@@ -42,10 +42,15 @@
 namespace octomap
 {
 
+// forward declaration for "friend"
+class IntensityOcTree;
+
 // node definition
 class IntensityOcTreeNode : public OcTreeNode
 {
 public:
+    friend class IntensityOcTree;// needs access to node children (inherited)
+
     // Constructors
     IntensityOcTreeNode() : OcTreeNode(), intensity(0.0)
     {
@@ -123,8 +128,6 @@ public:
    */
     virtual bool pruneNode(IntensityOcTreeNode *node);
 
-    void updateNodeLogOdds(IntensityOcTreeNode *node,
-                           const float &log_odds_update) const override;
     void updateInnerOccupancy();
 
     IntensityOcTreeNode *integrateNodeIntensity(const OcTreeKey &key,

@@ -88,6 +88,12 @@ IntensityOcTree::IntensityOcTree(double resolution)
     intensityOcTreeMemberInit.ensureLinking();
 }
 
+
+void IntensityOcTree::updateInnerOccupancy()
+{
+    this->updateInnerOccupancyRecurs(this->root, 0);
+}
+
 void IntensityOcTree::updateInnerOccupancyRecurs(IntensityOcTreeNode *node,
                                                  unsigned depth)
 {
@@ -127,14 +133,6 @@ bool IntensityOcTree::pruneNode(IntensityOcTreeNode *node)
     node->children = NULL;
 
     return true;
-}
-
-
-void IntensityOcTree::updateNodeLogOdds(IntensityOcTreeNode *node,
-                                        const float &log_odds_update) const
-{
-    OccupancyOcTreeBase<IntensityOcTreeNode>::updateNodeLogOdds(
-            node, log_odds_update);
 }
 
 
