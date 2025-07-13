@@ -33,49 +33,38 @@
 
 #include "octomap/IntensityOcTree.h"
 
-namespace octomap
-{
-explicit IntensityOcTree::IntensityOcTree(double resolution)
-    : OccupancyOcTreeBase<IntensityOcTreeNode>(resolution)
-{
-    intensityOcTreeMemberInit.ensureLinking();
+namespace octomap {
+IntensityOcTree::IntensityOcTree(double resolution)
+    : OccupancyOcTreeBase<IntensityOcTreeNode>(resolution) {
+  intensityOcTreeMemberInit.ensureLinking();
 }
-
 
 void IntensityOcTree::updateInnerOccupancyRecurs(IntensityOcTreeNode *node,
-                                                 unsigned int depth)
-{
-    if (!node)
-        return;
+                                                 unsigned int depth) {
+  if (!node)
+    return;
 
-    if (depth < this->tree_depth)
-    {
-        for (unsigned i = 0; i < 8; ++i)
-            if (nodeChildExists(node, i))
-                updateInnerOccupancyRecurs(node->getChild(i), depth + 1);
-    }
-    node->updateOccupancyChildren();
-    node->updateIntensityChildren();
+  if (depth < this->tree_depth) {
+    for (unsigned i = 0; i < 8; ++i)
+      if (nodeChildExists(node, i))
+        updateInnerOccupancyRecurs(node->getChild(i), depth + 1);
+  }
+  node->updateOccupancyChildren();
+  node->updateIntensityChildren();
 }
-
 
 void IntensityOcTree::updateNodeLogOdds(IntensityOcTreeNode *node,
-                                        const float &log_odds_update) const
-{
-    OccupancyOcTreeBase<IntensityOcTreeNode>::updateNodeLogOdds(
-            node, log_odds_update);
+                                        const float &log_odds_update) const {
+  OccupancyOcTreeBase<IntensityOcTreeNode>::updateNodeLogOdds(node,
+                                                              log_odds_update);
 }
-
 
 void IntensityOcTree::integrateNodeIntensity(IntensityOcTreeNode *node,
                                              double intensity_sample,
-                                             unsigned weight) const
-{
-    double old = node->getIntensity();
-    node->setIntensity(
-            (old * static_cast<double>(weight - 1) + intensity_sample) /
-            weight);
+                                             unsigned weight) const {
+  double old = node->getIntensity();
+  node->setIntensity(
+      (old * static_cast<double>(weight - 1) + intensity_sample) / weight);
 }
 
-
-}// namespace octomap
+} // namespace octomap

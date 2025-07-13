@@ -31,7 +31,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef OCTOMAP_INTENSITY_OCTREE_H
 #define OCTOMAP_INTENSITY_OCTREE_H
 
@@ -40,164 +39,127 @@
 #include <octomap/OcTreeNode.h>
 #include <octomap/OccupancyOcTreeBase.h>
 
-namespace octomap
-{
+namespace octomap {
 
 // node definition
-class IntensityOcTreeNode : public OcTreeNode
-{
+class IntensityOcTreeNode : public OcTreeNode {
 public:
-    // Constructors
-    IntensityOcTreeNode() : OcTreeNode(), intensity(0.0)
-    {
+  // Constructors
+  IntensityOcTreeNode() : OcTreeNode(), intensity(0.0) {}
+
+  IntensityOcTreeNode(const IntensityOcTreeNode &rhs)
+      : OcTreeNode(rhs), intensity(rhs.intensity) {}
+
+  // Comparator
+  bool operator==(const IntensityOcTreeNode &rhs) const {
+    return (rhs.value == value && rhs.intensity == intensity);
+  }
+
+  // Payload helpers
+  inline double getIntensity() const { return intensity; }
+  inline void setIntensity(double i) { intensity = i; }
+
+  // Copy when replacing a node
+  void copyData(const IntensityOcTreeNode &from) {
+    OcTreeNode::copyData(from);
+    this->intensity = from.getIntensity();
+  }
+
+  // Update occupancy and intensity of inner nodes
+  inline void updateIntensityChildren() {
+    if (this->isLeaf())
+      return;
+
+    double sum = 0.0;
+    unsigned cnt = 0;
+    for (unsigned i = 0; i < 8; ++i)
+      if (this->childExists(i)) {
+        sum += this->getChild(i)->intensity;
+        ++cnt;
+      }
+
+    intensity = cnt ? sum / cnt : intensity;
+  }
+
+  // Reverse pruning expand
+  void expandNode() {
+    if (hasChildren())
+      return;
+
+    allocChildren();
+    for (unsigned i = 0; i < 8; ++i) {
+      this->getChild(i)->intensity =
+          intensity; // propagate intensity to children
     }
+  }
 
-    IntensityOcTreeNode(const IntensityOcTreeNode &rhs)
-        : OcTreeNode(rhs), intensity(rhs.intensity)
-    {
-    }
+  // Serialisation and deserialisation
+  std::ostream &writeData(std::ostream &s) const {
+    OcTreeNode::writeData(s); // write log-odds
+    s.write(reinterpret_cast<const char *>(&intensity), sizeof(intensity));
+    return s;
+  }
 
-
-    // Comparator
-    bool operator==(const IntensityOcTreeNode &rhs) const
-    {
-        return (rhs.value == value && rhs.intensity == intensity);
-    }
-
-
-    // Payload helpers
-    inline double getIntensity() const
-    {
-        return intensity;
-    }
-    inline void setIntensity(double i)
-    {
-        intensity = i;
-    }
-
-
-    // Copy when replacing a node
-    void copyData(const IntensityOcTreeNode &from)
-    {
-        OcTreeNode::copyData(from);
-        this->intensity = from.getIntensity();
-    }
-
-
-    // Update occupancy and intensity of inner nodes
-    inline void updateIntensityChildren()
-    {
-        if (isLeaf())
-            return;
-
-        double sum = 0.0;
-        unsigned cnt = 0;
-        for (unsigned i = 0; i < 8; ++i)
-            if (childExists(i))
-            {
-                sum += getChild(i)->intensity;
-                ++cnt;
-            }
-
-        intensity = cnt ? sum / cnt : intensity;
-    }
-
-    // Reverse pruning expand
-    void expandNode()
-    {
-        if (hasChildren())
-            return;
-
-        allocChildren();
-        for (unsigned i = 0; i < 8; ++i)
-        {
-            getChild(i)->intensity =
-                    intensity;// propagate intensity to children
-        }
-    }
-
-
-    // Serialisation and deserialisation
-    std::ostream &writeData(std::ostream &s) const override
-    {
-        OcTreeNode::writeData(s);// write log-odds
-        s.write(reinterpret_cast<const char *>(&intensity), sizeof(intensity));
-        return s;
-    }
-
-    std::istream &readData(std::istream &s) override
-    {
-        OcTreeNode::readData(s);
-        s.read(reinterpret_cast<char *>(&intensity), sizeof(intensity));
-        return s;
-    }
+  std::istream &readData(std::istream &s) {
+    OcTreeNode::readData(s);
+    s.read(reinterpret_cast<char *>(&intensity), sizeof(intensity));
+    return s;
+  }
 
 protected:
-    double intensity;
+  double intensity;
 };
-
 
 // tree definition
-class IntensityOcTree : public OccupancyOcTreeBase<IntensityOcTreeNode>
-{
+class IntensityOcTree : public OccupancyOcTreeBase<IntensityOcTreeNode> {
 public:
-    // Default constructor, sets resolution of leafs
-    explicit IntensityOcTree(double resolution);
+  // Default constructor, sets resolution of leafs
+  IntensityOcTree(double resolution);
 
-    /// virtual constructor: creates a new object of same type
-    /// (Covariant return type requires an up-to-date compiler)
-    IntensityOcTree *create() const override
-    {
-        return new IntensityOcTree(resolution);
-    }
+  /// virtual constructor: creates a new object of same type
+  /// (Covariant return type requires an up-to-date compiler)
+  IntensityOcTree *create() const override {
+    return new IntensityOcTree(resolution);
+  }
 
-    std::string getTreeType() const
-    {
-        return "IntensityOcTree";
-    }
+  std::string getTreeType() const { return "IntensityOcTree"; }
 
-    void updateInnerOccupancyRecurs(IntensityOcTreeNode *node,
-                                    unsigned depth) override;
+  void updateInnerOccupancyRecurs(IntensityOcTreeNode *node, unsigned depth);
 
-    void updateNodeLogOdds(IntensityOcTreeNode *node,
-                           const float &log_odds_update) const override;
+  void updateNodeLogOdds(IntensityOcTreeNode *node,
+                         const float &log_odds_update) const override;
 
-    void integrateNodeIntensity(IntensityOcTreeNode *node,
-                                double intensity_sample,
-                                unsigned weight = 1) const;
-
+  void integrateNodeIntensity(IntensityOcTreeNode *node,
+                              double intensity_sample,
+                              unsigned weight = 1) const;
 
 protected:
+  /**
+   * Static member object which ensures that this OcTree's prototype
+   * ends up in the classIDMapping only once. You need this as a
+   * static member in any derived octree class in order to read .ot
+   * files through the AbstractOcTree factory. You should also call
+   * ensureLinking() once from the constructor.
+   */
+  class StaticMemberInitializer {
+  public:
+    StaticMemberInitializer() {
+      IntensityOcTree *tree = new IntensityOcTree(0.1);
+      tree->clearKeyRays();
+      AbstractOcTree::registerTreeType(tree);
+    }
     /**
-     * Static member object which ensures that this OcTree's prototype
-     * ends up in the classIDMapping only once. You need this as a
-     * static member in any derived octree class in order to read .ot
-     * files through the AbstractOcTree factory. You should also call
-     * ensureLinking() once from the constructor.
+     * Dummy function to ensure that MSVC does not drop the
+     * StaticMemberInitializer, causing this tree failing to register.
+     * Needs to be called from the constructor of this octree.
      */
-    class StaticMemberInitializer
-    {
-    public:
-        StaticMemberInitializer()
-        {
-            IntensityOcTree *tree = new IntensityOcTree(0.1);
-            tree->clearKeyRays();
-            AbstractOcTree::registerTreeType(tree);
-        }
-        /**
-      * Dummy function to ensure that MSVC does not drop the
-      * StaticMemberInitializer, causing this tree failing to register.
-      * Needs to be called from the constructor of this octree.
-      */
-        void ensureLinking()
-        {
-        }
-    };
+    void ensureLinking() {}
+  };
 
-    /// to ensure static initialization (only once)
-    static StaticMemberInitializer intensityOcTreeMemberInit;
+  /// to ensure static initialization (only once)
+  static StaticMemberInitializer intensityOcTreeMemberInit;
 };
 
-}// namespace octomap
+} // namespace octomap
 
-#endif// OCTOMAP_INTENSITY_OCTREE_H
+#endif // OCTOMAP_INTENSITY_OCTREE_H
