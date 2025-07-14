@@ -111,6 +111,17 @@ void IntensityOcTree::updateInnerOccupancyRecurs(IntensityOcTreeNode *node,
 }
 
 
+void IntensityOcTree::computeUpdateKeys(const octomap::Pointcloud &scan,
+                                        const octomath::Vector3 &origin,
+                                        octomap::KeySet &free_cells,
+                                        octomap::KeySet &occupied_cells,
+                                        double maxrange)
+{
+    // Delegates to base class
+    computeUpdate(scan, octomap::point3d(origin.x(), origin.y(), origin.z()),
+                  free_cells, occupied_cells, maxrange);
+}
+
 // Node Pruning
 bool IntensityOcTree::pruneNode(IntensityOcTreeNode *node)
 {

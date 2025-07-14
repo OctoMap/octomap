@@ -130,6 +130,12 @@ public:
 
     void updateInnerOccupancy();
 
+    void computeUpdateKeys(const octomap::Pointcloud &scan,
+                           const octomath::Vector3 &origin,
+                           octomap::KeySet &free_cells,
+                           octomap::KeySet &occupied_cells,
+                           double maxrange = -1.0);
+
     IntensityOcTreeNode *integrateNodeIntensity(const OcTreeKey &key,
                                                 double intensity);
     IntensityOcTreeNode *integrateNodeIntensity(float x, float y, float z,
