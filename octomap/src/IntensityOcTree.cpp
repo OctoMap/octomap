@@ -97,17 +97,20 @@ void IntensityOcTree::updateInnerOccupancy()
 void IntensityOcTree::updateInnerOccupancyRecurs(IntensityOcTreeNode *node,
                                                  unsigned depth)
 {
-    if (!node)
-        return;
-
-    if (depth < this->tree_depth)
+    if (nodeHasChildren(node))
     {
-        for (unsigned i = 0; i < 8; ++i)
-            if (nodeChildExists(node, i))
-                updateInnerOccupancyRecurs(getNodeChild(node, i), depth + 1);
+        if (depth < this->tree_depth)
+        {
+            for (unsigned i = 0; i < 8; ++i)
+            {
+                if (nodeChildExists(node, i))
+                    updateInnerOccupancyRecurs(getNodeChild(node, i),
+                                               depth + 1);
+            }
+        }
+        node->updateOccupancyChildren();
+        node->updateIntensityChildren();
     }
-    node->updateOccupancyChildren();
-    node->updateIntensityChildren();
 }
 
 
