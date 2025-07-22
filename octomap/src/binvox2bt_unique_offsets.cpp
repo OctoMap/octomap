@@ -46,7 +46,7 @@
 * License: New BSD License
 
 Example usage:
-./binvox2bt --mark-free --offset 1.0 2.0 3.0 model1.binvox --offset -1.0 0.5 0.0 model2.binvox -o merged.bt
+./binvox2bt_unique_offsets --mark-free --offset 1.0 2.0 3.0 model1.binvox --offset -1.0 0.5 0.0 model2.binvox -o merged.bt
 
 */
 
