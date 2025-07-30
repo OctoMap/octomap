@@ -40,6 +40,9 @@ TARGET_LINK_LIBRARIES(log2graph octomap)
 ADD_EXECUTABLE(binvox2bt binvox2bt.cpp)
 TARGET_LINK_LIBRARIES(binvox2bt octomap)
 
+ADD_EXECUTABLE(binvox2bt_unique_offsets binvox2bt_unique_offsets.cpp)
+TARGET_LINK_LIBRARIES(binvox2bt_unique_offsets octomap)
+
 ADD_EXECUTABLE(bt2vrml bt2vrml.cpp)
 TARGET_LINK_LIBRARIES(bt2vrml octomap)
 
@@ -70,6 +73,10 @@ TARGET_LINK_LIBRARIES(intersection_example octomap)
 ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
 TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
 
+ADD_EXECUTABLE(merge_octomaps merge_octomaps.cpp)
+TARGET_LINK_LIBRARIES(merge_octomaps octomap)
+
+
 install(TARGETS octomap octomap-static
   EXPORT octomap-targets
   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
@@ -81,6 +88,7 @@ install(TARGETS
 	graph2tree
 	log2graph
 	binvox2bt
+  binvox2bt_unique_offsets
 	bt2vrml
 	edit_octree
 	convert_octree

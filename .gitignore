@@ -26,8 +26,14 @@ Makefile
 # our binary files, in case someone forgets them in the source dir:
 *.bt
 *.ot
-*.graph
 *.pcd
+
+# IDE / logs
+*.graph
+.vscode/
+octomap/log/
+octomap/src/.vscode/
+octovis/src/extern/QGLViewer/.qmake.stash
 
 # ccache
 .cache
