@@ -44,10 +44,11 @@
 #else
   #include <ext/algorithm>
 #endif
-#include <fstream>
-#include <math.h>
 #include <assert.h>
+#include <fstream>
 #include <limits>
+#include <math.h>
+#include <sstream>
 
 #include <octomap/Pointcloud.h>
 
@@ -340,6 +341,132 @@ namespace octomap {
     OCTOMAP_DEBUG("done.\n");
 
     return s;
+  }
+
+  std::istream &Pointcloud::readPCD(std::istream &s) {
+    // Check if the input stream is valid
+    if (!s.good()) {
+      throw std::runtime_error("Invalid input stream for PCD reading.");
+    }
+
+    // Variables to store header information
+    std::string line;
+    int width = 0;            // Number of points per row (for organized clouds)
+    int height = 0;           // Number of rows (1 for unorganized clouds)
+    int points_count = 0;     // Total number of points
+    bool data_ascii = false;  // Flag for ASCII data type
+    bool header_read = false; // Flag to indicate header parsing completion
+
+    // Parse the header line by line
+    while (std::getline(s, line)) {
+      if (line.find("VERSION") == 0) {
+        // Skip VERSION field (not used in this implementation)
+        continue;
+      } else if (line.find("FIELDS") == 0) {
+        // Parse FIELDS to ensure only x, y, z are present
+        std::stringstream ss(line);
+        std::string word;
+        ss >> word; // Skip "FIELDS"
+        std::string field;
+        while (ss >> field) {
+          if (field != "x" && field != "y" && field != "z") {
+            OCTOMAP_WARNING("readPCD: Unsupported field in PCD file: %s\n",
+                            field.c_str());
+          }
+        }
+      } else if (line.find("SIZE") == 0) {
+        // Skip SIZE (assume 4 bytes for float)
+        continue;
+      } else if (line.find("TYPE") == 0) {
+        // Skip TYPE (assume float)
+        continue;
+      } else if (line.find("COUNT") == 0) {
+        // Skip COUNT (assume 1 element per field)
+        continue;
+      } else if (line.find("WIDTH") == 0) {
+        // Read width
+        std::stringstream ss(line);
+        std::string word;
+        ss >> word >> width;
+      } else if (line.find("HEIGHT") == 0) {
+        // Read height
+        std::stringstream ss(line);
+        std::string word;
+        ss >> word >> height;
+      } else if (line.find("VIEWPOINT") == 0) {
+        // Skip VIEWPOINT (not used)
+        continue;
+      } else if (line.find("POINTS") == 0) {
+        // Read total number of points
+        std::stringstream ss(line);
+        std::string word;
+        ss >> word >> points_count;
+      } else if (line.find("DATA") == 0) {
+        // Parse DATA type
+        std::stringstream ss(line);
+        std::string word, data_type;
+        ss >> word >> data_type;
+        if (data_type == "ascii") {
+          data_ascii = true;
+        } else {
+          throw std::runtime_error(
+              "readPCD: Unsupported data type: " + data_type +
+              ". Only ASCII supported in this implementation.");
+        }
+        header_read = true;
+        break; // Header complete, proceed to data
+      }
+      if (s.eof()) {
+        break; // End of stream reached
+      }
+    }
+
+    // Validate header completion
+    if (!header_read) {
+      throw std::runtime_error(
+          "readPCD: Incomplete or missing header in PCD data.");
+    }
+
+    // Calculate points_count if not provided but width and height are
+    if (points_count == 0 && width > 0 && height > 0) {
+      points_count = width * height;
+    }
+
+    OCTOMAP_DEBUG("readPCD: Reading %d points from PCD stream.\n",
+                  points_count);
+
+    // Read ASCII point data
+    if (data_ascii) {
+      this->points.reserve(points_count); // Pre-allocate space for efficiency
+      float x, y, z;
+      for (int i = 0; i < points_count; ++i) {
+        if (!(s >> x >> y >> z)) {
+          if (s.eof()) {
+            OCTOMAP_WARNING("readPCD: End of stream reached before reading all "
+                            "%d points.\n",
+                            points_count);
+            break;
+          } else {
+            throw std::runtime_error(
+                "readPCD: Error reading point data from PCD stream.");
+          }
+        }
+        this->push_back(x, y, z); // Add point to the Pointcloud
+      }
+    } else {
+      throw std::runtime_error("readPCD: Binary PCD files are not supported in "
+                               "this implementation.");
+    }
+
+    // Verify the number of points read
+    if (this->size() != static_cast<size_t>(points_count)) {
+      OCTOMAP_WARNING("readPCD: Read %zu points, expected %d.\n", this->size(),
+                      points_count);
+    }
+
+    OCTOMAP_DEBUG("readPCD: Done reading PCD stream.\n");
+
+    return s; // Return the stream for chaining
   }
 
 } // end namespace

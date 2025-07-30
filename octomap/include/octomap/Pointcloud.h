@@ -113,6 +113,7 @@ namespace octomap {
 
     std::istream& readBinary(std::istream &s);
     std::istream& read(std::istream &s);
+    std::istream &readPCD(std::istream &s);
     std::ostream& writeBinary(std::ostream &s) const;
 
   protected:

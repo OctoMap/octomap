@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 PROJECT( octomap-distribution )
 
 ENABLE_TESTING()  # enable CTest environment of subprojects
