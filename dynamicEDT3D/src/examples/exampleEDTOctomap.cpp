@@ -63,8 +63,7 @@ int main( int argc, char *argv[] ) {
   octomap::point3d max(x,y,z);
   //std::cout<<"Metric max: "<<x<<","<<y<<","<<z<<std::endl;
 
-  bool unknownAsOccupied = true;
-  unknownAsOccupied = false;
+  bool unknownAsOccupied = false;
   float maxDist = 1.0;
   //- the first argument ist the max distance at which distance computations are clamped
   //- the second argument is the octomap
