@@ -52,6 +52,15 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (rotation.x(), 1.2750367);
     EXPECT_FLOAT_EQ (rotation.y(), (-1.1329513));
     EXPECT_FLOAT_EQ (rotation.z(), 0.30116868);
+    
+    
+    Vector3 ones2 = *ones;
+    
+    // test comparison
+    EXPECT_TRUE(*ones < *twos);
+    EXPECT_FALSE(*twos < *ones);
+    EXPECT_FALSE(*ones < ones2);
+    EXPECT_FALSE(ones2 < *ones);
   
   // ------------------------------------------------------------
   } else if (test_name == "MathPose") {
