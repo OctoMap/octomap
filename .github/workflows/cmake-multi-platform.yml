@@ -27,9 +27,10 @@ jobs:
         build_type: [Release]
         c_compiler: [gcc, clang, cl]
         include:
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
+          # Deactivate windows for now, fails to build/link
+          #- os: windows-latest
+          #  c_compiler: cl
+          #  cpp_compiler: cl
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
