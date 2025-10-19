@@ -6,7 +6,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # enables -fPIC in applicable compilers
 
 option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
 option(BUILD_DYNAMICETD3D_SUBPROJECT  "Build targets from subproject dynamicEDT3D" ON)
-option(OCTOVIS_QT6 "Link Octovis against Qt6?" ON)
+option(OCTOVIS_QT6 "Link Octovis against Qt6?" OFF) # defaults to Qt5
 
 set(CMAKE_CXX_STANDARD 11)
 
