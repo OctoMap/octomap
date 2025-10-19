@@ -65,17 +65,14 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 # libQGLViewer, if dependencies available
 SET( BUILD_VIEWER 0)
 
-option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
+option(OCTOVIS_QT6 "Link Octovis against Qt6?" ON)
 
 # Look for required libraries:
 set(OpenGL_GL_PREFERENCE LEGACY)
 FIND_PACKAGE(OpenGL)
-if(NOT OCTOVIS_QT5)
-  FIND_PACKAGE(Qt4)
-endif(NOT OCTOVIS_QT5)
 
-IF (OpenGL-NOTFOUND OR Qt4-NOTFOUND)
-	MESSAGE ( "OpenGL and QT4 are required for octovis but could not be found.")
+IF (OpenGL-NOTFOUND)
+	MESSAGE ( "OpenGL is required for octovis but could not be found.")
 ELSE()
 	FIND_PACKAGE(QGLViewer)
 	IF(QGLViewer_FOUND)
