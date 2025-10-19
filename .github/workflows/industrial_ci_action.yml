@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: noetic, PRERELEASE: true}          
+          - {ROS_DISTRO: jazzy, PRERELEASE: true}          
+          - {ROS_DISTRO: humble, PRERELEASE: true}
           #- {ROS_DISTRO: rolling}  # 2024-03-12 temporarily deactivate until transitin to Ubuntu Noble is complete
     env:
       BUILDER: colcon
