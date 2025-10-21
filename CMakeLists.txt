@@ -15,6 +15,7 @@ option(BUILD_DYNAMICETD3D_SUBPROJECT
 
 add_subdirectory(octomap)
 if(BUILD_OCTOVIS_SUBPROJECT)
+    set(OCTOVIS_BUILD_OPTIONAL TRUE)
     add_subdirectory(octovis)
 endif()
 if(BUILD_DYNAMICETD3D_SUBPROJECT)

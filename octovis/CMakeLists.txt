@@ -4,6 +4,9 @@ project(
     VERSION 1.10.0
     LANGUAGES CXX
 )
+if(NOT DEFINED OCTOVIS_BUILD_OPTIONAL)
+    set(OCTOVIS_BUILD_OPTIONAL FALSE)
+endif()
 
 set(OCTOVIS_USE_QT_VERSION
     "auto"
@@ -39,12 +42,19 @@ include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 include(CompilerSettings)
 
+if (OCTOVIS_BUILD_OPTIONAL)
+    set(_required)
+else()
+    set(_required REQUIRED)
+endif()
+
 # We need the main octomap library to link against (same version as octovis)
 if(NOT TARGET octomap::octomap)
-    find_package(octomap "${OCTOVIS_VERSION}" REQUIRED)
+    find_package(octomap "${OCTOVIS_VERSION}" ${_required})
 endif()
+find_package(OpenGL ${_required})
 set(OCTOVIS_FIND_DEPENDENCIES
-    "include(CMakeFindDependencyMacro)\nfind_dependency(octomap ${OCTOVIS_VERSION})"
+    "include(CMakeFindDependencyMacro)\nfind_dependency(octomap ${OCTOVIS_VERSION})\nfind_dependency(OpenGL)\n"
 )
 
 # Looking for installed QGLViewer library
@@ -54,7 +64,11 @@ else()
     unset(QGLViewer_USE_QT_VERSION)
 endif()
 if(OCTOVIS_USE_QGLVIEWER STREQUAL "installed")
-    find_package(QGLViewer REQUIRED)
+    find_package(QGLViewer ${_required})
+    if(NOT QGLViewer_FOUND)
+        message(WARNING "No QGLViewer library found; skipping octovis build")
+        return()
+    endif()
 elseif(OCTOVIS_USE_QGLVIEWER STREQUAL "auto")
     find_package(QGLViewer)
 elseif(NOT OCTOVIS_USE_QGLVIEWER STREQUAL "vendored")
@@ -65,22 +79,18 @@ elseif(NOT OCTOVIS_USE_QGLVIEWER STREQUAL "vendored")
 endif()
 if(QGLViewer_FOUND AND QGLViewer_QT_VERSION)
     set(OCTOVIS_QT_VERSION "${QGLViewer_QT_VERSION}")
-    set(_required REQUIRED)
 elseif(NOT OCTOVIS_USE_QT_VERSION STREQUAL "auto")
     set(OCTOVIS_QT_VERSION "${OCTOVIS_USE_QT_VERSION}")
-    set(_required REQUIRED)
 else()
     unset(OCTOVIS_QT_VERSION)
     set(_required)
 endif()
 
-find_package(OpenGL REQUIRED)
-
 if(NOT DEFINED OCTOVIS_QT_VERSION OR OCTOVIS_QT_VERSION STREQUAL "5")
     find_package(Qt5 ${_required} COMPONENTS Core Gui OpenGL Widgets Xml)
     if(Qt5_FOUND)
         set(OCTOVIS_FIND_DEPENDENCIES
-            "${OCTOVIS_FIND_DEPENDENCIES}\nfind_dependency(OpenGL)\nfind_dependency(Qt5 ${Qt5_VERSION} COMPONENTS Core Gui OpenGL Widgets Xml)"
+            "${OCTOVIS_FIND_DEPENDENCIES}\nfind_dependency(Qt5 ${Qt5_VERSION} COMPONENTS Core Gui OpenGL Widgets Xml)"
         )
         set(OCTOVIS_QT_TARGETS Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Widgets
                                Qt5::Xml
@@ -93,7 +103,7 @@ if(NOT DEFINED OCTOVIS_QT_VERSION OR OCTOVIS_QT_VERSION STREQUAL "6")
     find_package(Qt6 ${_required} COMPONENTS Core Gui OpenGLWidgets Widgets Xml)
     if(Qt6_FOUND)
         set(OCTOVIS_FIND_DEPENDENCIES
-            "${OCTOVIS_FIND_DEPENDENCIES}\nfind_dependency(OpenGL)\nfind_dependency(Qt6 ${Qt6_VERSION} COMPONENTS Core Gui OpenGLWidgets Widgets Xml)"
+            "${OCTOVIS_FIND_DEPENDENCIES}\nfind_dependency(Qt6 ${Qt6_VERSION} COMPONENTS Core Gui OpenGLWidgets Widgets Xml)"
         )
         set(OCTOVIS_QT_TARGETS Qt6::Core Qt6::Gui Qt6::OpenGLWidgets
                                Qt6::Widgets Qt6::Xml
@@ -102,9 +112,20 @@ if(NOT DEFINED OCTOVIS_QT_VERSION OR OCTOVIS_QT_VERSION STREQUAL "6")
         set(OCTOVIS_QT_VERSION "6")
     endif()
 endif()
-if(NOT OCTOVIS_QT_VERSION)
-    message(FATAL_ERROR "No compatible Qt library found")
+if(NOT OCTOVIS_QT_TARGETS)
+    if(OCTOVIS_BUILD_OPTIONAL)
+        message(WARNING "No Qt library found; skipping octovis build")
+    else()
+        message(FATAL_ERROR "No Qt library found")
+    endif()
 endif()
+
+foreach(target IN ITEMS octomap::octomap OpenGL::GL OpenGL::GLU ${OCTOVIS_QT_TARGETS})
+    if(NOT TARGET ${target})
+        message(WARNING "Missing target ${target}; skipping octovis build")
+        return()
+    endif()
+endforeach()
 
 if(TARGET QGLViewer::QGLViewer)
     message(STATUS "octovis building with installed QGLViewer library")
