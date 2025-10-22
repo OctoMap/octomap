@@ -25,8 +25,9 @@ jobs:
       matrix:
         # removed for now: windows-latest
         os: [ubuntu-latest]
-        build_type: [Release, Debug]
+        build_type: [Release]
         c_compiler: [gcc, clang, cl]
+        dir : [octomap, dynamicEDT3D, octovis]
         include:
           # Deactivate windows for now, fails to build/link
           #- os: windows-latest
@@ -57,6 +58,7 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
+      working-directory: ${{ matrix.dir }}
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
@@ -67,6 +69,7 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
+      working-directory: ${{ matrix.dir }}
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
