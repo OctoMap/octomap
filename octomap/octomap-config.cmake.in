@@ -6,16 +6,12 @@
 #  Usage from an external project:
 #    In your CMakeLists.txt, add these lines:
 #
-#    FIND_PACKAGE(OCTOMAP REQUIRED )
-#    INCLUDE_DIRECTORIES(${OCTOMAP_INCLUDE_DIRS})
-#    TARGET_LINK_LIBRARIES(MY_TARGET_NAME ${OCTOMAP_LIBRARIES})
+#    find_package(octomap REQUIRED)
+#    target_link_libraries(MY_TARGET_NAME PRIVATE octomap::octomap)
 #
 #
-#    This file will define the following variables:
-#      - OCTOMAP_LIBRARIES      : The list of libraries to links against.
-#      - OCTOMAP_LIBRARY_DIRS   : The directory where lib files are. Calling
-#                                 LINK_DIRECTORIES with this path is NOT needed.
-#      - OCTOMAP_INCLUDE_DIRS   : The OctoMap include directories.
+#    This file will also define the following variables:
+#      - OCTOMAP_LIBRARIES      : For backwards compatibility with existing code
 #      - OCTOMAP_MAJOR_VERSION  : Major version.
 #      - OCTOMAP_MINOR_VERSION  : Minor version.
 #      - OCTOMAP_PATCH_VERSION  : Patch version.
@@ -25,19 +21,14 @@
 
 @PACKAGE_INIT@
 
+@OCTOMAP_FIND_DEPENDENCIES@
+
 set(OCTOMAP_MAJOR_VERSION "@OCTOMAP_MAJOR_VERSION@")
 set(OCTOMAP_MINOR_VERSION "@OCTOMAP_MINOR_VERSION@")
 set(OCTOMAP_PATCH_VERSION "@OCTOMAP_PATCH_VERSION@")
 set(OCTOMAP_VERSION "@OCTOMAP_VERSION@")
 
-set_and_check(OCTOMAP_INCLUDE_DIRS "@PACKAGE_OCTOMAP_INCLUDE_DIRS@")
-set_and_check(OCTOMAP_LIBRARY_DIRS "@PACKAGE_OCTOMAP_LIB_DIR@")
-
-# Set library names
-set(OCTOMAP_LIBRARIES
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMAP_LIBRARY@"
-  "@PACKAGE_OCTOMAP_LIB_DIR@/@OCTOMATH_LIBRARY@"
-)
+set(OCTOMAP_LIBRARIES octomap::octomap)
 
 # Additionally set the variables using a lower-case project name.
 # This fixes discovery for downstream packages that search for lower-case octomap, which has been common in downstream code:
@@ -45,9 +36,6 @@ set(octomap_MAJOR_VERSION "${OCTOMAP_MAJOR_VERSION}")
 set(octomap_MINOR_VERSION "${OCTOMAP_MINOR_VERSION}")
 set(octomap_PATCH_VERSION "${OCTOMAP_PATCH_VERSION}")
 set(octomap_VERSION "${OCTOMAP_VERSION}")
-set(octomap_INCLUDE_DIRS "${OCTOMAP_INCLUDE_DIRS}")
-set(octomap_LIBRARY_DIRS "${OCTOMAP_LIBRARY_DIRS}")
 set(octomap_LIBRARIES "${OCTOMAP_LIBRARIES}")
 
-
-@OCTOMAP_INCLUDE_TARGETS@
+include(${CMAKE_CURRENT_LIST_DIR}/octomap-targets.cmake)

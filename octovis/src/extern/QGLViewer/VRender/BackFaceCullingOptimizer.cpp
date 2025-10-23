@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -59,13 +59,13 @@ void BackFaceCullingOptimizer::optimize(std::vector<PtrPrimitive>& primitives_ta
 	int nb_culled = 0 ;
 
 	for(size_t i=0;i<primitives_tab.size();++i)
-		if((P = dynamic_cast<Polygone *>(primitives_tab[i])) != NULL)
+		if((P = dynamic_cast<Polygone *>(primitives_tab[i])) != nullptr)
 		{
 						for(unsigned int j=0;j<P->nbVertices();++j)
 				if(( (P->vertex(j+2) - P->vertex(j+1))^(P->vertex(j+1) - P->vertex(j))).z() > 0.0 )
 				{
 					delete primitives_tab[i] ;
-					primitives_tab[i] = NULL ;
+					primitives_tab[i] = nullptr ;
 					++nb_culled ;
 					break ;
 				}
@@ -75,7 +75,7 @@ void BackFaceCullingOptimizer::optimize(std::vector<PtrPrimitive>& primitives_ta
 
 	int j=0 ;
 	for(size_t k=0;k<primitives_tab.size();++k)
-		if(primitives_tab[k] != NULL)
+		if(primitives_tab[k] != nullptr)
 			primitives_tab[j++] = primitives_tab[k] ;
 
 	primitives_tab.resize(j) ;

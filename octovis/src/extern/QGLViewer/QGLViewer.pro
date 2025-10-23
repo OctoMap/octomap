@@ -6,10 +6,11 @@
 
 TEMPLATE = lib
 TARGET = QGLViewer
-VERSION = 2.6.3
+VERSION = 2.9.1
 CONFIG *= qt opengl warn_on shared thread create_prl rtti no_keywords
 
-QGL_HEADERS = qglviewer.h \
+QGL_HEADERS = \
+	  qglviewer.h \
 	  camera.h \
 	  manipulatedFrame.h \
 	  manipulatedCameraFrame.h \
@@ -22,7 +23,8 @@ QGL_HEADERS = qglviewer.h \
 	  domUtils.h \
 	  config.h
 
-SOURCES = qglviewer.cpp \
+SOURCES = \
+	  qglviewer.cpp \
 	  camera.cpp \
 	  manipulatedFrame.cpp \
 	  manipulatedCameraFrame.cpp \
@@ -42,8 +44,11 @@ TRANSLATIONS = qglviewer_fr.ts
 
 QT *= xml opengl
 
-contains ( $$[QT_VERSION], "^5.*" ) {
+equals (QT_MAJOR_VERSION, 5) {
 	QT *= gui widgets
+}
+equals (QT_MAJOR_VERSION, 6) {
+	QT *= gui widgets openglwidgets
 }
 
 !isEmpty( QGLVIEWER_STATIC ) {
@@ -117,12 +122,24 @@ unix {
 		PREFIX_=$${PREFIX}
 	}
 	isEmpty( LIB_DIR ) {
-		LIB_DIR_ = $${PREFIX_}/lib
+		macx|darwin-g++ {
+			LIB_DIR_ = /Library/Frameworks
+		} else {
+			LIB_DIR_ = $${PREFIX_}/lib
+		}
 	} else {
 		LIB_DIR_ = $${LIB_DIR}
 	}
 	isEmpty( INCLUDE_DIR ) {
-		INCLUDE_DIR_ = $${PREFIX_}/include
+		macx|darwin-g++ {
+			isEmpty( PREFIX ) {
+				INCLUDE_DIR_ = $${PWD}/Library/Developer/Headers
+			} else {
+				INCLUDE_DIR_ = $${PREFIX}/Headers
+			}
+		} else {
+			INCLUDE_DIR_ = $${PREFIX_}/include
+		}
 	} else {
 		INCLUDE_DIR_ = $${INCLUDE_DIR}
 	}
@@ -147,6 +164,18 @@ unix {
 		# GLU is part of the OpenGL framework
 	} else {
 		QMAKE_LIBS_OPENGL *= -lGLU
+
+		isEmpty( NO_QT_VERSION_SUFFIX ) {
+			equals (QT_MAJOR_VERSION, 4) {
+				TARGET = $$join(TARGET,,,-qt4)
+			}
+			equals (QT_MAJOR_VERSION, 5) {
+				TARGET = $$join(TARGET,,,-qt5)
+			}
+			equals (QT_MAJOR_VERSION, 6) {
+				TARGET = $$join(TARGET,,,-qt6)
+			}
+		}
 	}
 
 	MOC_DIR = .moc
@@ -193,6 +222,13 @@ unix {
 
 	# "make install" configuration options
 	INSTALLS *= target include documentation docImages docRefManual
+
+	# "make uninstall" for all targets
+	target.uninstall = @echo "uninstall"
+	include.uninstall = @echo "uninstall"  
+	documentation.uninstall = @echo "uninstall"  
+	docImages.uninstall = @echo "uninstall"  
+	docRefManual.uninstall = @echo "uninstall"  
 }
 
 
@@ -200,10 +236,13 @@ unix {
 # --  M a c O S X  --
 # -------------------
 macx|darwin-g++ {
-	# This setting creates a Mac framework. Comment out this line to create a dylib instead.
+	# Default setting creates a Mac framework. Comment out this line to create a dylib instead.
 	!staticlib: CONFIG *= lib_bundle
 
 	include.files *= qglviewer.icns
+
+    # Or whatever exists in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
+    #QMAKE_MAC_SDK = macosx10.15
 
 	lib_bundle {
 		FRAMEWORK_HEADERS.version = Versions

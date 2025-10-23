@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -150,9 +150,9 @@ using namespace std ;
 #define MALLOC(p, b, s, t) {if ((b) > 0) { \
 							p= (t*)malloc(b); if (!(p)) { \
 							fprintf(stderr, "gpc malloc failure: %s\n", s); \
-							exit(0);}} else p= NULL;}
+							exit(0);}} else p= nullptr;}
 
-#define FREE(p)            {if (p) {free(p); (p)= NULL;}}
+#define FREE(p)            {if (p) {free(p); (p)= nullptr;}}
 
 
 /*
@@ -387,8 +387,8 @@ static edge_node **bound_list(lmt_node **lmt, double y)
 	/* Add node onto the tail end of the LMT */
 	MALLOC(*lmt, sizeof(lmt_node), "LMT insertion", lmt_node);
 	(*lmt)->y= y;
-	(*lmt)->first_bound= NULL;
-	(*lmt)->next= NULL;
+	(*lmt)->first_bound= nullptr;
+	(*lmt)->next= nullptr;
 	return &((*lmt)->first_bound);
   }
   else
@@ -398,7 +398,7 @@ static edge_node **bound_list(lmt_node **lmt, double y)
 	  existing_node= *lmt;
 	  MALLOC(*lmt, sizeof(lmt_node), "LMT insertion", lmt_node);
 	  (*lmt)->y= y;
-	  (*lmt)->first_bound= NULL;
+	  (*lmt)->first_bound= nullptr;
 	  (*lmt)->next= existing_node;
 	  return &((*lmt)->first_bound);
 	}
@@ -419,8 +419,8 @@ static void add_to_sbtree(int *entries, sb_tree **sbtree, double y)
 	/* Add a new tree node here */
 	MALLOC(*sbtree, sizeof(sb_tree), "scanbeam tree insertion", sb_tree);
 	(*sbtree)->y= y;
-	(*sbtree)->less= NULL;
-	(*sbtree)->more= NULL;
+	(*sbtree)->less= nullptr;
+	(*sbtree)->more= nullptr;
 	(*entries)++;
   }
   else
@@ -555,14 +555,14 @@ static edge_node *build_lmt(lmt_node **lmt, sb_tree **sbtree,
 			e[i].dx= (edge_table[v].vertex.x - e[i].bot.x) /
 					   (e[i].top.y - e[i].bot.y);
 			e[i].type= type;
-			e[i].outp[ABOVE]= NULL;
-			e[i].outp[BELOW]= NULL;
-			e[i].next= NULL;
-			e[i].prev= NULL;
+			e[i].outp[ABOVE]= nullptr;
+			e[i].outp[BELOW]= nullptr;
+			e[i].next= nullptr;
+			e[i].prev= nullptr;
 			e[i].succ= ((num_edges > 1) && (i < (num_edges - 1))) ?
-					   &(e[i + 1]) : NULL;
-			e[i].pred= ((num_edges > 1) && (i > 0)) ? &(e[i - 1]) : NULL;
-			e[i].next_bound= NULL;
+					   &(e[i + 1]) : nullptr;
+			e[i].pred= ((num_edges > 1) && (i > 0)) ? &(e[i - 1]) : nullptr;
+			e[i].next_bound= nullptr;
 			e[i].bside[CLIP]= (op == GPC_DIFF) ? RIGHT : LEFT;
 			e[i].bside[SUBJ]= LEFT;
 		  }
@@ -605,14 +605,14 @@ static edge_node *build_lmt(lmt_node **lmt, sb_tree **sbtree,
 			e[i].dx= (edge_table[v].vertex.x - e[i].bot.x) /
 					   (e[i].top.y - e[i].bot.y);
 			e[i].type= type;
-			e[i].outp[ABOVE]= NULL;
-			e[i].outp[BELOW]= NULL;
-			e[i].next= NULL;
-			e[i].prev= NULL;
+			e[i].outp[ABOVE]= nullptr;
+			e[i].outp[BELOW]= nullptr;
+			e[i].next= nullptr;
+			e[i].prev= nullptr;
 			e[i].succ= ((num_edges > 1) && (i < (num_edges - 1))) ?
-					   &(e[i + 1]) : NULL;
-			e[i].pred= ((num_edges > 1) && (i > 0)) ? &(e[i - 1]) : NULL;
-			e[i].next_bound= NULL;
+					   &(e[i + 1]) : nullptr;
+			e[i].pred= ((num_edges > 1) && (i > 0)) ? &(e[i - 1]) : nullptr;
+			e[i].next_bound= nullptr;
 			e[i].bside[CLIP]= (op == GPC_DIFF) ? RIGHT : LEFT;
 			e[i].bside[SUBJ]= LEFT;
 		  }
@@ -632,7 +632,7 @@ static void add_edge_to_aet(edge_node **aet, edge_node *edge, edge_node *prev)
 	/* Append edge onto the tail end of the AET */
 	*aet= edge;
 	edge->prev= prev;
-	edge->next= NULL;
+	edge->next= nullptr;
   }
   else
   {
@@ -687,7 +687,7 @@ static void add_intersection(it_node **it, edge_node *edge0, edge_node *edge1,
 	(*it)->ie[1]= edge1;
 	(*it)->point.x= x;
 	(*it)->point.y= y;
-	(*it)->next= NULL;
+	(*it)->next= nullptr;
   }
   else
   {
@@ -723,7 +723,7 @@ static void add_st_edge(st_node **st, it_node **it, edge_node *edge,
 	(*st)->xb= edge->xb;
 	(*st)->xt= edge->xt;
 	(*st)->dx= edge->dx;
-	(*st)->prev= NULL;
+	(*st)->prev= nullptr;
   }
   else
   {
@@ -766,7 +766,7 @@ static void build_intersection_table(it_node **it, edge_node *aet, double dy)
 
   /* Build intersection table for the current scanbeam */
   reset_it(it);
-  st= NULL;
+  st= nullptr;
 
   /* Process each AET edge */
   for (edge= aet; edge; edge= edge->next)
@@ -823,7 +823,7 @@ static void add_left(polygon_node *p, double x, double y)
 {
   vertex_node *nv;
 
-  if(p == NULL) throw runtime_error("GPC: Something's wrong.") ;
+  if(p == nullptr) throw runtime_error("GPC: Something's wrong.") ;
 
   /* Create a new vertex node and set its fields */
   MALLOC(nv, sizeof(vertex_node), "vertex node creation", vertex_node);
@@ -842,8 +842,8 @@ static void merge_left(polygon_node *p, polygon_node *q, polygon_node *list)
 {
   polygon_node *target;
 
-  if(p == NULL) throw runtime_error("GPC: Something's wrong.") ;
-  if(q == NULL) throw runtime_error("GPC: Something's wrong.") ;
+  if(p == nullptr) throw runtime_error("GPC: Something's wrong.") ;
+  if(q == nullptr) throw runtime_error("GPC: Something's wrong.") ;
 
   /* Label contour as a hole */
   q->proxy->hole= TRUE;
@@ -872,13 +872,13 @@ static void add_right(polygon_node *p, double x, double y)
 {
   vertex_node *nv = 0;
 
-  if(p == NULL) throw runtime_error("GPC: Something's wrong.") ;
+  if(p == nullptr) throw runtime_error("GPC: Something's wrong.") ;
 
   /* Create a new vertex node and set its fields */
   MALLOC(nv, sizeof(vertex_node), "vertex node creation", vertex_node);
   nv->x= x;
   nv->y= y;
-  nv->next= NULL;
+  nv->next= nullptr;
 
   /* Add vertex nv to the right end of the polygon's vertex list */
   p->proxy->v[RIGHT]->next= nv;
@@ -892,8 +892,8 @@ static void merge_right(polygon_node *p, polygon_node *q, polygon_node *list)
 {
   polygon_node *target = 0;
 
-  if(p == NULL) throw runtime_error("GPC: Something's wrong.") ;
-  if(q == NULL) throw runtime_error("GPC: Something's wrong.") ;
+  if(p == nullptr) throw runtime_error("GPC: Something's wrong.") ;
+  if(q == nullptr) throw runtime_error("GPC: Something's wrong.") ;
 
 
   /* Label contour as external */
@@ -935,7 +935,7 @@ static void add_local_min(polygon_node **p, edge_node *edge,
 
   nv->x= x;
   nv->y= y;
-  nv->next= NULL;
+  nv->next= nullptr;
 
   /* Initialise proxy to point to p itself */
   (*p)->proxy= (*p);
@@ -969,7 +969,7 @@ static void add_vertex(vertex_node **t, double x, double y)
 	MALLOC(*t, sizeof(vertex_node), "tristrip vertex creation", vertex_node);
 	(*t)->x= x;
 	(*t)->y= y;
-	(*t)->next= NULL;
+	(*t)->next= nullptr;
   }
   else
 	/* Head further down the list */
@@ -985,9 +985,9 @@ static void new_tristrip(polygon_node **tn, edge_node *edge,
 	MALLOC(*tn, sizeof(polygon_node), "tristrip node creation", polygon_node);
 	 **tn = polygon_node() ;
 
-	(*tn)->next= NULL;
-	(*tn)->v[LEFT]= NULL;
-	(*tn)->v[RIGHT]= NULL;
+	(*tn)->next= nullptr;
+	(*tn)->v[LEFT]= nullptr;
+	(*tn)->v[RIGHT]= nullptr;
 	(*tn)->active= 1;
 	add_vertex(&((*tn)->v[LEFT]), x, y);
 	edge->outp[ABOVE]= *tn;
@@ -1189,27 +1189,27 @@ void gpc_add_contour(gpc_polygon *p, gpc_vertex_list *new_contour, int hole)
 void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 					  gpc_polygon *result)
 {
-  sb_tree       *sbtree= NULL;
-  it_node       *it= NULL, *intersect=0;
+  sb_tree       *sbtree= nullptr;
+  it_node       *it= nullptr, *intersect=0;
   edge_node     *edge=0, *prev_edge=0, *next_edge=0, *succ_edge=0, *e0=0, *e1=0;
-  edge_node     *aet= NULL, *c_heap= NULL, *s_heap= NULL;
-  lmt_node      *lmt= NULL, *local_min=0;
-  polygon_node  *out_poly= NULL, *p=0, *q=0, *poly=0, *npoly=0, *cf= NULL;
+  edge_node     *aet= nullptr, *c_heap= nullptr, *s_heap= nullptr;
+  lmt_node      *lmt= nullptr, *local_min=0;
+  polygon_node  *out_poly= nullptr, *p=0, *q=0, *poly=0, *npoly=0, *cf= nullptr;
   vertex_node   *vtx=0, *nv=0;
   h_state        horiz[2];
   int            in[2], exists[2], parity[2]= {LEFT, LEFT};
   int            c, v, contributing=0, search, scanbeam= 0, sbt_entries= 0;
   int            vclass=0, bl=0, br=0, tl=0, tr=0;
-  double        *sbt= NULL, xb, px, yb, yt=0.0, dy=0.0, ix, iy;
+  double        *sbt= nullptr, xb, px, yb, yt=0.0, dy=0.0, ix, iy;
 
-  /* Test for trivial NULL result cases */
+  /* Test for trivial nullptr result cases */
   if (((subj->num_contours == 0) && (clip->num_contours == 0))
    || ((subj->num_contours == 0) && ((op == GPC_INT) || (op == GPC_DIFF)))
    || ((clip->num_contours == 0) &&  (op == GPC_INT)))
   {
 	result->num_contours= 0;
-	result->hole= NULL;
-	result->contour= NULL;
+	result->hole= nullptr;
+	result->contour= nullptr;
 	return;
   }
 
@@ -1224,12 +1224,12 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
   if (clip->num_contours > 0)
 	c_heap= build_lmt(&lmt, &sbtree, &sbt_entries, clip, CLIP, op);
 
-  /* Return a NULL result if no contours contribute */
-  if (lmt == NULL)
+  /* Return a nullptr result if no contours contribute */
+  if (lmt == nullptr)
   {
 	result->num_contours= 0;
-	result->hole= NULL;
-	result->contour= NULL;
+	result->hole= nullptr;
+	result->contour= nullptr;
 	reset_lmt(&lmt);
 	FREE(s_heap);
 	FREE(c_heap);
@@ -1274,7 +1274,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 	  {
 		/* Add edges starting at this local minimum to the AET */
 		for (edge= local_min->first_bound; edge; edge= edge->next_bound)
-		  add_edge_to_aet(&aet, edge, NULL);
+		  add_edge_to_aet(&aet, edge, nullptr);
 
 		local_min= local_min->next;
 	  }
@@ -1415,7 +1415,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 			}
 			edge->outp[ABOVE]= cf;
-			cf= NULL;
+			cf= nullptr;
 			break;
 		  case ELI:
 			add_left(edge->outp[BELOW], xb, yb);
@@ -1429,7 +1429,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 			}
 			merge_right(cf, edge->outp[BELOW], out_poly);
-			cf= NULL;
+			cf= nullptr;
 			break;
 		  case ILI:
 			if (xb != px)
@@ -1438,13 +1438,13 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 			}
 			edge->outp[ABOVE]= cf;
-			cf= NULL;
+			cf= nullptr;
 			break;
 		  case IRI:
 			add_right(edge->outp[BELOW], xb, yb);
 			px= xb;
 			cf= edge->outp[BELOW];
-			edge->outp[BELOW]= NULL;
+			edge->outp[BELOW]= nullptr;
 			break;
 		  case IMX:
 			if (xb != px)
@@ -1453,8 +1453,8 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 			}
 			merge_left(cf, edge->outp[BELOW], out_poly);
-			cf= NULL;
-			edge->outp[BELOW]= NULL;
+			cf= nullptr;
+			edge->outp[BELOW]= nullptr;
 			break;
 		  case IMM:
 			if (xb != px)
@@ -1463,7 +1463,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 		}
 			merge_left(cf, edge->outp[BELOW], out_poly);
-			edge->outp[BELOW]= NULL;
+			edge->outp[BELOW]= nullptr;
 			add_local_min(&out_poly, edge, xb, yb);
 			cf= edge->outp[ABOVE];
 			break;
@@ -1474,7 +1474,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  px= xb;
 		}
 			merge_right(cf, edge->outp[BELOW], out_poly);
-			edge->outp[BELOW]= NULL;
+			edge->outp[BELOW]= nullptr;
 			add_local_min(&out_poly, edge, xb, yb);
 			cf= edge->outp[ABOVE];
 			break;
@@ -1612,7 +1612,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_right(p, ix, iy);
 			  e1->outp[ABOVE]= p;
-			  e0->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case ELI:
@@ -1620,7 +1620,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_left(q, ix, iy);
 			  e0->outp[ABOVE]= q;
-			  e1->outp[ABOVE]= NULL;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case EMX:
@@ -1628,8 +1628,8 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_left(p, ix, iy);
 			  merge_right(p, q, out_poly);
-			  e0->outp[ABOVE]= NULL;
-			  e1->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IMN:
@@ -1641,7 +1641,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_left(p, ix, iy);
 			  e1->outp[ABOVE]= p;
-			  e0->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IRI:
@@ -1649,7 +1649,7 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_right(q, ix, iy);
 			  e0->outp[ABOVE]= q;
-			  e1->outp[ABOVE]= NULL;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IMX:
@@ -1657,8 +1657,8 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  add_right(p, ix, iy);
 			  merge_left(p, q, out_poly);
-			  e0->outp[ABOVE]= NULL;
-			  e1->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IMM:
@@ -1727,8 +1727,8 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 		  e1->next= prev_edge->next;
 		  prev_edge->next= e0->next;
 		}
-		  if(e0->next == NULL) throw runtime_error("GPC internal error.") ;
-		  if(e1->next == NULL) throw runtime_error("GPC internal error.") ;
+		  if(e0->next == nullptr) throw runtime_error("GPC internal error.") ;
+		  if(e1->next == nullptr) throw runtime_error("GPC internal error.") ;
 		e0->next->prev= prev_edge;
 		e1->next->prev= e1;
 		e0->next= next_edge;
@@ -1766,14 +1766,14 @@ void gpc_polygon_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 		  edge->bundle[BELOW][SUBJ]= edge->bundle[ABOVE][SUBJ];
 		  edge->xb= edge->xt;
 		  }
-		edge->outp[ABOVE]= NULL;
+		edge->outp[ABOVE]= nullptr;
 	  }
 	}
   } /* === END OF SCANBEAM PROCESSING ================================== */
 
   /* Generate result polygon from out_poly */
-  result->contour= NULL;
-  result->hole= NULL;
+  result->contour= nullptr;
+  result->hole= nullptr;
   result->num_contours= count_contours(out_poly);
   if (result->num_contours > 0)
   {
@@ -1840,8 +1840,8 @@ void gpc_polygon_to_tristrip(gpc_polygon *s, gpc_tristrip *t)
   gpc_polygon c;
 
   c.num_contours= 0;
-  c.hole= NULL;
-  c.contour= NULL;
+  c.hole= nullptr;
+  c.contour= nullptr;
   gpc_tristrip_clip(GPC_DIFF, s, &c, t);
 }
 
@@ -1849,27 +1849,27 @@ void gpc_polygon_to_tristrip(gpc_polygon *s, gpc_tristrip *t)
 void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 					   gpc_tristrip *result)
 {
-  sb_tree       *sbtree= NULL;
-  it_node       *it= NULL, *intersect;
+  sb_tree       *sbtree= nullptr;
+  it_node       *it= nullptr, *intersect;
   edge_node     *edge=0, *prev_edge=0, *next_edge=0, *succ_edge=0, *e0=0, *e1=0;
-  edge_node     *aet= NULL, *c_heap= NULL, *s_heap= NULL, *cf=0;
-  lmt_node      *lmt= NULL, *local_min;
-  polygon_node  *tlist= NULL, *tn, *tnn, *p, *q;
+  edge_node     *aet= nullptr, *c_heap= nullptr, *s_heap= nullptr, *cf=0;
+  lmt_node      *lmt= nullptr, *local_min;
+  polygon_node  *tlist= nullptr, *tn, *tnn, *p, *q;
   vertex_node   *lt, *ltn, *rt, *rtn;
   h_state        horiz[2];
   vertex_type    cft = NUL;
   int            in[2], exists[2], parity[2]= {LEFT, LEFT};
   int            s, v, contributing=0, search, scanbeam= 0, sbt_entries= 0;
   int            vclass=0, bl=0, br=0, tl=0, tr=0;
-  double        *sbt= NULL, xb, px, nx, yb, yt=0.0, dy=0.0, ix, iy;
+  double        *sbt= nullptr, xb, px, nx, yb, yt=0.0, dy=0.0, ix, iy;
 
-  /* Test for trivial NULL result cases */
+  /* Test for trivial nullptr result cases */
   if (((subj->num_contours == 0) && (clip->num_contours == 0))
    || ((subj->num_contours == 0) && ((op == GPC_INT) || (op == GPC_DIFF)))
    || ((clip->num_contours == 0) &&  (op == GPC_INT)))
   {
 	result->num_strips= 0;
-	result->strip= NULL;
+	result->strip= nullptr;
 	return;
   }
 
@@ -1884,11 +1884,11 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
   if (clip->num_contours > 0)
 	c_heap= build_lmt(&lmt, &sbtree, &sbt_entries, clip, CLIP, op);
 
-  /* Return a NULL result if no contours contribute */
-  if (lmt == NULL)
+  /* Return a nullptr result if no contours contribute */
+  if (lmt == nullptr)
   {
 	result->num_strips= 0;
-	result->strip= NULL;
+	result->strip= nullptr;
 	reset_lmt(&lmt);
 	FREE(s_heap);
 	FREE(c_heap);
@@ -1927,7 +1927,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 	  {
 		/* Add edges starting at this local minimum to the AET */
 		for (edge= local_min->first_bound; edge; edge= edge->next_bound)
-		  add_edge_to_aet(&aet, edge, NULL);
+		  add_edge_to_aet(&aet, edge, nullptr);
 
 		local_min= local_min->next;
 	  }
@@ -2063,18 +2063,18 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			edge->outp[ABOVE]= cf->outp[ABOVE];
 			if (xb != cf->xb)
 			  VERTEX(edge, ABOVE, RIGHT, xb, yb);
-			cf= NULL;
+			cf= nullptr;
 			break;
 		  case ELI:
 			VERTEX(edge, BELOW, LEFT, xb, yb);
-			edge->outp[ABOVE]= NULL;
+			edge->outp[ABOVE]= nullptr;
 			cf= edge;
 			break;
 		  case EMX:
 			if (xb != cf->xb)
 			  VERTEX(edge, BELOW, RIGHT, xb, yb);
-			edge->outp[ABOVE]= NULL;
-			cf= NULL;
+			edge->outp[ABOVE]= nullptr;
+			cf= nullptr;
 			break;
 		  case IMN:
 			if (cft == LED)
@@ -2099,11 +2099,11 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  new_tristrip(&tlist, cf, cf->xb, yb);
 		}
 			VERTEX(edge, BELOW, RIGHT, xb, yb);
-			edge->outp[ABOVE]= NULL;
+			edge->outp[ABOVE]= nullptr;
 			break;
 		  case IMX:
 			VERTEX(edge, BELOW, LEFT, xb, yb);
-			edge->outp[ABOVE]= NULL;
+			edge->outp[ABOVE]= nullptr;
 			cft= IMX;
 			break;
 	  case IMM:
@@ -2115,7 +2115,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			break;
 		  case EMM:
 			VERTEX(edge, BELOW, RIGHT, xb, yb);
-			edge->outp[ABOVE]= NULL;
+			edge->outp[ABOVE]= nullptr;
 			new_tristrip(&tlist, edge, xb, yb);
 			cf= edge;
 			break;
@@ -2148,7 +2148,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  VERTEX(edge, BELOW, RIGHT, xb, yb);
 			  VERTEX(edge, ABOVE, RIGHT, xb, yb);
 		}
-			cf= NULL;
+			cf= nullptr;
 			break;
 		  default:
 			break;
@@ -2274,7 +2274,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  VERTEX(prev_edge, ABOVE, LEFT, px, iy);
 			  VERTEX(e0, ABOVE, RIGHT, ix, iy);
 			  e1->outp[ABOVE]= e0->outp[ABOVE];
-			  e0->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case ELI:
@@ -2284,15 +2284,15 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  VERTEX(e1, ABOVE, LEFT, ix, iy);
 			  VERTEX(next_edge, ABOVE, RIGHT, nx, iy);
 			  e0->outp[ABOVE]= e1->outp[ABOVE];
-			  e1->outp[ABOVE]= NULL;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case EMX:
 			if (p && q)
 			{
 			  VERTEX(e0, ABOVE, LEFT, ix, iy);
-			  e0->outp[ABOVE]= NULL;
-			  e1->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IMN:
@@ -2314,7 +2314,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  N_EDGE(next_edge, e1, ABOVE, nx, iy);
 			  VERTEX(next_edge, ABOVE, RIGHT, nx, iy);
 			  e1->outp[ABOVE]= e0->outp[ABOVE];
-			  e0->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IRI:
@@ -2324,7 +2324,7 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			  P_EDGE(prev_edge, e0, ABOVE, px, iy);
 			  VERTEX(prev_edge, ABOVE, LEFT, px, iy);
 			  e0->outp[ABOVE]= e1->outp[ABOVE];
-			  e1->outp[ABOVE]= NULL;
+			  e1->outp[ABOVE]= nullptr;
 			}
 			break;
 		  case IMX:
@@ -2332,8 +2332,8 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 			{
 			  VERTEX(e0, ABOVE, RIGHT, ix, iy);
 			  VERTEX(e1, ABOVE, LEFT, ix, iy);
-			  e0->outp[ABOVE]= NULL;
-			  e1->outp[ABOVE]= NULL;
+			  e0->outp[ABOVE]= nullptr;
+			  e1->outp[ABOVE]= nullptr;
 			  P_EDGE(prev_edge, e0, ABOVE, px, iy);
 			  VERTEX(prev_edge, ABOVE, LEFT, px, iy);
 			  new_tristrip(&tlist, prev_edge, px, iy);
@@ -2453,13 +2453,13 @@ void gpc_tristrip_clip(gpc_op op, gpc_polygon *subj, gpc_polygon *clip,
 		  edge->bundle[BELOW][SUBJ]= edge->bundle[ABOVE][SUBJ];
 		  edge->xb= edge->xt;
 		}
-		edge->outp[ABOVE]= NULL;
+		edge->outp[ABOVE]= nullptr;
 	  }
 	}
   } /* === END OF SCANBEAM PROCESSING ================================== */
 
   /* Generate result tristrip from tlist */
-  result->strip= NULL;
+  result->strip= nullptr;
   result->num_strips= count_tristrips(tlist);
   if (result->num_strips > 0)
   {

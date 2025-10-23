@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -65,7 +65,7 @@ void Exporter::exportToFile(const QString& filename,
 	QFile file(filename);
 
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		QMessageBox::warning(NULL, QGLViewer::tr("Exporter error", "Message box window title"), QGLViewer::tr("Unable to open file %1.").arg(filename));
+		QMessageBox::warning(nullptr, QGLViewer::tr("Exporter error", "Message box window title"), QGLViewer::tr("Unable to open file %1.").arg(filename));
 		return;
 	}
 
@@ -81,9 +81,9 @@ void Exporter::exportToFile(const QString& filename,
 		Segment *s = dynamic_cast<Segment *>(primitive_tab[i]) ;
 		Polygone *P = dynamic_cast<Polygone *>(primitive_tab[i]) ;
 
-		if(p != NULL) spewPoint(p,out) ;
-		if(s != NULL) spewSegment(s,out) ;
-		if(P != NULL) spewPolygone(P,out) ;
+		if(p != nullptr) spewPoint(p,out) ;
+		if(s != nullptr) spewSegment(s,out) ;
+		if(P != nullptr) spewPolygone(P,out) ;
 
 		if(i%N == 0)
 			vparams.progress(i/(float)primitive_tab.size(),QGLViewer::tr("Exporting to file %1").arg(filename)) ;

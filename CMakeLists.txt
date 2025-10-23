@@ -1,21 +1,23 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
-PROJECT( octomap-distribution )
+cmake_minimum_required(VERSION 3.10...4.1)
+project(
+    octomap-distribution
+    VERSION 1.10.0
+    LANGUAGES NONE
+)
 
-ENABLE_TESTING()  # enable CTest environment of subprojects
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # enables -fPIC in applicable compilers (required to avoid link errors in some cases)
+include(CTest)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
-option(BUILD_DYNAMICETD3D_SUBPROJECT  "Build targets from subproject dynamicEDT3D" ON)
-option(OCTOVIS_QT6 "Link Octovis against Qt6?" ON)
+option(BUILD_DYNAMICETD3D_SUBPROJECT
+       "Build targets from subproject dynamicEDT3D" ON
+)
 
-set(CMAKE_CXX_STANDARD 11)
-
-ADD_SUBDIRECTORY( octomap )
-
+add_subdirectory(octomap)
 if(BUILD_OCTOVIS_SUBPROJECT)
-	ADD_SUBDIRECTORY( octovis )
+    set(OCTOVIS_BUILD_OPTIONAL TRUE)
+    add_subdirectory(octovis)
 endif()
-
 if(BUILD_DYNAMICETD3D_SUBPROJECT)
-	ADD_SUBDIRECTORY( dynamicEDT3D )
+    add_subdirectory(dynamicEDT3D)
 endif()
