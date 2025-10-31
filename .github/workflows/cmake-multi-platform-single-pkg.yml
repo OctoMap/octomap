@@ -51,7 +51,7 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/{{ matrix.dir }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=${{ github.workspace }}/${{ matrix.dir }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
       working-directory: ${{ matrix.dir }}
