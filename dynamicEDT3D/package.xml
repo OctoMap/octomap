@@ -4,7 +4,7 @@
   <description> The dynamicEDT3D library implements an inrementally updatable Euclidean distance transform (EDT) in 3D. It comes with a wrapper to use the OctoMap 3D representation and hooks into the change detection of the OctoMap library to propagate changes to the EDT.</description>
 
   <author email="sprunkc@informatik.uni-freiburg.de">Christoph Sprunk</author>
-  <maintainer email="sprunkc@informatik.uni-freiburg.de">Christoph Sprunk</maintainer>
+  <maintainer email="mail@arminhornung.de">Armin Hornung</maintainer>
   <maintainer email="opensource@wolfgangmerkt.com">Wolfgang Merkt</maintainer>
   <license>BSD</license>
 
