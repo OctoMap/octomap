@@ -1,6 +1,6 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms
+name: Single package builds, CMake multi-platform
 
 on: [push]
 
@@ -51,7 +51,7 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=${{ github.workspace }}/{{ matrix.dir }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
       working-directory: ${{ matrix.dir }}
@@ -62,7 +62,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+        -S ${{ github.workspace }}/${{ matrix.dir }}
 
     - name: Build
       working-directory: ${{ matrix.dir }}
