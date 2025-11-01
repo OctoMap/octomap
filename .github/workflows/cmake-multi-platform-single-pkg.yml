@@ -21,9 +21,9 @@ jobs:
       matrix:
         # removed for now: windows-latest
         os: [ubuntu-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
-        dir : [octomap, dynamicEDT3D, octovis]
+        build_type: [Release, Debug]
+        #c_compiler: [gcc, clang, cl]
+        c_compiler: [gcc]
         include:
           # Deactivate windows for now, fails to build/link
           #- os: windows-latest
@@ -51,26 +51,26 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/${{ matrix.dir }}/build" >> "$GITHUB_OUTPUT"
+        echo "octomap-build-output-dir=${{ github.workspace }}/octomap/build" >> "$GITHUB_OUTPUT"
 
-    - name: Configure CMake
-      working-directory: ${{ matrix.dir }}
+    - name: octomap - Configure CMake
+      working-directory: octomap
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -B ${{ steps.strings.outputs.octomap-build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}/${{ matrix.dir }}
+        -S ${{ github.workspace }}/octomap
 
-    - name: Build
-      working-directory: ${{ matrix.dir }}
+    - name: octomap - Build
+      working-directory: octomap
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.octomap-build-output-dir }} --config ${{ matrix.build_type }}
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+    - name: octomap - Test
+      working-directory: ${{ steps.strings.outputs.octomap-build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
