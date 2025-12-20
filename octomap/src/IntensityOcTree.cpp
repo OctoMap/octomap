@@ -72,11 +72,19 @@ double IntensityOcTreeNode::getAverageChildIntensity() const
         }
     }
 
-    double average_intensity = cnt ? sum / cnt : intensity;
-    return average_intensity;
+    // If no children have intensity set, return a neutral default (0.0)
+    // instead of reusing the parent node's current intensity.
+    if (cnt > 0)
+    {
+        return sum / static_cast<double>(cnt);
+    }
+    else
+    {
+        return 0.0;
+    }
 }
 
-inline void IntensityOcTreeNode::updateIntensityChildren()
+void IntensityOcTreeNode::updateIntensityChildren()
 {
     intensity = getAverageChildIntensity();
 }
@@ -134,9 +142,8 @@ bool IntensityOcTree::pruneNode(IntensityOcTreeNode *node)
     // set value to children's values (all assumed equal)
     node->copyData(*(getNodeChild(node, 0)));
 
-    // update intensity
-    if (node->isIntensitySet())
-        node->setIntensity(node->getAverageChildIntensity());
+    // update intensity to represent the average of all children
+    node->setIntensity(node->getAverageChildIntensity());
 
     // delete children
     for (unsigned int i = 0; i < 8; i++)
@@ -184,4 +191,5 @@ IntensityOcTreeNode *IntensityOcTree::integrateNodeIntensity(float x, float y,
     return integrateNodeIntensity(key, intensity);
 }
 
+IntensityOcTree::StaticMemberInitializer IntensityOcTree::intensityOcTreeMemberInit;
 }// namespace octomap

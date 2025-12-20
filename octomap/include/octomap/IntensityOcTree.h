@@ -92,13 +92,13 @@ public:
         return (ZERO_EPSILON < intensity);
     }
 
-    // Serialisation and deserialisation
+    // Serialization and deserialization
     std::istream &readData(std::istream &s);
     std::ostream &writeData(std::ostream &s) const;
 
 protected:
     double intensity;
-    static constexpr double ZERO_EPSILON = 1e-6;// to avoid division by zero
+    static constexpr double ZERO_EPSILON = 1e-6;// threshold for checking if intensity has been set
 };
 
 // tree definition
