@@ -16,7 +16,8 @@ int main(int /*argc*/, char** /*argv*/) {
   point3d p(0.0f, 0.0f, 0.0f);
   IntensityOcTreeNode* node = tree.updateNode(p, true);
   EXPECT_TRUE(node);
-  EXPECT_NEAR(node->getOccupancy(), 0.8, 1e-5);
+  double node_prob = node->getOccupancy();
+  EXPECT_NEAR(node_prob, 0.8, 1e-5);
   EXPECT_FALSE(node->isIntensitySet());
 
   EXPECT_TRUE(tree.integrateNodeIntensity(p.x(), p.y(), p.z(), 10.0));
@@ -27,7 +28,8 @@ int main(int /*argc*/, char** /*argv*/) {
   EXPECT_TRUE(tree.integrateNodeIntensity(p.x(), p.y(), p.z(), 20.0));
   node = tree.search(p);
   EXPECT_TRUE(node);
-  EXPECT_NEAR(node->getIntensity(), 10.0 * 0.8 + 20.0 * 0.2, 1e-5);
+  double expected_intensity = 10.0 * node_prob + 20.0 * (1.0 - node_prob);
+  EXPECT_NEAR(node->getIntensity(), expected_intensity, 1e-5);
 
   EXPECT_FALSE(tree.integrateNodeIntensity(10.0f, 10.0f, 10.0f, 5.0));
 
