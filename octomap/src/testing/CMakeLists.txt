@@ -16,6 +16,9 @@ target_link_libraries(test_scans octomap)
 add_executable(test_color_tree test_color_tree.cpp)
 target_link_libraries(test_color_tree octomap)
 
+add_executable(test_intensity_tree test_intensity_tree.cpp)
+target_link_libraries(test_intensity_tree octomap)
+
 add_executable(color_tree_histogram color_tree_histogram.cpp)
 target_link_libraries(color_tree_histogram octomap)
 
@@ -57,6 +60,7 @@ add_test(NAME test_mapcollection
                  ${PROJECT_SOURCE_DIR}/share/data/mapcoll.txt
 )
 add_test(NAME test_color_tree COMMAND test_color_tree)
+add_test(NAME test_intensity_tree COMMAND test_intensity_tree)
 add_test(NAME test_bbx COMMAND test_bbx)
 
 set_tests_properties(ReadGraph PROPERTIES DEPENDS InsertScan)
