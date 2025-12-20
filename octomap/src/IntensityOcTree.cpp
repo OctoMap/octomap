@@ -156,6 +156,29 @@ bool IntensityOcTree::pruneNode(IntensityOcTreeNode *node)
     return true;
 }
 
+bool IntensityOcTree::isNodeCollapsible(const IntensityOcTreeNode *node) const
+{
+    // All children must exist, be leafs, and match in occupancy (ignore intensity).
+    if (!nodeChildExists(node, 0))
+        return false;
+
+    const IntensityOcTreeNode *firstChild = getNodeChild(node, 0);
+    if (nodeHasChildren(firstChild))
+        return false;
+
+    for (unsigned int i = 1; i < 8; ++i)
+    {
+        if (!nodeChildExists(node, i) ||
+            nodeHasChildren(getNodeChild(node, i)) ||
+            !(getNodeChild(node, i)->getValue() == firstChild->getValue()))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 // Integration
 IntensityOcTreeNode *

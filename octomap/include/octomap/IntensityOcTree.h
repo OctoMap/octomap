@@ -34,6 +34,7 @@
 #ifndef OCTOMAP_INTENSITY_OCTREE_H
 #define OCTOMAP_INTENSITY_OCTREE_H
 
+#include <cmath>
 #include <iostream>
 
 #include <octomap/OcTreeNode.h>
@@ -64,7 +65,8 @@ public:
     // Comparator
     bool operator==(const IntensityOcTreeNode &rhs) const
     {
-        return (rhs.value == value && rhs.intensity == intensity);
+        return (rhs.value == value &&
+                std::fabs(rhs.intensity - intensity) < ZERO_EPSILON);
     }
 
     // Payload helpers
@@ -89,6 +91,7 @@ public:
     double getAverageChildIntensity() const;
     inline bool isIntensitySet() const
     {
+        // Intensity is treated as non-negative; near-zero values are considered "unset".
         return (ZERO_EPSILON < intensity);
     }
 
@@ -128,8 +131,12 @@ public:
    */
     virtual bool pruneNode(IntensityOcTreeNode *node);
 
+    // Compare only occupancy for pruning, ignoring intensity.
+    virtual bool isNodeCollapsible(const IntensityOcTreeNode *node) const;
+
     void updateInnerOccupancy();
 
+    // Compatibility wrapper that forwards to computeUpdate with a point3d origin.
     void computeUpdateKeys(const octomap::Pointcloud &scan,
                            const octomath::Vector3 &origin,
                            octomap::KeySet &free_cells,
