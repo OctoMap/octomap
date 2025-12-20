@@ -87,7 +87,23 @@ public:
     }
 
     // Update occupancy and intensity of inner nodes
+    /**
+     * @brief Update this node's intensity from its children.
+     *
+     * The intensity of this node is set to the average intensity of its
+     * children whose intensity is considered set (see isIntensitySet()).
+     */
     inline void updateIntensityChildren();
+    /**
+     * @brief Compute the mean intensity of all children with intensity set.
+     *
+     * Only children for which isIntensitySet() returns true are taken into
+     * account. If none of the children have intensity set, this function
+     * returns 0.0.
+     *
+     * @return The average intensity of all children with intensity set,
+     *         or 0.0 if no such children exist.
+     */
     double getAverageChildIntensity() const;
     inline bool isIntensitySet() const
     {
