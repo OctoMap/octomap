@@ -2,11 +2,7 @@
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on multiple platforms
 
-on:
-  push:
-    branches: [ "devel", "master" ]
-  pull_request:
-    branches: [ "devel", "master" ]
+on: [push, fork, pull_request]
 
 jobs:
   build:

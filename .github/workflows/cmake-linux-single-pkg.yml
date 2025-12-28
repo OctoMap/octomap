@@ -2,11 +2,7 @@
 # Single package (subdirectory) builds of the components, based on CMake starter workflow template
 name: Single package builds, CMake multi-platform
 
-on:
-  push:
-    branches: [ "devel", "master" ]
-  pull_request:
-    branches: [ "devel", "master" ]
+on: [push, fork, pull_request]
 
 jobs:
   build:

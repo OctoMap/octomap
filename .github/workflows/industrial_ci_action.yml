@@ -3,8 +3,12 @@
 
 name: ROS-CI
 
-# This determines when this workflow is run
-on: [push, pull_request] # on all pushes and PRs
+# This determines when this workflow is run. Long-running ROS CI jobs only on devel and master
+on:
+  push:
+    branches: [ "devel", "master", "main" ]
+  pull_request:
+    branches: [ "devel", "master", "main" ]
 
 jobs:
   CI:
@@ -13,7 +17,7 @@ jobs:
         env:
           - {ROS_DISTRO: jazzy, PRERELEASE: true}          
           - {ROS_DISTRO: humble, PRERELEASE: true}
-          #- {ROS_DISTRO: rolling}  # 2024-03-12 temporarily deactivate until transitin to Ubuntu Noble is complete
+          #- {ROS_DISTRO: rolling}  # 2024-03-12 temporarily deactivate until transition to Ubuntu Noble is complete
     env:
       BUILDER: colcon
     runs-on: ubuntu-latest
