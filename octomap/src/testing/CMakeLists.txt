@@ -40,6 +40,7 @@ add_test(NAME InsertScan COMMAND unit_tests InsertScan)
 add_test(NAME ReadGraph COMMAND unit_tests ReadGraph)
 add_test(NAME StampedTree COMMAND unit_tests StampedTree)
 add_test(NAME OcTreeKey COMMAND unit_tests OcTreeKey)
+add_test(NAME OcTreeStructure COMMAND unit_tests OcTreeStructure)
 add_test(NAME test_scans
          COMMAND test_scans
                  ${PROJECT_SOURCE_DIR}/share/data/spherical_scan.graph
