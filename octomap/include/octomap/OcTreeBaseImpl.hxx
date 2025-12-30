@@ -705,9 +705,13 @@ namespace octomap {
       // TODO delete check depth, what happens to inner nodes with children?
       this->deleteNodeChild(node, pos);
 
-      if (!nodeHasChildren(node))
+      if (!nodeHasChildren(node)){
+        if (node->children != NULL){
+          delete[] node->children;
+          node->children = NULL;
+        }
         return true;
-      else{
+      } else {
         node->updateOccupancyChildren(); // TODO: occupancy?
       }
     }
