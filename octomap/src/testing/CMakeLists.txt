@@ -32,13 +32,17 @@ if(BUILD_TESTING)
 
   # CTest tests below
 
+
   ADD_EXECUTABLE(unit_tests unit_tests.cpp)
   TARGET_LINK_LIBRARIES(unit_tests octomap)
+
+
 
   ADD_TEST (NAME MathVector         COMMAND unit_tests MathVector     )
   ADD_TEST (NAME MathPose           COMMAND unit_tests MathPose       )
   ADD_TEST (NAME InsertRay          COMMAND unit_tests InsertRay      )
   ADD_TEST (NAME InsertScan         COMMAND unit_tests InsertScan     )
+  add_test (NAME OcTreeStructure    COMMAND unit_tests OcTreeStructure)
   ADD_TEST (NAME ReadGraph          COMMAND unit_tests ReadGraph      )
   ADD_TEST (NAME StampedTree        COMMAND unit_tests StampedTree    )
   ADD_TEST (NAME OcTreeKey          COMMAND unit_tests OcTreeKey      )
