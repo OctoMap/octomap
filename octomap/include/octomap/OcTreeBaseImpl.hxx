@@ -479,7 +479,8 @@ namespace octomap {
       return false;
     }
     else {
-      return this->deleteNode(key, depth);
+      this->deleteNode(key, depth);
+      return true;
     }
 
   }
@@ -492,20 +493,48 @@ namespace octomap {
       return false;
     }
     else {
-      return this->deleteNode(key, depth);
+      this->deleteNode(key, depth);
+      return true;
     }
   }
 
+  template <class NODE,class I>
+  bool OcTreeBaseImpl<NODE,I>::deleteNodeChecked(const OcTreeKey& key, unsigned int depth) {
+    if (depth == 0)
+      depth = tree_depth;
+    
+    if (search(key, depth) != NULL) {
+      deleteNode(key, depth);
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   template <class NODE,class I>
-  bool OcTreeBaseImpl<NODE,I>::deleteNode(const OcTreeKey& key, unsigned int depth) {
+  void OcTreeBaseImpl<NODE,I>::deleteNode(const OcTreeKey& key, unsigned int depth) {
     if (root == NULL)
-      return true;
+      return;
 
     if (depth == 0)
       depth = tree_depth;
-
-    return deleteNodeRecurs(root, 0, depth, key);
+    
+    // TODO refactor, see deleteNodeRecurs -> move into call (see comments at GitHub PR #288)
+    bool deleteChild = deleteNodeRecurs(root, 0, depth, key);
+    if (deleteChild) {
+      if (!nodeHasChildren(root)){
+        if (root->children != NULL){
+            delete[] root->children;
+            root->children = NULL;
+        }
+        this->tree_size = 0;
+        this->root = NULL;
+        // max extent of tree changed:
+        this->size_changed = true;
+      } else {
+        root->updateOccupancyChildren(); 
+      }    
+    }
   }
 
   template <class NODE,class I>
@@ -527,7 +556,9 @@ namespace octomap {
     for (unsigned int depth=tree_depth-1; depth >= 0; --depth) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
-      if (num_pruned == 0)
+      // FIXME: This does not further prune a partially pruned tree, if there was nothing to be pruned at leaf level already
+      // Should only be an edge case for manually constructed trees though.
+      if (num_pruned == 0) 
         break;
     }
   }
