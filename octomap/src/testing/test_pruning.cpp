@@ -238,7 +238,7 @@ int main(int /*argc*/, char** /*argv*/) {
       
     }
     
-    tree.write("pruning_test_out.ot");
+    //tree.write("pruning_test_out.ot"); for debugging
     
     {
       std::cout << "\nClearing tree / recursive delete\n===============================\n";
@@ -257,8 +257,195 @@ int main(int /*argc*/, char** /*argv*/) {
       EXPECT_EQ(tree.size(), 0);      
     }
 
-    tree.write("pruning_test_out.ot");
-    std::cerr << "Test successful.\n";
+    {
+
+    // ------------------------------------------------------------
+    std::cout << "\nCreation and pruning of 8 siblings\n===============================\n";
+    OcTree pruningTree(0.2f);
+    // Define 8 neighboring points in different octants around origin
+    // These points occupy all 8 octants of their parent cell at depth 1
+    point3d pt_000( 0.1f, 0.1f, 0.1f);  // octant 0
+    point3d pt_001( 0.1f, 0.1f, 0.3f);  // octant 1
+    point3d pt_010( 0.1f, 0.3f, 0.1f);  // octant 2
+    point3d pt_011( 0.1f, 0.3f, 0.3f);  // octant 3
+    point3d pt_100( 0.3f, 0.1f, 0.1f);  // octant 4
+    point3d pt_101( 0.3f, 0.1f, 0.3f);  // octant 5
+    point3d pt_110( 0.3f, 0.3f, 0.1f);  // octant 6
+    point3d pt_111( 0.3f, 0.3f, 0.3f);  // octant 7
+    
+    // Insert all 8 nodes with occupied state (true)
+    OcTreeKey key_000, key_001, key_010, key_011, key_100, key_101, key_110, key_111;
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_000, key_000));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_001, key_001));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_010, key_010));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_011, key_011));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_100, key_100));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_101, key_101));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_110, key_110));
+    EXPECT_TRUE(pruningTree.coordToKeyChecked(pt_111, key_111));
+    
+    pruningTree.updateNode(key_000, true);
+    pruningTree.updateNode(key_001, true);
+    pruningTree.updateNode(key_010, true);
+    pruningTree.updateNode(key_011, true);
+    pruningTree.updateNode(key_100, true);
+    pruningTree.updateNode(key_101, true);
+    pruningTree.updateNode(key_110, true);
+    //pruningTree.write("octree_pruning_test1.ot"); // DEBUGGING
+
+    auto checkPruneExpandConstant = [&](OcTree& t, size_t expectedNumNodes, size_t expectedNumLeafs, bool toMaxLikelihood=true){
+      EXPECT_EQ (t.calcNumNodes(), t.size()); // check for size inconsistencies
+      EXPECT_EQ (t.size(), expectedNumNodes); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      
+      t.prune();
+      EXPECT_EQ (t.size(), expectedNumNodes); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+
+      if (toMaxLikelihood) {
+        t.toMaxLikelihood();
+      }
+      
+      EXPECT_EQ (t.size(), expectedNumNodes); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      t.prune();
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+      EXPECT_EQ (t.size(), expectedNumNodes); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+
+      t.expand();
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+      EXPECT_EQ (t.size(), expectedNumNodes); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+    };
+
+
+        
+    size_t expectedNumNodes = 16+7;
+    size_t expectedNumLeafs = 7;
+    // seven separate nodes added, all separate leafs
+    EXPECT_EQ (pruningTree.size(), expectedNumNodes); 
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafs);
+    checkPruneExpandConstant(pruningTree, expectedNumNodes, expectedNumLeafs, false);
+
+    pruningTree.updateNode(key_111, true); // last insertion will cause pruning by one level
+    //pruningTree.write("octree_structure_pruning_test2.ot"); // DEBUGGING
+    const size_t expectedNumNodesPruned = 16;
+    const size_t expectedNumLeafsPruned = 1;
+    EXPECT_EQ (pruningTree.size(), expectedNumNodesPruned); 
+    EXPECT_EQ (pruningTree.calcNumNodes(), pruningTree.size());
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafsPruned);        
+    
+    //pruning should not have an additional effect
+    pruningTree.prune();
+    EXPECT_EQ (pruningTree.size(), expectedNumNodesPruned); 
+    EXPECT_EQ (pruningTree.calcNumNodes(), pruningTree.size());
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafsPruned); 
+    
+    // expanding should recreate all 8 nodes again
+    pruningTree.expand();
+    const size_t expectedNumNodesExp = 16+8;
+    const size_t expectedNumLeafsExp = 8;
+    EXPECT_EQ (pruningTree.size(), expectedNumNodesExp);
+    EXPECT_EQ (pruningTree.calcNumNodes(), pruningTree.size());
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafsExp);
+
+    pruningTree.prune(); // back to pruned node
+    EXPECT_EQ (pruningTree.size(), expectedNumNodesPruned); 
+    EXPECT_EQ (pruningTree.calcNumNodes(), pruningTree.size());
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafsPruned); 
+
+    // updating one of the child node to completely "free" should expand the tree again, and it is no longer collapsible
+    float logOddsChange = -1.0*pruningTree.getProbHitLog()+pruningTree.getProbMissLog(); // enough to go from occupied to free
+    pruningTree.updateNode(key_101, logOddsChange); // set one node to free
+    //pruningTree.write("octree_structure_pruning_test2.ot"); // DEBUGGING
+    
+    EXPECT_EQ (pruningTree.size(), expectedNumNodesExp);
+    EXPECT_EQ (pruningTree.calcNumNodes(), pruningTree.size());
+    EXPECT_EQ (pruningTree.getNumLeafNodes(), expectedNumLeafsExp);
+    checkPruneExpandConstant(pruningTree, expectedNumNodesExp, expectedNumLeafsExp); 
+
+
+
+    }
+
+    {
+      std::cout << "\nPruning fully filled octree\n===============================\n";
+      // test pruning of a fully filled octree to single root node
+      // manually create nodes at level 2, filling all space as single leafs nodes will exhaust memory
+      const float resolution = 0.2f; 
+      OcTree fullTree(resolution);
+      
+      // insert one node to initialize tree
+      point3d pt1(0.1f, 0.1f, 0.1f);
+      OcTreeKey key1;
+      EXPECT_TRUE(fullTree.search(pt1) == NULL);
+      EXPECT_TRUE(fullTree.coordToKeyChecked(pt1, key1));
+      OcTreeNode* node1 = fullTree.updateNode(key1, true);
+      EXPECT_TRUE(node1);
+      EXPECT_EQ(node1, fullTree.search(pt1));
+      size_t expectedNumNodes = 17; // inserting first node creates 17 nodes in total (root + 16 levels)
+      size_t expectedNumLeafs = 1; // one new leaf node
+      EXPECT_EQ (fullTree.size(), expectedNumNodes); 
+      EXPECT_EQ (fullTree.getNumLeafNodes(), expectedNumLeafs);
+      
+
+      auto getOrCreateChild = [&](OcTreeNode* parent, unsigned int idx)->OcTreeNode* {
+        OcTreeNode* child = nullptr;
+        if (fullTree.nodeChildExists(parent, idx))
+          child = fullTree.getNodeChild(parent, idx);
+        else
+          child = fullTree.createNodeChild(parent, idx);
+        return child;
+      };
+
+
+      OcTreeNode* root = fullTree.getRoot();
+      // fill first layer of children
+      for (unsigned int pos1 = 0; pos1 < 8; ++pos1){
+        OcTreeNode* newNodeL1 = getOrCreateChild(root, pos1);
+        newNodeL1->setLogOdds(fullTree.getProbHitLog()); 
+      }
+      root->setLogOdds(fullTree.getProbHitLog()); 
+
+      fullTree.deleteNode(key1); // remove initial placeholder
+
+      // sweep now through all possible positions at level 1 (again) + 2, 3 to fill properly and fully
+      for (unsigned int pos1 = 0; pos1 < 8; ++pos1){
+        OcTreeNode* newNodeL1 = getOrCreateChild(root, pos1);
+          for (unsigned int pos2 = 0; pos2 < 8; ++pos2){
+            OcTreeNode* newNodeL2 = getOrCreateChild(newNodeL1, pos2);
+            newNodeL2->setLogOdds(fullTree.getProbHitLog()); 
+          }
+        newNodeL1->setLogOdds(fullTree.getProbHitLog()); 
+      }
+      EXPECT_EQ(fullTree.size(), 73); // = 1+8+64
+      EXPECT_EQ(fullTree.size(), fullTree.calcNumNodes());
+      EXPECT_EQ (fullTree.getNumLeafNodes(), 64);
+
+      
+      //fullTree.write("octree_full_pruning_test.ot"); // DEBUGGING
+
+      // workaround for bug in pruning: does not prune an already partially pruned fullTree
+      fullTree.updateNode(pt1, true); 
+      fullTree.toMaxLikelihood();
+      fullTree.prune();
+
+      EXPECT_EQ(fullTree.size(), 1); 
+      EXPECT_EQ(fullTree.size(), fullTree.calcNumNodes());
+      EXPECT_EQ (fullTree.getNumLeafNodes(), 1);
+
+    }
+  // ------------------------------------------------------------
+
+
+
+
+    
+    std::cerr <<"\nTest successful.\n";
     return 0;
 
 }
