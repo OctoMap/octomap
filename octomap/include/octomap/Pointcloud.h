@@ -91,8 +91,6 @@ namespace octomap {
     // removes any points closer than [thres] to (0,0,0)
     void minDist(double thres);
 
-    void subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud);
-
     // iterators ------------------
 
     typedef point3d_collection::iterator iterator;

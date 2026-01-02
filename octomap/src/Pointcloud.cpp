@@ -31,19 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* According to c++ standard including this header has no practical effect
- * but it can be used to determine the c++ standard library implementation.
- */ 
-#include <ciso646>
 
-#if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
-  #include <algorithm>
-  #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
-    #include <random>
-  #endif
-#else
-  #include <ext/algorithm>
-#endif
 #include <assert.h>
 #include <fstream>
 #include <limits>
@@ -205,29 +193,6 @@ namespace octomap {
     } // end for points
     this->clear();
     this->push_back(result);
-  }
-
-
-  void Pointcloud::subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud) {
-    point3d_collection samples;
-    // visual studio does not support random_sample_n and neither does libc++
-  #if defined(_MSC_VER) || defined(_LIBCPP_VERSION)
-    samples.reserve(this->size());
-    samples.insert(samples.end(), this->begin(), this->end());
-    #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
-      std::random_device r;
-      std::mt19937 urbg(r());
-      std::shuffle(samples.begin(), samples.end(), urbg);
-    #else
-      std::random_shuffle(samples.begin(), samples.end());
-    #endif
-    samples.resize(num_samples);
-  #else
-    random_sample_n(begin(), end(), std::back_insert_iterator<point3d_collection>(samples), num_samples);
-    for (unsigned int i=0; i<samples.size(); i++) {
-      sample_cloud.push_back(samples[i]);
-    }
-  #endif
   }
 
 
