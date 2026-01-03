@@ -553,7 +553,7 @@ namespace octomap {
     if (root == NULL)
       return;
 
-    for (unsigned int depth=tree_depth-1; depth >= 0; --depth) {
+    for (int depth=tree_depth-1; depth >= 0; --depth) {
       unsigned int num_pruned = 0;
       pruneRecurs(this->root, 0, depth, num_pruned);
       // FIXME: This does not further prune a partially pruned tree, if there was nothing to be pruned at leaf level already

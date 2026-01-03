@@ -120,11 +120,11 @@ int main(int /*argc*/, char** /*argv*/) {
     OcTreeNode* prunedNode = tree.updateNode(OcTreeKey(singleKey[0]+0, singleKey[1]+1, singleKey[2]+1), true);
     EXPECT_EQ(tree.size(), 16);
     // all queries should now end up at same parent node:
-    OcTreeNode* parentNode = tree.search(singleKey);
+    OcTreeNode* parentNode1 = tree.search(singleKey);
     OcTreeNode* parentNode2 = tree.search(singleKey2);
-    EXPECT_EQ(parentNode, parentNode2);
+    EXPECT_EQ(parentNode1, parentNode2);
     // test pointer returned by updateNode (pruned)
-    EXPECT_EQ(prunedNode, parentNode);
+    EXPECT_EQ(prunedNode, parentNode1);
 
     //tree.write("pruning_test_out1.ot");
 

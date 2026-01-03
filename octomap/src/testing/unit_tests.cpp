@@ -173,32 +173,32 @@ int main(int argc, char** argv) {
     EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
 
     // checks if the tree structure is constant w.r.t. prune/expand operations
-    auto checkPruneExpandConstant = [&](OcTree& t, size_t expectedNumNodes, size_t expectedNumLeafs, bool toMaxLikelihood=true){
+    auto checkPruneExpandConstant = [&](OcTree& t, size_t expectedNumNodes_p, size_t expectedNumLeafs_p, bool toMaxLikelihood=true){
       EXPECT_EQ (t.calcNumNodes(), t.size()); // check for size inconsistencies
-      EXPECT_EQ (t.size(), expectedNumNodes); 
-      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
       
       t.prune();
-      EXPECT_EQ (t.size(), expectedNumNodes); 
-      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
       EXPECT_EQ (t.calcNumNodes(), t.size());
 
       if (toMaxLikelihood) {
         t.toMaxLikelihood();
       }
       
-      EXPECT_EQ (t.size(), expectedNumNodes); 
-      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
       t.prune();
       EXPECT_EQ (t.calcNumNodes(), t.size());
-      EXPECT_EQ (t.size(), expectedNumNodes); 
-      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
       EXPECT_EQ (t.calcNumNodes(), t.size());
 
       t.expand();
       EXPECT_EQ (t.calcNumNodes(), t.size());
-      EXPECT_EQ (t.size(), expectedNumNodes); 
-      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs);
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
       EXPECT_EQ (t.calcNumNodes(), t.size());
     };
 
