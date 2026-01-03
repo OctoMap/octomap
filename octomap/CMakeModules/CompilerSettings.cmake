@@ -7,11 +7,14 @@ endif(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 message(STATUS "${PROJECT_NAME} building as ${CMAKE_BUILD_TYPE}")
 
 # COMPILER FLAGS
-if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-error ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG")
-    set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(
+        "-Wall" "-Wextra" "-Wshadow" "-Wundef" "-pedantic" "-Wnull-dereference"
+        "$<$<CONFIG:Release>:-O3>"
+        "$<$<CONFIG:Release>:-funroll-loops>"
+        "$<$<CONFIG:Debug>:-Og>"
+    )
+    add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 endif()
 
 # enables -fPIC in applicable compilers
