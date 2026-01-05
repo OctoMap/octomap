@@ -185,7 +185,7 @@ namespace octomap {
     m_zMax = maxZ;
 
     std::vector<octomath::Vector3> cube_template;
-    initCubeTemplate(origin, cube_template);
+    initCubeTemplate(cube_template);
 
     unsigned int idx_occupied(0), idx_occupied_thres(0), idx_free(0), idx_free_thres(0);
     unsigned int color_idx_occupied(0), color_idx_occupied_thres(0);
@@ -244,7 +244,7 @@ namespace octomap {
     // init selectedVoxels GLarray
     initGLArrays(selectedVoxels.size(), m_selectionSize, &m_selectionArray, NULL);
 
-    generateCubes(selectedVoxels, &m_selectionArray, m_selectionSize, this->origin);
+    generateCubes(selectedVoxels, &m_selectionArray);
   }
 
   void OcTreeDrawer::clearOcTreeSelection(){
@@ -271,8 +271,7 @@ namespace octomap {
       *glColorArray = new GLfloat[glArraySize * 4 *4];
   }
 
-  void OcTreeDrawer::initCubeTemplate(const octomath::Pose6D& origin,
-                                      std::vector<octomath::Vector3>& cube_template) {
+  void OcTreeDrawer::initCubeTemplate(std::vector<octomath::Vector3>& cube_template) {
     cube_template.clear();
     cube_template.reserve(24);
 
@@ -511,18 +510,17 @@ namespace octomap {
 
   // still used for "selection" nodes
   void OcTreeDrawer::generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
-                                   GLfloat*** glArray, unsigned int& glArraySize,
-                                   octomath::Pose6D& origin,
+                                   GLfloat*** glArray,
                                    GLfloat** glColorArray) {
     unsigned int i = 0;
     unsigned int colorIdx = 0;
 
     std::vector<octomath::Vector3> cube_template;
-    initCubeTemplate(origin, cube_template);
+    initCubeTemplate(cube_template);
 
     for (std::list<octomap::OcTreeVolume>::const_iterator it=voxels.begin();
          it != voxels.end(); it++) {
-      i = generateCube(*it, cube_template, i, glArray);
+       i = generateCube(*it, cube_template, i, glArray);
     }
 
     if (glColorArray != NULL) {

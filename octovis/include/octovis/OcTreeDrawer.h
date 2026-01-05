@@ -88,8 +88,7 @@ namespace octomap {
     //! The array is cleared first, if needed
     /// rotates cubes to correct reference frame
     void generateCubes(const std::list<octomap::OcTreeVolume>& voxels,
-                       GLfloat*** glArray, unsigned int& glArraySize, 
-                       octomath::Pose6D& origin,
+                       GLfloat*** glArray, 
                        GLfloat** glColorArray = NULL);
     
     //! clear OpenGL visualization
@@ -98,9 +97,10 @@ namespace octomap {
     //! setup OpenGL arrays
     void initGLArrays(const unsigned int& num_cubes, unsigned int& glArraySize,
                        GLfloat*** glArray, GLfloat** glColorArray);
+
     //! setup cube template
-    void initCubeTemplate(const octomath::Pose6D& origin,
-                          std::vector<octomath::Vector3>& cube_template);
+    void initCubeTemplate(std::vector<octomath::Vector3>& cube_template);
+
     //! add one cube to arrays
     unsigned int generateCube(const octomap::OcTreeVolume& v,
                               const std::vector<octomath::Vector3>& cube_template,
