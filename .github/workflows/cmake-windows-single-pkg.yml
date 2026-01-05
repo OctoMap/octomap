@@ -1,0 +1,53 @@
+# Single package builds of the components, based on CMake starter workflow template
+name: Single package builds, CMake Windows
+
+on: [push, fork, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    continue-on-error: true
+
+    strategy:
+      fail-fast: true
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up MSVC environment
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Set BUILD_DIR environment variable
+      run: echo "BUILD_DIR=build" >> $GITHUB_ENV
+
+    - name: octomap - Configure CMake
+      working-directory: octomap
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    - name: octomap - Build
+      working-directory: octomap
+      run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+    - name: octomap - Test
+      working-directory: octomap
+      run: ctest --test-dir build --output-on-failure --build-config ${{ matrix.build_type }}
+
+    # TODO: try to build other packages on Windows as well
+    #- name: dynamicEDT3D - Configure CMake
+    #  working-directory: dynamicEDT3D
+    #  run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    #- name: dynamicEDT3D - Build
+    #  working-directory: dynamicEDT3D
+    #  run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+    #- name: octovis - Configure CMake
+    #  working-directory: octovis
+    #  run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    #- name: octovis - Build
+    #  working-directory: octovis
+    #  run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
