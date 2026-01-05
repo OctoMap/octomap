@@ -75,7 +75,7 @@ namespace octomap {
     initGLArrays(cnt_free_thres    , m_freeThresSize    , &m_freeThresArray, NULL);
 
     std::vector<octomath::Vector3> cube_template;
-    initCubeTemplate(origin, cube_template);
+    initCubeTemplate(cube_template);
 
     unsigned int idx_occupied(0), idx_occupied_thres(0), idx_free(0), idx_free_thres(0);
     unsigned int color_idx_occupied(0), color_idx_occupied_thres(0);

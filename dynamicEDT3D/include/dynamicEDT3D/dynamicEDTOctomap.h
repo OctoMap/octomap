@@ -107,7 +107,7 @@ public:
 private:
 	void initializeOcTree(octomap::point3d bbxMin, octomap::point3d bbxMax);
 	void insertMaxDepthLeafAtInitialize(octomap::OcTreeKey key);
-	void updateMaxDepthLeaf(octomap::OcTreeKey& key, bool occupied);
+	void updateMaxDepthLeaf(octomap::OcTreeKey& key, bool keyOccupied);
 
 	void worldToMap(const octomap::point3d &p, int &x, int &y, int &z) const;
 	void mapToWorld(int x, int y, int z, octomap::point3d &p) const;
