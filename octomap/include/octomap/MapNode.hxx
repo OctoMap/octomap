@@ -44,7 +44,7 @@ namespace octomap {
   }
 
   template <class TREETYPE>
-  MapNode<TREETYPE>::MapNode(const Pointcloud& in_cloud, pose6d in_origin): node_map(0) {
+  MapNode<TREETYPE>::MapNode(const Pointcloud&, pose6d): node_map(0) {
   }
 
   template <class TREETYPE>
@@ -60,7 +60,7 @@ namespace octomap {
   }
 
   template <class TREETYPE>
-  void MapNode<TREETYPE>::updateMap(const Pointcloud& cloud, point3d sensor_origin) {
+  void MapNode<TREETYPE>::updateMap(const Pointcloud&, point3d) {
   }
 
   template <class TREETYPE>

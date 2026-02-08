@@ -127,13 +127,13 @@ namespace octomap {
   }
 
   template <class MAPNODE>
-  MAPNODE* MapCollection<MAPNODE>::addNode(const Pointcloud& cloud, point3d sensor_origin) {
+  MAPNODE* MapCollection<MAPNODE>::addNode(const Pointcloud&, point3d) {
     // TODO...
     return 0;
   }
 
   template <class MAPNODE>
-  bool MapCollection<MAPNODE>::removeNode(const MAPNODE* n) {
+  bool MapCollection<MAPNODE>::removeNode(const MAPNODE*) {
     // TODO...
     return false;
   }
@@ -252,8 +252,8 @@ namespace octomap {
 
   // TODO
   template <class MAPNODE>
-  void MapCollection<MAPNODE>::insertScan(const Pointcloud& scan, const octomap::point3d& sensor_origin,
-                                          double maxrange, bool pruning, bool lazy_eval) {
+  void MapCollection<MAPNODE>::insertScan(const Pointcloud&, const octomap::point3d&,
+                                          double, bool, bool) {
     fprintf(stderr, "ERROR: MapCollection::insertScan is not implemented yet.\n");
   }
 
@@ -267,7 +267,7 @@ namespace octomap {
         
   // TODO
   template <class MAPNODE>
-  std::vector<Pointcloud*> MapCollection<MAPNODE>::segment(const Pointcloud& scan) const {
+  std::vector<Pointcloud*> MapCollection<MAPNODE>::segment(const Pointcloud&) const {
     std::vector<Pointcloud*> result;
     fprintf(stderr, "ERROR: MapCollection::segment is not implemented yet.\n");
     return result;
@@ -275,7 +275,7 @@ namespace octomap {
 
   // TODO
   template <class MAPNODE>
-  MAPNODE* MapCollection<MAPNODE>::associate(const Pointcloud& scan) {
+  MAPNODE* MapCollection<MAPNODE>::associate(const Pointcloud&) {
     fprintf(stderr, "ERROR: MapCollection::associate is not implemented yet.\n");
     return 0;
   }
