@@ -7,6 +7,14 @@ project(
 
 include(CTest)
 
+if(
+    CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR
+    AND NOT CMAKE_CONFIGURATION_TYPES
+    AND NOT CMAKE_BUILD_TYPE
+)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
 option(BUILD_DYNAMICETD3D_SUBPROJECT
