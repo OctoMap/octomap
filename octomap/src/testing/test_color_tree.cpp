@@ -27,6 +27,7 @@ int main(int /*argc*/, char** /*argv*/) {
       for (int z=-20; z<20; z++) {
         point3d endpoint ((float) x*0.05f+0.01f, (float) y*0.05f+0.01f, (float) z*0.05f+0.01f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, true); 
+        EXPECT_TRUE(n != NULL);
         n->setColor(z*5+100,x*5+100,y*5+100); 
       }
     }
@@ -38,6 +39,7 @@ int main(int /*argc*/, char** /*argv*/) {
       for (int z=-30; z<30; z++) {
         point3d endpoint ((float) x*0.02f+2.0f, (float) y*0.02f+2.0f, (float) z*0.02f+2.0f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, false); 
+        EXPECT_TRUE(n != NULL);
         n->setColor(255,255,0); // set color to yellow
       }
     }
@@ -145,9 +147,9 @@ int main(int /*argc*/, char** /*argv*/) {
   // delete / create some nodes
   {
     std::cout << "\nCreating / deleting nodes\n===============================\n";
-    size_t initialSize = tree.size();
-    EXPECT_EQ(initialSize, tree.calcNumNodes());
-    std::cout << "Initial size: " << initialSize << std::endl;
+    const size_t initialSize2 = tree.size();
+    EXPECT_EQ(initialSize2, tree.calcNumNodes());
+    std::cout << "Initial size: " << initialSize2 << std::endl;
     
     point3d newCoord(-2.0, -2.0, -2.0);
     ColorOcTreeNode* newNode = tree.updateNode(newCoord, true);
@@ -156,7 +158,7 @@ int main(int /*argc*/, char** /*argv*/) {
     
     const size_t insertedSize = tree.size();
     std::cout << "Size after one insertion: " << insertedSize << std::endl;
-    EXPECT_EQ(insertedSize, initialSize+6);
+    EXPECT_EQ(insertedSize, initialSize2+6);
     EXPECT_EQ(insertedSize, tree.calcNumNodes());
     
     // find parent of newly inserted node:
