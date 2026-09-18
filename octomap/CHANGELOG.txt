@@ -1,3 +1,18 @@
+v1.10.1: 2026-09-18
+===================
+- Fix MSVC isnan handling (#417)
+- Always enable C++11 (#416)
+- Raise minimum CMake version to 3.10
+- Fix dynamicEDT3D parameter naming
+- Fix node deletion behavior and memory leaks(#288 #318)
+- Fix OcTree pruning
+- Fix Vector3 comparison behavior (#441 #431)
+- Improved tests and compiler warnings
+- Fix clang warnings (#446)
+- Fix gcc16 compilation (#448)
+- octovis: Switch Qt 4/5 support to Qt 5/6
+
+
 v1.10.0: 2024-03-19
 ===================
 - CMake: Fix duplicate uninstall target (#406)
@@ -13,8 +28,6 @@ v1.10.0: 2024-03-19
 - ROS: Updates to compile cleanly on ROS 2 Rolling on Ubuntu 24.04 (#415)
 - ROS: Remove ccache  for ROS-Industrial CI yml (#413)
 - ROS: Remove EOL ROS distros from CI actions
-
-
 
 v1.9.8: 2022-05-12
 ==================
