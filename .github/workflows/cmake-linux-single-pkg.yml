@@ -90,7 +90,9 @@ jobs:
     - name: dynamicEDT3D - Build
       working-directory: dynamicEDT3D
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.dynamicEDT3D-build-output-dir }} --config ${{ matrix.build_type }}
+      run: |
+        echo $CMAKE_PREFIX_PATH
+        cmake --build ${{ steps.strings.outputs.dynamicEDT3D-build-output-dir }} --config ${{ matrix.build_type }}
       
       # No tests available
       
