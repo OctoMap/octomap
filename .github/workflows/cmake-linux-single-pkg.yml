@@ -93,8 +93,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         export CMAKE_PREFIX_PATH=${{ steps.strings.outputs.common-install-dir }}      
-        cmake -B ${{ steps.strings.outputs.octovis-build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}/octovis
+        cmake -B ${{ steps.strings.outputs.octovis-build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}/octovis
 
     - name: octovis - Build
       working-directory: octovis
