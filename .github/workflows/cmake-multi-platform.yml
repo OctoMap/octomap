@@ -78,4 +78,4 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }}
       
     - name: Install
-      run: cmake --install ${{ steps.strings.outputs.octomap-build-dir }}
+      run: cmake --install ${{ steps.strings.outputs.build-output-dir }}
