@@ -71,10 +71,9 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }}
       
     - name: octomap - Install
-      working-directory: octomap    
       run: |
         export CMAKE_PREFIX_PATH=${{ steps.strings.output.common-install-dir }}
-        cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}      
+        cmake --install ${{ steps.strings.outputs.octomap-build-output-dir }} --config ${{ matrix.build_type }}      
       
       
     - name: dynamicEDT3D - Configure CMake
