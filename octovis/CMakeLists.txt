@@ -50,8 +50,7 @@ endif()
 
 # We need the main octomap library to link against (same version as octovis)
 if(NOT TARGET octomap::octomap)
-    find_package(octomap "${OCTOVIS_VERSION}" ${_required}
-    HINTS ${CMAKE_SOURCE_DIR}/../octomap/build)
+    find_package(octomap "${OCTOVIS_VERSION}" ${_required})
 endif()
 find_package(OpenGL ${_required})
 set(OCTOVIS_FIND_DEPENDENCIES
