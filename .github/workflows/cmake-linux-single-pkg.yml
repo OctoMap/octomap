@@ -1,6 +1,6 @@
 
 # Single package (subdirectory) builds of the components, based on CMake starter workflow template
-name: Single package builds, CMake multi-platform
+name: Single package builds Linux
 
 on: [push, fork, pull_request]
 
@@ -45,6 +45,7 @@ jobs:
         echo "octomap-build-output-dir=${{ github.workspace }}/octomap/build" >> "$GITHUB_OUTPUT"
         echo "dynamicEDT3D-build-output-dir=${{ github.workspace }}/dynamicEDT3D/build" >> "$GITHUB_OUTPUT"
         echo "octovis-build-output-dir=${{ github.workspace }}/octovis/build" >> "$GITHUB_OUTPUT"
+        echo "common-install-dir=${{ github.workspace }}/install" >> "$GITHUB_OUTPUT"        
 
     - name: octomap - Configure CMake
       working-directory: octomap
@@ -55,6 +56,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.common-install-dir }}        
         -S ${{ github.workspace }}/octomap
 
     - name: octomap - Build
@@ -67,6 +69,13 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+      
+    - name: octomap - Install
+      working-directory: octomap    
+      run: |
+        export CMAKE_PREFIX_PATH=${{ steps.strings.output.common-install-dir }}
+        cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}      
+      
       
     - name: dynamicEDT3D - Configure CMake
       working-directory: dynamicEDT3D

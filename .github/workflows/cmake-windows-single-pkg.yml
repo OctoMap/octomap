@@ -1,5 +1,5 @@
 # Single package builds of the components, based on CMake starter workflow template
-name: Single package builds, CMake Windows
+name: Single package builds Windows (octomap only)
 
 on: [push, fork, pull_request]
 
