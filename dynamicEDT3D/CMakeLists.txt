@@ -24,8 +24,7 @@ set(DYNAMICEDT3D_SOVERSION
 )
 
 if(NOT TARGET octomap::octomap)
-    find_package(octomap "${DYNAMICEDT3D_VERSION}" REQUIRED
-        HINTS ${CMAKE_SOURCE_DIR}/../octomap/build)
+    find_package(octomap "${DYNAMICEDT3D_VERSION}" REQUIRED)
 endif()
 
 set(DYNAMICEDT3D_FIND_DEPENDENCIES
