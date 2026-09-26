@@ -72,7 +72,7 @@ jobs:
       
     - name: octomap - Install
       run: |
-        export CMAKE_PREFIX_PATH=${{ steps.strings.output.common-install-dir }}
+        export CMAKE_PREFIX_PATH=${{ steps.strings.outputs.common-install-dir }}
         cmake --install ${{ steps.strings.outputs.octomap-build-output-dir }} --config ${{ matrix.build_type }}      
       
       
