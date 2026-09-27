@@ -59,6 +59,7 @@ set(octomap_SOURCES
     src/OcTreeNode.cpp
     src/OcTreeStamped.cpp
     src/ColorOcTree.cpp
+    src/IntensityOcTree.cpp
 )
 add_library(octomap ${octomap_SOURCES})
 target_compile_features(octomap PUBLIC cxx_std_11)
