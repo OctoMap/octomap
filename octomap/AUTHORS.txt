@@ -12,4 +12,7 @@ Further contributors:
 * B. Jensen, TU Munich
 * A. Ecins, University of Maryland
 * C. Brew
-* F. Boniardi, University of Freiburg
+* F. Boniardi, University of Freiburg 
+
+... and many many more. For an up to date list, please check:
+https://github.com/OctoMap/octomap/graphs/contributors?all=1

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10...4.1)
 project(
     octovis
-    VERSION 1.10.0
+    VERSION 2.0.0
     LANGUAGES CXX
 )
 if(NOT DEFINED OCTOVIS_BUILD_OPTIONAL)
