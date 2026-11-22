@@ -1,3 +1,29 @@
+v2.0.0: 2026-11-22
+==================
+- CMake: Modernize build configuration, targets, package exports, and installation. Breaking change for integration.
+- CMake: Set the default Release build type only for top-level builds (#449)
+- Add tools to merge OctoMap files and convert binvox files with per-file offsets
+- Add PCD reading to Pointcloud
+- Fix deletion of root node. Also fixes the return value of deleteNode(...). (#307)
+- Improve standard compatibility by removing unused function Pointcloud::subSampleRandom(...) (Fixes #434)
+- octovis: Update Qt and bundled QGLViewer support; improve CMake dependency handling
+- CI: Add single-package Linux builds and a Windows OctoMap build (#443)
+- ROS CI: Update supported distributions and branch triggers
+
+v1.10.1: 2026-09-18
+===================
+- Fix MSVC isnan handling (#417)
+- Always enable C++11 (#416)
+- Raise minimum CMake version to 3.10
+- Fix dynamicEDT3D parameter naming
+- Fix node deletion behavior and memory leaks(#288 #318)
+- Fix OcTree pruning
+- Fix Vector3 comparison behavior (#441 #431)
+- Improved tests and compiler warnings
+- Fix clang warnings (#446)
+- Fix gcc16 compilation (#448)
+- octovis: Switch Qt 4/5 support to Qt 5/6
+
 v1.10.0: 2024-03-19
 ===================
 - CMake: Fix duplicate uninstall target (#406)

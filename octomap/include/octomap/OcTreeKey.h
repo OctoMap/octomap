@@ -34,11 +34,6 @@
 #ifndef OCTOMAP_OCTREE_KEY_H
 #define OCTOMAP_OCTREE_KEY_H
 
-/* According to c++ standard including this header has no practical effect
- * but it can be used to determine the c++ standard library implementation.
- */
-#include <ciso646>
-
 #include <assert.h>
 
 /* Libc++ does not implement the TR1 namespace, all c++11 related functionality

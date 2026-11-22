@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -97,12 +97,12 @@ void VisibilityOptimizer::optimize(vector<PtrPrimitive>& primitives,VRenderParam
 
         gpc_polygon cumulated_union ;
         cumulated_union.num_contours = 0 ;
-        cumulated_union.hole = NULL ;
-        cumulated_union.contour = NULL ;
+        cumulated_union.hole = nullptr ;
+        cumulated_union.contour = nullptr ;
         size_t nboptimised = 0 ;
 
         for(size_t pindex = primitives.size() - 1; long(pindex) >= 0;--pindex,++nboptimised)
-                if(primitives[pindex] != NULL)
+                if(primitives[pindex] != nullptr)
                 {
 #ifdef A_FAIRE
                         percentage_finished = pindex / (float)primitives.size() ;
@@ -131,11 +131,11 @@ void VisibilityOptimizer::optimize(vector<PtrPrimitive>& primitives,VRenderParam
                                         gpc_polygon new_poly ;
                                         gpc_polygon new_poly_reduced ;
                                         new_poly.num_contours = 0 ;
-                                        new_poly.hole = NULL ;
-                                        new_poly.contour = NULL ;
+                                        new_poly.hole = nullptr ;
+                                        new_poly.contour = nullptr ;
                                         new_poly_reduced.num_contours = 0 ;
-                                        new_poly_reduced.hole = NULL ;
-                                        new_poly_reduced.contour = NULL ;
+                                        new_poly_reduced.hole = nullptr ;
+                                        new_poly_reduced.contour = nullptr ;
 
                                         // 1 - creates a gpc_polygon corresponding to the current primitive
 
@@ -215,7 +215,7 @@ void VisibilityOptimizer::optimize(vector<PtrPrimitive>& primitives,VRenderParam
                                         {
                                                 ++nb_culled ;
                                                 delete p ;
-                                                primitives[pindex] = NULL ;
+                                                primitives[pindex] = nullptr ;
                                                 continue ;
                                         }
 
@@ -226,8 +226,8 @@ void VisibilityOptimizer::optimize(vector<PtrPrimitive>& primitives,VRenderParam
                                         {
                                                 gpc_polygon cumulated_union_tmp ;
                                                 cumulated_union_tmp.num_contours = 0 ;
-                                                cumulated_union_tmp.hole = NULL ;
-                                                cumulated_union_tmp.contour = NULL ;
+                                                cumulated_union_tmp.hole = nullptr ;
+                                                cumulated_union_tmp.contour = nullptr ;
 
                                                 gpc_polygon_clip(GPC_UNION,&new_poly,&cumulated_union,&cumulated_union_tmp) ;
 

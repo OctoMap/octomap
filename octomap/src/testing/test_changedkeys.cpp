@@ -33,10 +33,10 @@ void printChanges(OcTree& tree){
 
 
   // iterate through the entire tree
-  for(OcTree::tree_iterator it=tree.begin_tree(),
-      end=tree.end_tree(); it!= end; ++it) {
-    if (it.isLeaf()) {
-      if (tree.isNodeOccupied(*it)) {
+  for(OcTree::tree_iterator oit=tree.begin_tree(),
+      end=tree.end_tree(); oit!= end; ++oit) {
+    if (oit.isLeaf()) {
+      if (tree.isNodeOccupied(*oit)) {
         actualOccupied += 1;
       }
       else {

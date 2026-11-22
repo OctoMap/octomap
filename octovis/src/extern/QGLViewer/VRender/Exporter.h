@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -60,7 +60,7 @@ namespace vrender
 	{
 		public:
 			Exporter() ;
-			virtual ~Exporter() {}
+			virtual ~Exporter() {};
 
 			virtual void exportToFile(const QString& filename,const std::vector<PtrPrimitive>&,VRenderParams&) ;
 
@@ -92,7 +92,7 @@ namespace vrender
 	{
 		public:
 			EPSExporter() ;
-			virtual ~EPSExporter() {}
+			virtual ~EPSExporter() {};
 
 		protected:
 			virtual void spewPoint(const Point *, QTextStream& out) ;
@@ -120,7 +120,7 @@ namespace vrender
 	class PSExporter: public EPSExporter
 	{
 		public:
-			virtual ~PSExporter() {}
+			virtual ~PSExporter() {};
 		protected:
 			virtual void writeFooter(QTextStream& out) const ;
 	};
@@ -129,7 +129,7 @@ namespace vrender
 	{
 		public:
 			FIGExporter() ;
-			virtual ~FIGExporter() {}
+			virtual ~FIGExporter() {};
 
 		protected:
 			virtual void spewPoint(const Point *, QTextStream& out) ;

@@ -396,13 +396,6 @@
         }
       }
 
-      leaf_bbx_iterator(const leaf_bbx_iterator& other) : iterator_base<NodeType>(other) {
-        minKey = other.minKey;
-        maxKey = other.maxKey;
-      }
-
-
-
       /// postfix increment operator of iterator (it++)
       leaf_bbx_iterator operator++(int){
         leaf_bbx_iterator result = *this;

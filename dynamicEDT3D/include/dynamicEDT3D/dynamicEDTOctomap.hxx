@@ -183,8 +183,8 @@ void DynamicEDTOctomapBase<TREE>::insertMaxDepthLeafAtInitialize(octomap::OcTree
 }
 
 template <class TREE>
-void DynamicEDTOctomapBase<TREE>::updateMaxDepthLeaf(octomap::OcTreeKey& key, bool occupied){
-	if(occupied)
+void DynamicEDTOctomapBase<TREE>::updateMaxDepthLeaf(octomap::OcTreeKey& key, bool keyOccupied){
+	if(keyOccupied)
 		setObstacle(key[0]+offsetX, key[1]+offsetY, key[2]+offsetZ);
 	else
 		removeObstacle(key[0]+offsetX, key[1]+offsetY, key[2]+offsetZ);

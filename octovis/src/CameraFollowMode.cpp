@@ -87,7 +87,7 @@ void CameraFollowMode::cameraPathStopped(int id) {
   }
 }
 
-void CameraFollowMode::cameraPathFrameChanged(int id, int current_camera_frame) {
+void CameraFollowMode::cameraPathFrameChanged(int, int current_camera_frame) {
   if(m_followRobotTrajectory) {
     m_current_scan = m_start_frame + current_camera_frame;
     emit frameChanged(m_current_scan);

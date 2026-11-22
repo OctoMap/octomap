@@ -166,36 +166,36 @@ void boundingBoxTest(OcTree* tree){
   KeyVolumeMap bbxVoxels;
 
   size_t count = 0;
-  for(OcTree::leaf_bbx_iterator it = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey), end=tree->end_leafs_bbx();
-      it!= end; ++it)
+  for(OcTree::leaf_bbx_iterator oit = tree->begin_leafs_bbx(bbxMinKey,bbxMaxKey), oend=tree->end_leafs_bbx();
+      oit!= oend; ++oit)
   {
     count++;
-    OcTreeKey currentKey = it.getKey();
+    OcTreeKey currentKey = oit.getKey();
     // leaf is actually a leaf:
-    EXPECT_FALSE(tree->nodeHasChildren(&(*it)));
+    EXPECT_FALSE(tree->nodeHasChildren(&(*oit)));
 
     // leaf exists in tree:
     OcTreeNode* node = tree->search(currentKey);
     EXPECT_TRUE(node);
-    EXPECT_EQ(node, &(*it));
+    EXPECT_EQ(node, &(*oit));
     // all leafs are actually in the bbx:
     for (unsigned i = 0; i < 3; ++i){
 //      if (!(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i])){
 //        std::cout << "Key failed: " << i << " " << currentKey[i] << " "<< bbxMinKey[i] << " "<< bbxMaxKey[i]
-//             << "size: "<< it.getSize()<< std::endl;
+//             << "size: "<< oit.getSize()<< std::endl;
 //      }
       EXPECT_TRUE(currentKey[i] >= bbxMinKey[i] && currentKey[i] <= bbxMaxKey[i]);
     }
 
-    bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, it.getSize()));
+    bbxVoxels.insert(std::pair<OcTreeKey,double>(currentKey, oit.getSize()));
   }
   EXPECT_EQ(bbxVoxels.size(), count);
   std::cout << "Bounding box traversed ("<< count << " leaf nodes)\n\n";
 
 
   // compare with manual BBX check on all leafs:
-  for(OcTree::leaf_iterator it = tree->begin(), end=tree->end(); it!= end; ++it) {
-    OcTreeKey key = it.getKey();
+  for(OcTree::leaf_iterator oit = tree->begin(), oend=tree->end(); oit!= oend; ++oit) {
+    OcTreeKey key = oit.getKey();
     if (    key[0] >= bbxMinKey[0] && key[0] <= bbxMaxKey[0]
          && key[1] >= bbxMinKey[1] && key[1] <= bbxMaxKey[1]
          && key[2] >= bbxMinKey[2] && key[2] <= bbxMaxKey[2])
@@ -203,7 +203,7 @@ void boundingBoxTest(OcTree* tree){
       KeyVolumeMap::iterator bbxIt = bbxVoxels.find(key);
       EXPECT_FALSE(bbxIt == bbxVoxels.end());
       EXPECT_TRUE(key == bbxIt->first);
-      EXPECT_EQ(it.getSize(), bbxIt->second);
+      EXPECT_EQ(oit.getSize(), bbxIt->second);
     }
 
   }

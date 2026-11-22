@@ -52,6 +52,15 @@ int main(int argc, char** argv) {
     EXPECT_FLOAT_EQ (rotation.x(), 1.2750367);
     EXPECT_FLOAT_EQ (rotation.y(), (-1.1329513));
     EXPECT_FLOAT_EQ (rotation.z(), 0.30116868);
+    
+    
+    Vector3 ones2 = *ones;
+    
+    // test comparison
+    EXPECT_TRUE(*ones < *twos);
+    EXPECT_FALSE(*twos < *ones);
+    EXPECT_FALSE(*ones < ones2);
+    EXPECT_FALSE(ones2 < *ones);
   
   // ------------------------------------------------------------
   } else if (test_name == "MathPose") {
@@ -154,7 +163,141 @@ int main(int argc, char** argv) {
     EXPECT_TRUE (graph.readBinary("test.graph"));
   // ------------------------------------------------------------
 
-  } else if (test_name == "StampedTree") {
+  } else if (test_name == "OcTreeStructure") {
+    // test essential tree structure and node deletions - partial overlap with pruning & expand unit tests
+    OcTree tree (0.2);
+    size_t expectedNumNodes = 0;
+    size_t expectedNumLeafs = 0;
+    EXPECT_EQ (tree.getTreeDepth(), 16);
+    EXPECT_EQ (tree.size(), expectedNumNodes);
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+
+    // checks if the tree structure is constant w.r.t. prune/expand operations
+    auto checkPruneExpandConstant = [&](OcTree& t, size_t expectedNumNodes_p, size_t expectedNumLeafs_p, bool toMaxLikelihood=true){
+      EXPECT_EQ (t.calcNumNodes(), t.size()); // check for size inconsistencies
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
+      
+      t.prune();
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+
+      if (toMaxLikelihood) {
+        t.toMaxLikelihood();
+      }
+      
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
+      t.prune();
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+
+      t.expand();
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+      EXPECT_EQ (t.size(), expectedNumNodes_p); 
+      EXPECT_EQ (t.getNumLeafNodes(), expectedNumLeafs_p);
+      EXPECT_EQ (t.calcNumNodes(), t.size());
+    };
+
+    checkPruneExpandConstant(tree, expectedNumNodes, expectedNumLeafs); 
+
+    
+
+    point3d pt1(0.1f, 0.1f, 0.1f);
+    OcTreeKey key1;
+    EXPECT_TRUE(tree.search(pt1) == NULL);
+    EXPECT_TRUE(tree.coordToKeyChecked(pt1, key1));
+    OcTreeNode* node1 = tree.updateNode(key1, true);
+    EXPECT_TRUE(node1);
+    EXPECT_EQ(node1, tree.search(pt1));
+    expectedNumNodes += 17; // inserting first node creates 17 nodes in total (root + 16 levels)
+    expectedNumLeafs += 1; // one new leaf node
+    EXPECT_EQ (tree.size(), expectedNumNodes); 
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+    // second update of same coordinate should not change size
+    OcTreeNode* node1new = tree.updateNode(key1, true);
+    EXPECT_EQ(node1, node1new);
+    EXPECT_EQ (tree.size(), expectedNumNodes); 
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+
+    checkPruneExpandConstant(tree, expectedNumNodes, expectedNumLeafs);
+
+    // second point in octree coordinate next to first (common parent), expected result: one more leaf, 18 nodes total
+    expectedNumNodes += 1;
+    expectedNumLeafs += 1;
+    point3d pt2(0.3f, 0.3f, 0.3f);
+    EXPECT_TRUE(tree.search(pt2) == NULL);
+    OcTreeKey key2;
+    EXPECT_TRUE(tree.coordToKeyChecked(pt2, key2));
+    OcTreeNode* node2 = tree.updateNode(key2, true);
+    EXPECT_TRUE(node2);
+    EXPECT_EQ(node2, tree.search(pt2));
+    EXPECT_EQ (tree.size(), expectedNumNodes);
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+
+    // third point in different octant right after root, expected result: 16 more nodes, 1 more leaf
+    expectedNumNodes += 16;
+    expectedNumLeafs += 1;
+    point3d pt3(-0.1f, -0.1f, -0.1f);
+    OcTreeKey key3;
+    EXPECT_TRUE(tree.search(pt3) == NULL);
+    EXPECT_TRUE(tree.coordToKeyChecked(pt3, key3));
+    OcTreeNode* node3 = tree.updateNode(key3, false);
+    EXPECT_TRUE(node3);
+    //tree.write("octree_structure_test.ot"); // DEBUGGING
+
+    EXPECT_EQ(node3, tree.search(pt3));
+    EXPECT_EQ (tree.size(), expectedNumNodes); 
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+
+    checkPruneExpandConstant(tree, expectedNumNodes, expectedNumLeafs);
+
+    OcTree treeCopy = tree; // tree copy after inserting 3 nodes
+    EXPECT_TRUE(treeCopy == tree);
+    const size_t expectedNumLeafsCopy(expectedNumLeafs);
+    const size_t expectedNumNodesCopy(expectedNumNodes);
+    checkPruneExpandConstant(treeCopy, expectedNumNodesCopy, expectedNumLeafsCopy);
+
+
+    // delete last added node, expect 1 fewer leaf, 16 fewer nodes
+    expectedNumNodes -= 16;
+    expectedNumLeafs -= 1;
+    EXPECT_TRUE(tree.search(key3) != NULL);
+    tree.deleteNode(key3);
+    EXPECT_TRUE(tree.search(pt3) == NULL);
+    EXPECT_EQ (tree.size(), expectedNumNodes); 
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs); 
+
+    checkPruneExpandConstant(tree, expectedNumNodes, expectedNumLeafs);
+
+    EXPECT_EQ (treeCopy.size(), expectedNumNodesCopy); 
+    EXPECT_EQ (treeCopy.getNumLeafNodes(), expectedNumLeafsCopy); 
+
+    //delete all remaining nodes
+    for (OcTree::leaf_iterator it = tree.begin_leafs(), end = tree.end_leafs(); it != end; ++it) {
+       EXPECT_TRUE(tree.deleteNodeChecked(it.getKey(),it.getDepth()));
+    }
+    
+    // test deleting again (non-existing) node
+    EXPECT_FALSE(tree.deleteNodeChecked(key1));
+    
+    expectedNumNodes = 0;
+    expectedNumLeafs = 0;
+    EXPECT_EQ (tree.size(), expectedNumNodes); 
+    EXPECT_EQ (tree.getNumLeafNodes(), expectedNumLeafs);
+
+    EXPECT_FALSE(treeCopy == tree);
+    treeCopy.clear();
+    EXPECT_TRUE(treeCopy == tree);  
+    checkPruneExpandConstant(treeCopy, expectedNumNodes, expectedNumLeafs);
+
+        
+
+    // ------------------------------------------------------------
+  }  else if (test_name == "StampedTree") {
     OcTreeStamped stamped_tree (0.05);
     // fill tree
     for (int x=-20; x<20; x++) 
@@ -194,7 +337,7 @@ int main(int argc, char** argv) {
     OcTree tree (0.05);  
     point3d p(0.0,0.0,0.0);
     OcTreeKey key;
-    tree.coordToKeyChecked(p, key);
+    EXPECT_TRUE(tree.coordToKeyChecked(p, key));
     point3d p_inv = tree.keyToCoord(key);
     EXPECT_FLOAT_EQ (0.025, p_inv.x());
     EXPECT_FLOAT_EQ (0.025, p_inv.y());

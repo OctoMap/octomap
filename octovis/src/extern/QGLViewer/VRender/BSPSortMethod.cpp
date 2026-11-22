@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -70,7 +70,7 @@ class BSPTree
 		void recursFillPrimitiveArray(vector<PtrPrimitive>&) const;
 	private:
 		BSPNode *_root;
-		vector<Segment *> _segments;	// these are for storing segments and points when _root is null
+        vector<Segment *> _segments;	// these are for storing segments and points when _root is null
 		vector<Point *> _points;
 };
 
@@ -88,7 +88,7 @@ void BSPSortMethod::sortPrimitives(std::vector<PtrPrimitive>& primitive_tab,VRen
 																// by the insertion and can not be dynamic_casted anymore.
 	for(unsigned int i=0;i<primitive_tab.size();++i,++nbinserted)
 	{
-		if((P = dynamic_cast<Polygone *>(primitive_tab[i])) != NULL)
+        if((P = dynamic_cast<Polygone *>(primitive_tab[i])) != nullptr)
 			tree.insert(P);
 		else
 			segments_and_points.push_back(primitive_tab[i]);
@@ -104,9 +104,9 @@ void BSPSortMethod::sortPrimitives(std::vector<PtrPrimitive>& primitive_tab,VRen
 
 	for(unsigned int j=0;j<segments_and_points.size();++j,++nbinserted)
 	{
-		if((S = dynamic_cast<Segment *>(segments_and_points[j])) != NULL)
+        if((S = dynamic_cast<Segment *>(segments_and_points[j])) != nullptr)
 			tree.insert(S);
-		else if((p = dynamic_cast<Point *>(segments_and_points[j])) != NULL)
+        else if((p = dynamic_cast<Point *>(segments_and_points[j])) != nullptr)
 			tree.insert(p);
 
 		if(nbinserted%N==0)
@@ -156,7 +156,7 @@ class BSPNode
 
 BSPTree::BSPTree()
 {
-	_root = NULL;
+    _root = nullptr;
 }
 
 BSPTree::~BSPTree()
@@ -164,13 +164,13 @@ BSPTree::~BSPTree()
 	delete _root;
 }
 
-void BSPTree::insert(Point *P) 	{ if(_root == NULL) _points.push_back(P) 	; else _root->insert(P); }
-void BSPTree::insert(Segment *S) { if(_root == NULL) _segments.push_back(S); else _root->insert(S); }
-void BSPTree::insert(Polygone *P){ if(_root == NULL) _root = new BSPNode(P); else _root->insert(P); }
+void BSPTree::insert(Point *P) 	{ if(_root == nullptr) _points.push_back(P) 	; else _root->insert(P); }
+void BSPTree::insert(Segment *S) { if(_root == nullptr) _segments.push_back(S); else _root->insert(S); }
+void BSPTree::insert(Polygone *P){ if(_root == nullptr) _root = new BSPNode(P); else _root->insert(P); }
 
 void BSPTree::recursFillPrimitiveArray(vector<PtrPrimitive>& tab) const
 {
-	if(_root != NULL) _root->recursFillPrimitiveArray(tab);
+    if(_root != nullptr) _root->recursFillPrimitiveArray(tab);
 
 	for(unsigned int i=0;i<_points.size();++i) tab.push_back(_points[i]);
 	for(unsigned int j=0;j<_segments.size();++j) tab.push_back(_segments[j]);
@@ -220,7 +220,7 @@ void BSPNode::Classify(Segment *S, Segment * & moins_, Segment * & plus_)
 		if(s1 == 0)
 		{
 			moins_ = S;
-			plus_  = NULL;
+            plus_  = nullptr;
 			return;
 		}
 		else
@@ -255,12 +255,12 @@ void BSPNode::Classify(Segment *S, Segment * & moins_, Segment * & plus_)
 		if(s1 == -1)
 		{
 			moins_ = S;
-			plus_ = NULL;
+            plus_ = nullptr;
 			return;
 		}
 		else
 		{
-			moins_ = NULL;
+            moins_ = nullptr;
 			plus_  = S;
 			return;
 		}
@@ -269,14 +269,14 @@ void BSPNode::Classify(Segment *S, Segment * & moins_, Segment * & plus_)
 	{
 		if(s2 > 0)
 		{
-			moins_ = NULL;
+            moins_ = nullptr;
 			plus_  = S;
 			return;
 		}
 		else
 		{
 			moins_ = S;
-			plus_  = NULL;
+            plus_  = nullptr;
 			return;
 		}
 	}
@@ -284,14 +284,14 @@ void BSPNode::Classify(Segment *S, Segment * & moins_, Segment * & plus_)
 	{
 		if(s1 > 0)
 		{
-			moins_ = NULL;
+            moins_ = nullptr;
 			plus_  = S;
 			return;
 		}
 		else
 		{
 			moins_ = S;
-			plus_  = NULL;
+            plus_  = nullptr;
 			return;
 		}
 	}
@@ -304,12 +304,12 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 	static int Signs[100];
 	static double Zvals[100];
 
-	moins_ = NULL;
-	plus_ = NULL;
+    moins_ = nullptr;
+    plus_ = nullptr;
 
-	if(P == NULL)
+    if(P == nullptr)
 	{
-		//printf("BSPNode::Classify: Error. Null polygon.\n");
+        //printf("BSPNode::Classify: Error. Null polygon.\n");
 		return;
 	}
 
@@ -342,7 +342,7 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 	if((Smin == 0)&&(Smax == 0))
 	{
 		moins_ = P;
-		plus_  = NULL;
+        plus_  = nullptr;
 		return;
 	}
 
@@ -351,7 +351,7 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 	if(Smin == 1)
 	{
 		plus_  = P;
-		moins_ = NULL;
+        moins_ = nullptr;
 		return;
 	}
 
@@ -359,14 +359,14 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 
 	if(Smax == -1)
 	{
-		plus_ = NULL;
+        plus_ = nullptr;
 		moins_ = P;
 		return;
 	}
 
 	if((Smin == -1)&&(Smax == 0))
 	{
-		plus_ = NULL;
+        plus_ = nullptr;
 		moins_ = P;
 		return;
 	}
@@ -374,7 +374,7 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 	if((Smin == 0)&&(Smax == 1))
 	{
 		plus_ = P;
-		moins_ = NULL;
+        moins_ = nullptr;
 		return;
 	}
 
@@ -404,7 +404,7 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 		// Ils y a des imprecisions numeriques dues au fait que le poly estpres du plan.
 
 		moins_ = P;
-		plus_  = NULL;
+        plus_  = nullptr;
 		return;
 	}
 
@@ -488,7 +488,7 @@ void BSPNode::Classify(Polygone *P, Polygone * & moins_, Polygone * & plus_)
 
 void BSPNode::insert(Polygone *P)
 {
-	Polygone *side_plus = NULL, *side_moins = NULL;
+    Polygone *side_plus = nullptr, *side_moins = nullptr;
 
 	// 1 - Check on which size the polygon is, possibly split.
 
@@ -496,15 +496,15 @@ void BSPNode::insert(Polygone *P)
 
 	// 2 - insert polygons
 
-	if(side_plus != NULL) {
-		if(fils_plus == NULL)
+    if(side_plus != nullptr) {
+        if(fils_plus == nullptr)
 			fils_plus = new BSPNode(side_plus);
 		else
 			fils_plus->insert(side_plus);
 	}
 	
-	if(side_moins != NULL) {
-		if(fils_moins == NULL)
+    if(side_moins != nullptr) {
+        if(fils_moins == nullptr)
 			fils_moins = new BSPNode(side_moins);
 		else
 			fils_moins->insert(side_moins);
@@ -513,7 +513,7 @@ void BSPNode::insert(Polygone *P)
 
 void BSPNode::recursFillPrimitiveArray(vector<PtrPrimitive>& primitive_tab) const
 {
-  if(fils_plus != NULL)
+  if(fils_plus != nullptr)
     fils_plus->recursFillPrimitiveArray(primitive_tab);
 
   for(unsigned int i=0;i<seg_plus.size();++i)
@@ -521,10 +521,10 @@ void BSPNode::recursFillPrimitiveArray(vector<PtrPrimitive>& primitive_tab) cons
   for(unsigned int j=0;j<pts_plus.size();++j)
     primitive_tab.push_back(pts_plus[j]);
 
-  if(polygone != NULL)
+  if(polygone != nullptr)
     primitive_tab.push_back(polygone);
 
-  if(fils_moins != NULL)
+  if(fils_moins != nullptr)
     fils_moins->recursFillPrimitiveArray(primitive_tab);
 
   for(unsigned int i2=0;i2<seg_moins.size();++i2)
@@ -538,14 +538,14 @@ void BSPNode::insert(Point *P)
 	int res = Classify(P);
 
 	if(res == -1) {
-		if(fils_moins == NULL)
+        if(fils_moins == nullptr)
 			pts_moins.push_back(P);
 		else
 			fils_moins->insert(P);
 	}
 
 	if(res == 1) {
-		if(fils_plus == NULL)
+        if(fils_plus == nullptr)
 			pts_plus.push_back(P);
 		else
 			fils_plus->insert(P);
@@ -554,19 +554,19 @@ void BSPNode::insert(Point *P)
 
 void BSPNode::insert(Segment *S)
 {
-	Segment *side_plus = NULL, *side_moins = NULL;
+    Segment *side_plus = nullptr, *side_moins = nullptr;
 
 	Classify(S,side_moins,side_plus);
 
-	if(side_plus != NULL) {
-		if(fils_plus == NULL)
+    if(side_plus != nullptr) {
+        if(fils_plus == nullptr)
 			seg_plus.push_back(side_plus);
 		else
 			fils_plus->insert(side_plus);
 	}
 
-	if(side_moins != NULL) {
-		if(fils_moins == NULL)
+    if(side_moins != nullptr) {
+        if(fils_moins == nullptr)
 			seg_moins.push_back(side_moins);
 		else
 			fils_moins->insert(side_moins);
@@ -579,8 +579,8 @@ BSPNode::BSPNode(Polygone *P)
 
   initEquation(P,a,b,c,d);
 
-  fils_moins = NULL;
-  fils_plus  = NULL;
+  fils_moins = nullptr;
+  fils_plus  = nullptr;
 }
 
 void BSPNode::initEquation(const Polygone *P,double & a, double & b, double & c, double & d)

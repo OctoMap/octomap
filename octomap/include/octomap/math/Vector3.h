@@ -265,6 +265,8 @@ namespace octomath {
         else
           return false;
       }
+      // all equal
+      return false;
     }
 
     /// @return length of the vector ("L2 norm")

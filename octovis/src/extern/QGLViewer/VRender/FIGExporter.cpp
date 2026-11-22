@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -112,62 +112,6 @@ void FIGExporter::spewSegment(const Segment *S, QTextStream& out)
 {
 	const Feedback3DColor& P1 = Feedback3DColor(S->sommet3DColor(0)) ;
 	const Feedback3DColor& P2 = Feedback3DColor(S->sommet3DColor(1)) ;
-
-	GLdouble dx, dy;
-	GLfloat dr, dg, db, absR, absG, absB, colormax;
-	int steps;
-	GLdouble xstep, ystep;
-	GLfloat rstep, gstep, bstep;
-	GLdouble xnext, ynext, distance;
-	GLfloat rnext, gnext, bnext;
-
-	dr = P2.red()   - P1.red();
-	dg = P2.green() - P1.green();
-	db = P2.blue()  - P1.blue();
-
-	if (dr != 0 || dg != 0 || db != 0)
-	{
-		/* Smooth shaded line. */
-
-		dx = P2.x() - P1.x();
-		dy = P2.y() - P1.y();
-
-		distance = sqrt(dx * dx + dy * dy);
-
-		absR = fabs(dr);
-		absG = fabs(dg);
-		absB = fabs(db);
-
-		colormax = max(absR, max(absG, absB));
-		steps = int(0.5f + max(1.0, colormax * distance * EPS_SMOOTH_LINE_FACTOR));
-
-		xstep = dx / steps;
-		ystep = dy / steps;
-
-		rstep = dr / steps;
-		gstep = dg / steps;
-		bstep = db / steps;
-
-		xnext = P1.x();
-		ynext = P1.y();
-		rnext = P1.red();
-		gnext = P1.green();
-		bnext = P1.blue();
-
-		/* Back up half a step; we want the end points to be
-   			exactly the their endpoint colors. */
-
-		xnext -= xstep / 2.0;
-		ynext -= ystep / 2.0;
-		rnext -= rstep / 2.0f;
-		gnext -= gstep / 2.0f;
-		bnext -= bstep / 2.0f;
-	}
-	else
-	{
-		/* Single color line. */
-		steps = 0;
-	}
 
 	out << "2 1 0 1 0 7 " << (_depth--) << " 0 -1 0.000 0 0 -1 0 0 2\n";
 	out << "\t " << FigCoordX(P1.x()) << " " << FigCoordY(P1.y());

@@ -1,0 +1,33 @@
+# ===================================================================================
+#  The dynamicEDT3D CMake configuration file
+#
+#             ** File generated automatically, do not modify **
+#
+#  Usage from an external project:
+#    In your CMakeLists.txt, add these lines:
+#
+#    find_package(dynamicEDT3D REQUIRED)
+#    target_link_libraries(MY_TARGET_NAME PRIVATE octomap::dynamicEDT3D)
+#
+#
+#    This file will also define the following variables:
+#      - DYNAMICEDT3D_LIBRARIES      : For backwards compatibility with existing code
+#      - DYNAMICEDT3D_MAJOR_VERSION  : Major version.
+#      - DYNAMICEDT3D_MINOR_VERSION  : Minor version.
+#      - DYNAMICEDT3D_PATCH_VERSION  : Patch version.
+#      - DYNAMICEDT3D_VERSION        : Major.Minor.Patch version.
+#
+# ===================================================================================
+
+@PACKAGE_INIT@
+
+@DYNAMICEDT3D_FIND_DEPENDENCIES@
+
+set(DYNAMICEDT3D_MAJOR_VERSION "@DYNAMICEDT3D_MAJOR_VERSION@")
+set(DYNAMICEDT3D_MINOR_VERSION "@DYNAMICEDT3D_MINOR_VERSION@")
+set(DYNAMICEDT3D_PATCH_VERSION "@DYNAMICEDT3D_PATCH_VERSION@")
+set(DYNAMICEDT3D_VERSION "@DYNAMICEDT3D_VERSION@")
+
+set(DYNAMICEDT3D_LIBRARIES octomap::dynamicEDT3D)
+
+include(${CMAKE_CURRENT_LIST_DIR}/dynamicedt3d-targets.cmake)

@@ -203,6 +203,7 @@ namespace octomap {
      *  Delete a node (if exists) given a 3d point. Will always
      *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
      *  Pruned nodes at level "depth" will directly be deleted as a whole.
+     * @return success of key conversion (does not indicate if node was found/deleted - use search() before to check)
      */
     bool deleteNode(double x, double y, double z, unsigned int depth = 0);
 
@@ -210,15 +211,24 @@ namespace octomap {
      *  Delete a node (if exists) given a 3d point. Will always
      *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
      *  Pruned nodes at level "depth" will directly be deleted as a whole.
+     * @return success of key conversion (does not indicate if node was found/deleted - use search() before to check)
      */
     bool deleteNode(const point3d& value, unsigned int depth = 0);
 
     /** 
-     *  Delete a node (if exists) given an addressing key. Will always
+     *  Delete a node (if it exists) given an addressing key. Will always
      *  delete at the lowest level unless depth !=0, and expand pruned inner nodes as needed.
      *  Pruned nodes at level "depth" will directly be deleted as a whole.
+     * 
      */
-    bool deleteNode(const OcTreeKey& key, unsigned int depth = 0);
+    void deleteNode(const OcTreeKey& key, unsigned int depth = 0);
+
+    /** 
+     * Checks for existence of a node given an addressing key, and deletes it if found 
+     * by calling deleteNode(). 
+     * @return true if node was found and deleted, false otherwise
+     */
+    bool deleteNodeChecked(const OcTreeKey& key, unsigned int depth = 0);
 
     /// Deletes the complete tree structure
     void clear();
@@ -521,6 +531,7 @@ namespace octomap {
     void deleteNodeRecurs(NODE* node);
 
     /// recursive call of deleteNode()
+    /// @return true if child at level depth was found and deleted
     bool deleteNodeRecurs(NODE* node, unsigned int depth, unsigned int max_depth, const OcTreeKey& key);
 
     /// recursive call of prune()

@@ -22,9 +22,9 @@
 
 /****************************************************************************
 
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
+ Copyright (C) 2002-2023 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.6.3.
+ This file is part of the QGLViewer library version 2.9.1.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -90,7 +90,7 @@ void EPSExporter::writeHeader(QTextStream& out) const
 
 	out << "/threshold " << EPS_GOURAUD_THRESHOLD << " def\n";
 
-	for(int i = 0; GOURAUD_TRIANGLE_EPS[i] != NULL; i++)
+	for(int i = 0; GOURAUD_TRIANGLE_EPS[i] != nullptr; i++)
 		out << GOURAUD_TRIANGLE_EPS[i] << "\n";
 #ifdef A_VOIR
 	out <<  "\n" <<  << " setlinewidth\n\n", _lineWidth;
@@ -146,7 +146,7 @@ const char *EPSExporter::GOURAUD_TRIANGLE_EPS[] =
 	"div 10 1 roll 7 index 5 index 3 index add add 3 div 10 1 roll 6 index 4 ",
 	"index 2 index add add 3 div 10 1 roll 9 {pop} repeat 3 array astore ",
 	"triangle } ifelse } bd",
-	NULL
+	nullptr
 };
 
 void EPSExporter::spewPolygone(const Polygone *P, QTextStream& out)

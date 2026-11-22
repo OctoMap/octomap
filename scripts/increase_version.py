@@ -6,108 +6,124 @@
 #
 # Borrows heaviliy from ROS / catkin release tools
 
-
+import argparse
 import re
 import sys
-import copy
+from pathlib import Path
 
-manifest_match = "<version>(\d+)\.(\d+)\.(\d+)</version>"
+SUBPROJECTS = ["octomap", "octovis", "dynamicEDT3D"]
+DEFAULT_ROOTDIR = Path(__file__).parent.parent
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--rootdir",
+    metavar="DIR",
+    type=Path,
+    default=DEFAULT_ROOTDIR,
+    help=f"Octomap source tree (default: {DEFAULT_ROOTDIR})",
+)
+m = parser.add_mutually_exclusive_group()
+m.add_argument(
+    "--bump",
+    choices=["major", "minor", "patch"],
+    default="patch",
+    help="Which part of the version number to bump? (default: patch)",
+)
+m.add_argument(
+    "--version", metavar="MAJOR.MINOR.PATCH", help="Set a specific version to use"
+)
 
-if __name__ == '__main__':
-  bump = "patch"
-  if len(sys.argv) > 1:
-    bump = sys.argv[1]
-    if bump not in {"major","minor","patch"}:
-      print sys.argv[0]+" [major|minor|patch] (default: patch)"
-      exit(-1)
-  
-  
-  
-  manifests=["octomap/package.xml","octovis/package.xml","dynamicEDT3D/package.xml"]
-  cmakelists=["octomap/CMakeLists.txt","octovis/CMakeLists.txt","dynamicEDT3D/CMakeLists.txt"]
-  versions = []
+args = parser.parse_args()
 
-  # find versions in package.xml
-  for manifest in manifests:
-    with open(manifest, 'r') as f:
-      package_str = f.read()
-    match = re.search(manifest_match, package_str)
-    if match is None:
-      print "Error: no version tag found in %s" % manifest
-      exit(-1)
-    else:
-      v= match.groups()
-      v = [int(x) for x in v]
-      versions.append(v)
+MANIFESTS = [args.rootdir / p / "package.xml" for p in SUBPROJECTS]
+CMAKELISTS = [args.rootdir / p / "CMakeLists.txt" for p in SUBPROJECTS] + [
+    args.rootdir / "CMakeLists.txt"
+]
 
-  # find version in CMakeLists:
-  for cmake in cmakelists:
-    with open(cmake, 'r') as f:
-      cmake_str = f.read()
-    v = []
-    for m in ["MAJOR","MINOR","PATCH"]:
-      searchstr = "_%s_VERSION (\d+)\)" % m
-      match = re.search(searchstr, cmake_str)
-      if match is None:
-        print "Error: no version tag %s found in %s" % (searchstr,cmake)
-        exit(-1)
-      
-      v.append(int(match.group(1)))
+missing_files = [str(f) for f in MANIFESTS + CMAKELISTS if not f.is_file()]
+if missing_files:
+    sys.stderr.write(f"Missing files:\n* {'\n* '.join(missing_files)}\n")
+    sys.exit(1)
 
-    versions.append(v)
-  
-  new_version = copy.deepcopy(versions[0])
-  for v in versions:
-    if v != versions[0]:
-      print "Error: check current versions, mismatch: %d.%d.%d vs. %d.%d.%d" %(tuple(v)+tuple(versions[0]))
-      exit(-1)
+if args.version is None:
+    # Verify that all versions are consistent before bumping
+    versions = set()
+    for manifest in MANIFESTS:
+        with open(manifest, "r") as f:
+            content = f.read()
+        mo = re.search(r"<version>(\d)+\.(\d+)\.(\d+)</version>", content)
+        if not mo:
+            sys.stderr.write(f"Cannot find <version> tag in {manifest}\n")
+            sys.exit(1)
+        versions.add((int(mo.group(1)), int(mo.group(2)), int(mo.group(3))))
+    for cmakelist in CMAKELISTS:
+        with open(cmakelist, "r") as f:
+            content = f.read()
+        mo = re.search(r"project\s*\([^)]+VERSION\s+(\d)+\.(\d+)\.(\d+)", content)
+        if not mo:
+            sys.stderr.write(f"Cannot find project VERSION option in {cmakelist}\n")
+            sys.exit(1)
+        versions.add((int(mo.group(1)), int(mo.group(2)), int(mo.group(3))))
+    if len(versions) != 1:
+        sys.stderr.write(
+            f"Cannot bump multiple inconsistent versions: {', '.join('.'.join(str(v) for v in version) for version in sorted(versions))}\n"
+        )
+    version_numbers = [v for v in list(versions)[0]]
+    if args.bump == "patch":
+        version_numbers[2] += 1
+    if args.bump == "minor":
+        version_numbers[1] += 1
+        version_numbers[2] = 0
+    if args.bump == "major":
+        version_numbers[0] += 1
+        version_numbers[1] = 0
+        version_numbers[2] = 0
+    args.version = ".".join(str(v) for v in version_numbers)
+elif not re.match(r"^(\d+)\.(\d+)\.(\d+)$", args.version):
+    sys.stderr.write(f"Version {args.version!r} is not in MAJOR.MINOR.PATCH format\n")
+    sys.exit(1)
 
-  print "OctoMap component versions found: %d.%d.%d" % tuple(versions[0])
-  # "bump version" from catkin:
-  # find the desired index
-  idx = dict(major=0, minor=1, patch=2)[bump]
-  # increment the desired part
-  new_version[idx] += 1
-  # reset all parts behind the bumped part
-  new_version = new_version[:idx + 1] + [0 for x in new_version[idx + 1:]]
-  new_version_str = "%d.%d.%d" % tuple(new_version)
-  print 'Updating to new version: %s\n' % new_version_str
+anything_changed = False
 
-  # adjust CMakeLists
-  for cmake in cmakelists:
-    with open(cmake, 'r') as f:
-      cmake_str = f.read()
-    idx = dict(MAJOR=0, MINOR=1, PATCH=2)
-    for m in ["MAJOR","MINOR","PATCH"]:      
-      old_str = "_%s_VERSION %d)" % (m,versions[0][idx[m]])
-      new_str = "_%s_VERSION %d)" % (m,new_version[idx[m]])
-      cmake_str = cmake_str.replace(old_str, new_str)
+for manifest in MANIFESTS:
+    with open(manifest, "r") as f:
+        old_content = f.read()
+    new_content = re.sub(
+        r"<version>[0-9.]+</version>", f"<version>{args.version}</version>", old_content
+    )
+    if old_content != new_content:
+        anything_changed = True
+        sys.stdout.write(f"Updating {manifest} ...\n")
+        with open(manifest, "w") as f:
+            f.write(new_content)
 
-    with open(cmake, 'w') as f:
-      f.write(cmake_str)
+for cmakelist in CMAKELISTS:
+    with open(cmakelist, "r") as f:
+        old_content = f.read()
+    new_content = re.sub(
+        r"(project\s*\([^)]+)VERSION\s+[0-9.]+",
+        f"\\1VERSION {args.version}",
+        old_content,
+    )
+    if old_content != new_content:
+        anything_changed = True
+        sys.stdout.write(f"Updating {cmakelist} ...\n")
+        with open(cmakelist, "w") as f:
+            f.write(new_content)
 
-    
+if not anything_changed:
+    sys.stdout.write("Nothing to update.\n")
+    sys.exit(0)
 
-  # adjust package.xml
-  for manifest in manifests:
-    with open(manifest, 'r') as f:
-      package_str = f.read()
-    old_str = "<version>%d.%d.%d</version>" % tuple(versions[0])
-    new_str = "<version>%s</version>" % new_version_str
-    new_package_str = package_str.replace(old_str, new_str)
+sys.stdout.write(
+    f"""\n
+Finished writing package.xml and CMakeLists.txt files.
+Now check the output, adjust CHANGELOG, and "git commit".
+Finally, run:
+  git checkout master && git merge --no-ff devel && git tag v{args.version}
+  git push origin master devel && git push origin --tags
+  (adjust if not on the "devel" branch)
 
-    with open(manifest, 'w') as f:
-      f.write(new_package_str)
-
-  print "Finished writing package.xml and CMakeLists.txt files.\n"
-  print "Now check the output, adjust CHANGELOG, and \"git commit\".\nFinally, run:"
-  print "  git checkout master && git merge --no-ff devel && git tag v%s" % new_version_str
-  print "  git push origin master devel && git push --tags"
-  print "\n(adjust when not on the \"devel\" branch)\n"
-
-      
-  
-  
-  
-  
+"""
+)
+sys.exit(0)

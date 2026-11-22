@@ -1,24 +1,31 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
-PROJECT( octomap-distribution )
+cmake_minimum_required(VERSION 3.10...4.1)
+project(
+    octomap-distribution
+    VERSION 2.0.0
+    LANGUAGES NONE
+)
 
-ENABLE_TESTING()  # enable CTest environment of subprojects
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # enables -fPIC in applicable compilers (required to avoid link errors in some cases)
+include(CTest)
 
-option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
-option(BUILD_DYNAMICETD3D_SUBPROJECT  "Build targets from subproject dynamicEDT3D" ON)
-option(OCTOVIS_QT5 "Link Octovis against Qt5?" ON)
-
-if(OCTOVIS_QT5)
-	# Compiling against QT5 requires C++11.
-	set(CMAKE_CXX_STANDARD 11)
-endif(OCTOVIS_QT5)
-
-ADD_SUBDIRECTORY( octomap )
-
-if(BUILD_OCTOVIS_SUBPROJECT)
-	ADD_SUBDIRECTORY( octovis )
+if(
+    CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR
+    AND NOT CMAKE_CONFIGURATION_TYPES
+    AND NOT CMAKE_BUILD_TYPE
+)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_OCTOVIS_SUBPROJECT "Build targets from subproject octovis" ON)
+option(BUILD_DYNAMICETD3D_SUBPROJECT
+       "Build targets from subproject dynamicEDT3D" ON
+)
+
+add_subdirectory(octomap)
+if(BUILD_OCTOVIS_SUBPROJECT)
+    set(OCTOVIS_BUILD_OPTIONAL TRUE)
+    add_subdirectory(octovis)
+endif()
 if(BUILD_DYNAMICETD3D_SUBPROJECT)
-	ADD_SUBDIRECTORY( dynamicEDT3D )
+    add_subdirectory(dynamicEDT3D)
 endif()

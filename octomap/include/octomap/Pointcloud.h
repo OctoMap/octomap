@@ -91,8 +91,6 @@ namespace octomap {
     // removes any points closer than [thres] to (0,0,0)
     void minDist(double thres);
 
-    void subSampleRandom(unsigned int num_samples, Pointcloud& sample_cloud);
-
     // iterators ------------------
 
     typedef point3d_collection::iterator iterator;
@@ -113,6 +111,7 @@ namespace octomap {
 
     std::istream& readBinary(std::istream &s);
     std::istream& read(std::istream &s);
+    std::istream &readPCD(std::istream &s);
     std::ostream& writeBinary(std::ostream &s) const;
 
   protected:

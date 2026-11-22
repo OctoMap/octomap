@@ -1,27 +1,33 @@
-# It defines the following variables
-#  OCTOVIS_INCLUDE_DIRS  - include directories for OctoMap viewer
-#  OCTOVIS_LIBRARY_DIRS  - library directories for OctoMap viewer
-#  OCTOVIS_LIBRARIES     - libraries to link against
-#  OCTOVIS_MAJOR_VERSION - major version
-#  OCTOVIS_MINOR_VERSION - minor version
-#  OCTOVIS_PATCH_VERSION - patch version
-#  OCTOVIS_VERSION       - major.minor.patch version
+# ===================================================================================
+#  The OctoVis CMake configuration file
+#
+#             ** File generated automatically, do not modify **
+#
+#  Usage from an external project:
+#    In your CMakeLists.txt, add these lines:
+#
+#    find_package(octovis REQUIRED)
+#    target_link_libraries(MY_TARGET_NAME PRIVATE octomap::octovis)
+#
+#
+#    This file will also define the following variables:
+#      - OCTOVIS_LIBRARIES      : For backwards compatibility with existing code
+#      - OCTOVIS_MAJOR_VERSION  : Major version.
+#      - OCTOVIS_MINOR_VERSION  : Minor version.
+#      - OCTOVIS_PATCH_VERSION  : Patch version.
+#      - OCTOVIS_VERSION        : Major.Minor.Patch version.
+#
+# ===================================================================================
 
 @PACKAGE_INIT@
+
+@OCTOVIS_FIND_DEPENDENCIES@
 
 set(OCTOVIS_MAJOR_VERSION "@OCTOVIS_MAJOR_VERSION@")
 set(OCTOVIS_MINOR_VERSION "@OCTOVIS_MINOR_VERSION@")
 set(OCTOVIS_PATCH_VERSION "@OCTOVIS_PATCH_VERSION@")
 set(OCTOVIS_VERSION "@OCTOVIS_VERSION@")
 
-set_and_check(OCTOVIS_INCLUDE_DIRS "@PACKAGE_OCTOVIS_INCLUDE_DIRS@" "@QGLViewer_INCLUDE_DIR@")
-set_and_check(OCTOVIS_LIBRARY_DIRS "@PACKAGE_OCTOVIS_LIB_DIR@" "@QGLViewer_LIBRARY_DIR@")
+set(OCTOVIS_LIBRARIES octomap::octovis)
 
-# Set library names as absolute paths:
-set(OCTOVIS_LIBRARIES
-  "@QGLViewer_LIBRARIES@"
-  "@QT_LIBRARIES@"
-  "@PACKAGE_OCTOVIS_LIB_DIR@/@OCTOVIS_LIBRARY@"
-)
-
-@OCTOVIS_INCLUDE_TARGETS@
+include(${CMAKE_CURRENT_LIST_DIR}/octovis-targets.cmake)
