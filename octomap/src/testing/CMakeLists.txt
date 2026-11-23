@@ -28,6 +28,9 @@ target_link_libraries(test_pruning octomap octomath)
 add_executable(test_bbx test_bbx.cpp)
 target_link_libraries(test_bbx octomap)
 
+add_executable(test_delete_root test_delete_root.cpp)
+target_link_libraries(test_delete_root octomap)
+
 # CTest tests below
 
 add_executable(unit_tests unit_tests.cpp)
@@ -58,6 +61,7 @@ add_test(NAME test_mapcollection
                  ${PROJECT_SOURCE_DIR}/share/data/mapcoll.txt
 )
 add_test(NAME test_color_tree COMMAND test_color_tree)
+add_test(NAME test_delete_root COMMAND test_delete_root)
 add_test(NAME test_bbx COMMAND test_bbx)
 
 set_tests_properties(ReadGraph PROPERTIES DEPENDS InsertScan)
