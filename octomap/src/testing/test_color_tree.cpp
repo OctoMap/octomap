@@ -37,7 +37,7 @@ int main(int /*argc*/, char** /*argv*/) {
   for (int x=-30; x<30; x++) {
     for (int y=-30; y<30; y++) {
       for (int z=-30; z<30; z++) {
-        point3d endpoint ((float) x*0.02f+2.0f, (float) y*0.02f+2.0f, (float) z*0.02f+2.0f);
+        point3d endpoint ((float) x*0.02f+2.005f, (float) y*0.02f+2.005f, (float) z*0.02f+2.005f);
         ColorOcTreeNode* n = tree.updateNode(endpoint, false); 
         EXPECT_TRUE(n != NULL);
         n->setColor(255,255,0); // set color to yellow
