@@ -528,6 +528,7 @@ namespace octomap {
             root->children = NULL;
         }
         this->tree_size = 0;
+        delete this->root;
         this->root = NULL;
         // max extent of tree changed:
         this->size_changed = true;
