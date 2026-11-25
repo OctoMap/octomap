@@ -184,6 +184,14 @@ install(
 # ROS support
 install(FILES package.xml DESTINATION "${CMAKE_INSTALL_DATADIR}/octomap")
 
+# Allows Colcon to find non-Ament packages when using workspace underlays
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME}" "")
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME}"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/ament_index/resource_index/packages"
+)
+
 # pkg-config support
 install_pkg_config_file(
     octomap
