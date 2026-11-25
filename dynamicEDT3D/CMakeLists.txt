@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10...4.1)
 project(
     dynamicEDT3D
-    VERSION 2.0.0
+    VERSION 2.0.1
     LANGUAGES CXX
 )
 

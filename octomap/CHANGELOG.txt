@@ -1,3 +1,10 @@
+v2.0.1: 2026-11-25
+==================
+Fix test_color_tree instability: keep the free-space points off voxel borders (#452)
+ROS: Install the ament index marker again for ROS2 (#451)
+Fix: Free root node when deleteNode removes the last node (#450)
+
+
 v2.0.0: 2026-11-22
 ==================
 - CMake: Modernize build configuration, targets, package exports, and installation. Breaking change for integration.
